@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Tabs Directive</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Angular JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular.min.js"></script>
+    <script src="{% static 'SPTGUI/analysis.js' %}"></script>    
+  </head>
+  
+  <body ng-app="app">
+    <h1> A basic analysis canvas on page: {{url_basename}}.</h1>
+
+    <tabset>
+      <tab heading="Tab 1">
+	Lorem ipsum dolor sit amet, ut eam nullam utroque liberavisse, ea
+	graecis tractatos contentiones quo. Ipsum phaedrum scripserit sit id,
+	eu insolens indoctum vel, eos eu offendit delectus tincidunt. Eum
+	nostrum reprehendunt in, ullum nostrud legimus ei quo. Sed et elitr
+	corrumpit. Nibh maiestatis voluptatum has no, at est inermis epicuri,
+	omnis temporibus cu mei. Legere scriptorem voluptatibus et est, ea
+	noluisse deterruisset sea.
+      </tab>
+      <tab heading="Tab 2">
+	Just another tab!	
+      </tab>
+    </tabset>
+  </body>
+</html>
