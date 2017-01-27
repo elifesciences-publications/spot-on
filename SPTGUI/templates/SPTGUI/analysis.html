@@ -8,32 +8,137 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Tabs Directive</title>
+    <title>Analysis page</title>
     
     <!-- Bootstrap core CSS -->
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Angular JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular.min.js"></script>
+
+    <!-- concatenated flow.js + ng-flow libraries -->
+    <script src="{% static 'SPTGUI/dist/js/ng-flow-standalone.min.js' %}"></script>
+    
     <script src="{% static 'SPTGUI/analysis.js' %}"></script>    
   </head>
   
   <body ng-app="app">
-    <h1> A basic analysis canvas on page: {{url_basename}}.</h1>
 
-    <tabset>
-      <tab heading="Tab 1">
-	Lorem ipsum dolor sit amet, ut eam nullam utroque liberavisse, ea
-	graecis tractatos contentiones quo. Ipsum phaedrum scripserit sit id,
-	eu insolens indoctum vel, eos eu offendit delectus tincidunt. Eum
-	nostrum reprehendunt in, ullum nostrud legimus ei quo. Sed et elitr
-	corrumpit. Nibh maiestatis voluptatum has no, at est inermis epicuri,
-	omnis temporibus cu mei. Legere scriptorem voluptatibus et est, ea
-	noluisse deterruisset sea.
-      </tab>
-      <tab heading="Tab 2">
-	Just another tab!	
-      </tab>
-    </tabset>
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">SpasMod</a>
+        </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#code">Code</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+    
+      <h1> SpasMod: kinetic modeling.</h1>
+      <p>
+	Current page: {{url_basename}}.
+      </p>
+      
+      <tabset>
+	<tab heading="Data">
+	  Lorem ipsum dolor sit amet, ut eam nullam utroque liberavisse, ea
+	  graecis tractatos contentiones quo. Ipsum phaedrum scripserit sit id,
+	  eu insolens indoctum vel, eos eu offendit delectus tincidunt. Eum
+	  nostrum reprehendunt in, ullum nostrud legimus ei quo. Sed et elitr
+	  corrumpit. Nibh maiestatis voluptatum has no, at est inermis epicuri,
+	  omnis temporibus cu mei. Legere scriptorem voluptatibus et est, ea
+	  noluisse deterruisset sea.
+
+	  <h2>Upload datasets</h2>
+	  
+	  {% verbatim %}	  
+	  <div ng-controller="UploadController"
+	     flow-init="{target: '/upload'}"
+	     flow-files-submitted="$flow.upload()"
+	     flow-file-success="$file.msg = $message">
+
+	    {{username}}
+	    <!-- Drag'n'drop box -->
+	    <div class="alert alert-info" flow-drop>
+	      <div flow-drag-enter="style={border:'4px solid green'}" flow-drag-leave="style={}"
+		   ng-style="style">
+		
+		Drag And Drop your file here
+	      </div>
+	    </div>
+	    <input type="file" flow-btn/>
+
+	    <h2>Uploaded datasets</h2>
+
+	    <div class="alert alert-warning" ng-if="$flow.files.length==0">
+	      No dataset has been uploaded yet.
+	    </div>
+	    
+	    <div ng-if="$flow.files.length>0">
+	      <p>
+		Some information about the dataset:
+		<ul>
+		  <li>Number of files: {{$flow.files.length}}</li>
+		</ul>
+	      </p>
+	      
+	      <table class="table-striped">
+		<tr>
+		  <th class="col-md-2">id</th>
+		  <th class="col-md-5">File name</th>
+		  <th class="col-md-5">Comment</th>
+		  <th class="col-md-5">Options</th>
+		</tr>
+		<tr ng-repeat="file in $flow.files">
+		  <td class="col-md-2">{{$index+1}}</td>
+		  <td class="col-md-5">{{file.name}}</td>
+		  <td class="col-md-5">{{file.msg}}</td>
+		  <td class="col-md-1">
+		    <span class="glyphicon glyphicon-pencil"></span>
+		    <span class="glyphicon glyphicon-remove"></span>
+		  </td>
+		  
+		</tr>
+	      </table>
+	    </div>
+	  </div>
+	  {% endverbatim %}
+
+	  <h2> Additional information</h2>
+	  Blabla
+
+	  <h2> Statistics about this dataset </h2>
+	  Blah.
+	  
+	</tab>
+	<tab heading="Kinetic modeling">
+	  In this tab, you can perform a kinetic modeling of your data
+	  <div class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one! (div unbound)</div>
+	</tab>
+	<tab heading="Download">
+	  In this tab, you can download the results of your analysis
+	  <div>
+	    <div class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one! (div unbound)</div>
+	  </div>
+	</tab>
+      </tabset>
+
+    </div>
+    
   </body>
 </html>
