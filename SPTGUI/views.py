@@ -1,7 +1,9 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
+from django.utils import timezone
 from .models import Analysis, Dataset
-from fileuploadutils import chunkOperationUtil
+from fileuploadutils import chunkOperationUtil, checkValidityFile
+from django.core.files import File
 
 import random, string, json
 
@@ -39,7 +41,7 @@ def datasets_api(request, url_basename):
 @csrf_exempt
 def upload(request, url_basename):
     context = {}
-    resp = HttpResponse(json.dumps(context), content_type='application/json')
+    response = HttpResponse(json.dumps(context), content_type='application/json')
 
     filename=None
     responseTotalChunks=None
@@ -48,14 +50,33 @@ def upload(request, url_basename):
     one give some information for the program to use to
     build the file when the upload is finished
     """
-    chunkOperationUtil(request,resp)
+    if request.method == 'GET':
+        (response.status_code, response.content) = checkValidityFile(request, response)
+    elif request.method == 'POST':        
+        (response.status_code, response.content) = chunkOperationUtil(request, response)
+    if response.status_code == 200:
+        ## Get the analysis object, or create it if it doesn't exist
+        try:
+            ana = Analysis.objects.get(name=url_basename)
+        except:
+            ana = Analysis(url_basename=url_basename,
+                           pub_date=timezone.now(),
+                           name='',
+                           description='')
+            ana.save()
 
-    ## Incorporate the upload to the database here
-    ## 1. Handle the file reception
-    ## 2. If the file is completed, save it to the database
+        ## Create a database entry
+        print json.loads(response.content)
+        fi = File(open(json.loads(response.content)['address'], 'r')) ## This could be handled differently
+        da = Dataset(analysis=ana,
+                     name='',
+                     description='',
+                     data=fi)
+        da.save()
+        
     ## 3. Defer to the celery analysis
     
-    return resp    
+    return response
 
 def analysis_root(request):
     return HttpResponse("There's nothing here...")

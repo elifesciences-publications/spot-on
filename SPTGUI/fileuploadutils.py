@@ -72,43 +72,58 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
         else:
             return 'UPLOAD'
 
+def checkValidityFile(request, response):
+    """Called with a GET request
+    Used to cehck the validity of the file.
+    For flow.jf (ng-flow) to proceed, it is compulsory that it receives
+    a code 400 HTML response. A 200 code doesn't work."""
+    
+    logging.info("file checking")
+
+    ## Validations
+    flowChunkSize=str(request.GET['flowChunkSize'])
+    flowFileName=str(request.GET['flowFilename'])
+    flowTotalSize=str(request.GET['flowTotalSize'])
+    flowTotalChunks=str(request.GET['flowTotalChunks'])
+    flowChunkNumber=str(request.GET['flowChunkNumber'])
+    responseTotalChunks={'totalchunks':flowTotalChunks}
+
+    n = json.dumps(responseTotalChunks)
+    return (400,n)
+        
 def chunkOperationUtil(request,response):
-        flowFileName=None
-        flowChunkSize=None
-        flowTotalSize=None
-        flowChunkNumber=None
-        responseTotalChunks=None
-        if (request.method == 'GET'):
-            #check the validity of the file
-            logging.info("file checking")
-            flowChunkSize=str(request.GET['flowChunkSize'])
-            flowFileName=str(request.GET['flowFilename'])
-            flowTotalSize=str(request.GET['flowTotalSize'])
-            flowTotalChunks=str(request.GET['flowTotalChunks'])
-            flowChunkNumber=str(request.GET['flowChunkNumber'])
-            responseTotalChunks={'totalchunks':flowTotalChunks}
-            n = json.dumps(responseTotalChunks)
-            response.data=n
-            response.status_code=400
-        elif (request.method == 'POST'):
-            flowChunkNumber=str(request.POST['flowChunkNumber'])
-            flowChunkSize=str(request.POST['flowChunkSize'])
-            flowFileName=request.POST['flowFilename']
-            flowTotalSize=str(request.POST['flowTotalSize'])
-            flowTotalChunks=str(request.POST['flowTotalChunks'])
-            logging.info('uploading file %s \n file info: flowchuncknumber = %s; flowchunksize = %s; flowtotalsize = %s;' % (flowFileName, flowChunkNumber, flowChunkSize, flowTotalSize))
-            logging.info('creating folder')
-            createTempFile(flowFileName,flowChunkNumber,request.FILES['file'].read())
-            logging.info("Building file")
-            createFileFromChunk(flowFileName,flowChunkSize,flowTotalSize,flowTotalChunks)
-            response.status_code=200
-            if os.path.isfile(uploadpath+folderlike+flowFileName):
-                path=str(uploadpath+flowFileName)
-                responseTotalChunks={'msg':'file upload complete','address':path,'filename':flowFileName}
-            else:
-                logging.info('file not yet completed %s ' % str(flowChunkNumber))
-            n = json.dumps(responseTotalChunks)
-            response.content=n
+    """Handle the POST request"""
+    flowFileName=None
+    flowChunkSize=None
+    flowTotalSize=None
+    flowChunkNumber=None
+    responseTotalChunks=None
+
+    ## Validate input (throws exception if missing I guess)
+    flowChunkNumber=str(request.POST['flowChunkNumber'])
+    flowChunkSize=str(request.POST['flowChunkSize'])
+    flowFileName=request.POST['flowFilename']
+    flowTotalSize=str(request.POST['flowTotalSize'])
+    flowTotalChunks=str(request.POST['flowTotalChunks'])
+        
+    logging.info('uploading file %s \n file info: flowchuncknumber = %s; flowchunksize = %s; flowtotalsize = %s;' % (flowFileName, flowChunkNumber, flowChunkSize, flowTotalSize))
+    
+    logging.info('creating folder')
+    createTempFile(flowFileName,flowChunkNumber,request.FILES['file'].read())
+    logging.info("Building file")
+    createFileFromChunk(flowFileName,flowChunkSize,flowTotalSize,flowTotalChunks)
+
+    if os.path.isfile(uploadpath+folderlike+flowFileName):
+        path=str(uploadpath+flowFileName)
+        responseTotalChunks={'msg':'file upload complete',
+                             'address':path,
+                             'filename':flowFileName}
+    else:
+        logging.info('file not yet completed %s ' % str(flowChunkNumber))
+        
+    n = json.dumps(responseTotalChunks)
+    return (200, n)
+
 
 def createTempFile(flowFileName,flowChunkNumber,chunk):
     try:
