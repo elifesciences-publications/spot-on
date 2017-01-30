@@ -3,11 +3,21 @@
     // From https://thinkster.io/angular-tabs-directive
     angular.module('app', ['flow'])
 	.controller('UploadController', ['$scope', function($scope) {
+	    $scope.currentlyUploading=false;
+	    $scope.successfullyUploaded=0;
+	    
 	    // This event bound when a file is added
 	    $scope.$on('flow::fileAdded', function (event, $flow, flowFile) {
-		$scope.username='toto';//prevent file from uploading
-});
-	    
+		$scope.currentlyUploading=true;
+	    });
+	    $scope.$on('flow::complete', function (event, $flow, flowFile) {
+		$scope.currentlyUploading=false;
+	    });
+	    $scope.$on('flow::fileSuccess', function (file, message, chunk) {
+		$scope.successfullyUploaded=$scope.successfullyUploaded+1;
+		// Call the API object
+	    });
+
 	}])
 	.directive('tab', function() {
 	    return {

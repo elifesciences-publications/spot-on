@@ -27,15 +27,17 @@ def datasets_api(request, url_basename):
     """Function that exposes the list of available datasets, it is a view on the 
     Datasets library"""
     try:
-        ana = Analysis.objects.get(name=url_basename)
+        ana = Analysis.objects.get(url_basename=url_basename)
     except:
         return HttpResponse(json.dumps([]), content_type='application/json')
-    ret = [{'unique_id': d.unique_id,
-            'filename' : d.filename, ## to check
-            'title' :    d.title,
+    print ana
+    ret = [{'id': d.id, ## the id of the Dataset in the database
+            'unique_id': d.unique_id,
+            'filename' : d.data.name,
+            'name' :    d.name,
             'description' : d.description,
             'upload_status' : d.upload_status,
-            'preanalysis_status' : d.preanalysis_status} for d in Dataset.objects.filter(name=ana)]
+            'preanalysis_status' : d.preanalysis_status} for d in Dataset.objects.filter(analysis=ana)]
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 @csrf_exempt
@@ -57,7 +59,7 @@ def upload(request, url_basename):
     if response.status_code == 200:
         ## Get the analysis object, or create it if it doesn't exist
         try:
-            ana = Analysis.objects.get(name=url_basename)
+            ana = Analysis.objects.get(url_basename=url_basename)
         except:
             ana = Analysis(url_basename=url_basename,
                            pub_date=timezone.now(),
@@ -68,9 +70,13 @@ def upload(request, url_basename):
         ## Create a database entry
         print json.loads(response.content)
         fi = File(open(json.loads(response.content)['address'], 'r')) ## This could be handled differently
+        fi.name = json.loads(response.content)['filename']
         da = Dataset(analysis=ana,
                      name='',
                      description='',
+                     unique_id = json.loads(response.content)['unique_id'],
+                     upload_status=True, # Upload is complete
+                     preanalysis_status=False, # Preanalysis has not been launched
                      data=fi)
         da.save()
         

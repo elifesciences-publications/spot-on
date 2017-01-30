@@ -105,6 +105,7 @@ def chunkOperationUtil(request,response):
     flowFileName=request.POST['flowFilename']
     flowTotalSize=str(request.POST['flowTotalSize'])
     flowTotalChunks=str(request.POST['flowTotalChunks'])
+    flowIdentifier=str(request.POST['flowIdentifier'])
         
     logging.info('uploading file %s \n file info: flowchuncknumber = %s; flowchunksize = %s; flowtotalsize = %s;' % (flowFileName, flowChunkNumber, flowChunkSize, flowTotalSize))
     
@@ -115,9 +116,10 @@ def chunkOperationUtil(request,response):
 
     if os.path.isfile(uploadpath+folderlike+flowFileName):
         path=str(uploadpath+flowFileName)
-        responseTotalChunks={'msg':'file upload complete',
-                             'address':path,
-                             'filename':flowFileName}
+        responseTotalChunks={'msg' : 'file upload complete',
+                             'address' : path,
+                             'filename' : flowFileName,
+                             'unique_id': flowIdentifier}
     else:
         logging.info('file not yet completed %s ' % str(flowChunkNumber))
         

@@ -87,15 +87,8 @@
 	    <div class="alert alert-warning" ng-if="$flow.files.length==0">
 	      No dataset has been uploaded yet.
 	    </div>
-	    
-	    <div ng-if="$flow.files.length>0">
-	      <p>
-		Some information about the dataset:
-		<ul>
-		  <li>Number of files: {{$flow.files.length}}</li>
-		</ul>
-	      </p>
-	      
+
+	    <div ng-if="currentlyUploading">
 	      <table class="table-striped">
 		<tr>
 		  <th class="col-md-2">id</th>
@@ -110,10 +103,20 @@
 		  <td class="col-md-1">
 		    <span class="glyphicon glyphicon-pencil"></span>
 		    <span class="glyphicon glyphicon-remove"></span>
-		  </td>
-		  
+		  </td>		  
 		</tr>
 	      </table>
+	    </div>
+
+	    
+	    <div ng-if="successfullyUploaded>0">
+	      <p>
+		Some information about the dataset:
+		<ul>
+		  <li>Number of files: {{$flow.files.length}}</li>
+		</ul>
+	      </p>
+	      
 	    </div>
 	  </div>
 	  {% endverbatim %}
