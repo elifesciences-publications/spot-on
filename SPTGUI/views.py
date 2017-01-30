@@ -40,7 +40,10 @@ def datasets_api(request, url_basename):
             'preanalysis_status' : d.preanalysis_status} for d in Dataset.objects.filter(analysis=ana)]
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
-@csrf_exempt
+def delete_api(request, url_basename):
+    """Function to delete a dataset"""
+    return HttpResponse()
+
 def upload(request, url_basename):
     context = {}
     response = HttpResponse(json.dumps(context), content_type='application/json')

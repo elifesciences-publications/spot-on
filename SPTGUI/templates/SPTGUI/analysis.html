@@ -1,4 +1,5 @@
 {% load static %}
+{% csrf_token %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +15,8 @@
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Angular JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular-cookies.js"></script>
 
     <!-- concatenated flow.js + ng-flow libraries -->
     <script src="{% static 'SPTGUI/dist/js/ng-flow-standalone.min.js' %}"></script>
@@ -68,9 +70,11 @@
 	  
 	  {% verbatim %}	  
 	  <div ng-controller="UploadController"
-	     flow-init="{target: './upload/'}"
-	     flow-files-submitted="$flow.upload()"
-	     flow-file-success="$file.msg = $message">
+	       flow-init="{target: './upload/'}"
+	       flow-files-submitted="$flow.upload()"
+	       flow-upload-started="uploadStart($flow);"
+	       flow-file-success="$file.msg = $message">
+	    
 
 	    <!-- Drag'n'drop box -->
 	    <div class="alert alert-info" flow-drop>
@@ -129,7 +133,7 @@
 		  <td class="col-md-5">{{data.filename}}</td>
 		  <td class="col-md-1">
 		    <span class="glyphicon glyphicon-pencil"></span>
-		    <span class="glyphicon glyphicon-remove"></span>
+		    <span ng-click="deleteDataset(data);" class="glyphicon glyphicon-remove"></span>
 		  </td>		  
 		</tr>
 	      </table>	      

@@ -1,17 +1,35 @@
 ;(function(window) {
 
     // From https://thinkster.io/angular-tabs-directive
-    angular.module('app', ['flow'])
+    angular.module('app', ['flow', 'ngCookies'])
+	.config(['$httpProvider', function($httpProvider) {
+	    // Play nicely with the CSRF cookie. Here we set the CSRF cookie
+	    // to the cookie sent by Django
+	    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+	    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+	}])
+	       
+	.run(['$http', '$cookies', function($http, $cookies) {
+	    // CSRF cookie initialization
+	    // And here we properly populate it (cannot be done before)
+	    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+	}])
     
-	.service('getterService', function($http) {
+	.service('getterService', ['$http', '$cookies', function($http) {
 	    // This service handles $http requests to get the list fo the datasets
 	    this.getDatasets = function(callback) {
 		return $http.get('./api/datasets');
+	    };
+
+	    // Delete a dataset, provided its id (filename used for validation)
+	    this.deleteDataset = function(database_id, filename) {
+		return $http.post('./api/delete/', {'id': database_id,
+						    'filename': filename});
 	    }
-	})
+	}])
 
     
-	.controller('UploadController', ['$scope', 'getterService', function($scope, getterService) {
+	.controller('UploadController', ['getterService', '$scope', '$cookies', function(getterService, $scope, $cookies) {
 	    // This is the controller for the upload part of the app
 
 	    //
@@ -19,10 +37,28 @@
 	    //
 	    $scope.currentlyUploading=false;
 	    $scope.successfullyUploaded=0;
+	    $scope.uploadStart = function($flow){
+		$flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
+	    }; // Populate $flow with the CSRF cookie!
 	    getterService.getDatasets().then(function(dataResponse) {
 		$scope.datasets = dataResponse['data'];
 		$scope.successfullyUploaded=dataResponse['data'].length;
-	    });// Populate the scope with the already uploaded datasets
+	    }); // Populate the scope with the already uploaded datasets
+
+	    
+	    //
+	    // ==== Handle the edition of the list of files
+	    //
+	    $scope.deleteDataset = function(dataset) {
+		alert("deleting stuff: "+ dataset.filename + " (id: " + dataset.id + ")");
+		getterService.deleteDataset(dataset.id, dataset.filename)
+		    .then(function(dataResponse) {
+			getterService.getDatasets().then(function(dataResponse) {
+			    $scope.datasets = dataResponse['data'];
+			    $scope.successfullyUploaded=dataResponse['data'].length;
+			}); // Update the datasets variable when deleting sth.
+		    });
+	    }
 	    
 	    //
 	    // ==== Upload (ng-flow) events
