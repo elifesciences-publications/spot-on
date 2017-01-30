@@ -3,13 +3,6 @@
     // From https://thinkster.io/angular-tabs-directive
     angular.module('app', ['flow'])
 	.controller('UploadController', ['$scope', function($scope) {
-	    // Used to collect the input files
-	    $scope.username = 'World';
-	    
-	    $scope.sayHello = function() {
-		$scope.greeting = 'Hello ' + $scope.username + '!';
-	    };
-
 	    // This event bound when a file is added
 	    $scope.$on('flow::fileAdded', function (event, $flow, flowFile) {
 		$scope.username='toto';//prevent file from uploading

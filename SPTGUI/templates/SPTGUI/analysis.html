@@ -68,11 +68,10 @@
 	  
 	  {% verbatim %}	  
 	  <div ng-controller="UploadController"
-	     flow-init="{target: '/upload'}"
+	     flow-init="{target: './upload/'}"
 	     flow-files-submitted="$flow.upload()"
 	     flow-file-success="$file.msg = $message">
 
-	    {{username}}
 	    <!-- Drag'n'drop box -->
 	    <div class="alert alert-info" flow-drop>
 	      <div flow-drag-enter="style={border:'4px solid green'}" flow-drag-leave="style={}"
