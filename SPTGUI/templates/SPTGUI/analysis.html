@@ -84,7 +84,7 @@
 
 	    <h2>Uploaded datasets</h2>
 
-	    <div class="alert alert-warning" ng-if="$flow.files.length==0">
+	    <div class="alert alert-warning" ng-if="successfullyUploaded==0">
 	      No dataset has been uploaded yet.
 	    </div>
 
@@ -113,9 +113,26 @@
 	      <p>
 		Some information about the dataset:
 		<ul>
-		  <li>Number of files: {{$flow.files.length}}</li>
+		  <li>Number of files: {{successfullyUploaded}}</li>
 		</ul>
 	      </p>
+	      <table class="table-striped">
+		<tr>
+		  <th class="col-md-2">id</th>
+		  <th class="col-md-5">File name</th>
+		  <th class="col-md-5">Comment</th>
+		  <th class="col-md-5">Options</th>
+		</tr>
+		<tr ng-repeat="data in datasets">
+		  <td class="col-md-2">{{$index+1}}</td>
+		  <td class="col-md-5">{{data.unique_id}}</td>
+		  <td class="col-md-5">{{data.filename}}</td>
+		  <td class="col-md-1">
+		    <span class="glyphicon glyphicon-pencil"></span>
+		    <span class="glyphicon glyphicon-remove"></span>
+		  </td>		  
+		</tr>
+	      </table>	      
 	      
 	    </div>
 	  </div>
