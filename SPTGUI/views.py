@@ -1,4 +1,3 @@
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Analysis, Dataset
@@ -42,7 +41,35 @@ def datasets_api(request, url_basename):
 
 def delete_api(request, url_basename):
     """Function to delete a dataset"""
-    return HttpResponse()
+    response = HttpResponse(json.dumps([]), content_type='application/json')
+    response.status_code = 400
+    if request.method == 'POST':
+        ## Make all the checks that we need
+        try: # Get the parameters
+            body = json.loads(request.body)
+        except:
+            response.content = 'Cannot parse request'
+            return response
+        try: # Get the analysis
+            ana = Analysis.objects.get(url_basename=url_basename)
+        except:
+            response.content = 'Analysis not found'
+            return response
+        try: # Get the dataset
+            da = Dataset.objects.get(id=body['id'])
+        except:
+            response.content = 'Dataset not found'
+            return response
+        if body['filename'] != da.data.name:
+            response.content = 'Dataset name not matching database'
+            return response
+
+        ## delete
+        da.delete()
+        response.status_code = 200
+        return response
+    
+    return response
 
 def upload(request, url_basename):
     context = {}

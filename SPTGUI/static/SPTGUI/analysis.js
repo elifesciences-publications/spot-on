@@ -23,8 +23,9 @@
 
 	    // Delete a dataset, provided its id (filename used for validation)
 	    this.deleteDataset = function(database_id, filename) {
-		return $http.post('./api/delete/', {'id': database_id,
-						    'filename': filename});
+		return $http.post('./api/delete/',
+				  {'id': database_id,
+				   'filename': filename});
 	    }
 	}])
 
@@ -50,7 +51,7 @@
 	    // ==== Handle the edition of the list of files
 	    //
 	    $scope.deleteDataset = function(dataset) {
-		alert("deleting stuff: "+ dataset.filename + " (id: " + dataset.id + ")");
+		//alert("deleting stuff: "+ dataset.filename + " (id: " + dataset.id + ")"); // Debugging
 		getterService.deleteDataset(dataset.id, dataset.filename)
 		    .then(function(dataResponse) {
 			getterService.getDatasets().then(function(dataResponse) {
