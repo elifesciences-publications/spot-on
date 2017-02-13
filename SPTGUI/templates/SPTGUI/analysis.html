@@ -14,6 +14,9 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
 
+    <!-- Lodash library -->
+    <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+    
     <!-- Angular JS -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular-cookies.js"></script>
@@ -114,30 +117,50 @@
 
 	    
 	    <div ng-if="successfullyUploaded>0">
-	      <p>
-		Some information about the dataset:
 		<ul>
 		  <li>Number of files: {{successfullyUploaded}}</li>
 		</ul>
-	      </p>
-	      <table class="table-striped">
-		<tr>
-		  <th class="col-md-2">id</th>
-		  <th class="col-md-5">File name</th>
-		  <th class="col-md-5">Comment</th>
-		  <th class="col-md-5">Options</th>
-		</tr>
-		<tr ng-repeat="data in datasets">
-		  <td class="col-md-2">{{$index+1}}</td>
-		  <td class="col-md-5">{{data.unique_id}}</td>
-		  <td class="col-md-5">{{data.filename}}</td>
-		  <td class="col-md-1">
-		    <span class="glyphicon glyphicon-pencil"></span>
-		    <span ng-click="deleteDataset(data);" class="glyphicon glyphicon-remove"></span>
-		  </td>		  
-		</tr>
-	      </table>	      
-	      
+
+		<table class="table-striped">
+		  <tr>
+		    <th class="col-md-2">id</th>
+		    <th class="col-md-5">File name</th>
+		    <th class="col-md-5">Description</th>
+		    <th class="col-md-5">Options</th>
+		  </tr>
+		  <tr ng-repeat="data in datasets">
+		    <td class="col-md-2">{{$index+1}}</td>
+		    <td class="col-md-5">{{data.name}}</td>
+		    <td class="col-md-5">{{data.description}}</td>
+		    <td class="col-md-1">
+		      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil"></span>
+		      <span ng-click="deleteDataset(data);" class="glyphicon glyphicon-remove"></span>
+		    </td>		  
+		  </tr>
+		</table>	      
+	    </div>
+
+	    <div ng-if="editingDataset">
+	      <h3>Editing dataset: {{editedDataset.name}}</h3>
+	      <form ng-submit="saveEdit(editedDataset)">
+		<table>
+		  <tr>
+		    <td> Name: </td>
+		    <td><input type="text" ng-model="editedDataset.name"></td>
+		  </tr>
+		  <tr>
+		    <td> Description: </td>
+		    <td><textarea ng-model="editedDataset.description"></textarea></td>
+		  </tr>
+		  <tr>
+		    <td>&nbsp;</td>
+		    <td>
+		      <button class="btn btn-default" ng-click="cancelEdit(editedDataset)">Cancel</button>
+		      <button type="submit" class="btn btn-default">Submit</button>
+		    </td>
+		  </tr>
+		</table>
+	      </form>
 	    </div>
 	  </div>
 	  {% endverbatim %}

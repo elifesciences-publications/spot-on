@@ -16,7 +16,7 @@
 	}])
     
 	.service('getterService', ['$http', '$cookies', function($http) {
-	    // This service handles $http requests to get the list fo the datasets
+	    // This service handles $http requests to get the list for the datasets
 	    this.getDatasets = function(callback) {
 		return $http.get('./api/datasets');
 	    };
@@ -26,7 +26,14 @@
 		return $http.post('./api/delete/',
 				  {'id': database_id,
 				   'filename': filename});
-	    }
+	    };
+
+	    this.updateDataset = function(database_id, dataset) {
+		return $http.post('./api/edit/',
+				  {'id': database_id,
+				   'dataset': dataset});
+	    };
+	    
 	}])
 
     
@@ -38,6 +45,9 @@
 	    //
 	    $scope.currentlyUploading=false;
 	    $scope.successfullyUploaded=0;
+	    $scope.editingDataset=false;
+	    $scope.editedDataset=null;
+	    
 	    $scope.uploadStart = function($flow){
 		$flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
 	    }; // Populate $flow with the CSRF cookie!
@@ -59,6 +69,32 @@
 			    $scope.successfullyUploaded=dataResponse['data'].length;
 			}); // Update the datasets variable when deleting sth.
 		    });
+	    }
+
+	    $scope.editDataset = function(dataset) {
+		$scope.editingDataset=true;
+		$scope.editedDataset=angular.copy(dataset);
+	    };
+
+	    $scope.cancelEdit = function(dataset) {
+		$scope.editedDataset = null;
+		$scope.editingDataset= false;
+	    };
+
+	    $scope.saveEdit = function(dataset) {
+		$scope.datasets  =_.map($scope.datasets, function(el) {
+		    return (el.id===dataset.id) ? dataset : el;
+		});
+		// Finish by sending the updated entry to the server
+		getterService.updateDataset(dataset.id, dataset)
+		//    .then(function(dataResponse) {
+		//	getterService.getDatasets().then(function(dataResponse) {
+		//	    $scope.datasets = dataResponse['data'];
+		//	    $scope.successfullyUploaded=dataResponse['data'].length;
+		//	}); // Update the datasets variable when deleting sth.
+		//    };
+
+		$scope.cancelEdit(dataset); // End edition
 	    }
 	    
 	    //
