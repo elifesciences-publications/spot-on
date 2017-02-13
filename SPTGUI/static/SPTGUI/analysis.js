@@ -153,6 +153,9 @@
 			    $scope.successfullyUploaded=dataResponse['data'].length;
 			}); // Populate the scope with the already uploaded datasets
 			// Check if all the dataset is "ok", if yes, switch the flag
+			if (_.every(dataResponse['data'], function(el) {return el.state==='ok'})) {
+			    $scope.poolPreprocessing = false;
+			}
 		    });
 		}
 		return(true)
