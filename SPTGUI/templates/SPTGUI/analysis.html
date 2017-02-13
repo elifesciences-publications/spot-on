@@ -126,12 +126,14 @@
 		    <th class="col-md-2">id</th>
 		    <th class="col-md-5">File name</th>
 		    <th class="col-md-5">Description</th>
+		    <th class="col-md-2">Status</th>
 		    <th class="col-md-5">Options</th>
 		  </tr>
 		  <tr ng-repeat="data in datasets">
 		    <td class="col-md-2">{{$index+1}}</td>
 		    <td class="col-md-5">{{data.name}}</td>
 		    <td class="col-md-5">{{data.description}}</td>
+		    <td class="col-md-2">{{data.preanalysis_status}}</td>
 		    <td class="col-md-1">
 		      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil"></span>
 		      <span ng-click="deleteDataset(data);" class="glyphicon glyphicon-remove"></span>
@@ -164,9 +166,11 @@
 	    </div>
 
 	    <div> <!-- A debug DIV -->
-	    <button class="btn btn-default" ng-click="preprocessingStartStop()">Start/Stop pooler</button>
-	    {{random}}
+	      <h3> Debuggging stuff </h3>
+	      <button class="btn btn-default" ng-click="preprocessingStartStop()">Start/Stop pooler</button>
+	      {{random}}
 	    </div>
+	    
 	  </div><!-- End of the UploadController controller -->
 
 

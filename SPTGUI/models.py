@@ -16,6 +16,8 @@ class Analysis(models.Model):
 CHOICES_PREA = [('error', 'An unknown error occurred'),
                 ('na', 'Not available'),
                 ('error', 'An error occured'),
+                ('queued', 'Sent to the processing queue'),
+                ('uploaded', 'Uploaded done'),
                 ('inprogress', 'Preprocessing in progress'),
                 ('fileformaterror', 'Unrecognized file format'),
                 ('ok', 'Preprocessing completed with success')]
@@ -29,4 +31,5 @@ class Dataset(models.Model):
     unique_id = models.CharField(default='', max_length=200)
     upload_status = models.BooleanField(default=False)
     preanalysis_status = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
+    preanalysis_token = models.CharField(default='', max_length=100)
     

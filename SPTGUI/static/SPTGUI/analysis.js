@@ -135,13 +135,28 @@
 	    preprocessingWaiter = $interval(function() {
 		// This loops forever, but might become inactive
 		if ($scope.poolPreprocessing) {
-	            //$scope.random = $scope.random+1; // DEBUG
 		    getterService.getPreprocessing().then(function(dataResponse) {
 			$scope.random = dataResponse['data'];
+			// Deprecated code (that works)
+			// $scope.datasets = _.map($scope.datasets, function(el) {
+			//     // This is just to update the preprocessing status
+			//     for (i in dataResponse['data']) {
+			// 	da = dataResponse['data'][i]
+			// 	if (el.id == da.id) {
+			// 	    el.preanalysis_status = da.state;
+			// 	}
+			//     }
+			//     return el;
+			// });
+			getterService.getDatasets().then(function(dataResponse) {
+			    $scope.datasets = dataResponse['data'];
+			    $scope.successfullyUploaded=dataResponse['data'].length;
+			}); // Populate the scope with the already uploaded datasets
+			// Check if all the dataset is "ok", if yes, switch the flag
 		    });
 		}
 		return(true)
-	    }, 500);
+	    }, 2000);
 
 	}])
     

@@ -4,6 +4,8 @@ from .models import Analysis, Dataset
 from fileuploadutils import chunkOperationUtil, checkValidityFile
 from django.core.files import File
 
+import celery, tasks
+
 import random, string, json
 
 # Create your views here.
@@ -20,6 +22,19 @@ def index(request):
 def upload_tmp(request):
     template = loader.get_template('SPTGUI/upload_tmp.html')
     return HttpResponse(template.render(request))
+
+def queue_status(request):
+    """Returns the status of the queue"""
+    a = celery.app.control.inspect().reserved()['celery@alice']
+    b = celery.app.control.inspect().active()['celery@alice']
+    return HttpResponse(str(a)+str(b)+str(len(a))+" "+str(len(b)) )
+def queue_new(request):
+    """add stuff to the queue"""
+    for i in range(20):
+        celery.loong.delay()
+    return HttpResponse("ok")
+
+
 
 ## ==== Views
 def datasets_api(request, url_basename):
@@ -81,9 +96,18 @@ def preprocessing_api(request, url_basename):
         return HttpResponse(json.dumps([]), content_type='application/json')
 
     ## Return result
-    ret = [{'id': d.id, ## the id of the Dataset in the database
-            'unique_id': d.unique_id,
-            'preanalysis_status' : d.preanalysis_status} for d in Dataset.objects.filter(analysis=ana)]
+    active = celery.app.control.inspect().active()['celery@alice']
+    reserved = celery.app.control.inspect().reserved()['celery@alice']
+
+    ## Make the junction by UUID
+    
+    ret_active = [{'uuid': d['id'],
+                   'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
+                   'state': 'inprogress'} for d in active] ## /!\ to be Filtered by task type
+    ret_scheduled = [{'uuid': d['id'],
+                      'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
+                      'state': 'queued'} for d in reserved] ## /!\ to be Filtered by task
+    ret = ret_active+ret_scheduled
     return HttpResponse(json.dumps(ret), content_type='application/json')    
     
 def delete_api(request, url_basename):
@@ -134,7 +158,7 @@ def upload(request, url_basename):
     elif request.method == 'POST':        
         (response.status_code, response.content) = chunkOperationUtil(request, response)
     if response.status_code == 200:
-        ## Get the analysis object, or create it if it doesn't exist
+        ## 1. Get the analysis object, or create it if it doesn't exist
         try:
             ana = Analysis.objects.get(url_basename=url_basename)
         except:
@@ -144,7 +168,7 @@ def upload(request, url_basename):
                            description='')
             ana.save()
 
-        ## Create a database entry
+        ## 2. Create a database entry
         fi = File(open(json.loads(response.content)['address'], 'r')) ## This could be handled differently
         fi.name = json.loads(response.content)['filename']
         da = Dataset(analysis=ana,
@@ -152,12 +176,16 @@ def upload(request, url_basename):
                      description='',
                      unique_id = json.loads(response.content)['unique_id'],
                      upload_status=True, # Upload is complete
-                     preanalysis_status='na', # Preanalysis has not been launched
+                     preanalysis_status='uploaded', # Preanalysis has not been launched
                      data=fi)
         da.save()
-        
-    ## 3. Defer to the celery analysis
-    
+
+        ## 3. Defer to the celery analysis
+        da.preanalysis_status='queued'
+        ta = tasks.check_input_file.delay(da.data.path, da.id)
+        da.preanalysis_token = ta.id
+        da.save()
+
     return response
 
 def analysis_root(request):
