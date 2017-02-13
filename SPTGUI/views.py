@@ -29,7 +29,6 @@ def datasets_api(request, url_basename):
         ana = Analysis.objects.get(url_basename=url_basename)
     except:
         return HttpResponse(json.dumps([]), content_type='application/json')
-    print ana
     ret = [{'id': d.id, ## the id of the Dataset in the database
             'unique_id': d.unique_id,
             'filename' : d.data.name,
@@ -56,7 +55,6 @@ def edit_api(request, url_basename):
         return HttpResponse(json.dumps([]), content_type='application/json')
 
     ## Make the update
-    print body
     d.name = body['dataset']['name']
     d.description = body['dataset']['description']
     d.save()
@@ -71,6 +69,23 @@ def edit_api(request, url_basename):
             'preanalysis_status' : d.preanalysis_status}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+def preprocessing_api(request, url_basename):
+    """Function to poll the state of the preprocessing for all the datasets"""
+
+    ## Filter the request
+    if not request.method == 'GET':
+        return HttpResponse(json.dumps(['error']), content_type='application/json')
+    try:
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps([]), content_type='application/json')
+
+    ## Return result
+    ret = [{'id': d.id, ## the id of the Dataset in the database
+            'unique_id': d.unique_id,
+            'preanalysis_status' : d.preanalysis_status} for d in Dataset.objects.filter(analysis=ana)]
+    return HttpResponse(json.dumps(ret), content_type='application/json')    
+    
 def delete_api(request, url_basename):
     """Function to delete a dataset"""
     response = HttpResponse(json.dumps([]), content_type='application/json')
@@ -137,7 +152,7 @@ def upload(request, url_basename):
                      description='',
                      unique_id = json.loads(response.content)['unique_id'],
                      upload_status=True, # Upload is complete
-                     preanalysis_status=False, # Preanalysis has not been launched
+                     preanalysis_status='na', # Preanalysis has not been launched
                      data=fi)
         da.save()
         

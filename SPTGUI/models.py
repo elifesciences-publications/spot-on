@@ -12,6 +12,13 @@ class Analysis(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2000)
 
+
+CHOICES_PREA = [('error', 'An unknown error occurred'),
+                ('na', 'Not available'),
+                ('error', 'An error occured'),
+                ('inprogress', 'Preprocessing in progress'),
+                ('fileformaterror', 'Unrecognized file format'),
+                ('ok', 'Preprocessing completed with success')]
     
 class Dataset(models.Model):
     """Contains datasets and some data about the dataset"""
@@ -21,5 +28,5 @@ class Dataset(models.Model):
     data = models.FileField(upload_to='uploads/', default='default.jpg', null=True, blank=True)
     unique_id = models.CharField(default='', max_length=200)
     upload_status = models.BooleanField(default=False)
-    preanalysis_status = models.BooleanField(default=False)
+    preanalysis_status = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     

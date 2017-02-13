@@ -18,7 +18,7 @@
 	.service('getterService', ['$http', '$cookies', function($http) {
 	    // This service handles $http requests to get the list for the datasets
 	    this.getDatasets = function(callback) {
-		return $http.get('./api/datasets');
+		return $http.get('./api/datasets/');
 	    };
 
 	    // Delete a dataset, provided its id (filename used for validation)
@@ -33,11 +33,15 @@
 				  {'id': database_id,
 				   'dataset': dataset});
 	    };
+
+	    this.getPreprocessing = function(callback) {
+		return $http.get('./api/preprocessing/');
+	    };
 	    
 	}])
 
     
-	.controller('UploadController', ['getterService', '$scope', '$cookies', function(getterService, $scope, $cookies) {
+	.controller('UploadController', ['getterService', '$scope', '$cookies', '$interval', function(getterService, $scope, $cookies, $interval) {
 	    // This is the controller for the upload part of the app
 
 	    //
@@ -47,6 +51,8 @@
 	    $scope.successfullyUploaded=0;
 	    $scope.editingDataset=false;
 	    $scope.editedDataset=null;
+	    $scope.poolPreprocessing=false;
+	    $scope.random = 0; // DEBUG
 	    
 	    $scope.uploadStart = function($flow){
 		$flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
@@ -103,7 +109,6 @@
 	    // (1) Fired when a file is added to the download list
 	    $scope.$on('flow::fileAdded', function (event, $flow, flowFile) {
 		$scope.currentlyUploading=true;
-		// Start the watcher if it has not been started before.
 	    });
 
 	    // (2) Fired when all downloads are complete
@@ -113,13 +118,30 @@
 
 	    // (3) Fired when one download completes
 	    $scope.$on('flow::fileSuccess', function (file, message, chunk) {
-		//$scope.successfullyUploaded=$scope.successfullyUploaded+1;
 		getterService.getDatasets().then(function(dataResponse) {
 		    $scope.datasets = dataResponse['data'];
 		    $scope.successfullyUploaded=dataResponse['data'].length;
+		    $scope.poolPreprocessing = true; // start the watcher.
 		});
-		// Call the API object
 	    });
+
+	    //
+	    // ==== Server-side processing after the upload
+	    //
+	    $scope.preprocessingStartStop = function() {
+		// A DEBUG function
+		$scope.poolPreprocessing = !$scope.poolPreprocessing;
+	    }
+	    preprocessingWaiter = $interval(function() {
+		// This loops forever, but might become inactive
+		if ($scope.poolPreprocessing) {
+	            //$scope.random = $scope.random+1; // DEBUG
+		    getterService.getPreprocessing().then(function(dataResponse) {
+			$scope.random = dataResponse['data'];
+		    });
+		}
+		return(true)
+	    }, 500);
 
 	}])
     
