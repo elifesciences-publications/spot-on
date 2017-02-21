@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Analysis, Dataset
-from fileuploadutils import chunkOperationUtil, checkValidityFile
+#from fileuploadutils import chunkOperationUtil, checkValidityFile
 import fileuploadutils2 as fuu
 from django.core.files import File
 from flask import Response
@@ -25,7 +25,7 @@ def upload_tmp(request):
     template = loader.get_template('SPTGUI/upload_tmp.html')
     return HttpResponse(template.render(request))
 
-@csrf_exempt
+#@csrf_exempt
 def upload_tmp_bknd(request):
     """A backend for the upload debugging stuff"""
     ## Call the original stuff
@@ -42,7 +42,6 @@ def upload_tmp_bknd(request):
     # Format the request object
 
     request.args = request.GET
-    print request.POST
     try:
         request.form = request.POST
     except:
@@ -54,7 +53,6 @@ def upload_tmp_bknd(request):
     re = HttpResponse()
     re.content = resp.data
     re.status_code = int(resp.status)
-    print "returning!"
     return re
     
     
@@ -179,6 +177,67 @@ def delete_api(request, url_basename):
     return response
 
 def upload(request, url_basename):
+    """A backend for the upload debugging stuff"""
+    ## Call the original stuff
+    ## Make sure we send the right stuff back.
+    resp=Response()
+    resp.ok = False
+	
+    filename=None
+    responseTotalChunks=None
+    """
+    flow js always send a get befora a post, the first
+    one give some information for the program to use to
+    build the file when the upload is finished
+    """
+    # Format the request object
+
+    request.args = request.GET
+    try:
+        request.form = request.POST
+    except:
+        request.form = []
+
+    fuu.chunkOperationUtil(request,resp);
+
+    # Transfer to a real object
+    re = HttpResponse()
+    re.content = resp.data
+    re.status_code = int(resp.status)
+
+    if re.status_code == 200 and resp.ok:
+        ## 1. Get the analysis object, or create it if it doesn't exist
+        try:
+            ana = Analysis.objects.get(url_basename=url_basename)
+        except:
+            ana = Analysis(url_basename=url_basename,
+                           pub_date=timezone.now(),
+                           name='',
+                           description='')
+            ana.save()
+
+        ## 2. Create a database entry
+        fi = File(open(json.loads(re.content)['address'], 'r')) ## This could be handled differently
+        fi.name = json.loads(re.content)['filename']
+        da = Dataset(analysis=ana,
+                     name=request.POST['flowFilename'],
+                     description='',
+                     unique_id = json.loads(re.content)['unique_id'],
+                     upload_status=True, # Upload is complete
+                     preanalysis_status='uploaded', # Preanalysis has not been launched
+                     data=fi)
+        da.save()
+
+        ## 3. Defer to the celery analysis
+        da.preanalysis_status='queued'
+        ta = tasks.check_input_file.delay(da.data.path, da.id)
+        da.preanalysis_token = ta.id
+        da.save()
+
+    return re
+    
+
+def upload_old(request, url_basename):
     context = {}
     response = HttpResponse(json.dumps(context), content_type='application/json')
 
@@ -194,6 +253,7 @@ def upload(request, url_basename):
         
     elif request.method == 'POST':        
         (response.status_code, response.content) = chunkOperationUtil(request, response)
+        
     if response.status_code == 200:
         ## 1. Get the analysis object, or create it if it doesn't exist
         try:
@@ -219,7 +279,7 @@ def upload(request, url_basename):
 
         ## 3. Defer to the celery analysis
         da.preanalysis_status='queued'
-        ta = tasks.check_input_file.delay(da.data.path, da.id)
+        #ta = tasks.check_input_file.delay(da.data.path, da.id)
         da.preanalysis_token = ta.id
         da.save()
 

@@ -16,8 +16,8 @@ def cleantmp(arg0, filename):
         for f in os.listdir(arg0):
             if f.startswith(filename): ## Wrong, we might remove more than expected
                 os.remove(arg0+"/"+f)
-            else:
-                print "not removing f:", f
+            #else:
+            #    print "not removing f:", f
     except:
         logging.exception("Exception  while removing %s " % tmppath)
         #logging.exception("message")
@@ -28,7 +28,6 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
         try:
             if not os.path.exists(tmppath):
                 os.makedirs(tmppath)
-            print os.listdir(tmppath)
             for f in os.listdir(tmppath):
                 try:
                     if f.index(filename)!=-1: ## Fails if multiple tmp uploads at the same time
@@ -38,7 +37,6 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
             if total_files<1:
                 return 'UPLOAD'
         except:
-            print "Doh!"
             logging.exception("message")
         logging.info('total files %s ' % str(total_files) )
         if(total_files==1 and int(flowTotalChunks)==1):
@@ -95,6 +93,7 @@ def chunkOperationUtil(request,response):
             flowTotalSize=str(request.args['flowTotalSize'])
             flowTotalChunks=str(request.args['flowTotalChunks'])
             flowChunkNumber=str(request.args['flowChunkNumber'])
+            flowIdentifier=str(request.args['flowIdentifier'])            
             responseTotalChunks={'totalchunks':flowTotalChunks}
             n = json.dumps(responseTotalChunks)
             response.data=n
@@ -105,15 +104,22 @@ def chunkOperationUtil(request,response):
             flowFileName=request.form['flowFilename']
             flowTotalSize=str(request.form['flowTotalSize'])
             flowTotalChunks=str(request.form['flowTotalChunks'])
+            flowIdentifier=str(request.form['flowIdentifier'])
             logging.info('uploading file %s \n file info: flowchuncknumber = %s; flowchunksize = %s; flowtotalsize = %s;' % (flowFileName, flowChunkNumber, flowChunkSize, flowTotalSize))
             logging.info('creating folder')
             createTempFile(flowFileName,flowChunkNumber,request.FILES['file'].read())
             logging.info("Building file")
             createFileFromChunk(flowFileName,flowChunkSize,flowTotalSize,flowTotalChunks)
+            if flowTotalChunks==flowChunkNumber:
+                response.ok = True                
             response.status="200"
             if os.path.isfile(uploadpath+"/"+flowFileName):
                 path=str(uploadpath+flowFileName)
-                responseTotalChunks={'msg':'file upload complete','address':path,'filename':flowFileName}
+                responseTotalChunks={'msg':'file upload complete',
+                                     'address':path,
+                                     'filename':flowFileName,
+                                     'unique_id': flowIdentifier
+                                 }
             else:
                 logging.info('file not yet completed %s ' % str(flowChunkNumber))
             n = json.dumps(responseTotalChunks)
@@ -121,11 +127,9 @@ def chunkOperationUtil(request,response):
 
 def createTempFile(flowFileName,flowChunkNumber,chunk):
     try:
-        print 'create %s '% tmppath
         logging.info('create %s '% tmppath)
         os.mkdir(tmppath)
     except:
-        print " %s allready exists" % tmppath
         logging.info(" %s allready exists" % tmppath)
     chunk_file = str(flowFileName)+'.part'+str(flowChunkNumber)
     chunkpath=tmppath+chunk_file
