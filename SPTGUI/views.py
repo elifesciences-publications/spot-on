@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.utils import timezone
 from .models import Analysis, Dataset
 from fileuploadutils import chunkOperationUtil, checkValidityFile
+import fileuploadutils2 as fuu
 from django.core.files import File
-
+from flask import Response
 import celery, tasks
+from django.views.decorators.csrf import csrf_exempt
 
 import random, string, json
 
@@ -23,6 +25,39 @@ def upload_tmp(request):
     template = loader.get_template('SPTGUI/upload_tmp.html')
     return HttpResponse(template.render(request))
 
+@csrf_exempt
+def upload_tmp_bknd(request):
+    """A backend for the upload debugging stuff"""
+    ## Call the original stuff
+    ## Make sure we send the right stuff back.
+    resp=Response()
+	
+    filename=None
+    responseTotalChunks=None
+    """
+    flow js always send a get befora a post, the first
+    one give some information for the program to use to
+    build the file when the upload is finished
+    """
+    # Format the request object
+
+    request.args = request.GET
+    print request.POST
+    try:
+        request.form = request.POST
+    except:
+        request.form = []
+
+    fuu.chunkOperationUtil(request,resp);
+
+    # Transfer to a real object
+    re = HttpResponse()
+    re.content = resp.data
+    re.status_code = int(resp.status)
+    print "returning!"
+    return re
+    
+    
 def queue_status(request):
     """Returns the status of the queue"""
     a = celery.app.control.inspect().reserved()['celery@alice']
@@ -33,6 +68,7 @@ def queue_new(request):
     for i in range(20):
         celery.loong.delay()
     return HttpResponse("ok")
+
 
 
 
@@ -155,6 +191,7 @@ def upload(request, url_basename):
     """
     if request.method == 'GET':
         (response.status_code, response.content) = checkValidityFile(request, response)
+        
     elif request.method == 'POST':        
         (response.status_code, response.content) = chunkOperationUtil(request, response)
     if response.status_code == 200:
