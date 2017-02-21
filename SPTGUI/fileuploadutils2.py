@@ -1,5 +1,7 @@
 import os,shutil,logging,configimpl,json
 
+## TODO: handle tmp files in a better way!
+
 #configuration for using pyserver.flowjs in windows o linux
 #where to change the path separator
 folderlike='/' #configimpl.config.get('fileconfig','folderlike')
@@ -7,12 +9,15 @@ folderlike='/' #configimpl.config.get('fileconfig','folderlike')
 tmppath=os.getcwd()+folderlike+'static'+folderlike+'tmpdir'+folderlike
 uploadpath=os.getcwd()+folderlike+'static'+folderlike+'upload'+folderlike
 
-def cleantmp(arg0):
+def cleantmp(arg0, filename):
     logging.info('cleaning')
     try:
         logging.info('start cleaning the %s folder' % tmppath);
         for f in os.listdir(arg0):
-            os.remove(arg0+"/"+f)
+            if f.startswith(filename): ## Wrong, we might remove more than expected
+                os.remove(arg0+"/"+f)
+            else:
+                print "not removing f:", f
     except:
         logging.exception("Exception  while removing %s " % tmppath)
         #logging.exception("message")
@@ -25,8 +30,11 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
                 os.makedirs(tmppath)
             print os.listdir(tmppath)
             for f in os.listdir(tmppath):
-                if f.index(filename)!=-1:
-                    total_files=total_files+1
+                try:
+                    if f.index(filename)!=-1: ## Fails if multiple tmp uploads at the same time
+                        total_files=total_files+1
+                except:
+                    pass 
             if total_files<1:
                 return 'UPLOAD'
         except:
@@ -50,7 +58,7 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
                 logging.info('in tmppath folder there is %s chunk'%str(total_files))
             except:
                 logging.exception("message")
-            cleantmp(tmppath)
+            cleantmp(tmppath, filename)
         #total_files * int(chunksize))>=(int(totalsize)-int(chunksize) + 1
         #this maybe the real check to do
         elif(str(total_files)==flowTotalChunks):
@@ -69,7 +77,7 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
                 logging.info('the total chunks is %s' %str(flowTotalChunks))
                 logging.info('in tmppath folder there is %s chunk'%str(total_files))
             f.close()
-            cleantmp(tmppath)
+            cleantmp(tmppath, filename)
         else:
             return 'UPLOAD'
 
