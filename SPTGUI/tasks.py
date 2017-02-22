@@ -29,10 +29,10 @@ def check_input_file(filepath, file_id):
     - Update the Dataset entry with the appropriately parsed information
     """
     
-    ## Sanity checks
+    ## ==== Sanity checks
     da = Dataset.objects.get(id=file_id)
     
-    ## Check file format
+    ## ==== Check file format
     try: # try to parse the file
         fi = parsers.read_file(da.data.path)
     except: # exit
@@ -41,7 +41,7 @@ def check_input_file(filepath, file_id):
         da.save()
         return
 
-    ## Save it!
+    ## ==== Save the parsed result!
     with tempfile.NamedTemporaryFile(dir="uploads/", delete=False) as f:
         fil = File(f)
         fil.write(json.dumps(fi))
@@ -50,9 +50,11 @@ def check_input_file(filepath, file_id):
         da.parsed.name = da.data.name + '.parsed'
         da.save()
 
-    ## Extract the relevant information
+    ## ==== Extract the relevant information
+    da.pre_ntraces = len(fi) # number of traces
+    da.pre_npoints = sum([len(i) for i in fi]) # number of points
 
-    ## Update the state
+    ## ==== Update the state
     da.preanalysis_token = ''
     da.preanalysis_status = 'ok'
     da.save()

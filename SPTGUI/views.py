@@ -139,7 +139,10 @@ def datasets_api(request, url_basename):
             'name' :    d.name,
             'description' : d.description,
             'upload_status' : d.upload_status,
-            'preanalysis_status' : d.preanalysis_status} for d in Dataset.objects.filter(analysis=ana)]
+            'preanalysis_status' : d.preanalysis_status,
+            'pre_ntraces' : d.pre_ntraces,
+            'pre_npoints' : d.pre_npoints
+        } for d in Dataset.objects.filter(analysis=ana)]
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 def edit_api(request, url_basename):

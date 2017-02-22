@@ -33,4 +33,7 @@ class Dataset(models.Model):
     upload_status = models.BooleanField(default=False)
     preanalysis_status = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     preanalysis_token = models.CharField(default='', max_length=100)
-    
+
+    ## Preanalysis statistics
+    pre_ntraces = models.IntegerField(null=True, blank=True)
+    pre_npoints = models.IntegerField(null=True, blank=True)

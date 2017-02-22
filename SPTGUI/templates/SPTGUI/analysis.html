@@ -180,6 +180,17 @@
 		<h2> Information about a dataset </h2>
 		<div ng-if="showingStatistics">
 		  Selected dataset: {{shownStatistics.name}}
+
+		  <table class="table table-responsive">
+		    <tr>
+		      <td>Number of traces</td>
+		      <td>{{shownStatistics.pre_ntraces}}</td>
+		    </tr>
+		    <tr>
+		      <td>Number of detections</td>
+		      <td>{{shownStatistics.pre_npoints}}</td>
+		    </tr>
+		  </table>
 		</div>
 		
 		<div ng-if="!showingStatistics"
