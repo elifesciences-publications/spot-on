@@ -7,8 +7,9 @@ from django.core.files import File
 from flask import Response
 import celery, tasks
 from django.views.decorators.csrf import csrf_exempt
+from wsgiref.util import FileWrapper
 
-import random, string, json
+import random, string, json, os
 
 # Create your views here.
 from django.http import HttpResponse
@@ -66,10 +67,65 @@ def queue_new(request):
         celery.loong.delay()
     return HttpResponse("ok")
 
-
-
-
 ## ==== Views
+def dataset_original(request, url_basename, dataset_id):
+    """Function that return a pointer to the original file"""
+
+    ## Sanity checks
+    try:
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps(['analysis not found']),
+                            content_type='application/json')
+    try:
+        da = Dataset.objects.get(analysis=ana, id=dataset_id)
+    except:
+        return HttpResponse(json.dumps(['dataset not found']),
+                            content_type='application/json')
+
+    ## Return data
+    response = HttpResponse(FileWrapper(da.data.file), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(da.data.path))
+    return response
+        
+
+def dataset_parsed(request, url_basename, dataset_id):
+    """Function that return a pointer to the parsed file"""
+    try:
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps(['analysis not found']),
+                            content_type='application/json')
+    try:
+        da = Dataset.objects.get(analysis=ana, id=dataset_id)
+    except:
+        return HttpResponse(json.dumps(['dataset not found']),
+                            content_type='application/json')
+
+    ## Return data
+    response = HttpResponse(FileWrapper(da.parsed.file), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(da.parsed.path))
+    return response
+
+def dataset_report(request, url_basename, dataset_id):
+    """Function that return a pointer to the importation report"""
+    try:
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps(['analysis not found']),
+                            content_type='application/json')
+    try:
+        da = Dataset.objects.get(analysis=ana, id=dataset_id)
+    except:
+        return HttpResponse(json.dumps(['dataset not found']),
+                            content_type='application/json')
+
+    ## Return data
+    response = HttpResponse(json.dumps(['this is a useless report']),
+                            content_type='application/json')
+    return response
+    
+
 def datasets_api(request, url_basename):
     """Function that exposes the list of available datasets, it is a view on the 
     Datasets library"""
