@@ -219,23 +219,62 @@
 	    
 	    
 	  </div><!-- End of the UploadController controller -->
-
-	  {% endverbatim %}
-
-	  
 	</tab>
+
+	
 	<tab heading="Kinetic modeling">
-	  In this tab, you can perform a kinetic modeling of your data
-	  <div class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one! (div unbound)</div>
-	</tab>
+	  <div ng-controller="ModelingController"><!-- Another controller -->
+	    In this tab, you can perform a kinetic modeling of your data
+
+	    <div ng-if="statistics.status=='ok';">
+	      <ul>
+		<li>Enter parameters</li>
+		<li>Bin size</li>
+		<li>Model button</li>
+		<li>Field that wait for the job to be completed</li>
+		<li>D3.js view</li>
+		<li>save in SVG button</li>
+	      </ul>
+
+	      <h2> Modeling parameters </h2>
+	      <form>
+		<table>
+		  <tr>
+		    <td> Bin size: </td>
+		    <td><input type="text" ng-model="modelingParameters.bin_size"></td>
+		  </tr>
+		  <tr>
+		    <td> Random: </td>
+		    <td><input ng-model="modelingParameters.random"></input></td>
+		  </tr>
+		  <tr>
+		    <td>&nbsp;</td>
+		    <td>
+		      <button type="submit" class="btn btn-default">Run the analysis</button>
+		    </td>
+		  </tr>
+		</table>
+	      </form>
+
+	      <h2> Results of the simulation </h2>
+	      Play here with all the story of updated stuff.
+	      {{modelingParameters.bin_size}}
+	    </div>
+
+	    
+	    <div ng-if="statistics.status!='ok';"
+		 class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one! (div unbound)</div>
+	  </div>
+	</tab><!-- End of the ModelingController controller -->
+	
 	<tab heading="Download">
 	  In this tab, you can download the results of your analysis
 	  <div>
-	    <div class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one! (div unbound)</div>
+	    <div class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one!</div>
 	  </div>
 	</tab>
       </tabset>
-
+      {% endverbatim %}
     </div>    
   </body>
 </html>

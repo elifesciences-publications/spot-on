@@ -44,8 +44,6 @@
 	    };
 	    
 	}])
-
-    
 	.controller('UploadController', ['getterService', '$scope', '$cookies', '$interval', function(getterService, $scope, $cookies, $interval) {
 	    // This is the controller for the upload part of the app
 
@@ -58,7 +56,7 @@
 	    $scope.editedDataset=null;
 	    $scope.poolPreprocessing=false;
 	    $scope.random = 0; // DEBUG
-	    $scope.statistics = null;
+	    //$scope.statistics = null;
 	    
 	    $scope.uploadStart = function($flow){
 		$flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
@@ -188,7 +186,27 @@
 	    }, 2000);
 
 	}])
-    
+    	.controller('ModelingController', ['getterService', '$scope', '$cookies', '$interval', function(getterService, $scope, $cookies, $interval) {
+	    // This is the controller for the modeling tab
+
+	    // Initiate the window with what we have /!\ SHOULD GO INTO A WATCHER FOR THE TAB SWITCHING STUFF
+	    getterService.getDatasets().then(function(dataResponse) {
+		$scope.datasets = dataResponse['data'];
+	    }); // Populate the scope with the already uploaded datasets
+	    getterService.getStatistics().then(function(dataResponse) {
+		$scope.statistics = dataResponse['data'];
+	    }); // Populate the scope with the already computed statistics	    
+	    //
+	    // ==== CRUD modeling parameters
+	    //
+	    $scope.modelingParameters = {bin_size : 10,
+					 random : 3,
+					};
+	    //$scope.saveParameters = function(modelingParameters) {
+	    //$scope.modelingParameters = scope.modelingParameters
+	    //};
+	}])
+
 	.directive('tab', function() {
 	    // Simple logic to create a <tab> directive in angular/bootstrap
 	    return {

@@ -88,8 +88,9 @@ def statistics(request, url_basename):
                                         'message': 'no properly uploaded dataset'}),
                             content_type='application/json')
     res = {'status' : 'ok',
-               'ntraces' : sum([i.pre_ntraces for i in da]),
-               'npoints' : sum([i.pre_npoints for i in da]),
+           'ok_traces' : len(da),
+           'ntraces' : sum([i.pre_ntraces for i in da]),
+           'npoints' : sum([i.pre_npoints for i in da]),
        }
                             
     return HttpResponse(json.dumps(res), content_type='application/json')
