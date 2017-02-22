@@ -21,6 +21,11 @@
 		return $http.get('./api/datasets/');
 	    };
 
+	    // Get some statistics on the uploaded and preprocessed datasets
+	    this.getStatistics = function(callback) {
+		return $http.get('./statistics/');
+	    };	    
+
 	    // Delete a dataset, provided its id (filename used for validation)
 	    this.deleteDataset = function(database_id, filename) {
 		return $http.post('./api/delete/',
@@ -53,6 +58,7 @@
 	    $scope.editedDataset=null;
 	    $scope.poolPreprocessing=false;
 	    $scope.random = 0; // DEBUG
+	    $scope.statistics = null;
 	    
 	    $scope.uploadStart = function($flow){
 		$flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
@@ -61,6 +67,9 @@
 		$scope.datasets = dataResponse['data'];
 		$scope.successfullyUploaded=dataResponse['data'].length;
 	    }); // Populate the scope with the already uploaded datasets
+	    getterService.getStatistics().then(function(dataResponse) {
+		$scope.statistics = dataResponse['data'];
+	    }); // Populate the scope with the already computed statistics
 
 	    $scope.showingStatistics=false;
 	    $scope.shownStatistics=null;
@@ -70,13 +79,15 @@
 	    // ==== Handle the edition of the list of files
 	    //
 	    $scope.deleteDataset = function(dataset) {
-		//alert("deleting stuff: "+ dataset.filename + " (id: " + dataset.id + ")"); // Debugging
 		getterService.deleteDataset(dataset.id, dataset.filename)
 		    .then(function(dataResponse) {
 			getterService.getDatasets().then(function(dataResponse) {
 			    $scope.datasets = dataResponse['data'];
 			    $scope.successfullyUploaded=dataResponse['data'].length;
 			}); // Update the datasets variable when deleting sth.
+			getterService.getStatistics().then(function(dataResponse) {
+			    $scope.statistics = dataResponse['data'];
+			}); // Populate the scope with the already computed statistics
 		    });
 		if ($scope.showStatistics == dataset) {
 		    $scope.shownStatistics = null;
@@ -100,12 +111,6 @@
 		});
 		// Finish by sending the updated entry to the server
 		getterService.updateDataset(dataset.id, dataset)
-		//    .then(function(dataResponse) {
-		//	getterService.getDatasets().then(function(dataResponse) {
-		//	    $scope.datasets = dataResponse['data'];
-		//	    $scope.successfullyUploaded=dataResponse['data'].length;
-		//	}); // Update the datasets variable when deleting sth.
-		//    };
 
 		$scope.cancelEdit(dataset); // End edition
 	    }
@@ -138,6 +143,9 @@
 		    $scope.successfullyUploaded=dataResponse['data'].length;
 		    $scope.poolPreprocessing = true; // start the watcher.
 		});
+		getterService.getStatistics().then(function(dataResponse) {
+		    $scope.statistics = dataResponse['data'];
+		}); // Populate the scope with the already computed statistics
 	    });
 
 	    //
@@ -167,6 +175,9 @@
 			    $scope.datasets = dataResponse['data'];
 			    $scope.successfullyUploaded=dataResponse['data'].length;
 			}); // Populate the scope with the already uploaded datasets
+			getterService.getStatistics().then(function(dataResponse) {
+			    $scope.statistics = dataResponse['data'];
+			}); // Populate the scope with the already computed statistics
 			// Check if all the dataset is "ok", if yes, switch the flag
 			if (_.every(dataResponse['data'], function(el) {return el.state==='ok'})) {
 			    $scope.poolPreprocessing = false;

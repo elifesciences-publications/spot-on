@@ -21,6 +21,9 @@ urlpatterns = [
     url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/parsed/$', views.dataset_parsed, name='dataset_parsed'),
     url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/report/$', views.dataset_report, name='datasets_report'),
 
+    ## Statistics
+    url(r'^analysis/(?P<url_basename>.+)/statistics/$', views.statistics, name='statistics'),
+    
     ## CRUD datasets
     url(r'^analysis/(?P<url_basename>.+)/api/delete/$', views.delete_api, name='delete_api'),
     url(r'^analysis/(?P<url_basename>.+)/api/edit/$', views.edit_api, name='edit_api'),

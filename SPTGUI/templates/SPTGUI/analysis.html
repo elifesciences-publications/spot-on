@@ -201,7 +201,19 @@
 
 	      <div class="col-md-6">
 		<h2> Global statistics </h2>
-		Only show it if some of the stuff have the "ok" status.
+		<div ng-if="statistics.status=='ok';">
+		  <table class="table table-responsive">
+		    <tr>
+		      <td>Number of traces</td>
+		      <td>{{statistics.ntraces}}</td>
+		    </tr>
+		    <tr>
+		      <td>Number of detections</td>
+		      <td>{{statistics.npoints}}</td>
+		    </tr>
+		  </table>		  
+		</div>
+		
 	      </div>
 	    </div>
 	    

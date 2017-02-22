@@ -68,6 +68,32 @@ def queue_new(request):
     return HttpResponse("ok")
 
 ## ==== Views
+def statistics(request, url_basename):
+    """Function returns some global statistics about all the datasets"""
+    ## Sanity checks
+    try:
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps({'status': 'error',
+                                        'message': 'analysis not found'}),
+                            content_type='application/json')
+    try:
+        da = Dataset.objects.filter(analysis=ana, preanalysis_status='ok')
+    except:
+        return HttpResponse(json.dumps({'status': 'error',
+                                        'message': 'dataset not found'}),
+                            content_type='application/json')
+    if len(da)==0:
+        return HttpResponse(json.dumps({'status': 'error',
+                                        'message': 'no properly uploaded dataset'}),
+                            content_type='application/json')
+    res = {'status' : 'ok',
+               'ntraces' : sum([i.pre_ntraces for i in da]),
+               'npoints' : sum([i.pre_npoints for i in da]),
+       }
+                            
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
 def dataset_original(request, url_basename, dataset_id):
     """Function that return a pointer to the original file"""
 
