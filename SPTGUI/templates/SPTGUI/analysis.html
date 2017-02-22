@@ -97,7 +97,6 @@
 
 	    <h2>Uploaded datasets</h2>
 	    
-<a href="#0" title="My Tooltip!" data-toggle="tooltip" data-placement="top" tooltip >My Tooltip Link 22</a>
 	    <div class="alert alert-warning" ng-if="successfullyUploaded==0">
 	      No dataset has been uploaded yet.
 	    </div>
@@ -138,7 +137,10 @@
 		  </tr>
 		  <tr ng-repeat="data in datasets">
 		    <td class="col-md-2">{{$index+1}}</td>
-		    <td class="col-md-5">{{data.name}}</td>
+		    <td class="col-md-5">{{data.name}}
+		      (<a href="#" title="View the uploaded file" data-placement="top" data-html="true" tooltip >uploaded</a>,
+		      <a href="#" title="View the file as interpreted by our system, in a standardized format" data-placement="top" data-html="true" tooltip >parsed</a>, <a href="#" title="View the importation report" data-placement="top" data-html="true" tooltip >importation report</a>).
+		    </td>
 		    <td class="col-md-5">{{data.description}}</td>
 		    <td class="col-md-2">{{data.preanalysis_status}}</td>
 		    <td class="col-md-1">
