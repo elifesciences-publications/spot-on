@@ -25,17 +25,24 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
             if not os.path.exists(tmppath):
                 os.makedirs(tmppath)
             for f in os.listdir(tmppath):
-                if f.index(filename)!=-1:
-                    total_files=total_files+1
+                try:
+                    print "indexpos:", f.index(filename)
+                    if f.index(filename)!=-1:
+                        total_files=total_files+1
+                except:
+                    pass
             if total_files<1:
                 return 'UPLOAD'
         except:
             logging.exception("message")
         logging.info('total files %s ' % str(total_files) )
+        print "total chunks:",str(total_files), flowTotalChunks
+        
         if(total_files==1 and int(flowTotalChunks)==1):
             try:
                 logging.info('upload path from config %s ' % uploadpath)
                 logging.info('completing file %s ' % uploadpath+filename);
+                print 'completing file %s ' % uploadpath+filename
                 f=open(uploadpath+filename,'wb+')
                 newFile=tmppath+filename+'.'+'part1'
                 file=open(newFile,'rb');
@@ -74,7 +81,7 @@ def createFileFromChunk(filename,chunksize,totalsize,flowTotalChunks):
 
 def checkValidityFile(request, response):
     """Called with a GET request
-    Used to cehck the validity of the file.
+    Used to check the validity of the file.
     For flow.jf (ng-flow) to proceed, it is compulsory that it receives
     a code 400 HTML response. A 200 code doesn't work."""
     
@@ -98,7 +105,8 @@ def chunkOperationUtil(request,response):
     flowTotalSize=None
     flowChunkNumber=None
     responseTotalChunks=None
-
+    code = 200
+    
     ## Validate input (throws exception if missing I guess)
     flowChunkNumber=str(request.POST['flowChunkNumber'])
     flowChunkSize=str(request.POST['flowChunkSize'])
@@ -112,6 +120,7 @@ def chunkOperationUtil(request,response):
     logging.info('creating folder')
     createTempFile(flowFileName,flowChunkNumber,request.FILES['file'].read())
     logging.info("Building file")
+    #print flowFileName,flowChunkSize,flowTotalSize,flowTotalChunks
     createFileFromChunk(flowFileName,flowChunkSize,flowTotalSize,flowTotalChunks)
 
     if os.path.isfile(uploadpath+folderlike+flowFileName):
@@ -122,9 +131,11 @@ def chunkOperationUtil(request,response):
                              'unique_id': flowIdentifier}
     else:
         logging.info('file not yet completed %s ' % str(flowChunkNumber))
+        print "not completed"
+        code = 400 ## Not done with uploading
         
     n = json.dumps(responseTotalChunks)
-    return (200, n)
+    return (code, n)
 
 
 def createTempFile(flowFileName,flowChunkNumber,chunk):
@@ -132,7 +143,7 @@ def createTempFile(flowFileName,flowChunkNumber,chunk):
         logging.info('create %s '% tmppath)
         os.mkdir(tmppath)
     except:
-        logging.info(" %s allready exists" % tmppath)
+        logging.info(" %s already exists" % tmppath)
     chunk_file = str(flowFileName)+'.part'+str(flowChunkNumber)
     chunkpath=tmppath+chunk_file
     try:
@@ -140,5 +151,6 @@ def createTempFile(flowFileName,flowChunkNumber,chunk):
         chunkFile.write(chunk)
         chunkFile.close()
         logging.info('file completed name is %s ' % chunkpath)
+        print 'file completed name is %s ' % chunkpath
     except:
         logging.exception("message")

@@ -21,39 +21,38 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 ## ==== DEBUG
-def upload_tmp(request):
-    template = loader.get_template('SPTGUI/upload_tmp.html')
-    return HttpResponse(template.render(request))
+# def upload_tmp(request):
+#     template = loader.get_template('SPTGUI/upload_tmp.html')
+#     return HttpResponse(template.render(request))
 
-#@csrf_exempt
-def upload_tmp_bknd(request):
-    """A backend for the upload debugging stuff"""
-    ## Call the original stuff
-    ## Make sure we send the right stuff back.
-    resp=Response()
+# def upload_tmp_bknd(request):
+#     """A backend for the upload debugging stuff"""
+#     ## Call the original stuff
+#     ## Make sure we send the right stuff back.
+#     resp=Response()
 	
-    filename=None
-    responseTotalChunks=None
-    """
-    flow js always send a get befora a post, the first
-    one give some information for the program to use to
-    build the file when the upload is finished
-    """
-    # Format the request object
+#     filename=None
+#     responseTotalChunks=None
+#     """
+#     flow js always send a get befora a post, the first
+#     one give some information for the program to use to
+#     build the file when the upload is finished
+#     """
+#     # Format the request object
 
-    request.args = request.GET
-    try:
-        request.form = request.POST
-    except:
-        request.form = []
+#     request.args = request.GET
+#     try:
+#         request.form = request.POST
+#     except:
+#         request.form = []
 
-    fuu.chunkOperationUtil(request,resp);
+#     fuu.chunkOperationUtil(request,resp);
 
-    # Transfer to a real object
-    re = HttpResponse()
-    re.content = resp.data
-    re.status_code = int(resp.status)
-    return re
+#     # Transfer to a real object
+#     re = HttpResponse()
+#     re.content = resp.data
+#     re.status_code = int(resp.status)
+#     return re
     
     
 def queue_status(request):
