@@ -138,12 +138,13 @@
 		  <tr ng-repeat="data in datasets">
 		    <td class="col-md-2">{{$index+1}}</td>
 		    <td class="col-md-5">{{data.name}}
-		      (<a href="#" title="View the uploaded file" data-placement="top" data-html="true" tooltip >uploaded</a>,
-		      <a href="#" title="View the file as interpreted by our system, in a standardized format" data-placement="top" data-html="true" tooltip >parsed</a>, <a href="#" title="View the importation report" data-placement="top" data-html="true" tooltip >importation report</a>).
+		      (<a href="datasets/{{data.id}}/original/" title="View the uploaded file" data-placement="top" data-html="true" tooltip >uploaded</a>,
+		      <a href="datasets/{{data.id}}/parsed/" title="View the file as interpreted by our system, in a standardized format" data-placement="top" data-html="true" tooltip >parsed</a>, <a href="datasets/{{data.id}}/report/" title="View the importation report" data-placement="top" data-html="true" tooltip >importation report</a>).
 		    </td>
 		    <td class="col-md-5">{{data.description}}</td>
 		    <td class="col-md-2">{{data.preanalysis_status}}</td>
 		    <td class="col-md-1">
+		      <span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open"></span>
 		      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil"></span>
 		      <span ng-click="deleteDataset(data);" class="glyphicon glyphicon-remove"></span>
 		    </td>		  
@@ -173,16 +174,31 @@
 		</table>
 	      </form>
 	    </div>
+
+	    <div>
+	      <div class="col-md-6">
+		<h2> Information about a dataset </h2>
+		<div ng-if="showingStatistics">
+		  Selected dataset: {{shownStatistics.name}}
+		</div>
+		
+		<div ng-if="!showingStatistics"
+		     class="alert alert-warning" role="alert">
+		  Click on the <span class="glyphicon glyphicon-eye-open"></span> label to display information and statistics about the dataset.
+		</div>
+	      </div>
+
+	      <div class="col-md-6">
+		<h2> Global statistics </h2>
+		Only show it if some of the stuff have the "ok" status.
+	      </div>
+	    </div>
+	    
 	    
 	  </div><!-- End of the UploadController controller -->
 
 	  {% endverbatim %}
 
-	  <h2> Additional information</h2>
-	  Blabla
-
-	  <h2> Statistics about this dataset </h2>
-	  Blah.
 	  
 	</tab>
 	<tab heading="Kinetic modeling">

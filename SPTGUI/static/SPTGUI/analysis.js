@@ -62,6 +62,9 @@
 		$scope.successfullyUploaded=dataResponse['data'].length;
 	    }); // Populate the scope with the already uploaded datasets
 
+	    $scope.showingStatistics=false;
+	    $scope.shownStatistics=null;
+	    
 	    
 	    //
 	    // ==== Handle the edition of the list of files
@@ -75,6 +78,10 @@
 			    $scope.successfullyUploaded=dataResponse['data'].length;
 			}); // Update the datasets variable when deleting sth.
 		    });
+		if ($scope.showStatistics == dataset) {
+		    $scope.shownStatistics = null;
+		    $scope.showingStatistics = false;   
+		}
 	    }
 
 	    $scope.editDataset = function(dataset) {
@@ -102,6 +109,14 @@
 
 		$scope.cancelEdit(dataset); // End edition
 	    }
+
+	    //
+	    // ==== Logic of the statistics display
+	    //
+	    $scope.showDataset = function(dataset) {
+		$scope.shownStatistics = dataset;
+		$scope.showingStatistics = true;
+	    };
 	    
 	    //
 	    // ==== Upload (ng-flow) events
