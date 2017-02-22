@@ -6,13 +6,18 @@
   <head>
     <meta charset="utf-8">
     <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
     <title>Analysis page</title>
     
-    <!-- Bootstrap core CSS -->
+    <!-- Bootstrap core CSS and JS -->
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
 
     <!-- Lodash library -->
     <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
@@ -20,11 +25,12 @@
     <!-- Angular JS -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.0/angular-cookies.js"></script>
-    <script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
     <!-- concatenated flow.js + ng-flow libraries -->
     <script src="{% static 'SPTGUI/dist/js/ng-flow-standalone.min.js' %}"></script>
     
-    <script src="{% static 'SPTGUI/analysis.js' %}"></script>    
+    <script src="{% static 'SPTGUI/analysis.js' %}"></script>
+
+    
   </head>
   
   <body ng-app="app">
@@ -90,7 +96,8 @@
 	    <input type="file" flow-btn/>
 
 	    <h2>Uploaded datasets</h2>
-
+	    
+<a href="#0" title="My Tooltip!" data-toggle="tooltip" data-placement="top" tooltip >My Tooltip Link 22</a>
 	    <div class="alert alert-warning" ng-if="successfullyUploaded==0">
 	      No dataset has been uploaded yet.
 	    </div>
@@ -167,8 +174,6 @@
 	    
 	  </div><!-- End of the UploadController controller -->
 
-
-	  
 	  {% endverbatim %}
 
 	  <h2> Additional information</h2>
@@ -190,7 +195,6 @@
 	</tab>
       </tabset>
 
-    </div>
-    
+    </div>    
   </body>
 </html>

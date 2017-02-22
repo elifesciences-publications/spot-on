@@ -129,7 +129,6 @@ def preprocessing_api(request, url_basename):
     except:
         return HttpResponse(json.dumps([]), content_type='application/json')
 
-    ## Return result
     active = celery.app.control.inspect().active()['celery@alice']
     reserved = celery.app.control.inspect().reserved()['celery@alice']
 
