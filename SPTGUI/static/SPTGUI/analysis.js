@@ -1,3 +1,5 @@
+// NOTE: $cookies might not be required everywhere...
+
 ;(function(window) {
 
     // From https://thinkster.io/angular-tabs-directive
@@ -15,7 +17,7 @@
 	    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
 	}])
     
-	.service('getterService', ['$http', '$cookies', function($http) {
+	.service('getterService', ['$http', function($http) {
 	    // This service handles $http requests to get the list for the datasets
 	    this.getDatasets = function(callback) {
 		return $http.get('./api/datasets/');
@@ -186,7 +188,7 @@
 	    }, 2000);
 
 	}])
-    	.controller('ModelingController', ['getterService', '$scope', '$cookies', '$interval', function(getterService, $scope, $cookies, $interval) {
+    	.controller('ModelingController', ['getterService', '$scope', '$interval', function(getterService, $scope, $interval) {
 	    // This is the controller for the modeling tab
 
 	    // Initiate the window with what we have /!\ SHOULD GO INTO A WATCHER FOR THE TAB SWITCHING STUFF
