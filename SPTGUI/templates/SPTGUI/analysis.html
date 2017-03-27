@@ -239,16 +239,16 @@
 	      Here show the uploaded datasets and offer the opportunity to include/exclude them from the analysis. Make sure that only valid datasets are visible.
 	      <table class="table-striped">
 		<tr>
-		  <td> Id </td>
-		  <td> File name </td>
-		  <td> Description </td>
-		  <td> Include </td>
+		  <td class="col-md-2"> Id </td>
+		  <td class="col-md-5"> File name </td>
+		  <td class="col-md-5"> Description </td>
+		  <td class="col-md-2"> Include </td>
 		</tr>
 		<tr ng-repeat="data in datasets">
-		  <td>{{$index+1}}</td>
-		  <td>{{data.name}}</td>
-		  <td>{{data.description}}</td>
-		  <td> Y/N </td>
+		  <td class="col-md-2">{{$index+1}}</td>
+		  <td class="col-md-5">{{data.name}}</td>
+		  <td class="col-md-5">{{data.description}}</td>
+		  <td class="col-md-2"> Y/N </td>
 		</tr>
 	      </table>
 
