@@ -1,5 +1,5 @@
 angular.module('app')
-    .controller('ModelingController', ['getterService', '$scope', '$interval', function(getterService, $scope, $interval) {
+    .controller('ModelingController', ['analysisService', 'getterService', '$scope', '$interval', function(analysisService, getterService, $scope, $interval) {
 	// This is the controller for the modeling tab
 
 	// Scope variables
@@ -25,7 +25,6 @@ angular.module('app')
 				     random : 3,
 				     include : null // Populated later
 				    };
-
 	//
 	// ==== Analysis computation logic
 	//
@@ -36,7 +35,6 @@ angular.module('app')
 	    // Show a progress bar (synced from messages from the broker)
 	    // Display a graph
 	    $scope.modelingParameters.include = $scope.datasets.map(function(l){return true;})
-	    alert($scope.modelingParameters.include)
 	    $scope.jlhist = [{'x': 1,'y': 5}, 
 			     {'x': 20,'y': 20}, 
 			     {'x': 40,'y': 10}, 
@@ -44,6 +42,14 @@ angular.module('app')
 			     {'x': 80,'y': 5},
 			     {'x': 100,'y': parameters.random}];
 	    $scope.$applyAsync();
+	    analysisService.runAnalysis(parameters).then(
+		function(dataResponse) {alert(dataResponse['data'])});	    
 	    $scope.analysisState='done'; // 'running' for progress bar
+	}
+
+	// Debug function to check the analysis
+	$scope.checkAnalysis = function(params) {
+	    analysisService.checkAnalysis(params).then(
+		function(dataResponse) {alert(dataResponse['data'])});
 	}
     }]);

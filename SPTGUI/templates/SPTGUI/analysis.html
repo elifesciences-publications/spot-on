@@ -28,6 +28,7 @@
     <!-- Custom app code -->   
     <script src="{% static 'SPTGUI/analysis.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_getterService.js' %}"></script>    
+    <script src="{% static 'SPTGUI/analysis_analysisService.js' %}"></script>    
     <script src="{% static 'SPTGUI/analysis_UploadController.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_ModelingController.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_jumpLengthHistogram.js' %}"></script>
@@ -275,6 +276,7 @@
 		    <td>&nbsp;</td>
 		    <td>
 		      <button type="submit" class="btn btn-default">Run the analysis</button>
+		      <button ng-click="checkAnalysis(modelingParameters)" class="btn btn-default">Play the piano</button>
 		    </td>
 		  </tr>
 		</table>

@@ -28,9 +28,10 @@ urlpatterns = [
     url(r'^analysis/(?P<url_basename>.+)/api/delete/$', views.delete_api, name='delete_api'),
     url(r'^analysis/(?P<url_basename>.+)/api/edit/$', views.edit_api, name='edit_api'),
     url(r'^analysis/(?P<url_basename>.+)/api/preprocessing/$', views.preprocessing_api, name='preprocessing_api'),
-    url(r'^analysis/(?P<url_basename>.+)/$', views.analysis, name='analysis'),
-    url(r'^$', views.index, name='index'),
 
     ## Perform analysis
     url(r'^analysis/(?P<url_basename>.+)/api/analyze/$', views.analyze_api, name='analyze_api'),
+    
+    url(r'^analysis/(?P<url_basename>.+)/$', views.analysis, name='analysis'),
+    url(r'^$', views.index, name='index'),
 ]

@@ -9,9 +9,8 @@ import celery, tasks
 from django.views.decorators.csrf import csrf_exempt
 from wsgiref.util import FileWrapper
 
-import random, string, json, os
+import random, string, json, os, hashlib, pickle, urlparse
 
-# Create your views here.
 from django.http import HttpResponse
 from django.template import loader
 
@@ -20,41 +19,6 @@ def index(request):
     template = loader.get_template('SPTGUI/homepage.html')
     context = {'url_basename': get_unused_namepage()}
     return HttpResponse(template.render(context, request))
-
-## ==== DEBUG
-# def upload_tmp(request):
-#     template = loader.get_template('SPTGUI/upload_tmp.html')
-#     return HttpResponse(template.render(request))
-
-# def upload_tmp_bknd(request):
-#     """A backend for the upload debugging stuff"""
-#     ## Call the original stuff
-#     ## Make sure we send the right stuff back.
-#     resp=Response()
-	
-#     filename=None
-#     responseTotalChunks=None
-#     """
-#     flow js always send a get befora a post, the first
-#     one give some information for the program to use to
-#     build the file when the upload is finished
-#     """
-#     # Format the request object
-
-#     request.args = request.GET
-#     try:
-#         request.form = request.POST
-#     except:
-#         request.form = []
-
-#     fuu.chunkOperationUtil(request,resp);
-
-#     # Transfer to a real object
-#     re = HttpResponse()
-#     re.content = resp.data
-#     re.status_code = int(resp.status)
-#     return re
-    
     
 def queue_status(request):
     """Returns the status of the queue"""
@@ -253,20 +217,44 @@ def delete_api(request, url_basename):
             response.content = 'Dataset name not matching database'
             return response
 
-        ## delete
-        da.delete()
+        da.delete()         ## delete
         response.status_code = 200
         return response
     
     return response
 
+## ==== Analysis
 def analyze_api(request, url_basename):
     """This view, when called with a POST, starts the analysis (fitting of
     kinetic model) on a selection of datasets. When called with a GET, it 
     returns the progress of the analysis."""
+    hash_size = 16
 
+    try:
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps(['analysis not found or no data uploaded']), content_type='application/json')
+
+    if request.method == 'GET': # return the '*_progress' object, if it exists
+        cha = dict(urlparse.parse_qsl(
+            urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
+        cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+        pa = "../static/analysis/{}/{}_progress.pkl".format(url_basename, cha)
+        if os.path.exists(pa) :
+            return HttpResponse(json.dumps(['found!']), content_type='application/json')
+        else:
+            print 
+            return HttpResponse(json.dumps([cha]), content_type='application/json')
+            # TODO MW: say that we are sad (say it with an error code)
+            return HttpResponse(json.dumps([pa+' not found']), content_type='application/json')
+
+    elif request.method == 'POST': # Queue an analysis (but should be valid)
+        fitparams = json.loads(request.body)
+        cha = dict(urlparse.parse_qsl(
+            urlparse.urlsplit("http://ex.org/?"+fitparams['hashvalue']).query))
+        cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+        return HttpResponse(json.dumps(cha), content_type='application/json') # DBG
     
-
 def upload(request, url_basename):
     """A backend for the upload debugging stuff"""
     ## Call the original stuff
