@@ -15,6 +15,13 @@ import SPTGUI.parsers as parsers
 ## ==== Here go the tasks to be performed asynchronously
 ##    
 
+@shared_task
+def empirical_jld():
+    """This function computes the empirical jump length distribution of a 
+    dataset"""
+    import time
+    time.sleep(5)
+    return [1,1,7,1,2,7,0,1,4]
 
 @shared_task
 def check_input_file(filepath, file_id):

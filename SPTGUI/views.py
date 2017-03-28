@@ -260,6 +260,13 @@ def delete_api(request, url_basename):
     
     return response
 
+def analyze_api(request, url_basename):
+    """This view, when called with a POST, starts the analysis (fitting of
+    kinetic model) on a selection of datasets. When called with a GET, it 
+    returns the progress of the analysis."""
+
+    
+
 def upload(request, url_basename):
     """A backend for the upload debugging stuff"""
     ## Call the original stuff

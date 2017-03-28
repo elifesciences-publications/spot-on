@@ -24,9 +24,15 @@
     
     <!-- concatenated flow.js + ng-flow libraries -->
     <script src="{% static 'SPTGUI/dist/js/ng-flow-standalone.min.js' %}"></script>
-        
-    <script src="{% static 'SPTGUI/analysis.js' %}"></script>
 
+    <!-- Custom app code -->   
+    <script src="{% static 'SPTGUI/analysis.js' %}"></script>
+    <script src="{% static 'SPTGUI/analysis_getterService.js' %}"></script>    
+    <script src="{% static 'SPTGUI/analysis_UploadController.js' %}"></script>
+    <script src="{% static 'SPTGUI/analysis_ModelingController.js' %}"></script>
+    <script src="{% static 'SPTGUI/analysis_jumpLengthHistogram.js' %}"></script>
+    <script src="{% static 'SPTGUI/analysis_tabs.js' %}"></script>
+    
     <!-- D3.js -->
     <script src="{% static 'SPTGUI/dist/js/d3.v3.min.js' %}"></script>
     

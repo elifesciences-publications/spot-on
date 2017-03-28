@@ -30,4 +30,7 @@ urlpatterns = [
     url(r'^analysis/(?P<url_basename>.+)/api/preprocessing/$', views.preprocessing_api, name='preprocessing_api'),
     url(r'^analysis/(?P<url_basename>.+)/$', views.analysis, name='analysis'),
     url(r'^$', views.index, name='index'),
+
+    ## Perform analysis
+    url(r'^analysis/(?P<url_basename>.+)/api/analyze/$', views.analyze_api, name='analyze_api'),
 ]
