@@ -229,6 +229,7 @@ def analyze_api(request, url_basename):
     kinetic model) on a selection of datasets. When called with a GET, it 
     returns the progress of the analysis."""
     hash_size = 16
+    bf = "./static/analysis/"
 
     try:
         ana = Analysis.objects.get(url_basename=url_basename)
@@ -239,12 +240,16 @@ def analyze_api(request, url_basename):
         cha = dict(urlparse.parse_qsl(
             urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
         cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
-        pa = "../static/analysis/{}/{}_progress.pkl".format(url_basename, cha)
+        pa = bf+"{}/{}_progress.pkl".format(url_basename, cha)
         if os.path.exists(pa) :
-            return HttpResponse(json.dumps(['found!']), content_type='application/json')
+            with open(pa, 'r') as f:
+                save_pars = pickle.load(f)
+            allgood = all([i['status']=='done' for i in save_pars['queue'].values()])
+            return HttpResponse(json.dumps({'params': save_pars['pars'],
+                                            'queue': save_pars['queue'],
+                                            'allgood': allgood}),
+                                content_type='application/json')
         else:
-            print 
-            return HttpResponse(json.dumps([cha]), content_type='application/json')
             # TODO MW: say that we are sad (say it with an error code)
             return HttpResponse(json.dumps([pa+' not found']), content_type='application/json')
 
@@ -253,6 +258,40 @@ def analyze_api(request, url_basename):
         cha = dict(urlparse.parse_qsl(
             urlparse.urlsplit("http://ex.org/?"+fitparams['hashvalue']).query))
         cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+
+        prog_p = bf+"{}/{}_progress.pkl".format(url_basename, cha)
+        to_process = []
+        if not os.path.exists(prog_p): ## Create the pickle file
+            
+            save_pars = {'pars': fitparams,
+                         'queue': {},
+                         'fit': {},
+                         'date_created': timezone.now(),
+                         'date_modified': timezone.now()}
+            
+            with open(prog_p, 'w') as f: ## Write the fitting parameters to file
+                pickle.dump(save_pars, f)
+                
+            ## Queue to Celery: loop over the datasets
+            for data_id in fitparams['include']:
+                save_pars['queue'][data_id] = {'status': 'queued'}
+                to_process.append(data_id)
+                
+        else: ## Determine the new stuff to be run
+            with open(prog_p, 'r') as f: ## Load the pickle file
+                save_pars = pickle.load(f)
+            
+            for data_id in fitparams['include'] : ## Difference in the queue dict
+                if data_id not in save_pars['queue'] or save_pars['queue'][data_id]['status'] == 'error':
+                    save_pars['queue'][data_id] = {'status': 'queued'}
+                    to_process.append(data_id)
+            
+        ## Queue to celery
+        with open(prog_p, 'w') as f: ## Write the fitting parameters to file
+                pickle.dump(save_pars, f)
+        for data_id in to_process:
+            tasks.fit_jld.delay(bf, url_basename, cha, data_id)
+
         return HttpResponse(json.dumps(cha), content_type='application/json') # DBG
     
 def upload(request, url_basename):
@@ -294,6 +333,8 @@ def upload(request, url_basename):
                            name='',
                            description='')
             ana.save()
+            os.makedirs("./static/analysis/"+url_basename) # Create folder for analyses
+
 
         ## 2. Create a database entry
         fi = File(open(json.loads(re.content)['address'], 'r')) ## This could be handled differently

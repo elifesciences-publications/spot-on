@@ -276,11 +276,12 @@
 		    <td>&nbsp;</td>
 		    <td>
 		      <button type="submit" class="btn btn-default">Run the analysis</button>
-		      <button ng-click="checkAnalysis(modelingParameters)" class="btn btn-default">Play the piano</button>
+		      
 		    </td>
 		  </tr>
 		</table>
 	      </form>
+	      <button ng-click="checkAnalysis(modelingParameters);" class="btn btn-default">Play the piano</button>
 
 	      <h2> Results of the simulation </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">

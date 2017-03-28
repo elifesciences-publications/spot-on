@@ -34,7 +34,7 @@ angular.module('app')
 	    // Send the POST command to the server
 	    // Show a progress bar (synced from messages from the broker)
 	    // Display a graph
-	    $scope.modelingParameters.include = $scope.datasets.map(function(l){return true;})
+	    $scope.modelingParameters.include = $scope.datasets.map(function(l){return l.id;})
 	    $scope.jlhist = [{'x': 1,'y': 5}, 
 			     {'x': 20,'y': 20}, 
 			     {'x': 40,'y': 10}, 
@@ -43,7 +43,7 @@ angular.module('app')
 			     {'x': 100,'y': parameters.random}];
 	    $scope.$applyAsync();
 	    analysisService.runAnalysis(parameters).then(
-		function(dataResponse) {alert(dataResponse['data'])});	    
+		function(dataResponse) {});	    
 	    $scope.analysisState='done'; // 'running' for progress bar
 	}
 

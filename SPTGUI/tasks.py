@@ -1,8 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-import tempfile, json
-
+import os, tempfile, json, pickle, fasteners
 ## Initialize django stuff
 import django
 django.setup()
@@ -16,13 +15,41 @@ import SPTGUI.parsers as parsers
 ##    
 
 @shared_task
-def empirical_jld():
-    """This function computes the empirical jump length distribution of a 
-    dataset"""
-    import time
-    time.sleep(5)
-    return [1,1,7,1,2,7,0,1,4]
+def fit_jld(path, url_basename, hash_prefix, dataset_id):
+    """This function fits the histogram of jump lengths of a given 
+    dataset for a specific set of parameters to a BOUND-UNBOUND kinetic 
+    model.
+    
+    Inputs:
+    - path: the folder where the analyses are stored
+    - url_basename: the name of the analysis page
+    - hash_prefix: the prefix filename
+    - dataset_id: the id of the dataset in the database.
 
+    Returns: None
+    - Update the Dataset entry with the appropriately parsed information
+    """
+    print dataset_id
+    prog_p = os.path.join(path,url_basename, "{}_progress.pkl".format(hash_prefix))
+    # Open the pickle file and change the pickle file to 'processing'
+    with fasteners.InterProcessLock(prog_p+'.lock'):
+        with open(prog_p, 'r') as f:
+            save_pars = pickle.load(f)
+            save_pars['queue'][dataset_id]['status'] = 'processing'
+        with open(prog_p, 'w') as f:
+            pickle.dump(save_pars, f)
+        
+    import time
+    time.sleep(10)
+
+    # Open the pickle file and change the pickle file to 'done'
+    with fasteners.InterProcessLock(prog_p+'.lock'):
+        with open(prog_p, 'r') as f:
+            save_pars = pickle.load(f)
+        save_pars['queue'][dataset_id]['status'] = 'done'
+        with open(prog_p, 'w') as f:
+            pickle.dump(save_pars, f)
+    
 @shared_task
 def check_input_file(filepath, file_id):
     """This function checks that the uploaded file has the right format and

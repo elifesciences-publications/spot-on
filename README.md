@@ -2,7 +2,7 @@ fastSPT (provisional title)
 --------------------------
 
 # Installation
-Requirements include `celery`, `django`, `python`, `lmfit`, `scipy`.
+Requirements include `celery`, `django`, `python`, `lmfit`, `scipy`, `fasteners`.
 
 # Usage
 ## Start the service
