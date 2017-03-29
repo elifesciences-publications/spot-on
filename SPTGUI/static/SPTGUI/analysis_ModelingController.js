@@ -31,9 +31,7 @@ angular.module('app')
 
 	// Function that runs the analysis
 	$scope.runAnalysis = function(parameters) {
-	    // Send the POST command to the server
 	    // Show a progress bar (synced from messages from the broker)
-	    // Display a graph
 	    $scope.modelingParameters.include = $scope.datasets.map(function(l){return l.id;})
 	    $scope.jlhist = [{'x': 1,'y': 5}, 
 			     {'x': 20,'y': 20}, 
@@ -42,10 +40,24 @@ angular.module('app')
 			     {'x': 80,'y': 5},
 			     {'x': 100,'y': parameters.random}];
 	    $scope.$applyAsync();
-	    analysisService.runAnalysis(parameters).then(
-		function(dataResponse) {});	    
-	    $scope.analysisState='done'; // 'running' for progress bar
+	    analysisService.runAnalysis(parameters)   
+	    $scope.analysisState='running'; // 'running' for progress bar
 	}
+
+	// A watcher that periodically checks the state of the computation
+	processingWaiter = $interval(function() {
+	    // This loops forever, but might become inactive
+	    if ($scope.analysisState=='running') {
+		analysisService.checkAnalysis($scope.modelingParameters)
+		    .then(function(dataResponse) {
+			if (dataResponse['data'].allgood) {
+			    $scope.analysisState = 'done'; // Hide progress bar
+			    alert('getting fitted values');// Download the fitted values
+			}
+		    });
+	    }
+	    return(true)
+	}, 2000);
 
 	// Debug function to check the analysis
 	$scope.checkAnalysis = function(params) {
