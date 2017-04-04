@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^analysis/(?P<url_basename>.+)/api/datasets/$', views.datasets_api, name='datasets_api'),
 
     ## Information about a dataset
-    url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$', views.dataset_original, name='dataset_original'),
+url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$', views.dataset_original, name='dataset_original'),
     url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/parsed/$', views.dataset_parsed, name='dataset_parsed'),
     url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/report/$', views.dataset_report, name='datasets_report'),
 
@@ -31,7 +31,8 @@ urlpatterns = [
 
     ## Perform analysis
     url(r'^analysis/(?P<url_basename>.+)/api/analyze/$', views.analyze_api, name='analyze_api'),
+    url(r'^analysis/(?P<url_basename>.+)/api/analyze/(?P<dataset_id>[0-9]+)$', views.get_analysis, name='get_analysis'),
     
-    url(r'^analysis/(?P<url_basename>.+)/$', views.analysis, name='analysis'),
+    url(r'^analysis/(?P<url_basename>.+)/', views.analysis, name='analysis'),
     url(r'^$', views.index, name='index'),
 ]

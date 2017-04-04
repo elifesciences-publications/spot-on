@@ -1,5 +1,5 @@
 angular.module('app')
-    .controller('ModelingController', ['analysisService', 'getterService', '$scope', '$interval', function(analysisService, getterService, $scope, $interval) {
+    .controller('ModelingController', ['analysisService', 'getterService', '$scope', '$interval', '$q', function(analysisService, getterService, $scope, $interval, $q) {
 	// This is the controller for the modeling tab
 
 	// Scope variables
@@ -48,11 +48,17 @@ angular.module('app')
 	processingWaiter = $interval(function() {
 	    // This loops forever, but might become inactive
 	    if ($scope.analysisState=='running') {
-		analysisService.checkAnalysis($scope.modelingParameters)
+		pars = $scope.modelingParameters;
+		analysisService.checkAnalysis(pars)
 		    .then(function(dataResponse) {
 			if (dataResponse['data'].allgood) {
-			    $scope.analysisState = 'done'; // Hide progress bar
-			    alert('getting fitted values');// Download the fitted values
+			    //alert('getting fitted values');// Download the fitted values
+			    $q.all(pars.include.map(function(data_id) {
+				return analysisService.getFitted(data_id, pars);
+			    })).then(function(l) {
+				alert('all done!');
+				$scope.analysisState = 'done'; // Hide progress bar
+			    });
 			}
 		    });
 	    }

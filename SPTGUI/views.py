@@ -293,7 +293,24 @@ def analyze_api(request, url_basename):
             tasks.fit_jld.delay(bf, url_basename, cha, data_id)
 
         return HttpResponse(json.dumps(cha), content_type='application/json') # DBG
+
+def get_analysis(request, url_basename, dataset_id):
+    """Returns the fitted model of a given dataset, or a wait/error message."""
+    hash_size=16
+    bf = "./static/analysis/"
     
+    cha = dict(urlparse.parse_qsl(
+        urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
+    cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+    pa = bf+"{}/{}_progress.pkl".format(url_basename, cha)
+    if os.path.exists(pa) :
+        with open(pa, 'r') as f:
+            save_pars = pickle.load(f)    
+    return HttpResponse(json.dumps([cha]), content_type='application/json')
+
+
+                 
+#### ==== UPLOAD STUFF    
 def upload(request, url_basename):
     """A backend for the upload debugging stuff"""
     ## Call the original stuff

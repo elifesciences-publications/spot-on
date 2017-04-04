@@ -16,11 +16,17 @@ angular.module('app')
 	}
 
 	this.checkAnalysis = function(params) {
-	    // make a get here on './analyze/'. Return the result.
 	    //This either contains the progress report or the result
 	    params.hashvalue='null'
 	    params.hashvalue = encodeQueryData(params)
 	    return $http.get('./api/analyze/?' + encodeQueryData(params));
+	}
+
+	this.getFitted = function(data_id, params) {
+	    //This either contains the progress report or the result
+	    params.hashvalue='null'
+	    params.hashvalue = encodeQueryData(params)
+	    return $http.get('./api/analyze/'+data_id+'?'+encodeQueryData(params));
 	}
 
 	// Get empirical jump length distribution
