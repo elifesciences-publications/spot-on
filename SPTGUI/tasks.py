@@ -1,7 +1,8 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-import os, tempfile, json, pickle, fasteners
+
+import os, sys, tempfile, json, pickle, fasteners
 ## Initialize django stuff
 import django
 django.setup()
@@ -9,6 +10,9 @@ django.setup()
 from django.core.files import File
 from SPTGUI.models import Dataset
 import SPTGUI.parsers as parsers
+
+sys.path.append('fastSPT')
+import fastSPT
 
 ##
 ## ==== Here go the tasks to be performed asynchronously
@@ -29,20 +33,28 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
     Returns: None
     - Update the Dataset entry with the appropriately parsed information
     """
-    print dataset_id
     prog_p = os.path.join(path,url_basename, "{}_progress.pkl".format(hash_prefix))
-    # Open the pickle file and change the pickle file to 'processing'
+
+    ## === Initialize
     with fasteners.InterProcessLock(prog_p+'.lock'):
         with open(prog_p, 'r') as f:
             save_pars = pickle.load(f)
             save_pars['queue'][dataset_id]['status'] = 'processing'
         with open(prog_p, 'w') as f:
             pickle.dump(save_pars, f)
-        
-    import time
-    time.sleep(10)
 
-    # Open the pickle file and change the pickle file to 'done'
+    ## ==== Perform analysis
+    da = Dataset.objects.get(id=dataset_id)
+    with open(da.parsed.path, 'r') as f:  ## Open dataset
+        fastSPT
+        ## Format the dataset for analysis
+        ## Perform the analysis
+        ## Save the corresponding file
+
+    # ==== Save results
+    ## Save the histogram (save params AND the hist)
+    
+    ## Open the pickle file and change the pickle file to 'done'
     with fasteners.InterProcessLock(prog_p+'.lock'):
         with open(prog_p, 'r') as f:
             save_pars = pickle.load(f)
@@ -76,7 +88,7 @@ def check_input_file(filepath, file_id):
         return
 
     ## ==== Save the parsed result!
-    with tempfile.NamedTemporaryFile(dir="uploads/", delete=False) as f:
+    with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
         fil = File(f)
         fil.write(json.dumps(fi))
 

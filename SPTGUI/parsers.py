@@ -12,7 +12,7 @@
 
 
 ## ==== Imports
-import scipy.io, os
+import scipy.io, os, json
 import numpy as np
 
 ##
@@ -71,3 +71,37 @@ def read_anders(fn):
         f = [int(i) for i in tr[2][0]]
         traces.append(zip(x,y,t,f))
     return traces
+
+## ==== Format for fastSPT
+def to_fastSPT(f):
+    """Returns an object formatted to be used with fastSPT from a parsed dataset
+    (in the internal representation of the GUI). f is a file descriptor (thus the
+    function assumes that the file exists).
+
+    Actually, the fastSPT code is a little bit picky about what it likes and what
+    it doesn't. It cares strictly about the file format, that is a nested numpy
+    object, and of the data types. I expect many bugs to arise from improper 
+    converters that do not fully comply with the file format."""
+
+    da = json.loads(f.read()) ## Load data
+
+    ## Create the object
+    dt = np.dtype([('xy', 'O'), ('TimeStamp', 'O'), ('Frame', 'O')]) # dtype
+    DT = np.dtype('<f8', '<f8', 'uint16')
+    trackedPar = []
+    for i in da:
+        xy = []
+        TimeStamp = []
+        Frame = []
+        for p in i:
+            xy.append([p[0],p[1]])
+            TimeStamp.append(p[2])
+            Frame.append(p[3])
+        trackedPar.append((np.array(xy, dtype='<f8'),
+                           np.array([TimeStamp], dtype='<f8'),
+                           np.array([Frame], dtype='uint16')))
+    return np.asarray(trackedPar, dtype=dt)
+            
+    
+    ## And create the format.
+    
