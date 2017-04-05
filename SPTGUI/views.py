@@ -324,7 +324,12 @@ def get_analysis(request, url_basename, dataset_id):
             fitparams = {}
             for k in save_pars['fitparams'].keys():
                 fitparams[k] = save_pars['fitparams'][k].value
-            return HttpResponse(json.dumps(fitparams), content_type='application/json')
+            print save_pars['fit']
+            return HttpResponse(json.dumps(
+                {'fitparams': fitparams,
+                 'fit': {'x': save_pars['fit']['x'].tolist(),
+                         'y': save_pars['fit']['y'].tolist()}
+             }), content_type='application/json')
     else:
         return HttpResponse(json.dumps('nothing ready here'), content_type='application/json')
 

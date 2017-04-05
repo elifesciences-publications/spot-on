@@ -18,6 +18,7 @@ angular.module('app')
 		    if (!ll) {return null;}
 		    return ll.data
 		});
+		$scope.jlfit = l.map(function(ll) {return null;}); // init fit
 		$scope.analysisState = 'done'; // Hide progress bar
 	    });		    
 	}); // Populate the scope with the already uploaded datasets
@@ -73,7 +74,6 @@ angular.module('app')
 			    })).then(function(l) {
 				$scope.jlfit = l.map(function(ll){return ll.data});
 				$scope.fitAvailable = true;
-				console.log($scope.jlfit);
 				$scope.analysisState = 'done'; // Hide progress bar
 			    });
 			}
@@ -81,10 +81,4 @@ angular.module('app')
 	    }
 	    return(true)
 	}, 2000);
-
-	// Debug function to check the analysis
-	$scope.checkAnalysis = function(params) {
-	    analysisService.checkAnalysis(params).then(
-		function(dataResponse) {alert(dataResponse['data'])});
-	}
     }]);

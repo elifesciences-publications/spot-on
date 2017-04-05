@@ -314,7 +314,6 @@
 		  </tr>
 		</table>
 	      </form>
-	      <button ng-click="checkAnalysis(modelingParameters);" class="btn btn-default">Play the piano</button>
 
 	      <h2> Results of the simulation </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
@@ -327,12 +326,12 @@
 		<div ng-if="fitAvailable">
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
-		    <li>D<sub>free</sub> : {{jlfit[ce].D_free}} </li>
-		    <li>D<sub>bound</sub> : {{jlfit[ce].D_bound}} </li>
-		    <li>F<sub>bound</sub> : {{jlfit[ce].F_bound}}</li>
+		    <li>D<sub>free</sub> : {{jlfit[ce].fitparams.D_free}} </li>
+		    <li>D<sub>bound</sub> : {{jlfit[ce].fitparams.D_bound}} </li>
+		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound}}</li>
 		  </ul>
 		</div>
-		<jump-length-histogram data="[jlhist[ce], dt]" dt="dt"></jump-length-histogram>
+		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt]" dt="dt"></jump-length-histogram>
 		
 		<input ng-model="dt" type="number"></input>
 		Displaying {{dt}} Delta t.

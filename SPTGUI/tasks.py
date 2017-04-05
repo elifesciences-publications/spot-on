@@ -114,7 +114,7 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
                                                                      dataset_id))
     with fasteners.InterProcessLock(prog_da+'.lock'):
         with open(prog_da, 'w') as f:
-            pickle.dump({'fit': scaled_y,
+            pickle.dump({'fit': {'x': HistVecJumpsCDF, 'y':scaled_y},
                          'fitparams': fit.params,
                          'params' : save_pars['pars']}, f)
     
