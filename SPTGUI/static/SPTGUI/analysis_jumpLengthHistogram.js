@@ -59,13 +59,19 @@ angular.module('app')
 		if(!data){ return; }
 		dt = data[1];
 		if (!dt) {return;}
-		dat = data[0][dt];
-		data = fmt_data(dat);
-		console.log(data);
-		g.selectAll("path")
-		    .datum(data)
-		    .attr("fill", "steelblue")
-		    .attr("d", area);		
+		if (dt<data[0].length && dt>0) {
+		    dat = data[0][dt];
+		    data = fmt_data(dat);
+		    //console.log(data);
+		    g.selectAll("path")
+			.datum(data)
+			.attr("fill", "steelblue")
+			.attr("d", area);
+		    
+		}
+		else {
+		    g.selectAll("path").attr("fill", "transparent");
+		}
 	    });
 	    
 	    
