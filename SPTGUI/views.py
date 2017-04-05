@@ -321,10 +321,14 @@ def get_analysis(request, url_basename, dataset_id):
         with open(pa, 'r') as f:
             save_pars = pickle.load(f)
             pa = save_pars['fit']
-            return HttpResponse(json.dumps([pa[2].tolist(), pa[3].tolist()]), content_type='application/json')
+            fitparams = {}
+            for k in save_pars['fitparams'].keys():
+                fitparams[k] = save_pars['fitparams'][k].value
+            return HttpResponse(json.dumps(fitparams), content_type='application/json')
     else:
         return HttpResponse(json.dumps('nothing ready here'), content_type='application/json')
 
+    
 def get_jld(request, url_basename, dataset_id):
     """Returns the empirical jump length distribution (precomputed at the
     upload stage."""

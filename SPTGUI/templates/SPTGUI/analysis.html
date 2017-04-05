@@ -324,6 +324,14 @@
 		Running, please wait...
 	      </div>
 	      <div ng-if="analysisState=='done'">
+		<div ng-if="fitAvailable">
+		  <em>Fit parameters for cell {{ce}}.</em>
+		  <ul>
+		    <li>D<sub>free</sub> : {{jlfit[ce].D_free}} </li>
+		    <li>D<sub>bound</sub> : {{jlfit[ce].D_bound}} </li>
+		    <li>F<sub>bound</sub> : {{jlfit[ce].F_bound}}</li>
+		  </ul>
+		</div>
 		<jump-length-histogram data="[jlhist[ce], dt]" dt="dt"></jump-length-histogram>
 		
 		<input ng-model="dt" type="number"></input>

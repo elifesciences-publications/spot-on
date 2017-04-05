@@ -44,6 +44,8 @@ angular.module('app')
 				    };
 	$scope.dt = 1; // Display parameter
 	$scope.ce = 0;
+	$scope.fitAvailable = false;
+
 	//
 	// ==== Analysis computation logic
 	//
@@ -61,6 +63,7 @@ angular.module('app')
 	processingWaiter = $interval(function() {
 	    // This loops forever, but might become inactive
 	    if ($scope.analysisState=='running') {
+		$scope.fitAvailable = false;
 		pars = $scope.modelingParameters;
 		analysisService.checkAnalysis(pars)
 		    .then(function(dataResponse) {
@@ -68,8 +71,9 @@ angular.module('app')
 			    $q.all(pars.include.map(function(data_id) {
 				return analysisService.getFitted(data_id, pars);
 			    })).then(function(l) {
-				//$scope.jlhist = l.map(function(ll){return ll.data});
-				alert("not updating jlhist")
+				$scope.jlfit = l.map(function(ll){return ll.data});
+				$scope.fitAvailable = true;
+				console.log($scope.jlfit);
 				$scope.analysisState = 'done'; // Hide progress bar
 			    });
 			}
