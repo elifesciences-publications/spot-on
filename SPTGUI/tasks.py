@@ -39,8 +39,8 @@ def compute_jld(dataset_id):
     with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
         fil = File(f)
         pickle.dump(an, fil) #fil.write(json.dumps(fi))
-        da.parsed = fil
-        da.parsed.name = da.data.name + '.jld'
+        da.jld = fil
+        da.jld.name = da.data.name + '.jld'
         da.save()    
 
 

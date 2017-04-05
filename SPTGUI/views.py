@@ -31,9 +31,6 @@ def queue_new(request):
         celery.loong.delay()
     return HttpResponse("ok")
 
-## ==== Views
-
-#### ==== DBG
 def barchart(request):
     """Returns a barchart template"""
     template = loader.get_template('SPTGUI/barchart.html')
@@ -42,6 +39,7 @@ def barchart(request):
     
 
 
+## ==== Views
 def statistics(request, url_basename):
     """Function returns some global statistics about all the datasets"""
     ## Sanity checks
@@ -130,6 +128,11 @@ def dataset_report(request, url_basename, dataset_id):
 def datasets_api(request, url_basename):
     """Function that exposes the list of available datasets, it is a view on the 
     Datasets library"""
+    def check_jld(d):
+        try:
+            return os.path.exists(d.jld.path)
+        except:
+            return False
     try:
         ana = Analysis.objects.get(url_basename=url_basename)
     except:
@@ -142,7 +145,8 @@ def datasets_api(request, url_basename):
             'upload_status' : d.upload_status,
             'preanalysis_status' : d.preanalysis_status,
             'pre_ntraces' : d.pre_ntraces,
-            'pre_npoints' : d.pre_npoints
+            'pre_npoints' : d.pre_npoints,
+            'jld_available': check_jld(d),
         } for d in Dataset.objects.filter(analysis=ana)]
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
@@ -385,7 +389,6 @@ def upload(request, url_basename):
         da.preanalysis_status='queued'
         ta = tasks.check_input_file.apply_async((da.data.path, da.id),
                                                 link=tasks.compute_jld.s())
-        #ta = tasks.check_input_file.delay(da.data.path, da.id)
         da.preanalysis_token = ta.id
         da.save()
 
