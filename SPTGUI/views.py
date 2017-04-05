@@ -188,11 +188,11 @@ def preprocessing_api(request, url_basename):
     except:
         return HttpResponse(json.dumps([]), content_type='application/json')
 
+    print celery.app.control.inspect().active()
     active = celery.app.control.inspect().active()['celery@alice']
     reserved = celery.app.control.inspect().reserved()['celery@alice']
 
     ## Make the junction by UUID
-    
     ret_active = [{'uuid': d['id'],
                    'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
                    'state': 'inprogress'} for d in active] ## /!\ to be Filtered by task type
@@ -379,62 +379,18 @@ def upload(request, url_basename):
         da.save()
 
         ## 3. Defer to the celery analysis
+        ## Here we first perform the "check_input_file" task. If this one returns
+        ## properly, the histogram of jump lengths distribution is computed
+        ## (compute_jld).
         da.preanalysis_status='queued'
-        ta = tasks.check_input_file.delay(da.data.path, da.id)
+        ta = tasks.check_input_file.apply_async((da.data.path, da.id),
+                                                link=tasks.compute_jld.s())
+        #ta = tasks.check_input_file.delay(da.data.path, da.id)
         da.preanalysis_token = ta.id
         da.save()
 
     return re
     
-
-# def upload_old(request, url_basename):
-#     context = {}
-#     response = HttpResponse(json.dumps(context), content_type='application/json')
-
-#     filename=None
-#     responseTotalChunks=None
-#     """
-#     flow js always send a GET before a POST, the first
-#     one give some information for the program to use to
-#     build the file when the upload is finished
-#     """
-#     if request.method == 'GET':
-#         (response.status_code, response.content) = checkValidityFile(request, response)
-        
-#     elif request.method == 'POST':        
-#         (response.status_code, response.content) = chunkOperationUtil(request, response)
-        
-#     if response.status_code == 200:
-#         ## 1. Get the analysis object, or create it if it doesn't exist
-#         try:
-#             ana = Analysis.objects.get(url_basename=url_basename)
-#         except:
-#             ana = Analysis(url_basename=url_basename,
-#                            pub_date=timezone.now(),
-#                            name='',
-#                            description='')
-#             ana.save()
-
-#         ## 2. Create a database entry
-#         fi = File(open(json.loads(response.content)['address'], 'r')) ## This could be handled differently
-#         fi.name = json.loads(response.content)['filename']
-#         da = Dataset(analysis=ana,
-#                      name=request.POST['flowFilename'],
-#                      description='',
-#                      unique_id = json.loads(response.content)['unique_id'],
-#                      upload_status=True, # Upload is complete
-#                      preanalysis_status='uploaded', # Preanalysis has not been launched
-#                      data=fi)
-#         da.save()
-
-#         ## 3. Defer to the celery analysis
-#         da.preanalysis_status='queued'
-#         #ta = tasks.check_input_file.delay(da.data.path, da.id)
-#         da.preanalysis_token = ta.id
-#         da.save()
-
-#     return response
-
 def analysis_root(request):
     return HttpResponse("There's nothing here...")
 
