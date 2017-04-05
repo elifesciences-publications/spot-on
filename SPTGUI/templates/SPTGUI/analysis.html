@@ -35,7 +35,7 @@
     <script src="{% static 'SPTGUI/analysis_tabs.js' %}"></script>
     
     <!-- D3.js -->
-    <script src="{% static 'SPTGUI/dist/js/d3.v3.min.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/d3.v4.min.js' %}"></script>
     
   </head>
   
@@ -291,7 +291,10 @@
 		Running, please wait...
 	      </div>
 	      <div ng-if="analysisState=='done'">
-		<jump-length-histogram data="jlhist"></jump-length-histogram>
+		<jump-length-histogram data="[jlhist, dt]" dt="dt"></jump-length-histogram>
+		
+		<input ng-model="dt"></input>
+		Displaying {{dt}} Delta t.
 	      </div>
 	    </div>
 

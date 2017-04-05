@@ -32,6 +32,16 @@ def queue_new(request):
     return HttpResponse("ok")
 
 ## ==== Views
+
+#### ==== DBG
+def barchart(request):
+    """Returns a barchart template"""
+    template = loader.get_template('SPTGUI/barchart.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+    
+
+
 def statistics(request, url_basename):
     """Function returns some global statistics about all the datasets"""
     ## Sanity checks
@@ -302,11 +312,14 @@ def get_analysis(request, url_basename, dataset_id):
     cha = dict(urlparse.parse_qsl(
         urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
     cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
-    pa = bf+"{}/{}_progress.pkl".format(url_basename, cha)
+    pa = bf+"{}/{}_{}.pkl".format(url_basename, cha, dataset_id)
     if os.path.exists(pa) :
         with open(pa, 'r') as f:
-            save_pars = pickle.load(f)    
-    return HttpResponse(json.dumps([cha]), content_type='application/json')
+            save_pars = pickle.load(f)
+            pa = save_pars['fit']
+            return HttpResponse(json.dumps([pa[2].tolist(), pa[3].tolist()]), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps('nothing ready here'), content_type='application/json')
 
 
                  
@@ -374,53 +387,53 @@ def upload(request, url_basename):
     return re
     
 
-def upload_old(request, url_basename):
-    context = {}
-    response = HttpResponse(json.dumps(context), content_type='application/json')
+# def upload_old(request, url_basename):
+#     context = {}
+#     response = HttpResponse(json.dumps(context), content_type='application/json')
 
-    filename=None
-    responseTotalChunks=None
-    """
-    flow js always send a GET before a POST, the first
-    one give some information for the program to use to
-    build the file when the upload is finished
-    """
-    if request.method == 'GET':
-        (response.status_code, response.content) = checkValidityFile(request, response)
+#     filename=None
+#     responseTotalChunks=None
+#     """
+#     flow js always send a GET before a POST, the first
+#     one give some information for the program to use to
+#     build the file when the upload is finished
+#     """
+#     if request.method == 'GET':
+#         (response.status_code, response.content) = checkValidityFile(request, response)
         
-    elif request.method == 'POST':        
-        (response.status_code, response.content) = chunkOperationUtil(request, response)
+#     elif request.method == 'POST':        
+#         (response.status_code, response.content) = chunkOperationUtil(request, response)
         
-    if response.status_code == 200:
-        ## 1. Get the analysis object, or create it if it doesn't exist
-        try:
-            ana = Analysis.objects.get(url_basename=url_basename)
-        except:
-            ana = Analysis(url_basename=url_basename,
-                           pub_date=timezone.now(),
-                           name='',
-                           description='')
-            ana.save()
+#     if response.status_code == 200:
+#         ## 1. Get the analysis object, or create it if it doesn't exist
+#         try:
+#             ana = Analysis.objects.get(url_basename=url_basename)
+#         except:
+#             ana = Analysis(url_basename=url_basename,
+#                            pub_date=timezone.now(),
+#                            name='',
+#                            description='')
+#             ana.save()
 
-        ## 2. Create a database entry
-        fi = File(open(json.loads(response.content)['address'], 'r')) ## This could be handled differently
-        fi.name = json.loads(response.content)['filename']
-        da = Dataset(analysis=ana,
-                     name=request.POST['flowFilename'],
-                     description='',
-                     unique_id = json.loads(response.content)['unique_id'],
-                     upload_status=True, # Upload is complete
-                     preanalysis_status='uploaded', # Preanalysis has not been launched
-                     data=fi)
-        da.save()
+#         ## 2. Create a database entry
+#         fi = File(open(json.loads(response.content)['address'], 'r')) ## This could be handled differently
+#         fi.name = json.loads(response.content)['filename']
+#         da = Dataset(analysis=ana,
+#                      name=request.POST['flowFilename'],
+#                      description='',
+#                      unique_id = json.loads(response.content)['unique_id'],
+#                      upload_status=True, # Upload is complete
+#                      preanalysis_status='uploaded', # Preanalysis has not been launched
+#                      data=fi)
+#         da.save()
 
-        ## 3. Defer to the celery analysis
-        da.preanalysis_status='queued'
-        #ta = tasks.check_input_file.delay(da.data.path, da.id)
-        da.preanalysis_token = ta.id
-        da.save()
+#         ## 3. Defer to the celery analysis
+#         da.preanalysis_status='queued'
+#         #ta = tasks.check_input_file.delay(da.data.path, da.id)
+#         da.preanalysis_token = ta.id
+#         da.save()
 
-    return response
+#     return response
 
 def analysis_root(request):
     return HttpResponse("There's nothing here...")

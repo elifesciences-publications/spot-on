@@ -25,6 +25,7 @@ angular.module('app')
 				     random : 3,
 				     include : null // Populated later
 				    };
+	$scope.dt = 1;
 	//
 	// ==== Analysis computation logic
 	//
@@ -33,13 +34,13 @@ angular.module('app')
 	$scope.runAnalysis = function(parameters) {
 	    // Show a progress bar (synced from messages from the broker)
 	    $scope.modelingParameters.include = $scope.datasets.map(function(l){return l.id;})
-	    $scope.jlhist = [{'x': 1,'y': 5}, 
-			     {'x': 20,'y': 20}, 
-			     {'x': 40,'y': 10}, 
-			     {'x': 60,'y': 40}, 
-			     {'x': 80,'y': 5},
-			     {'x': 100,'y': parameters.random}];
-	    $scope.$applyAsync();
+	    // $scope.jlhist = [{'x': 1,'y': 5}, 
+	    // 		     {'x': 20,'y': 20}, 
+	    // 		     {'x': 40,'y': 10}, 
+	    // 		     {'x': 60,'y': 40}, 
+	    // 		     {'x': 80,'y': 5},
+	    // 		     {'x': 100,'y': parameters.random}];
+	    // $scope.$applyAsync();
 	    analysisService.runAnalysis(parameters)   
 	    $scope.analysisState='running'; // 'running' for progress bar
 	}
@@ -56,7 +57,7 @@ angular.module('app')
 			    $q.all(pars.include.map(function(data_id) {
 				return analysisService.getFitted(data_id, pars);
 			    })).then(function(l) {
-				alert('all done!');
+				$scope.jlhist = l.map(function(ll){return ll.data});
 				$scope.analysisState = 'done'; // Hide progress bar
 			    });
 			}

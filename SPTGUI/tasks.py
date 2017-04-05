@@ -11,8 +11,8 @@ from django.core.files import File
 from SPTGUI.models import Dataset
 import SPTGUI.parsers as parsers
 
-sys.path.append('fastSPT')
-import fastSPT
+sys.path.append('SPTGUI/fastSPT_analysis')
+import fastSPT_analysis as fastSPT
 
 ##
 ## ==== Here go the tasks to be performed asynchronously
@@ -46,13 +46,19 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
     ## ==== Perform analysis
     da = Dataset.objects.get(id=dataset_id)
     with open(da.parsed.path, 'r') as f:  ## Open dataset
-        fastSPT
-        ## Format the dataset for analysis
-        ## Perform the analysis
-        ## Save the corresponding file
-
+        cell = parsers.to_fastSPT(f) ## Format the dataset for analysis
+        print "WARNING, using default parameters to compute jld"
+        an = fastSPT.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
+        
     # ==== Save results
     ## Save the histogram (save params AND the hist)
+    prog_da = os.path.join(path,url_basename, "{}_{}.pkl".format(hash_prefix,
+                                                                     dataset_id))
+    with fasteners.InterProcessLock(prog_da+'.lock'):
+        with open(prog_da, 'w') as f:
+            pickle.dump({'jld': an,
+                         'fit': an, ## /!\ TODO MW: put the real fit!!!
+                         'params' : save_pars['pars']}, f)
     
     ## Open the pickle file and change the pickle file to 'done'
     with fasteners.InterProcessLock(prog_p+'.lock'):
