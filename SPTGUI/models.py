@@ -29,6 +29,7 @@ class Dataset(models.Model):
     description = models.CharField(max_length=2000)
     data = models.FileField(upload_to='uploads/', default='default.jpg', null=True, blank=True)
     parsed = models.FileField(upload_to='uploads/', null=True, blank=True)
+    jld = models.FileField(upload_to='uploads/', null=True, blank=True)    
     unique_id = models.CharField(default='', max_length=200)
     upload_status = models.BooleanField(default=False)
     preanalysis_status = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
