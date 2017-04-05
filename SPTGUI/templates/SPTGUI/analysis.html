@@ -265,13 +265,46 @@
 	      <form ng-submit="runAnalysis(modelingParameters);">
 		<table>
 		  <tr>
-		    <td> Bin size: </td>
-		    <td><input type="text" ng-model="modelingParameters.bin_size"></td>
+		    <td> D<sub>free</sub>: </td>
+		    <td>
+		      <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any">
+		      <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any">
+		    </td>
 		  </tr>
 		  <tr>
-		    <td> Random: </td>
-		    <td><input ng-model="modelingParameters.random"></input></td>
+		    <td> D<sub>bound</sub>: </td>
+		    <td>
+		      <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any">
+		      <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any">
+		    </td>
 		  </tr>
+		  <tr>
+		    <td> F<sub>bound</sub>: </td>
+		    <td>
+		      <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any">
+		      <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any">
+		    </td>
+		  </tr>
+		  <tr>
+		    <td> Localization error: </td>
+		    <td><input ng-model="modelingParameters.LocError" type="number" step="any"></td>
+		  </tr>
+		  <tr>
+		    <td> dT: </td>
+		    <td><input ng-model="modelingParameters.dT" type="number" step="any"></td>
+		  </tr>
+		  <tr>
+		    <td> dZ: </td>
+		    <td><input ng-model="modelingParameters.dZ" type="number" step="any"></td>
+		  </tr>
+		  <tr>
+		    <td> Model Fit: </td>
+		    <td><input type="number" ng-model="modelingParameters.ModelFit"></td>
+		  </tr>
+		  <tr>
+		    <td> Iterations: </td>
+		    <td><input type="number" ng-model="modelingParameters.iterations"></td>
+		  </tr>			  
 		  <tr>
 		    <td>&nbsp;</td>
 		    <td>
@@ -291,10 +324,13 @@
 		Running, please wait...
 	      </div>
 	      <div ng-if="analysisState=='done'">
-		<jump-length-histogram data="[jlhist, dt]" dt="dt"></jump-length-histogram>
+		<jump-length-histogram data="[jlhist[ce], dt]" dt="dt"></jump-length-histogram>
 		
-		<input ng-model="dt"></input>
+		<input ng-model="dt" type="number"></input>
 		Displaying {{dt}} Delta t.
+
+		<input ng-model="ce" type="number"></input>
+		Displaying cell {{ce}}.
 	      </div>
 	    </div>
 

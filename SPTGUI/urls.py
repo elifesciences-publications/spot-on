@@ -10,7 +10,7 @@ urlpatterns = [
     #url(r'^upload/$', views.upload_tmp_bknd, name='upload_tmp_bknd'),    ## TEMPORARY
     #url(r'^queue/status/$', views.queue_status, name='queue_status'),## TEMPORARY
     #url(r'^queue/new/$', views.queue_new, name='queue_new'),## TEMPORARY
-    url(r'^barchart/$', views.barchart, name='barchart'),## TEMPORARY
+    #url(r'^barchart/$', views.barchart, name='barchart'),## TEMPORARY
     
     ## Main routes
     url(r'^analysis/$', views.analysis_root, name='analysis_root'),
@@ -33,6 +33,7 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     ## Perform analysis
     url(r'^analysis/(?P<url_basename>.+)/api/analyze/$', views.analyze_api, name='analyze_api'),
     url(r'^analysis/(?P<url_basename>.+)/api/analyze/(?P<dataset_id>[0-9]+)$', views.get_analysis, name='get_analysis'),
+    url(r'^analysis/(?P<url_basename>.+)/api/jld/(?P<dataset_id>[0-9]+)$', views.get_jld, name='get_jld'),
     
     url(r'^analysis/(?P<url_basename>.+)/', views.analysis, name='analysis'),
     url(r'^$', views.index, name='index'),

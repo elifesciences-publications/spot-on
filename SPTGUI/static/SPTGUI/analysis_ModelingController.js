@@ -8,6 +8,18 @@ angular.module('app')
 	// Initiate the window with what we have
 	getterService.getDatasets().then(function(dataResponse) {
 	    $scope.datasets = dataResponse['data'];
+	    $q.all($scope.datasets.map(function(el) { // Get JLD when available
+		if (el.jld_available) {
+		    return getterService.getJLD(el.id);
+		}
+		else {return null;}
+	    })).then(function(l) {
+		$scope.jlhist = l.map(function(ll){
+		    if (!ll) {return null;}
+		    return ll.data
+		});
+		$scope.analysisState = 'done'; // Hide progress bar
+	    });		    
 	}); // Populate the scope with the already uploaded datasets
 	getterService.getStatistics().then(function(dataResponse) {
 	    $scope.statistics = dataResponse['data'];
@@ -20,12 +32,18 @@ angular.module('app')
 	// ==== CRUD modeling parameters
 	//
 
-	// Should also contain the datasets to include
-	$scope.modelingParameters = {bin_size : 10,
-				     random : 3,
+	$scope.modelingParameters = {D_free : [0.15, 25],
+				     D_bound: [0.0005, 0.08],
+				     F_bound: [0, 1],
+				     LocError: 0.035,
+				     iterations: 3,
+				     dT: 4.477/1000,
+				     dZ: 0.700,
+				     ModelFit: 1, //1: PDF fit, 2: CDF fit
 				     include : null // Populated later
 				    };
-	$scope.dt = 1;
+	$scope.dt = 1; // Display parameter
+	$scope.ce = 0;
 	//
 	// ==== Analysis computation logic
 	//
@@ -34,12 +52,6 @@ angular.module('app')
 	$scope.runAnalysis = function(parameters) {
 	    // Show a progress bar (synced from messages from the broker)
 	    $scope.modelingParameters.include = $scope.datasets.map(function(l){return l.id;})
-	    // $scope.jlhist = [{'x': 1,'y': 5}, 
-	    // 		     {'x': 20,'y': 20}, 
-	    // 		     {'x': 40,'y': 10}, 
-	    // 		     {'x': 60,'y': 40}, 
-	    // 		     {'x': 80,'y': 5},
-	    // 		     {'x': 100,'y': parameters.random}];
 	    // $scope.$applyAsync();
 	    analysisService.runAnalysis(parameters)   
 	    $scope.analysisState='running'; // 'running' for progress bar
@@ -53,11 +65,11 @@ angular.module('app')
 		analysisService.checkAnalysis(pars)
 		    .then(function(dataResponse) {
 			if (dataResponse['data'].allgood) {
-			    //alert('getting fitted values');// Download the fitted values
 			    $q.all(pars.include.map(function(data_id) {
 				return analysisService.getFitted(data_id, pars);
 			    })).then(function(l) {
-				$scope.jlhist = l.map(function(ll){return ll.data});
+				//$scope.jlhist = l.map(function(ll){return ll.data});
+				alert("not updating jlhist")
 				$scope.analysisState = 'done'; // Hide progress bar
 			    });
 			}

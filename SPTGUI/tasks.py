@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 
 import os, sys, tempfile, json, pickle, fasteners
+import numpy as np
 ## Initialize django stuff
 import django
 django.setup()
@@ -61,9 +62,17 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
     """
     prog_p = os.path.join(path,url_basename, "{}_progress.pkl".format(hash_prefix))
 
-    print "WARNING, actually this computes the jld, not the fit"
-
-    ## === Initialize
+    
+    ## ==== Load JLD
+    da =  Dataset.objects.get(id=dataset_id)
+    with open(da.jld.path, 'r') as f: ## Open the pickle file
+        jld = pickle.load(f)
+        HistVecJumps = jld[2] ## Extract from the pickled file
+        JumpProb = jld[3]
+        HistVecJumpsCDF = jld[0]
+        JumpProbCDF = jld[1]        
+    
+    ## ==== Initialize
     with fasteners.InterProcessLock(prog_p+'.lock'):
         with open(prog_p, 'r') as f:
             save_pars = pickle.load(f)
@@ -71,21 +80,42 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
         with open(prog_p, 'w') as f:
             pickle.dump(save_pars, f)
 
-    ## ==== Perform analysis
-    da = Dataset.objects.get(id=dataset_id)
-    with open(da.parsed.path, 'r') as f:  ## Open dataset
-        cell = parsers.to_fastSPT(f) ## Format the dataset for analysis
-        print "WARNING, using default parameters to compute jld"
-        an = fastSPT.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
-        
+    ## ==== Sanity format the dictionary of parameters
+    params = save_pars['pars'].copy()
+    params.pop("include")
+    params.pop("hashvalue")
+    params["D_Bound"] = params.pop("D_bound")
+    params["D_Free"] = params.pop("D_free")
+    params["Frac_Bound"] = params.pop("F_bound")
+    print params
+    
+    ## ==== Perform the fit and compute the distribution
+    fit = fastSPT.fit_jump_length_distribution(JumpProb, JumpProbCDF,
+                                               HistVecJumps, HistVecJumpsCDF,
+                                               **params)
+    ## Generate the PDF corresponding to the fitted parameters
+    y = fastSPT.generate_jump_length_distribution(fit.params['D_free'],
+                                                  fit.params['D_bound'],
+                                                  fit.params['F_bound'],  
+                                                  JumpProb,
+                                                  HistVecJumpsCDF,
+                                                  params['LocError'],
+                                                  params['dT'],
+                                                  params['dZ'])
+    ## Normalize it
+    norm_y = np.zeros_like(y)
+    for i in range(y.shape[0]): # Normalize y as a PDF
+        norm_y[i,:] = y[i,:]/y[i,:].sum()
+        scaled_y = (float(len(HistVecJumpsCDF))/len(HistVecJumps))*norm_y
+    
     # ==== Save results
     ## Save the histogram (save params AND the hist)
     prog_da = os.path.join(path,url_basename, "{}_{}.pkl".format(hash_prefix,
                                                                      dataset_id))
     with fasteners.InterProcessLock(prog_da+'.lock'):
         with open(prog_da, 'w') as f:
-            pickle.dump({'jld': an,
-                         'fit': an, ## /!\ TODO MW: put the real fit!!!
+            pickle.dump({'fit': scaled_y,
+                         'fitparams': fit.params,
                          'params' : save_pars['pars']}, f)
     
     ## Open the pickle file and change the pickle file to 'done'

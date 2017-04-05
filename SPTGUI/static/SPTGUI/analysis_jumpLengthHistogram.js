@@ -4,17 +4,16 @@ angular.module('app')
 	    data = [];
 	    data.push({date: 0, close: 0});
 	    for (i=1; i<dat[0].length; i++) {
-		data.push({date: dat[0][i-1], close: dat[1][0][i]});
-		data.push({date: dat[0][i], close: dat[1][0][i]});
+		data.push({date: dat[0][i-1], close: dat[1][i]});
+		data.push({date: dat[0][i], close: dat[1][i]});
 	    }
 	    return data;
 	};
 	function link(scope, el, attr){
 	    // Get input and parse it
 	    dt = scope.data[1];
-	    dat = scope.data[0][dt];
-	    data = fmt_data(dat);	    
-
+	    data = fmt_data([scope.data[0][0], scope.data[0][1][dt]]);
+	    
 	    var svg = d3.select(el[0]).append('svg')
 	    margin = {top: 20, right: 20, bottom: 30, left: 50},
 	    width = 600;
@@ -59,10 +58,8 @@ angular.module('app')
 		if(!data){ return; }
 		dt = data[1];
 		if (!dt) {return;}
-		if (dt<data[0].length && dt>0) {
-		    dat = data[0][dt];
-		    data = fmt_data(dat);
-		    //console.log(data);
+		if (dt<data[0][1].length && dt>0) {
+		    data = fmt_data([data[0][0], data[0][1][dt]]);
 		    g.selectAll("path")
 			.datum(data)
 			.attr("fill", "steelblue")

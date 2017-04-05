@@ -325,6 +325,34 @@ def get_analysis(request, url_basename, dataset_id):
     else:
         return HttpResponse(json.dumps('nothing ready here'), content_type='application/json')
 
+def get_jld(request, url_basename, dataset_id):
+    """Returns the empirical jump length distribution (precomputed at the
+    upload stage."""
+    def check_jld(d):
+        try:
+            return os.path.exists(d.jld.path)
+        except:
+            return False
+
+
+    try: ## Package this in a function /!\ TODO MW get_dataset
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps(['analysis not found']),
+                            content_type='application/json')
+    try:
+        da = Dataset.objects.get(analysis=ana, id=dataset_id)
+    except:
+        return HttpResponse(json.dumps(['dataset not found']),
+                            content_type='application/json')
+    
+    if check_jld(da): ## If the jld is available
+        with open(da.jld.path, 'r') as f:
+            jld = pickle.load(f)
+        return HttpResponse(json.dumps([jld[2].tolist(), jld[3].tolist()]), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps("JLD not ready"), content_type='application/json')
+
 
                  
 #### ==== UPLOAD STUFF    
