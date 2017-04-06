@@ -189,7 +189,10 @@ def fit_jld(arg):
     with fasteners.InterProcessLock(prog_p+'.lock'):
         with open(prog_p, 'r') as f:
             save_pars = pickle.load(f)
-        save_pars['queue'][dataset_id]['status'] = 'done'
+        if pooled:
+            save_pars['queue']['pooled']['status'] = 'done'            
+        else:
+            save_pars['queue'][dataset_id]['status'] = 'done'            
         with open(prog_p, 'w') as f:
             pickle.dump(save_pars, f)
     

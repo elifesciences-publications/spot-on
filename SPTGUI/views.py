@@ -298,8 +298,10 @@ def analyze_api(request, url_basename):
                 if data_id not in save_pars['queue'] or save_pars['queue'][data_id]['status'] == 'error':
                     save_pars['queue'][data_id] = {'status': 'queued'}
                     to_process.append(data_id)
-            if len(fitparams['include'])>1: ## Also compute the pooled stuff if needed
-                save_pars['queue']['pooled'] = {'status': 'queued'}
+            print fitparams['include']
+        if len(fitparams['include'])>1: ## Also compute the pooled stuff if needed
+            print "computing a pooled queue"
+            save_pars['queue']['pooled'] = {'status': 'queued'}
             
         ## Queue to celery
         with open(prog_p, 'w') as f: ## Write the fitting parameters to file
@@ -317,7 +319,7 @@ def analyze_api(request, url_basename):
                                                   'hash_prefix': cha,
                                                   'url_basename': url_basename},
                                           link=tasks.fit_jld.s())
-
+        print save_pars
         return HttpResponse(json.dumps(cha), content_type='application/json') # DBG
 
 def get_analysis(request, url_basename, dataset_id):
