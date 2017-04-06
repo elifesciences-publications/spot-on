@@ -305,10 +305,11 @@ def analyze_api(request, url_basename):
         with open(prog_p, 'w') as f: ## Write the fitting parameters to file
                 pickle.dump(save_pars, f)
         for data_id in to_process:
-            tasks.fit_jld.delay(bf, url_basename, cha, data_id)
+            tasks.fit_jld.delay((bf, url_basename, cha, data_id))
             #print "DBG: NOT FITTING JLD THIS TIME. DEBUG ONLY"
         if len(fitparams['include'])>1: ## Compute the pooled stuff
             ## We need to compute the jld of the pooled stuff
+            print "including"
             tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
                                                   'pooled' : True,
                                                   'include':fitparams['include'],

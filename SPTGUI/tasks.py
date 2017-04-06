@@ -56,7 +56,7 @@ def compute_jld(dataset_id, pooled=False, include=None,
             with open(prog_p, 'r') as f:
                 save_params = pickle.load(f)
                 if save_params['status'] == 'done':
-                    return ['jld']
+                    return (path, url_basename, hash_prefix, include)
                 else:
                     save_params['status'] = 'computing'
             with open(prog_p, 'w') as f:
@@ -94,7 +94,8 @@ def compute_jld(dataset_id, pooled=False, include=None,
 
 
 @shared_task
-def fit_jld(path, url_basename, hash_prefix, dataset_id):
+def fit_jld(arg):
+    (path, url_basename, hash_prefix, dataset_id) = arg
     """This function fits the histogram of jump lengths of a given 
     dataset for a specific set of parameters to a BOUND-UNBOUND kinetic 
     model.
@@ -180,7 +181,7 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
     with fasteners.InterProcessLock(prog_da+'.lock'):
         with open(prog_da, 'w') as f:
             out_pars['fit'] = {'x': HistVecJumpsCDF, 'y':scaled_y}
-            put_pars['fitparams'] = fit.params
+            out_pars['fitparams'] = fit.params
             out_pars['params'] = save_pars['pars']
             pickle.dump(out_pars, f)
     
