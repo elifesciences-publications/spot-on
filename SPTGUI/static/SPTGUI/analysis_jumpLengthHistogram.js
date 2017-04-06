@@ -91,8 +91,11 @@ angular.module('app')
 			.attr("stroke", "red")
 			.attr("stroke-width", 1.5)
 			.attr("d", line);
+		} else { // Erase the line
+		    fitline.selectAll("path")
+		    .attr("stroke", "transparent")
 		}
-	    });
+	    }); 
 	}
 	return {
 	    link: link,

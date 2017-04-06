@@ -78,7 +78,6 @@ angular.module('app')
 	// Function that runs the analysis
 	$scope.runAnalysis = function(parameters) {
 	    // Show a progress bar (synced from messages from the broker)
-	    $scope.modelingParameters.include = $scope.datasets.map(function(l){return l.id;})
 	    // $scope.$applyAsync();
 	    analysisService.runAnalysis(parameters)   
 	    $scope.analysisState='running'; // 'running' for progress bar

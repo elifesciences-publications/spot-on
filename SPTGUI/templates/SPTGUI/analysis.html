@@ -343,12 +343,19 @@
 
 		<input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
 		Displaying cell {{ce}}.
+
+		Show pooled fit <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
+		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="EDITME"></toggle-switch>
+
+		Show pooled jump length distribution:
+		<span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
+		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="EDITME"></toggle-switch>
 	      </div>
 	    </div>
 
 	    
 	    <div ng-if="statistics.status!='ok';"
-		 class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one! (div unbound)</div>
+		 class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one!</div>
 	  </div>
 	</tab><!-- End of the ModelingController controller -->
 	
