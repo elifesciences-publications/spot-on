@@ -101,7 +101,4 @@ def to_fastSPT(f):
                            np.array([TimeStamp], dtype='<f8'),
                            np.array([Frame], dtype='uint16')))
     return np.asarray(trackedPar, dtype=dt)
-            
-    
-    ## And create the format.
     
