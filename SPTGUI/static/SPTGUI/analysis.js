@@ -3,7 +3,7 @@
 ;(function(window) {
 
     // From https://thinkster.io/angular-tabs-directive
-    angular.module('app', ['flow', 'ngCookies'])
+    angular.module('app', ['flow', 'ngCookies', 'toggle-switch'])
 	.config(['$httpProvider', function($httpProvider) {
 	    // Play nicely with the CSRF cookie. Here we set the CSRF cookie
 	    // to the cookie sent by Django

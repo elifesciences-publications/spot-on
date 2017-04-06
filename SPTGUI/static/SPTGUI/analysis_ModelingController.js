@@ -8,6 +8,30 @@ angular.module('app')
 	// Initiate the window with what we have
 	getterService.getDatasets().then(function(dataResponse) {
 	    $scope.datasets = dataResponse['data'];
+	    $scope.datasets = $scope.datasets.map(function(el) {
+		el.incl=false; return el})
+	    $scope.datasetsf = $scope.datasets.map(function(el) {
+		return function(newVal) {
+		    function add(array, value) {
+			if (array.indexOf(value) === -1) {array.push(value);}
+		    }
+
+		    function remove(array, value) {
+			var index = array.indexOf(value);
+			if (index !== -1) {array.splice(index, 1);}
+		    }
+		    
+		    if (arguments.length) {
+			if (newVal == true) {
+			    add($scope.modelingParameters.include, el.id)
+			} else {
+			    remove($scope.modelingParameters.include, el.id)
+			}
+			el.incl = newVal
+		    } else {
+			return el.incl
+		    }
+		}});
 	    $q.all($scope.datasets.map(function(el) { // Get JLD when available
 		if (el.jld_available) {
 		    return getterService.getJLD(el.id);
@@ -41,7 +65,7 @@ angular.module('app')
 				     dT: 4.477/1000,
 				     dZ: 0.700,
 				     ModelFit: 1, //1: PDF fit, 2: CDF fit
-				     include : null // Populated later
+				     include : [] // Populated later
 				    };
 	$scope.dt = 1; // Display parameter
 	$scope.ce = 0;

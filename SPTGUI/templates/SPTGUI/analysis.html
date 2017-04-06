@@ -14,14 +14,16 @@
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>
     <script src="{% static 'SPTGUI/dist/js/bootstrap.min.js' %}"></script>
-
+    
     <!-- Lodash library -->
     <script src="{% static 'SPTGUI/dist/js/lodash.min.js' %}"></script>
     
     <!-- Angular JS -->
     <script src="{% static 'SPTGUI/dist/js/angular.min.js' %}"></script>
     <script src="{% static 'SPTGUI/dist/js/angular-cookies.js' %}"></script>
-    
+    <script src="{% static 'SPTGUI/dist/js/angular-toggle-switch.min.js' %}"></script>
+    <link href="{% static 'SPTGUI/dist/css/angular-toggle-switch.css' %}" rel="stylesheet">
+
     <!-- concatenated flow.js + ng-flow libraries -->
     <script src="{% static 'SPTGUI/dist/js/ng-flow-standalone.min.js' %}"></script>
 
@@ -257,9 +259,12 @@
 		  <td class="col-md-2">{{$index+1}}</td>
 		  <td class="col-md-5">{{data.name}}</td>
 		  <td class="col-md-5">{{data.description}}</td>
-		  <td class="col-md-2"> Y/N </td>
+		  <td class="col-md-2">
+		    <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="datasetsf[$index]"></toggle-switch>
+		  </td>
 		</tr>
 	      </table>
+	      {{modelingParameters.include}}
 
 	      <h2> Modeling parameters </h2>
 	      <form ng-submit="runAnalysis(modelingParameters);">
@@ -333,10 +338,10 @@
 		</div>
 		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt]" dt="dt"></jump-length-histogram>
 		
-		<input ng-model="dt" type="number"></input>
+		<input ng-model="dt" type="number" min="1" max="{{jlhist[0][1].length-1}}">
 		Displaying {{dt}} Delta t.
 
-		<input ng-model="ce" type="number"></input>
+		<input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
 		Displaying cell {{ce}}.
 	      </div>
 	    </div>
