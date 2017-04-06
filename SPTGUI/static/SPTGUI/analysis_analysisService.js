@@ -29,13 +29,11 @@ angular.module('app')
 	    return $http.get('./api/analyze/'+data_id+'?'+encodeQueryData(params));
 	}
 
-	// Get empirical jump length distribution
-	// ./analyze/1/jld
-	// ./analyze/c/jld
-	// ./analyze/1/fit <-- focus on this one
-
-	// call runAnalysis
-	// start periodical timer (not inside this service)
-	// this timer updates the progress bar
-	// update the graph when we have everything
+	// Function to query the pooled histogram
+	this.getPooledJLD = function(params) {
+	    //This either contains the progress report or the result
+	    params.hashvalue='null'
+	    params.hashvalue = encodeQueryData(params)
+	    return $http.get('./api/jld/pooled?'+encodeQueryData(params));
+	}	
     }]);

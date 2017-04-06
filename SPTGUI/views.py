@@ -276,7 +276,6 @@ def analyze_api(request, url_basename):
         prog_p = bf+"{}/{}_progress.pkl".format(url_basename, cha)
         to_process = []
         if not os.path.exists(prog_p): ## Create the pickle file
-            
             save_pars = {'pars': fitparams,
                          'queue': {},
                          'fit': {},
@@ -299,12 +298,24 @@ def analyze_api(request, url_basename):
                 if data_id not in save_pars['queue'] or save_pars['queue'][data_id]['status'] == 'error':
                     save_pars['queue'][data_id] = {'status': 'queued'}
                     to_process.append(data_id)
+            if len(fitparams['include'])>1: ## Also compute the pooled stuff if needed
+                save_pars['queue']['pooled'] = {'status': 'queued'}
             
         ## Queue to celery
         with open(prog_p, 'w') as f: ## Write the fitting parameters to file
                 pickle.dump(save_pars, f)
         for data_id in to_process:
             tasks.fit_jld.delay(bf, url_basename, cha, data_id)
+            #print "DBG: NOT FITTING JLD THIS TIME. DEBUG ONLY"
+        if len(fitparams['include'])>1: ## Compute the pooled stuff
+            ## We need to compute the jld of the pooled stuff
+            tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
+                                                  'pooled' : True,
+                                                  'include':fitparams['include'],
+                                                  'path': bf,
+                                                  'hash_prefix': cha,
+                                                  'url_basename': url_basename},
+                                          link=tasks.fit_jld.s())
 
         return HttpResponse(json.dumps(cha), content_type='application/json') # DBG
 
@@ -333,6 +344,50 @@ def get_analysis(request, url_basename, dataset_id):
     else:
         return HttpResponse(json.dumps('nothing ready here'), content_type='application/json')
 
+
+def get_jldp(request, url_basename):
+    """Same as `get_jld` but returns the jld for the pooled values. In practice,
+    the code is significantly different from the `get_jld` function since the 
+    jump length distribution/histogram (jld) is stored in a pickled file. The
+    name of this pickled file is generated based on the `include` parameters
+    selected by the user. 
+    Also, the jld is computed if it is not available."""
+    hash_size = 16
+    bf = "./static/analysis/"
+    
+    if request.method == "GET":
+        ## ==== Generate the path
+        cha = dict(urlparse.parse_qsl(
+            urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
+        cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+        pa = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
+
+        save_params = {"status" : "notrun"}
+        if os.path.exists(pa): ##  Probe for the computed histogram
+            with open(pa, 'r') as f:
+                save_params = pickle.load(f)
+            if 'status' in save_params and save_params['status']=='done':
+                jld = save_params['jld']
+                return HttpResponse(json.dumps([jld[2].tolist(),
+                                                jld[3].tolist()]),
+                                    content_type='application/json')
+ 
+        if save_params['status'] == 'notrun':
+            save_params['status'] = 'queued'
+            with open(pa, 'w') as f:
+                pickle.dump(save_params, f)
+            include = [int(i) for i in request.GET['include'].split(',')]
+            print "computing for values: {}".format(include)
+            ## /!\ TODO MW Should check that the datasets belong to the
+            ## right owner. Else one can download everybody's dataset...
+            tasks.compute_jld.apply_async(
+                kwargs={'dataset_id': None,
+                        'pooled': True,
+                        'include' : include,
+                        'url_basename': url_basename,
+                        'path' : bf,
+                        'hash_prefix' : cha})
+        return HttpResponse(json.dumps('computing'), content_type='application/json')
     
 def get_jld(request, url_basename, dataset_id):
     """Returns the empirical jump length distribution (precomputed at the

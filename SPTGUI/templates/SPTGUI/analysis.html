@@ -302,6 +302,8 @@
 		</table>
 	      </form>
 
+<button class="btn btn-default" ng-click="getPooledJLD()" ng-if="!gettingPooledJLD">Get the pooled JLD </button><span ng-if="gettingPooledJLD">Please wait</span>
+
 	      <h2> Results of the simulation </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
 		No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).

@@ -20,29 +20,77 @@ import fastSPT_analysis as fastSPT
 ##    
 
 @shared_task
-def compute_jld(dataset_id):
-    """This function computes the histogram of jump length of an uploaded 
+def compute_jld(dataset_id, pooled=False, include=None,
+                path=None, hash_prefix=None, url_basename=None):
+    """
+    This function computes the histogram of jump length of an uploaded 
     dataset and save it in the corresponding dataset slot. It does not 
-    compute the fit of the dataset."""
+    compute the fit of the dataset.
 
-    ## ==== Perform analysis
-    print "Computing JLD for dataset {}".format(dataset_id)
+    The `compute_jld` function accepts both single and multi cells computations 
+    of the jump lengths distribution (jld) through two configurations of
+    arguments:
 
-    da = Dataset.objects.get(id=dataset_id)
-    with open(da.parsed.path, 'r') as f:  ## Open dataset
-        cell = parsers.to_fastSPT(f) ## Format the dataset for analysis
-        print "WARNING, using default parameters to compute jld"
-        an = fastSPT.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
+    1. Single cell/dataset computation: if `dataset_id` is provided AND
+    `pooled=False`. In that case, the computed histogram is saved in the database
+    2. Multiple cell/dataset computation: if `pooled=True`, `include` is a list
+    of datasets (represented by their id in the database) and `fname` is a 
+    string that will be used as a prefix for saving. Saving is performed as a 
+    pickle object.
 
-    print "DONE: Computed JLD for dataset {}".format(dataset_id)
+    Arguments:
+    ---------
+    - dataset_id (int): the id of the dataset in the Dataset database (single cell only)
+    - pooled (bool): whether we should compute a single (False) or a multi-dataset (True) jld
+    - include (list of int): if `pooled==True`, the list of dataset ids in the Dataset database.
+    - path (str): if `pooled==True`, the folder where to save the results
+    - hash_prefix (str): if `pooled==True`, the prefix to be used for saving
+    - url_basename (str): if `pooled==True`, the folder where to save the results
+    """
+    ## ==== Load datasets
+    if not pooled:
+        include = [dataset_id]
+    else: ## Return if it has already been computed
+        prog_p = os.path.join(path,url_basename, "{}_pooled.pkl".format(hash_prefix))
+        if os.path.exists(prog_p):
+            with open(prog_p, 'r') as f:
+                save_params = pickle.load(f)
+                if save_params['status'] == 'done':
+                    return ['jld']
+                else:
+                    save_params['status'] = 'computing'
+            with open(prog_p, 'w') as f:
+                pickle.dump(save_params, f)
+                        
+    cell_l = []
+    for da_id in include:
+        da = Dataset.objects.get(id=da_id)
+        with open(da.parsed.path, 'r') as f:  ## Open dataset
+            cell_l.append(parsers.to_fastSPT(f)) ##Format the dataset for analysis
+    cell = np.hstack(cell_l)
+            
+    ## ==== Compute the JLD
+    print "WARNING, using default parameters to compute jld"
+    an = fastSPT.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
+    print "DONE: Computed JLD for dataset(s) {}".format(include)
         
     ## ==== Save results
-    with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
-        fil = File(f)
-        pickle.dump(an, fil) #fil.write(json.dumps(fi))
-        da.jld = fil
-        da.jld.name = da.data.name + '.jld'
-        da.save()    
+    if not pooled:
+        with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
+            fil = File(f)
+            pickle.dump(an, fil)
+            da.jld = fil
+            da.jld.name = da.data.name + '.jld'
+            da.save()
+    else:
+        with fasteners.InterProcessLock(prog_p+'.lock'):
+            with open(prog_p, 'w') as f:
+                pickle.dump({'jld': an,
+                             'status': 'done',
+                             'fit': None,
+                             'fitparams': None,
+                             'params' : None}, f)
+    return (path, url_basename, hash_prefix, include)
 
 
 @shared_task
@@ -62,21 +110,41 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
     """
     prog_p = os.path.join(path,url_basename, "{}_progress.pkl".format(hash_prefix))
 
+    if type(dataset_id)==list:
+        pooled=True
+    elif type(dataset_id)==int:
+        pooled=False
+    else:
+        raise TypeError("dataset_id should be either an int or a list")
+
     
     ## ==== Load JLD
-    da =  Dataset.objects.get(id=dataset_id)
-    with open(da.jld.path, 'r') as f: ## Open the pickle file
-        jld = pickle.load(f)
-        HistVecJumps = jld[2] ## Extract from the pickled file
-        JumpProb = jld[3]
-        HistVecJumpsCDF = jld[0]
-        JumpProbCDF = jld[1]        
+    if not pooled:
+        da =  Dataset.objects.get(id=dataset_id)
+        with open(da.jld.path, 'r') as f: ## Open the pickle file
+            jld = pickle.load(f)
+        prog_da = os.path.join(path,url_basename, "{}_{}.pkl".format(hash_prefix,
+                                                                     dataset_id))
+        out_pars = {}
+    else:
+        prog_da = os.path.join(path,url_basename, "{}_pooled.pkl".format(hash_prefix))
+        with open(prog_da, 'r') as f:
+            out_pars = pickle.load(f)
+            jld = out_pars['jld']
+            
+    HistVecJumps = jld[2] ## Extract from the pickled file
+    JumpProb = jld[3]
+    HistVecJumpsCDF = jld[0]
+    JumpProbCDF = jld[1]
     
     ## ==== Initialize
     with fasteners.InterProcessLock(prog_p+'.lock'):
         with open(prog_p, 'r') as f:
             save_pars = pickle.load(f)
-            save_pars['queue'][dataset_id]['status'] = 'processing'
+            if not pooled:
+                save_pars['queue'][dataset_id]['status'] = 'processing'
+            else:
+                save_pars['queue']['pooled']['status'] = 'processing'
         with open(prog_p, 'w') as f:
             pickle.dump(save_pars, f)
 
@@ -87,7 +155,6 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
     params["D_Bound"] = params.pop("D_bound")
     params["D_Free"] = params.pop("D_free")
     params["Frac_Bound"] = params.pop("F_bound")
-    print params
     
     ## ==== Perform the fit and compute the distribution
     fit = fastSPT.fit_jump_length_distribution(JumpProb, JumpProbCDF,
@@ -110,13 +177,12 @@ def fit_jld(path, url_basename, hash_prefix, dataset_id):
     
     # ==== Save results
     ## Save the histogram (save params AND the hist)
-    prog_da = os.path.join(path,url_basename, "{}_{}.pkl".format(hash_prefix,
-                                                                     dataset_id))
     with fasteners.InterProcessLock(prog_da+'.lock'):
         with open(prog_da, 'w') as f:
-            pickle.dump({'fit': {'x': HistVecJumpsCDF, 'y':scaled_y},
-                         'fitparams': fit.params,
-                         'params' : save_pars['pars']}, f)
+            out_pars['fit'] = {'x': HistVecJumpsCDF, 'y':scaled_y}
+            put_pars['fitparams'] = fit.params
+            out_pars['params'] = save_pars['pars']
+            pickle.dump(out_pars, f)
     
     ## Open the pickle file and change the pickle file to 'done'
     with fasteners.InterProcessLock(prog_p+'.lock'):

@@ -70,6 +70,7 @@ angular.module('app')
 	$scope.dt = 1; // Display parameter
 	$scope.ce = 0;
 	$scope.fitAvailable = false;
+	$scope.gettingPooledJLD = false;
 
 	//
 	// ==== Analysis computation logic
@@ -81,6 +82,29 @@ angular.module('app')
 	    // $scope.$applyAsync();
 	    analysisService.runAnalysis(parameters)   
 	    $scope.analysisState='running'; // 'running' for progress bar
+	}
+
+	// Function that does everything to display a pooled jld
+	$scope.getPooledJLD = function() {
+	    if (!$scope.modelingParameters.include||$scope.modelingParameters.include.length==0)
+	    {
+		alert('no dataset selected');
+		return;
+	    }
+	    
+	    $scope.gettingPooledJLD = true;
+	    $interval(function() {
+		if ($scope.gettingPooledJLD) {
+		    analysisService.getPooledJLD($scope.modelingParameters).then(
+			function(l) {
+			    if (l.data != 'computing') {
+				$scope.jldp = l.data
+				$scope.gettingPooledJLD = false;
+				return false;
+			    }
+			});
+		}
+		return true;}, 500);
 	}
 
 	// A watcher that periodically checks the state of the computation
