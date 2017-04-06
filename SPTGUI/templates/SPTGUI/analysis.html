@@ -246,7 +246,6 @@
 		  </td>
 		</tr>
 	      </table>
-	      {{modelingParameters.include}}
 
 	      <h2> Modeling parameters </h2>
 	      <form ng-submit="runAnalysis(modelingParameters);">
@@ -302,8 +301,6 @@
 		</table>
 	      </form>
 
-<button class="btn btn-default" ng-click="getPooledJLD()" ng-if="!gettingPooledJLD">Get the pooled JLD </button><span ng-if="gettingPooledJLD">Please wait</span>
-
 	      <h2> Results of the simulation </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
 		No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
@@ -320,20 +317,25 @@
 		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound}}</li>
 		  </ul>
 		</div>
-		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt]" dt="dt"></jump-length-histogram>
+		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt, jlphist, showJLP, gettingPooledJLD]" dt="dt"></jump-length-histogram>
 		
 		<input ng-model="dt" type="number" min="1" max="{{jlhist[0][1].length-1}}">
 		Displaying {{dt}} Delta t.
 
-		<input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
-		Displaying cell {{ce}}.
+		<div ng-if="!showJLP">
+		  <input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
+		  Displaying cell {{ce}}.
+		</div>
+		<div ng-if="showJLP">
+		  Displaying group {{modelingParameters.include}}
+		</div>
 
 		Show pooled fit <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
 		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="EDITME"></toggle-switch>
 
 		Show pooled jump length distribution:
 		<span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
-		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="EDITME"></toggle-switch>
+		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLP"></toggle-switch> <span ng-if="gettingPooledJLD">Please wait</span>
 	      </div>
 	    </div>
 

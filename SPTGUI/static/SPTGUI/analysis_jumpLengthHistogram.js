@@ -71,12 +71,20 @@ angular.module('app')
 	    scope.$watch('data', function(dat){ // Angular connexion
 		if(!dat){ return; }
 		dt = dat[2];
+		if (dat[4]&!dat[5]) {
+		    pool = true;
+		    col = "orchid";
+		    data = dat[3]
+		} else {
+		    pool = false;
+		    col = "steelblue";
+		    data = dat[0]
+		}
 		if (!dt) {return;}
-		if (dt<dat[0][1].length && dt>0) {
-		    data = fmt_data([dat[0][0], dat[0][1][dt]]);
+		if (dt<data[1].length && dt>0) {
 		    bars.selectAll("path")
-			.datum(data)
-			.attr("fill", "steelblue")
+			.datum(fmt_data([data[0], data[1][dt]]))
+			.attr("fill", col)
 			.attr("d", area);
 		    
 		}

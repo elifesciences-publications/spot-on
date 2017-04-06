@@ -22,6 +22,8 @@ angular.module('app')
 		    }
 		    
 		    if (arguments.length) {
+			$scope.showJLP = false; // plot-related
+			$scope.jlphist = null; // reset the hist when include changes
 			if (newVal == true) {
 			    add($scope.modelingParameters.include, el.id)
 			} else {
@@ -71,6 +73,8 @@ angular.module('app')
 	$scope.ce = 0;
 	$scope.fitAvailable = false;
 	$scope.gettingPooledJLD = false;
+	$scope.jlphist = null; // Pooled JLD
+	$scope.showJLP = false;
 
 	//
 	// ==== Analysis computation logic
@@ -80,6 +84,10 @@ angular.module('app')
 	$scope.runAnalysis = function(parameters) {
 	    // Show a progress bar (synced from messages from the broker)
 	    // $scope.$applyAsync();
+	    if (parameters.include.length == 0){
+		alert('no dataset included! Make a selection');
+		return;
+	    }
 	    analysisService.runAnalysis(parameters)   
 	    $scope.analysisState='running'; // 'running' for progress bar
 	}
@@ -98,13 +106,36 @@ angular.module('app')
 		    analysisService.getPooledJLD($scope.modelingParameters).then(
 			function(l) {
 			    if (l.data != 'computing') {
-				$scope.jldp = l.data
-				$scope.gettingPooledJLD = false;
+				$scope.jlphist = l.data
+				$scope.gettingPooledJLD = false; // plot-related
+				$scope.showJLP = true; // plot-related
 				return false;
 			    }
 			});
 		}
 		return true;}, 500);
+	}
+
+	// The logic behind the toggle switch to show the JLP
+	$scope.displayJLP = function(newVal) {
+	    if (arguments.length) {
+		if (newVal == true) {
+		    if (!$scope.jlphist) {
+			$scope.getPooledJLD();
+		    }
+		    // Check that we have everything we need to display
+		    else if (!$scope.modelingParameters.include||$scope.modelingParameters.include.length==0)
+		    {
+			$scope.showJLP = false;
+		    }
+		    else {
+			$scope.showJLP = true;}
+		} else {
+		    $scope.showJLP = false;
+		}
+	    } else {
+		return $scope.showJLP;
+	    }
 	}
 
 	// A watcher that periodically checks the state of the computation
