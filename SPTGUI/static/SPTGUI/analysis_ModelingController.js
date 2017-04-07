@@ -5,9 +5,10 @@ angular.module('app')
 	// Scope variables
 	$scope.analysisState = 'notrun';
 
+	initView = function() {
 	// Initiate the window with what we have
-	getterService.getDatasets().then(function(dataResponse) {
-	    $scope.datasets = dataResponse['data'];
+	//getterService.getDatasets().then(function(dataResponse) {
+	    //$scope.datasets = dataResponse['data'];
 	    $scope.datasets = $scope.datasets.map(function(el) {
 		el.incl=false; return el})
 	    $scope.datasetsf = $scope.datasets.map(function(el) {
@@ -49,13 +50,21 @@ angular.module('app')
 		$scope.jlfit = l.map(function(ll) {return null;}); // init fit
 		$scope.analysisState = 'done'; // Hide progress bar
 	    });
-	}); // Populate the scope with the already uploaded datasets
+	}
+	//); // Populate the scope with the already uploaded datasets
+	
+	getterService.getDatasets().then(function(dataResponse) {
+	    // In an ideal world this function should only be called when the tab is displayed
+	    $scope.datasets = dataResponse['data'];
+	    initView(); // Initialize the view
+	});
 	getterService.getStatistics().then(function(dataResponse) {
 	    $scope.statistics = dataResponse['data'];
 	}); // Populate the scope with the already computed statistics
+	
 	$scope.$on('datasets:updated', function(event,data) {
 	    $scope.datasets = data
-
+	    
 	    // Now reset everything
 	    $scope.jlphist = null;
 	    $scope.jlpfit = null;
@@ -66,7 +75,10 @@ angular.module('app')
 	    $scope.modelingParameters.include = [];
 	    $scope.jlhist = null;
 	    $scope.jlfit = null;
-	    //$scope.analysisState = 'notrun';
+	    $scope.analysisState = 'notrun';
+
+	    // And initialize stuff again
+	    initView();
 	}); // Look for updated datasets
 	
 	//

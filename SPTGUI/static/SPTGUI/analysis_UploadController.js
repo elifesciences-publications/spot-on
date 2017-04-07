@@ -116,27 +116,21 @@ angular.module('app')
 	    // This loops forever, but might become inactive
 	    if ($scope.poolPreprocessing) {
 		getterService.getPreprocessing().then(function(dataResponse) {
-		    $scope.random = dataResponse['data'];
-		    // Deprecated code (that works)
-		    // $scope.datasets = _.map($scope.datasets, function(el) {
-		    //     // This is just to update the preprocessing status
-		    //     for (i in dataResponse['data']) {
-		    // 	da = dataResponse['data'][i]
-		    // 	if (el.id == da.id) {
-		    // 	    el.preanalysis_status = da.state;
-		    // 	}
-		    //     }
-		    //     return el;
-		    // });
-		    getterService.getDatasets().then(function(dataResponse) {
-			$scope.datasets = dataResponse['data'];
-			$scope.successfullyUploaded=dataResponse['data'].length;
+		    getterService.getDatasets().then(function(dataResp) {
+			$scope.datasets = dataResp['data'];
+			$scope.successfullyUploaded=dataResp['data'].length;
+			if (_.every(dataResponse['data'], function(el) {return el.state==='ok'})) {
+			    getterService.broadcastDataset($scope.datasets);
+			    $scope.poolPreprocessing = false;
+			}
+			
 		    }); // Populate the scope with the already uploaded datasets
 		    getterService.getStatistics().then(function(dataResponse) {
 			$scope.statistics = dataResponse['data'];
 		    }); // Populate the scope with the already computed statistics
 		    // Check if all the dataset is "ok", if yes, switch the flag
 		    if (_.every(dataResponse['data'], function(el) {return el.state==='ok'})) {
+			//getterService.broadcastDataset($scope.datasets);
 			$scope.poolPreprocessing = false;
 		    }
 		});
