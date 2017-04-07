@@ -101,7 +101,8 @@ def edit_api(request, url_basename):
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 def preprocessing_api(request, url_basename):
-    """Function to poll the state of the preprocessing for all the datasets"""
+    """Function to poll the state of the preprocessing for all the datasets.
+    Preprocessing mostly consists of the asynchronous task `check_input_file`."""
 
     ## Filter the request
     if not request.method == 'GET':
@@ -111,15 +112,16 @@ def preprocessing_api(request, url_basename):
     
     active = celery.app.control.inspect().active()['celery@alice']
     reserved = celery.app.control.inspect().reserved()['celery@alice']
+    active = [i for i in active if i['name'] == 'SPTGUI.tasks.check_input_file']
+    reserved = [i for i in reserved if i['name'] == 'SPTGUI.tasks.check_input_file']
 
     ## Make the junction by UUID
-    logging.warning("in `preprocessing_api`, the junction to get the list of running stuff is not filtered by task type. This is bad.")
     ret_active = [{'uuid': d['id'],
                    'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
-                   'state': 'inprogress'} for d in active] ## /!\ TODO MW to be Filtered by task type
+                   'state': 'inprogress'} for d in active]
     ret_scheduled = [{'uuid': d['id'],
                       'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
-                      'state': 'queued'} for d in reserved] ## /!\ TODO MW to be Filtered by task
+                      'state': 'queued'} for d in reserved]
     ret = ret_active+ret_scheduled
     return HttpResponse(json.dumps(ret), content_type='application/json')    
     
