@@ -23,8 +23,7 @@ from SPTGUI.models import Dataset
 import SPTGUI.parsers as parsers
 
 ## Import analysis backend
-sys.path.append('SPTGUI/fastSPT_analysis')
-import fastSPT_analysis as fastSPT
+import fastspt
 
 ##
 ## ==== Initialize stuff
