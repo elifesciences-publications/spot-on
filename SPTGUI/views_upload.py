@@ -12,6 +12,7 @@ from flask import Response
 from .models import Analysis, Dataset
 from django.core.files import File
 import celery, tasks
+from django.utils import timezone
 
 ## ==== Views
 def upload(request, url_basename):
