@@ -39,20 +39,26 @@ pip install fastspt-6.1.tar.gz
 
 ## Download and install the fastSPT repository
 
+So far, it has to be initialized manually (you have to create several repositories by hand).
+
 ```{shell}
 git clone https://padouppadoup@gitlab.com/padouppadoup/fastSPT.git
 cd fastSPT
+mkdir -p static/upload/
+mkdir    static/tmpdir/
+mkdir    static/analysis
+mkdir -p uploads/uploads/
 ```
 
 # Usage
 ## Start the service
 
 ```{bash}
+tmux
 export WORKON_HOME=~/.envs
 source /usr/local/bin/virtualenvwrapper.sh ## or: source ~/.local/bin/virtualenvwrapper.sh
 cd fastSPT/
-tmux
 workon fastSPT
 python manage.py runserver
-celery -A SPTGUI worker -l info # In a different terminal
+celery -A SPTGUI worker -l INFO # In a different terminal
 ```
