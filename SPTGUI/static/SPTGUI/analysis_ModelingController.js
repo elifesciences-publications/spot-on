@@ -55,6 +55,18 @@ angular.module('app')
 	}); // Populate the scope with the already computed statistics
 	$scope.$on('datasets:updated', function(event,data) {
 	    $scope.datasets = data
+
+	    // Now reset everything
+	    $scope.jlphist = null;
+	    $scope.jlpfit = null;
+	    $scope.ce = 0;
+	    $scope.dt = 1;
+	    $scope.showJLP = false;
+	    $scope.showJLPf = false;
+	    $scope.modelingParameters.include = [];
+	    $scope.jlhist = null;
+	    $scope.jlfit = null;
+	    //$scope.analysisState = 'notrun';
 	}); // Look for updated datasets
 	
 	//
