@@ -1,9 +1,19 @@
-# Create your tasks here
-from __future__ import absolute_import, unicode_literals
-from celery import shared_task
+# Index of the asynchronous tasks to be performed for the fastSPT-GUI
+# By MW, GPLv3+, Feb.-Apr. 2017
 
+##
+## ==== A bunch of imports
+##
+
+## General imports
+from __future__ import absolute_import, unicode_literals
 import os, sys, tempfile, json, pickle, fasteners
 import numpy as np
+
+## Celery imports
+from celery import shared_task
+from celery.utils.log import get_task_logger
+
 ## Initialize django stuff
 import django
 django.setup()
@@ -12,8 +22,14 @@ from django.core.files import File
 from SPTGUI.models import Dataset
 import SPTGUI.parsers as parsers
 
+## Import analysis backend
 sys.path.append('SPTGUI/fastSPT_analysis')
 import fastSPT_analysis as fastSPT
+
+##
+## ==== Initialize stuff
+##
+logger = get_task_logger(__name__)
 
 ##
 ## ==== Here go the tasks to be performed asynchronously
@@ -70,9 +86,9 @@ def compute_jld(dataset_id, pooled=False, include=None,
     cell = np.hstack(cell_l)
             
     ## ==== Compute the JLD
-    print "WARNING, using default parameters to compute jld"
+    logger.warning("WARNING, using default parameters to compute jld")
     an = fastSPT.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
-    print "DONE: Computed JLD for dataset(s) {}".format(include)
+    logger.info("DONE: Computed JLD for dataset(s) {}".format(include))
         
     ## ==== Save results
     if not pooled:

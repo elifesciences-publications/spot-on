@@ -1,260 +1,91 @@
-from django.shortcuts import render
+# Index of views for the fastSPT-GUI app
+# A graphical user interface to the fastSPT tool by Anders S. Hansen, 2016
+# By MW, GPLv3+, Feb.-Apr. 2017
+
+##
+## ==== Imports
+##
+import random, string, json, os, hashlib, pickle, urlparse, logging
+
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from .models import Analysis, Dataset
-#from fileuploadutils import chunkOperationUtil, checkValidityFile
-import fileuploadutils2 as fuu
-from django.core.files import File
-from flask import Response
-import celery, tasks
-from django.views.decorators.csrf import csrf_exempt
-from wsgiref.util import FileWrapper
-
-import random, string, json, os, hashlib, pickle, urlparse
-
 from django.http import HttpResponse
 from django.template import loader
 
+import celery, tasks, config
+
+##
+## ==== Global variables
+##
+hash_size = 16 ## Size of the prefix to save the fitted datasets
+bf = "./static/analysis/" ## Location to save the fitted datasets
+
+
+##
+## === DBG VIEWS
+##
+if config.debug_views:
+    logging.warning("'debug' is enabled")
+    logging.warning("additional debug views have been loaded. Avoid that in production.")
+    
+    def barchart(request):
+        """Returns a barchart template"""
+        logging.warning("you called the `barchart` function, which is a 'debug' function, avoid that in production")
+        template = loader.get_template('SPTGUI/barchart.html')
+        context = {}
+        return HttpResponse(template.render(context, request))
+
+    def queue_status(request):
+        """Returns the status of the queue"""
+        logging.warning("you called the `queue_status` function, which is a 'debug' function, avoid that in production")        
+        a = celery.app.control.inspect().reserved()['celery@alice']
+        b = celery.app.control.inspect().active()['celery@alice']
+        return HttpResponse(str(a)+str(b)+str(len(a))+" "+str(len(b)) )
+    
+    
+##
+## ==== Main views
+##
 def index(request):
-    """Main view"""
+    """Main view, returns the homepage template"""
     template = loader.get_template('SPTGUI/homepage.html')
     context = {'url_basename': get_unused_namepage()}
     return HttpResponse(template.render(context, request))
-    
-def queue_status(request):
-    """Returns the status of the queue"""
-    a = celery.app.control.inspect().reserved()['celery@alice']
-    b = celery.app.control.inspect().active()['celery@alice']
-    return HttpResponse(str(a)+str(b)+str(len(a))+" "+str(len(b)) )
-def queue_new(request):
-    """add stuff to the queue"""
-    for i in range(20):
-        celery.loong.delay()
-    return HttpResponse("ok")
 
-def barchart(request):
-    """Returns a barchart template"""
-    template = loader.get_template('SPTGUI/barchart.html')
-    context = {}
+def analysis_root(request):
+    """A simple placeholder text for the root of the analysis/ route"""
+    return HttpResponse("There's nothing here...")
+
+def analysis(request, url_basename):
+    """Returns the analysis view. This is the main view of the system"""
+    template = loader.get_template('SPTGUI/analysis.html')
+    context = {'url_basename': url_basename}
     return HttpResponse(template.render(context, request))
-    
 
 
-## ==== Views
-def statistics(request, url_basename):
-    """Function returns some global statistics about all the datasets"""
-    ## Sanity checks
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps({'status': 'error',
-                                        'message': 'analysis not found'}),
-                            content_type='application/json')
-    try:
-        da = Dataset.objects.filter(analysis=ana, preanalysis_status='ok')
-    except:
-        return HttpResponse(json.dumps({'status': 'error',
-                                        'message': 'dataset not found'}),
-                            content_type='application/json')
-    if len(da)==0:
-        return HttpResponse(json.dumps({'status': 'error',
-                                        'message': 'no properly uploaded dataset'}),
-                            content_type='application/json')
-    res = {'status' : 'ok',
-           'ok_traces' : len(da),
-           'ntraces' : sum([i.pre_ntraces for i in da]),
-           'npoints' : sum([i.pre_npoints for i in da]),
-       }
-                            
-    return HttpResponse(json.dumps(res), content_type='application/json')
+## ==== Where are the views gone?
+## view_import.py -> views providing statistics on the imported datasets
+## views_tab_data.py -> Views involved in the display of the first tab (UploadController)
 
-def dataset_original(request, url_basename, dataset_id):
-    """Function that return a pointer to the original file"""
+##
+## ==== Other views
+##
 
-    ## Sanity checks
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps(['analysis not found']),
-                            content_type='application/json')
-    try:
-        da = Dataset.objects.get(analysis=ana, id=dataset_id)
-    except:
-        return HttpResponse(json.dumps(['dataset not found']),
-                            content_type='application/json')
 
-    ## Return data
-    response = HttpResponse(FileWrapper(da.data.file), content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(da.data.path))
-    return response
-        
-
-def dataset_parsed(request, url_basename, dataset_id):
-    """Function that return a pointer to the parsed file"""
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps(['analysis not found']),
-                            content_type='application/json')
-    try:
-        da = Dataset.objects.get(analysis=ana, id=dataset_id)
-    except:
-        return HttpResponse(json.dumps(['dataset not found']),
-                            content_type='application/json')
-
-    ## Return data
-    response = HttpResponse(FileWrapper(da.parsed.file), content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(da.parsed.path))
-    return response
-
-def dataset_report(request, url_basename, dataset_id):
-    """Function that return a pointer to the importation report"""
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps(['analysis not found']),
-                            content_type='application/json')
-    try:
-        da = Dataset.objects.get(analysis=ana, id=dataset_id)
-    except:
-        return HttpResponse(json.dumps(['dataset not found']),
-                            content_type='application/json')
-
-    ## Return data
-    response = HttpResponse(json.dumps(['this is a useless report']),
-                            content_type='application/json')
-    return response
-    
-
-def datasets_api(request, url_basename):
-    """Function that exposes the list of available datasets, it is a view on the 
-    Datasets library"""
-    def check_jld(d):
-        try:
-            return os.path.exists(d.jld.path)
-        except:
-            return False
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps([]), content_type='application/json')
-    ret = [{'id': d.id, ## the id of the Dataset in the database
-            'unique_id': d.unique_id,
-            'filename' : d.data.name,
-            'name' :    d.name,
-            'description' : d.description,
-            'upload_status' : d.upload_status,
-            'preanalysis_status' : d.preanalysis_status,
-            'pre_ntraces' : d.pre_ntraces,
-            'pre_npoints' : d.pre_npoints,
-            'jld_available': check_jld(d),
-        } for d in Dataset.objects.filter(analysis=ana)]
-    return HttpResponse(json.dumps(ret), content_type='application/json')
-
-def edit_api(request, url_basename):
-    """Function to edit a dataset"""
-
-    ## Filter the request
-    if not request.method == 'POST':
-        return HttpResponse(json.dumps(['error']), content_type='application/json')
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps([]), content_type='application/json')
-    try:
-        body = json.loads(request.body)
-        d = Dataset.objects.get(id=int(body['id']))
-    except:
-        return HttpResponse(json.dumps([]), content_type='application/json')
-
-    ## Make the update
-    d.name = body['dataset']['name']
-    d.description = body['dataset']['description']
-    d.save()
-
-    ## Return something
-    ret = {'id': d.id, ## the id of the Dataset in the database
-            'unique_id': d.unique_id,
-            'filename' : d.data.name,
-            'name' :    d.name,
-            'description' : d.description,
-            'upload_status' : d.upload_status,
-            'preanalysis_status' : d.preanalysis_status}
-    return HttpResponse(json.dumps(ret), content_type='application/json')
-
-def preprocessing_api(request, url_basename):
-    """Function to poll the state of the preprocessing for all the datasets"""
-
-    ## Filter the request
-    if not request.method == 'GET':
-        return HttpResponse(json.dumps(['error']), content_type='application/json')
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps([]), content_type='application/json')
-
-    active = celery.app.control.inspect().active()['celery@alice']
-    reserved = celery.app.control.inspect().reserved()['celery@alice']
-
-    ## Make the junction by UUID
-    ret_active = [{'uuid': d['id'],
-                   'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
-                   'state': 'inprogress'} for d in active] ## /!\ to be Filtered by task type
-    ret_scheduled = [{'uuid': d['id'],
-                      'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
-                      'state': 'queued'} for d in reserved] ## /!\ to be Filtered by task
-    ret = ret_active+ret_scheduled
-    return HttpResponse(json.dumps(ret), content_type='application/json')    
-    
-def delete_api(request, url_basename):
-    """Function to delete a dataset"""
-    response = HttpResponse(json.dumps([]), content_type='application/json')
-    response.status_code = 400
-    if request.method == 'POST':
-        ## Make all the checks that we need
-        try: # Get the parameters
-            body = json.loads(request.body)
-        except:
-            response.content = 'Cannot parse request'
-            return response
-        try: # Get the analysis
-            ana = Analysis.objects.get(url_basename=url_basename)
-        except:
-            response.content = 'Analysis not found'
-            return response
-        try: # Get the dataset
-            da = Dataset.objects.get(id=body['id'])
-        except:
-            response.content = 'Dataset not found'
-            return response
-        if body['filename'] != da.data.name:
-            response.content = 'Dataset name not matching database'
-            return response
-
-        da.delete()         ## delete
-        response.status_code = 200
-        return response
-    
-    return response
-
-## ==== Analysis
+## ==== Analysis views
 def analyze_api(request, url_basename):
     """This view, when called with a POST, starts the analysis (fitting of
     kinetic model) on a selection of datasets. When called with a GET, it 
     returns the progress of the analysis."""
-    hash_size = 16
-    bf = "./static/analysis/"
 
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps(['analysis not found or no data uploaded']), content_type='application/json')
+    ana = get_object_or_404(Analysis, url_basename=url_basename)
 
     if request.method == 'GET': # return the '*_progress' object, if it exists
-        cha = dict(urlparse.parse_qsl(
-            urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
-        cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+        cha = compute_hash(request.GET['hashvalue'])
         pa = bf+"{}/{}_progress.pkl".format(url_basename, cha)
         po = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
+        
         if os.path.exists(pa) :
             with open(pa, 'r') as f:
                 save_pars = pickle.load(f)
@@ -264,16 +95,13 @@ def analyze_api(request, url_basename):
                                             'allgood': allgood}),
                                 content_type='application/json')
         else:
-            # TODO MW: say that we are sad (say it with an error code)
-            return HttpResponse(json.dumps([pa+' not found']), content_type='application/json')
+            return HttpResponse(json.dumps([pa+' not found']), content_type='application/json', status=400)
 
     elif request.method == 'POST': # Queue an analysis (but should be valid)
         fitparams = json.loads(request.body)
-        cha = dict(urlparse.parse_qsl(
-            urlparse.urlsplit("http://ex.org/?"+fitparams['hashvalue']).query))
-        cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
-
+        cha = compute_hash(fitparams['hashvalue'])
         prog_p = bf+"{}/{}_progress.pkl".format(url_basename, cha)
+        
         to_process = []
         if not os.path.exists(prog_p): ## Create the pickle file
             save_pars = {'pars': fitparams,
@@ -291,7 +119,7 @@ def analyze_api(request, url_basename):
                 to_process.append(data_id)
                 
         else: ## Determine the new stuff to be run
-            with open(prog_p, 'r') as f: ## Load the pickle file
+            with open(prog_p, 'r') as f:
                 save_pars = pickle.load(f)
             
             for data_id in fitparams['include'] : ## Difference in the queue dict
@@ -306,7 +134,7 @@ def analyze_api(request, url_basename):
                 pickle.dump(save_pars, f)
         for data_id in to_process:
             tasks.fit_jld.delay((bf, url_basename, cha, data_id))
-        if len(fitparams['include'])>1 and save_pars['queue']['pooled']['status']=='queued': ## Compute the pooled stuff
+        if len(fitparams['include'])>1 and save_pars['queue']['pooled']['status']=='queued':
             tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
                                                   'pooled' : True,
                                                   'include':fitparams['include'],
@@ -314,27 +142,16 @@ def analyze_api(request, url_basename):
                                                   'hash_prefix': cha,
                                                   'url_basename': url_basename},
                                           link=tasks.fit_jld.s())
-        return HttpResponse(json.dumps(cha), content_type='application/json') # DBG
-
-def get_analysisp(request, url_basename):
-    """Returns the fitted model for the currently selected datasets
-    Note that it does not trigger the computation if no dataset has been 
-    found."""
-    return get_analysis(request, url_basename, None, pooled=True)
+        return HttpResponse(json.dumps(''), content_type='application/json')
     
 def get_analysis(request, url_basename, dataset_id, pooled=False):
     """Returns the fitted model of a given dataset, or a wait/error message.
     If `pooled==True`, the fitted pool is returned and the `dataset_id` argument
     is then ignored."""
     
-    hash_size=16
-    bf = "./static/analysis/"
-    
-    cha = dict(urlparse.parse_qsl(
-        urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
-    cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+    cha = compute_hash(request.GET['hashvalue'])    
 
-    
+    ## ==== Handle pooling
     if pooled:
         include = [int(i) for i in request.GET['include'].split(",")]
         if len(include)>1:
@@ -345,6 +162,8 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
             pooled = False
     else:
         pa = bf+"{}/{}_{}.pkl".format(url_basename, cha, dataset_id)
+
+    ## ==== Actually generate the response
     if os.path.exists(pa):
         with open(pa, 'r') as f:
             save_pars = pickle.load(f)
@@ -358,9 +177,15 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
                          'y': save_pars['fit']['y'].tolist()}
              }), content_type='application/json')
     else:
-        return HttpResponse(json.dumps('nothing ready here'), content_type='application/json')
+        return HttpResponse(json.dumps('nothing ready here'), content_type='application/json', status=400) ## TODO MW /!\ not sure we should return 400...
 
+def get_analysisp(request, url_basename):
+    """Returns the fitted model for the currently selected datasets
+    Note that it does not trigger the computation if no dataset has been 
+    found."""
+    return get_analysis(request, url_basename, None, pooled=True)
 
+    
 def get_jldp(request, url_basename):
     """Same as `get_jld` but returns the jld for the pooled values. In practice,
     the code is significantly different from the `get_jld` function since the 
@@ -368,14 +193,10 @@ def get_jldp(request, url_basename):
     name of this pickled file is generated based on the `include` parameters
     selected by the user. 
     Also, the jld is computed if it is not available."""
-    hash_size = 16
-    bf = "./static/analysis/"
     
     if request.method == "GET":
         ## ==== Generate the path
-        cha = dict(urlparse.parse_qsl(
-            urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
-        cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+        cha = compute_hash(request.GET['hashvalue'])    
         pa = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
 
         save_params = {"status" : "notrun"}
@@ -393,7 +214,7 @@ def get_jldp(request, url_basename):
             with open(pa, 'w') as f:
                 pickle.dump(save_params, f)
             include = [int(i) for i in request.GET['include'].split(',')]
-            print "computing for values: {}".format(include)
+            logging.info("computing for values: {}".format(include))
             ## /!\ TODO MW Should check that the datasets belong to the
             ## right owner. Else one can download everybody's dataset...
             tasks.compute_jld.apply_async(
@@ -403,115 +224,42 @@ def get_jldp(request, url_basename):
                         'url_basename': url_basename,
                         'path' : bf,
                         'hash_prefix' : cha})
+            
         return HttpResponse(json.dumps('computing'), content_type='application/json')
     
 def get_jld(request, url_basename, dataset_id):
     """Returns the empirical jump length distribution (precomputed at the
     upload stage."""
-    def check_jld(d):
-        try:
-            return os.path.exists(d.jld.path)
-        except:
-            return False
 
-
-    try: ## Package this in a function /!\ TODO MW get_dataset
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps(['analysis not found']),
-                            content_type='application/json')
-    try:
-        da = Dataset.objects.get(analysis=ana, id=dataset_id)
-    except:
-        return HttpResponse(json.dumps(['dataset not found']),
-                            content_type='application/json')
-    
-    if check_jld(da): ## If the jld is available
+    ## Sanity checks
+    ana = get_object_or_404(Analysis, url_basename=url_basename)
+    da = get_object_or_404(Dataset, analysis=ana, id=dataset_id)
+     
+    if check_jld(da): ## If the jld field is available in the database
         with open(da.jld.path, 'r') as f:
             jld = pickle.load(f)
         return HttpResponse(json.dumps([jld[2].tolist(), jld[3].tolist()]), content_type='application/json')
     else:
         return HttpResponse(json.dumps("JLD not ready"), content_type='application/json')
-
-
                  
-#### ==== UPLOAD STUFF    
-def upload(request, url_basename):
-    """A backend for the upload debugging stuff"""
-    ## Call the original stuff
-    ## Make sure we send the right stuff back.
-    resp=Response()
-    resp.ok = False
-	
-    filename=None
-    responseTotalChunks=None
-    """
-    flow js always send a get befora a post, the first
-    one give some information for the program to use to
-    build the file when the upload is finished
-    """
-    # Format the request object
-
-    request.args = request.GET
-    try:
-        request.form = request.POST
-    except:
-        request.form = []
-
-    fuu.chunkOperationUtil(request,resp);
-
-    # Transfer to a real object
-    re = HttpResponse()
-    re.content = resp.data
-    re.status_code = int(resp.status)
-
-    if re.status_code == 200 and resp.ok:
-        ## 1. Get the analysis object, or create it if it doesn't exist
-        try:
-            ana = Analysis.objects.get(url_basename=url_basename)
-        except:
-            ana = Analysis(url_basename=url_basename,
-                           pub_date=timezone.now(),
-                           name='',
-                           description='')
-            ana.save()
-            os.makedirs("./static/analysis/"+url_basename) # Create folder for analyses
-
-
-        ## 2. Create a database entry
-        fi = File(open(json.loads(re.content)['address'], 'r')) ## This could be handled differently
-        fi.name = json.loads(re.content)['filename']
-        da = Dataset(analysis=ana,
-                     name=request.POST['flowFilename'],
-                     description='',
-                     unique_id = json.loads(re.content)['unique_id'],
-                     upload_status=True, # Upload is complete
-                     preanalysis_status='uploaded', # Preanalysis has not been launched
-                     data=fi)
-        da.save()
-
-        ## 3. Defer to the celery analysis
-        ## Here we first perform the "check_input_file" task. If this one returns
-        ## properly, the histogram of jump lengths distribution is computed
-        ## (compute_jld).
-        da.preanalysis_status='queued'
-        ta = tasks.check_input_file.apply_async((da.data.path, da.id),
-                                                link=tasks.compute_jld.s())
-        da.preanalysis_token = ta.id
-        da.save()
-
-    return re
     
-def analysis_root(request):
-    return HttpResponse("There's nothing here...")
-
-def analysis(request, url_basename):
-    """Returns the analysis view"""
-    template = loader.get_template('SPTGUI/analysis.html')
-    context = {'url_basename': url_basename}
-    return HttpResponse(template.render(context, request))
-
 ## ==== Auxiliary functions
+def check_jld(d):
+    """Function to avoid an exception when checking whether a file exists 
+    in the database"""
+    try:
+        return os.path.exists(d.jld.path)
+    except:
+        return False
+
+def compute_hash(hashvalue):
+    """Function that takes the 'hashvalue' of the GET request and compute a 
+    reproducible hash from that"""
+    cha = dict(urlparse.parse_qsl(
+        urlparse.urlsplit("http://ex.org/?"+hashvalue).query))
+    cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
+    return cha
+
 def get_unused_namepage():
     """Function returns an unused, 10 chars identifier for an analysis"""
     N=10
