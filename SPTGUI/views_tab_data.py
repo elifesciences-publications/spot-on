@@ -109,9 +109,13 @@ def preprocessing_api(request, url_basename):
         return HttpResponse(json.dumps(['error']), content_type='application/json')
 
     ana = get_object_or_404(Analysis, url_basename=url_basename)
-    
-    active = celery.app.control.inspect().active()['celery@alice']
-    reserved = celery.app.control.inspect().reserved()['celery@alice']
+
+    active = []
+    reserved = []
+    for i in celery.app.control.inspect().active().values():
+        active += i#celery.app.control.inspect().active()['celery@alice']
+    for i in celery.app.control.inspect().reserved().values():
+        reserved += i#celery.app.control.inspect().reserved()#['celery@alice']
     active = [i for i in active if i['name'] == 'SPTGUI.tasks.check_input_file']
     reserved = [i for i in reserved if i['name'] == 'SPTGUI.tasks.check_input_file']
 
