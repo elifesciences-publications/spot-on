@@ -72,6 +72,7 @@ angular.module('app')
 
 	    scope.$watch('data', function(dat){ // Angular connexion
 		if(!dat){ return; }
+		if(!dat[0]){ return; }
 		dt = dat[2];
 		if (dat[4]&!dat[5]) {
 		    pool = true;
