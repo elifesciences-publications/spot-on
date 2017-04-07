@@ -86,7 +86,7 @@ def compute_jld(dataset_id, pooled=False, include=None,
             
     ## ==== Compute the JLD
     logger.warning("WARNING, using default parameters to compute jld")
-    an = fastSPT.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
+    an = fastspt.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
     logger.info("DONE: Computed JLD for dataset(s) {}".format(include))
         
     ## ==== Save results
@@ -173,11 +173,11 @@ def fit_jld(arg):
     params["Frac_Bound"] = params.pop("F_bound")
     
     ## ==== Perform the fit and compute the distribution
-    fit = fastSPT.fit_jump_length_distribution(JumpProb, JumpProbCDF,
+    fit = fastspt.fit_jump_length_distribution(JumpProb, JumpProbCDF,
                                                HistVecJumps, HistVecJumpsCDF,
                                                **params)
     ## Generate the PDF corresponding to the fitted parameters
-    y = fastSPT.generate_jump_length_distribution(fit.params['D_free'],
+    y = fastspt.generate_jump_length_distribution(fit.params['D_free'],
                                                   fit.params['D_bound'],
                                                   fit.params['F_bound'],  
                                                   JumpProb,
