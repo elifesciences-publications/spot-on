@@ -41,13 +41,6 @@ def datasets_api(request, url_basename):
     a view on the Datasets library
     """
     
-    def check_jld(d):
-        """Small helper function to check if we have a JLD stored"""
-        try:
-            return os.path.exists(d.jld.path)
-        except:
-            return False
-        
     ana = get_object_or_404(Analysis, url_basename=url_basename)
     ret = [{'id': d.id, ## the id of the Dataset in the database
             'unique_id': d.unique_id,
@@ -110,23 +103,44 @@ def preprocessing_api(request, url_basename):
 
     ana = get_object_or_404(Analysis, url_basename=url_basename)
 
+    ltasks  = ['SPTGUI.tasks.check_input_file']#, 'SPTGUI.tasks.compute_jld']
     active = []
     reserved = []
-    for i in celery.app.control.inspect().active().values():
-        active += i#celery.app.control.inspect().active()['celery@alice']
-    for i in celery.app.control.inspect().reserved().values():
-        reserved += i#celery.app.control.inspect().reserved()#['celery@alice']
-    active = [i for i in active if i['name'] == 'SPTGUI.tasks.check_input_file']
-    reserved = [i for i in reserved if i['name'] == 'SPTGUI.tasks.check_input_file']
+    act_obj = celery.app.control.inspect().active()
+    if act_obj != None:
+        for i in act_obj.values():
+            active += i
+            
+    res_obj = celery.app.control.inspect().reserved()
+    if res_obj != None:
+        for i in res_obj.values():
+            reserved += i
+    active = [i for i in active if i['name'] in ltasks]
+    reserved = [i for i in reserved if i['name'] in ltasks]
 
     ## Make the junction by UUID
-    ret_active = [{'uuid': d['id'],
-                   'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
-                   'state': 'inprogress'} for d in active]
-    ret_scheduled = [{'uuid': d['id'],
-                      'id' : Dataset.objects.get(preanalysis_token=d['id']).id,
-                      'state': 'queued'} for d in reserved]
-    ret = ret_active+ret_scheduled
+    ana = Analysis.objects.get(url_basename=url_basename)
+    run = Dataset.objects.filter(analysis=ana)
+    ret = []
+    
+    for d in run:
+        if d.preanalysis_token == '': ## Check if the jld has been computed
+            if not check_jld(d): 
+                ret.append({'uuid': d.preanalysis_token,
+                            'id' : d.id,
+                            'state': 'computing jld'})
+            else:
+                ret.append({'uuid': d.preanalysis_token,
+                            'id' : d.id,
+                            'state': 'ok'})
+        elif d.preanalysis_token in [i['id'] for i in active]:
+            ret.append({'uuid': d.preanalysis_token,
+                   'id' : d.id,
+                   'state': 'inprogress'})
+        elif d.preanalysis_token in [i['id'] for i in reserved]:
+            ret.append({'uuid': d.preanalysis_token,
+                   'id' : d.id,
+                   'state': 'queued'})
     return HttpResponse(json.dumps(ret), content_type='application/json')    
     
 def delete_api(request, url_basename):
@@ -154,3 +168,11 @@ def delete_api(request, url_basename):
         return response
     
     return response
+
+## ==== Helper functions
+def check_jld(d):
+    """Small helper function to check if we have a JLD stored"""
+    try:
+        return os.path.exists(d.jld.path)
+    except:
+        return False
