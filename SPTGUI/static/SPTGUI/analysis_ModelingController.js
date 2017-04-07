@@ -23,7 +23,9 @@ angular.module('app')
 		    
 		    if (arguments.length) {
 			$scope.showJLP = false; // plot-related
+			$scope.showJLPf
 			$scope.jlphist = null; // reset the hist when include changes
+			$scope.jlpfit = null; // and the fit
 			if (newVal == true) {
 			    add($scope.modelingParameters.include, el.id)
 			} else {
@@ -46,7 +48,7 @@ angular.module('app')
 		});
 		$scope.jlfit = l.map(function(ll) {return null;}); // init fit
 		$scope.analysisState = 'done'; // Hide progress bar
-	    });		    
+	    });
 	}); // Populate the scope with the already uploaded datasets
 	getterService.getStatistics().then(function(dataResponse) {
 	    $scope.statistics = dataResponse['data'];
@@ -74,8 +76,10 @@ angular.module('app')
 	$scope.fitAvailable = false;
 	$scope.gettingPooledJLD = false;
 	$scope.jlphist = null; // Pooled JLD
+	$scope.jlpfit = null; // Pooled fit
 	$scope.showJLP = false;
-
+	$scope.showJLPf = false;
+	
 	//
 	// ==== Analysis computation logic
 	//
@@ -138,6 +142,20 @@ angular.module('app')
 	    }
 	}
 
+	// The logic behind the toggle switch to show the JLPf
+	// The logic behind the toggle switch to show the JLP
+	$scope.displayJLPf = function(newVal) {
+	    if (arguments.length) {
+		if (newVal == true) {
+		    if (!$scope.jlpfit) {return;}
+		    // Check that we have everything we need to display
+		    else {$scope.showJLPf = true;}
+		}
+		else {$scope.showJLPf = false;}
+	    }
+	    else {return $scope.showJLPf;}
+	}	
+
 	// A watcher that periodically checks the state of the computation
 	processingWaiter = $interval(function() {
 	    // This loops forever, but might become inactive
@@ -147,6 +165,11 @@ angular.module('app')
 		analysisService.checkAnalysis(pars)
 		    .then(function(dataResponse) {
 			if (dataResponse['data'].allgood) {
+			    analysisService.getPooledFitted(pars).then(
+				function(l) {
+				    $scope.jlpfit = l.data;
+				}
+			    );
 			    $q.all(pars.include.map(function(data_id) {
 				return analysisService.getFitted(data_id, pars);
 			    })).then(function(l) {
@@ -159,4 +182,12 @@ angular.module('app')
 	    }
 	    return(true)
 	}, 2000);
+
+	// A small debug function to get the pooled fit (if available)
+	$scope.gimmeTheFitP = function(params) {
+	    analysisService.getPooledFitted(params).then(function(l) {
+		console.log(l.data);
+		alert("Not yet man!");
+	    });
+	};
     }]);

@@ -174,7 +174,7 @@
 		</table>
 	      </form>
 	    </div>
-
+	    
 	    <div>
 	      <div class="col-md-6">
 		<h2> Information about a dataset </h2>
@@ -300,6 +300,8 @@
 		  </tr>
 		</table>
 	      </form>
+	      <button ng-click="gimmeTheFitP(modelingParameters)" class="btn btn-default">Gimme the pooled fit (plz)</button> !! Make sure that you selected files to include.
+
 
 	      <h2> Results of the simulation </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
@@ -317,12 +319,12 @@
 		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound}}</li>
 		  </ul>
 		</div>
-		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt, jlphist, showJLP, gettingPooledJLD]" dt="dt"></jump-length-histogram>
+		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
 		
 		<input ng-model="dt" type="number" min="1" max="{{jlhist[0][1].length-1}}">
 		Displaying {{dt}} Delta t.
 
-		<div ng-if="!showJLP">
+		<div ng-hide="showJLP">
 		  <input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
 		  Displaying cell {{ce}}.
 		</div>
@@ -330,9 +332,11 @@
 		  Displaying group {{modelingParameters.include}}
 		</div>
 
-		Show pooled fit <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
-		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="EDITME"></toggle-switch>
-
+		<div ng-if="jlpfit!=null">
+		  Show pooled fit <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
+		  <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLPf"></toggle-switch> {{showJLPf}}
+		</div>
+		
 		Show pooled jump length distribution:
 		<span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
 		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLP"></toggle-switch> <span ng-if="gettingPooledJLD">Please wait</span>

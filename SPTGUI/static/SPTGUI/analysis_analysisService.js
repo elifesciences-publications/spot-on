@@ -29,11 +29,20 @@ angular.module('app')
 	    return $http.get('./api/analyze/'+data_id+'?'+encodeQueryData(params));
 	}
 
+	this.getPooledFitted = function(params) {
+	    //This either contains the progress report or the result
+	    params.hashvalue='null'
+	    params.hashvalue = encodeQueryData(params)
+	    return $http.get('./api/analyze/pooled?'+encodeQueryData(params));
+	}
+	
+
 	// Function to query the pooled histogram
 	this.getPooledJLD = function(params) {
 	    //This either contains the progress report or the result
 	    params.hashvalue='null'
 	    params.hashvalue = encodeQueryData(params)
 	    return $http.get('./api/jld/pooled?'+encodeQueryData(params));
-	}	
+	}
+
     }]);

@@ -46,9 +46,11 @@ angular.module('app')
 	    x.domain([0, d3.max(data, function(d) { return d.date; })]);
 	    y.domain([0, 1.1*d3.max(data, function(d) { return d.close; })]);
 
-	    bars = g.append("g");
-	    fitline = g.append("g");
+	    var bars = g.append("g");
+	    var fitline = g.append("g");
+	    var fitlinepooled = g.append("g");
 	    fitline.append("path");
+	    fitlinepooled.append("path");
 	    bars.append("path")
 		.datum(data)
 		.attr("fill", "steelblue")
@@ -91,7 +93,8 @@ angular.module('app')
 		else {
 		    bars.selectAll("path").attr("fill", "transparent");
 		}
-		if (dat[1]) { // Add the line graph of the fit
+		// Handle fit plotting
+		if (dat[1] && !pool) { // Add the line graph of the fit
 		    fit = dat[1].fit;
 		    fitline.selectAll("path")
 		    	.datum(fmt_fit(fit.x, fit.y[dt]))
@@ -102,6 +105,20 @@ angular.module('app')
 		} else { // Erase the line
 		    fitline.selectAll("path")
 		    .attr("stroke", "transparent")
+		}
+		// Handle pooled fit plotting
+		if (dat[7]) { // Show the pooled fit
+		    fit = dat[6].fit;
+		    fitlinepooled.selectAll("path")
+		    	.datum(fmt_fit(fit.x, fit.y[dt]))
+			.attr("fill", "none")
+			.attr("stroke", "orange")
+			.attr("stroke-width", 3)
+			.style("stroke-dasharray", ("6, 6"))
+			.attr("d", line);		    
+		} else {
+		    fitlinepooled.selectAll("path")
+		    .attr("stroke", "transparent")		    
 		}
 	    }); 
 	}

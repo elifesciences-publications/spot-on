@@ -192,7 +192,6 @@ def preprocessing_api(request, url_basename):
     except:
         return HttpResponse(json.dumps([]), content_type='application/json')
 
-    print celery.app.control.inspect().active()
     active = celery.app.control.inspect().active()['celery@alice']
     reserved = celery.app.control.inspect().reserved()['celery@alice']
 
@@ -255,6 +254,7 @@ def analyze_api(request, url_basename):
             urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
         cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
         pa = bf+"{}/{}_progress.pkl".format(url_basename, cha)
+        po = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
         if os.path.exists(pa) :
             with open(pa, 'r') as f:
                 save_pars = pickle.load(f)
@@ -298,20 +298,15 @@ def analyze_api(request, url_basename):
                 if data_id not in save_pars['queue'] or save_pars['queue'][data_id]['status'] == 'error':
                     save_pars['queue'][data_id] = {'status': 'queued'}
                     to_process.append(data_id)
-            print fitparams['include']
-        if len(fitparams['include'])>1: ## Also compute the pooled stuff if needed
-            print "computing a pooled queue"
-            save_pars['queue']['pooled'] = {'status': 'queued'}
+        if len(fitparams['include'])>1 and not 'pooled' in save_pars['queue']: ## To avoid recomputing
+            save_pars['queue']['pooled'] = {'status': 'queued'} 
             
         ## Queue to celery
         with open(prog_p, 'w') as f: ## Write the fitting parameters to file
                 pickle.dump(save_pars, f)
         for data_id in to_process:
             tasks.fit_jld.delay((bf, url_basename, cha, data_id))
-            #print "DBG: NOT FITTING JLD THIS TIME. DEBUG ONLY"
-        if len(fitparams['include'])>1: ## Compute the pooled stuff
-            ## We need to compute the jld of the pooled stuff
-            print "including"
+        if len(fitparams['include'])>1 and save_pars['queue']['pooled']['status']=='queued': ## Compute the pooled stuff
             tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
                                                   'pooled' : True,
                                                   'include':fitparams['include'],
@@ -319,26 +314,44 @@ def analyze_api(request, url_basename):
                                                   'hash_prefix': cha,
                                                   'url_basename': url_basename},
                                           link=tasks.fit_jld.s())
-        print save_pars
         return HttpResponse(json.dumps(cha), content_type='application/json') # DBG
 
-def get_analysis(request, url_basename, dataset_id):
-    """Returns the fitted model of a given dataset, or a wait/error message."""
+def get_analysisp(request, url_basename):
+    """Returns the fitted model for the currently selected datasets
+    Note that it does not trigger the computation if no dataset has been 
+    found."""
+    return get_analysis(request, url_basename, None, pooled=True)
+    
+def get_analysis(request, url_basename, dataset_id, pooled=False):
+    """Returns the fitted model of a given dataset, or a wait/error message.
+    If `pooled==True`, the fitted pool is returned and the `dataset_id` argument
+    is then ignored."""
+    
     hash_size=16
     bf = "./static/analysis/"
     
     cha = dict(urlparse.parse_qsl(
         urlparse.urlsplit("http://ex.org/?"+request.GET['hashvalue']).query))
     cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
-    pa = bf+"{}/{}_{}.pkl".format(url_basename, cha, dataset_id)
-    if os.path.exists(pa) :
+
+    
+    if pooled:
+        include = [int(i) for i in request.GET['include'].split(",")]
+        if len(include)>1:
+            pa = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
+        else: ## We are not really pooling, use existing data
+            dataset_id = include[0]
+            pa = bf+"{}/{}_{}.pkl".format(url_basename, cha, dataset_id)
+            pooled = False
+    else:
+        pa = bf+"{}/{}_{}.pkl".format(url_basename, cha, dataset_id)
+    if os.path.exists(pa):
         with open(pa, 'r') as f:
             save_pars = pickle.load(f)
             pa = save_pars['fit']
             fitparams = {}
             for k in save_pars['fitparams'].keys():
                 fitparams[k] = save_pars['fitparams'][k].value
-            print save_pars['fit']
             return HttpResponse(json.dumps(
                 {'fitparams': fitparams,
                  'fit': {'x': save_pars['fit']['x'].tolist(),
