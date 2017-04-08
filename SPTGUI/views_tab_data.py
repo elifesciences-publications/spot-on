@@ -10,10 +10,16 @@ import json, os, celery, logging
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from .models import Analysis, Dataset
+import SPTGUI.statistics as stats
 
 ## ==== Views
 def statistics(request, url_basename):
     """Function returns some global statistics about all the datasets"""
+    def mean(m,e):
+        """Compute a weighted mean, given a list of individual means (m)
+        and a list of 'effectifs'"""
+        return sum([i*j for (i,j) in zip(m,e)])/sum(e)
+        
     ana = get_object_or_404(Analysis, url_basename=url_basename)
     try:
         da = Dataset.objects.filter(analysis=ana, preanalysis_status='ok')
@@ -26,10 +32,24 @@ def statistics(request, url_basename):
             json.dumps({'status': 'error',
                         'message': 'no properly uploaded dataset'}),
             content_type='application/json', status=400)
+
+    comp_ltraj = stats.global_mean_median(da, stats.length_of_trajectories)
+    comp_ppf = stats.global_mean_median(da, stats.particles_per_frame)
+    comp_jlength = stats.global_mean_median(da, stats.jump_length)
+    
     res = {'status' : 'ok',
            'ok_traces' : len(da),
-           'ntraces' : sum([i.pre_ntraces for i in da]),
-           'npoints' : sum([i.pre_npoints for i in da]),
+           'pre_ntraces' : sum([i.pre_ntraces for i in da]),
+           'pre_npoints' : sum([i.pre_npoints for i in da]),
+           'pre_ntraces3': sum([i.pre_ntraces3 for i in da]),
+           'pre_nframes' : sum([i.pre_nframes for i in da]),
+           'pre_njumps'  : sum([i.pre_njumps for i in da]),
+           'pre_median_length_of_trajectories' : comp_ltraj['median'],
+           'pre_mean_length_of_trajectories' : comp_ltraj['mean'],
+           'pre_median_particles_per_frame' : comp_ppf['median'],
+           'pre_mean_particles_per_frame' : comp_ppf['mean'],
+           'pre_median_jump_length' : comp_jlength['median'],
+           'pre_mean_jump_length' : comp_jlength['median'],
        }
                             
     return HttpResponse(json.dumps(res), content_type='application/json')    
@@ -49,8 +69,20 @@ def datasets_api(request, url_basename):
             'description' : d.description,
             'upload_status' : d.upload_status,
             'preanalysis_status' : d.preanalysis_status,
+
+            ## Preanalysis statistics
             'pre_ntraces' : d.pre_ntraces,
             'pre_npoints' : d.pre_npoints,
+            'pre_ntraces3' : d.pre_ntraces3,
+            'pre_nframes' : d.pre_nframes,
+            'pre_njumps' : d.pre_njumps,
+            'pre_median_length_of_trajectories' : d.pre_median_length_of_trajectories,
+            'pre_mean_length_of_trajectories' : d.pre_mean_length_of_trajectories,
+            'pre_median_particles_per_frame' : d.pre_median_particles_per_frame,
+            'pre_mean_particles_per_frame' : d.pre_mean_particles_per_frame,
+            'pre_median_jump_length' : d.pre_median_jump_length,
+            'pre_mean_jump_length' : d.pre_mean_jump_length,
+            
             'jld_available': check_jld(d),
         } for d in Dataset.objects.filter(analysis=ana)]
     

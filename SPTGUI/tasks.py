@@ -24,6 +24,7 @@ import SPTGUI.parsers as parsers
 
 ## Import analysis backend
 import fastspt
+import SPTGUI.statistics as stats
 
 ##
 ## ==== Initialize stuff
@@ -246,9 +247,21 @@ def check_input_file(filepath, file_id):
         da.save()
 
     ## ==== Extract the relevant information
-    da.pre_ntraces = len(fi) # number of traces
-    da.pre_npoints = sum([len(i) for i in fi]) # number of points
-
+    da.pre_ntraces = stats.number_of_trajectories(fi) # number of traces
+    da.pre_ntraces3= stats.number_of_trajectories3(fi)
+    da.pre_npoints = stats.number_of_detections(fi)   # number of points
+    da.pre_njumps  = stats.number_of_jumps(fi)
+    da.pre_nframes = stats.number_of_frames(fi) # Number of frames
+    le = stats.length_of_trajectories(fi)
+    da.pre_median_length_of_trajectories = le["median"]
+    da.pre_mean_length_of_trajectories   = le["mean"]
+    le = stats.particles_per_frame(fi)
+    da.pre_median_particles_per_frame    = le["median"]
+    da.pre_mean_particles_per_frame      = le["mean"]
+    le = stats.jump_length(fi)
+    da.pre_median_jump_length            = le["median"]
+    da.pre_mean_jump_length              = le["mean"]
+    
     ## ==== Update the state
     da.preanalysis_token = ''
     da.preanalysis_status = 'ok'

@@ -3,7 +3,7 @@
 # By MW, GPLv3+, Feb.-Apr. 2017
 
 import numpy as np
-import logging
+import logging, json
 
 def number_of_trajectories(fi):
     """Returns the number of trajectories in a dataset"""
@@ -16,6 +16,15 @@ def number_of_trajectories3(fi):
 def number_of_jumps(fi):
     """Returns the total number of jumps"""
     return sum([len(i)-1 for i in fi if len(i)>1])
+
+def number_of_frames(fi):
+    """Returns the number of recorded frames as the maximum of the frame index"""
+    l = 0
+    for traj in fi:
+        m = max([i[3] for i in traj])
+        if m>l:
+            l=m
+    return l
 
 def number_of_detections(fi):
     """Returns the number of detections in a dataset"""
@@ -52,3 +61,13 @@ def jump_length(fi):
             l.append(dist(traj[i-1][0], traj[i-1][1], traj[i][0], traj[i][1]))
     l = np.asarray(l)
     return {"median": np.median(l), "mean": l.mean()}
+
+def global_mean_median(da, fu):
+    """A function to compute global stuff.
+    It first loads all the datasets, then send it to the corresponding function"""
+    AllData = []
+    for d in da:
+        with open(d.parsed.path, 'r') as f:
+            AllData += json.load(f)
+    return fu(AllData)
+            

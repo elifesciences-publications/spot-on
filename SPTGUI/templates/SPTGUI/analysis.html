@@ -179,16 +179,39 @@
 	      <div class="col-md-6">
 		<h2> Information about a dataset </h2>
 		<div ng-if="showingStatistics">
-		  Selected dataset: {{shownStatistics.name}}
+		  <h3>Selected dataset: {{shownStatistics.name}}</h3>
 
 		  <table class="table table-responsive">
 		    <tr>
 		      <td>Number of traces</td>
 		      <td>{{shownStatistics.pre_ntraces}}</td>
+		    </tr>		    <tr>
+		      <td>Number of frames</td>
+		      <td>{{shownStatistics.pre_nframes}}</td>
 		    </tr>
 		    <tr>
 		      <td>Number of detections</td>
 		      <td>{{shownStatistics.pre_npoints}}</td>
+		    </tr>
+		    <tr>
+		      <td>Number of traces with >=3 detections</td>
+		      <td>{{shownStatistics.pre_ntraces3}}</td>
+		    </tr>
+		    <tr>
+		      <td>Number of jumps</td>
+		      <td>{{shownStatistics.pre_njumps}}</td>
+		    </tr>
+		    <tr>
+		      <td>Length of trajectories (in number of frames)</td>
+		      <td>median: {{shownStatistics.pre_median_length_of_trajectories}}, mean: {{shownStatistics.pre_mean_length_of_trajectories}}</td>
+		    </tr>
+		    <tr>
+		      <td>Particles per frame</td>
+		      <td>median: {{shownStatistics.pre_median_particles_per_frame}}, mean: {{shownStatistics.pre_mean_particles_per_frame}}</td>
+		    </tr>
+		    <tr>
+		      <td>Jump length</td>
+		      <td>median: {{shownStatistics.pre_median_jump_length}}, Mean: {{shownStatistics.pre_median_jump_length}}</td>
 		    </tr>
 		  </table>
 		</div>
@@ -205,11 +228,34 @@
 		  <table class="table table-responsive">
 		    <tr>
 		      <td>Number of traces</td>
-		      <td>{{statistics.ntraces}}</td>
+		      <td>{{statistics.pre_ntraces}}</td>
+		    </tr>		    <tr>
+		      <td>Number of frames</td>
+		      <td>{{statistics.pre_nframes}}</td>
 		    </tr>
 		    <tr>
 		      <td>Number of detections</td>
-		      <td>{{statistics.npoints}}</td>
+		      <td>{{statistics.pre_npoints}}</td>
+		    </tr>
+		    <tr>
+		      <td>Number of traces with >=3 detections</td>
+		      <td>{{statistics.pre_ntraces3}}</td>
+		    </tr>
+		    <tr>
+		      <td>Number of jumps</td>
+		      <td>{{statistics.pre_njumps}}</td>
+		    </tr>
+		    <tr>
+		      <td>Length of trajectories (in number of frames)</td>
+		      <td>median: {{statistics.pre_median_length_of_trajectories}}, mean: {{statistics.pre_mean_length_of_trajectories}}</td>
+		    </tr>
+		    <tr>
+		      <td>Particles per frame</td>
+		      <td>median: {{statistics.pre_median_particles_per_frame}}, mean: {{statistics.pre_mean_particles_per_frame}}</td>
+		    </tr>
+		    <tr>
+		      <td>Jump length</td>
+		      <td>median: {{statistics.pre_median_jump_length}}, Mean: {{statistics.pre_median_jump_length}}</td>
 		    </tr>
 		  </table>		  
 		</div>
