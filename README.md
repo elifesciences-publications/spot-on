@@ -62,3 +62,7 @@ workon fastSPT
 python manage.py runserver
 celery -A SPTGUI worker -l INFO # In a different terminal
 ```
+
+# Launching (some) tests
+
+Open a Django shell: `python manage.py shell` and type the command: `import SPTGUI.statistics_tests as stats;stats.test_statistics()`. This should run the tests for the statistics on all the existing entries of the database.
