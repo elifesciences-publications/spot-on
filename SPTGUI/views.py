@@ -204,7 +204,8 @@ def get_jldp(request, url_basename):
     
     if request.method == "GET":
         ## ==== Generate the path
-        cha = compute_hash(request.GET['hashvalueJLD'])    
+        fitparams = request.GET
+        cha = compute_hash(fitparams['hashvalueJLD'])
         pa = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
 
         save_params = {"status" : "notrun"}
@@ -219,6 +220,7 @@ def get_jldp(request, url_basename):
  
         if save_params['status'] == 'notrun':
             save_params['status'] = 'queued'
+            save_params['params'] = fitparams
             with open(pa, 'w') as f:
                 pickle.dump(save_params, f)
             include = [int(i) for i in request.GET['include'].split(',')]
@@ -226,11 +228,16 @@ def get_jldp(request, url_basename):
             ## /!\ TODO MW Should check that the datasets belong to the
             ## right owner. Else one can download everybody's dataset...
             logging.warning("Should check that the datasets belong to the right owner. Else one can download everybody's dataset...")
+            keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap"]
+            keytip = [float, int, int, int, float, float]
+            compute_params = {k: t(float(fitparams[k])) for (k,t) in zip(keys,keytip)}
+            print compute_params
             tasks.compute_jld.apply_async(
                 kwargs={'dataset_id': None,
                         'pooled': True,
                         'include' : include,
                         'url_basename': url_basename,
+                        'compute_params': compute_params,
                         'path' : bf,
                         'hash_prefix' : cha})
             

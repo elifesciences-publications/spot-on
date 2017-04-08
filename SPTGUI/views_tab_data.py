@@ -29,9 +29,9 @@ def statistics(request, url_basename):
                             content_type='application/json', status=400)
     if len(da)==0:
         return HttpResponse(
-            json.dumps({'status': 'error',
+            json.dumps({'status': 'empty',
                         'message': 'no properly uploaded dataset'}),
-            content_type='application/json', status=400)
+            content_type='application/json')
 
     comp_ltraj = stats.global_mean_median(da, stats.length_of_trajectories)
     comp_ppf = stats.global_mean_median(da, stats.particles_per_frame)
