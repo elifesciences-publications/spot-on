@@ -37,4 +37,13 @@ class Dataset(models.Model):
 
     ## Preanalysis statistics
     pre_ntraces = models.IntegerField(null=True, blank=True)
+    pre_ntraces3 = models.IntegerField(null=True, blank=True)
     pre_npoints = models.IntegerField(null=True, blank=True)
+    pre_njumps = models.IntegerField(null=True, blank=True)
+    pre_nframes = models.IntegerField(null=True, blank=True)
+    pre_median_length_of_trajectories = models.FloatField(null=True, blank=True)
+    pre_mean_length_of_trajectories = models.FloatField(null=True, blank=True)
+    pre_median_particles_per_frame = models.FloatField(null=True, blank=True)
+    pre_mean_particles_per_frame = models.FloatField(null=True, blank=True)
+    pre_median_jump_length = models.FloatField(null=True, blank=True)
+    pre_mean_jump_length = models.FloatField(null=True, blank=True)
