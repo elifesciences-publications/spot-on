@@ -37,7 +37,8 @@ logger = get_task_logger(__name__)
 
 @shared_task
 def compute_jld(dataset_id, pooled=False, include=None,
-                path=None, hash_prefix=None, url_basename=None):
+                path=None, hash_prefix=None, url_basename=None,
+                compute_params=None):
     """
     This function computes the histogram of jump length of an uploaded 
     dataset and save it in the corresponding dataset slot. It does not 
@@ -54,6 +55,10 @@ def compute_jld(dataset_id, pooled=False, include=None,
     string that will be used as a prefix for saving. Saving is performed as a 
     pickle object.
 
+    Finally, if `compute_params` is provided as a dictionary (and not None), the
+    jld is computed with custom parameters instead of the default ones, and the
+    result is saved in at a custom location (similarly as the pooled values).
+
     Arguments:
     ---------
     - dataset_id (int): the id of the dataset in the Dataset database (single cell only)
@@ -62,12 +67,22 @@ def compute_jld(dataset_id, pooled=False, include=None,
     - path (str): if `pooled==True`, the folder where to save the results
     - hash_prefix (str): if `pooled==True`, the prefix to be used for saving
     - url_basename (str): if `pooled==True`, the folder where to save the results
+    - compute_params (dict): a dictionary of parameters to be passed to the
+    compute_jump_length_distribution of the fastspt backend.
     """
     ## ==== Load datasets
+    savefile = False
+    if compute_params != None:
+        prog_p = os.path.join(path,url_basename, "jld_{}_{}.pkl".format(hash_prefix, dataset_id))
+        savefile = True
+    else:
+        compute_params = {}
     if not pooled:
         include = [dataset_id]
     else: ## Return if it has already been computed
         prog_p = os.path.join(path,url_basename, "{}_pooled.pkl".format(hash_prefix))
+        savefile = True
+    if savefile:
         if os.path.exists(prog_p):
             with open(prog_p, 'r') as f:
                 save_params = pickle.load(f)
@@ -86,12 +101,11 @@ def compute_jld(dataset_id, pooled=False, include=None,
     cell = np.hstack(cell_l)
             
     ## ==== Compute the JLD
-    logger.warning("WARNING, using default parameters to compute jld")
-    an = fastspt.compute_jump_length_distribution(cell, CDF=True, useAllTraj=True) ## Perform the analysis
+    an = fastspt.compute_jump_length_distribution(cell, CDF=True, useAllTraj=False, **compute_params) ## Perform the analysis
     logger.info("DONE: Computed JLD for dataset(s) {}".format(include))
         
     ## ==== Save results
-    if not pooled:
+    if not savefile:
         with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
             fil = File(f)
             pickle.dump(an, fil)
@@ -100,18 +114,26 @@ def compute_jld(dataset_id, pooled=False, include=None,
             da.save()
     else:
         with fasteners.InterProcessLock(prog_p+'.lock'):
-            with open(prog_p, 'w') as f:
-                pickle.dump({'jld': an,
-                             'status': 'done',
-                             'fit': None,
-                             'fitparams': None,
-                             'params' : None}, f)
+            if pooled:
+                with open(prog_p, 'w') as f:
+                    pickle.dump({'jld': an,
+                                 'status': 'done',
+                                 'fit': None,
+                                 'fitparams': None,
+                                 'params' : None}, f)
+            else:
+                with open(prog_p, 'r') as f:
+                    save_params = pickle.load(f)
+                save_params['jld'] = an
+                save_params['status'] = 'done'
+                with open(prog_p, 'w') as f:
+                    pickle.dump(save_params, f)
     return (path, url_basename, hash_prefix, include)
 
 
 @shared_task
-def fit_jld(arg):
-    (path, url_basename, hash_prefix, dataset_id) = arg
+def fit_jld(arg, hash_prefix):
+    (path, url_basename, hash_jld, dataset_id) = arg
     """This function fits the histogram of jump lengths of a given 
     dataset for a specific set of parameters to a BOUND-UNBOUND kinetic 
     model.
@@ -125,8 +147,9 @@ def fit_jld(arg):
     Returns: None
     - Update the Dataset entry with the appropriately parsed information
     """
-    prog_p = os.path.join(path,url_basename, "{}_progress.pkl".format(hash_prefix))
-
+    prog_p = os.path.join(path,url_basename, "{}_progress.pkl".format(hash_prefix+hash_jld))
+    prog_jld = os.path.join(path,url_basename, "jld_{}_{}.pkl".format(hash_jld, dataset_id))
+    
     if type(dataset_id)==list:
         pooled=True
     elif type(dataset_id)==int:
@@ -138,14 +161,15 @@ def fit_jld(arg):
     ## ==== Load JLD
     if not pooled:
         da =  Dataset.objects.get(id=dataset_id)
-        with open(da.jld.path, 'r') as f: ## Open the pickle file
-            jld = pickle.load(f)
-        prog_da = os.path.join(path,url_basename, "{}_{}.pkl".format(hash_prefix,
+        with open(prog_jld, 'r') as f: ## Open the pickle file
+            jld = pickle.load(f)['jld']
+        prog_da = os.path.join(path,url_basename, "{}_{}.pkl".format(hash_prefix+hash_jld,
                                                                      dataset_id))
         out_pars = {}
     else:
-        prog_da = os.path.join(path,url_basename, "{}_pooled.pkl".format(hash_prefix))
-        with open(prog_da, 'r') as f:
+        prog_jld = os.path.join(path,url_basename, "{}_pooled.pkl".format(hash_jld))
+        prog_da = os.path.join(path,url_basename, "{}_pooled.pkl".format(hash_prefix+hash_jld))
+        with open(prog_jld, 'r') as f:
             out_pars = pickle.load(f)
             jld = out_pars['jld']
             
@@ -172,6 +196,7 @@ def fit_jld(arg):
     params["D_Bound"] = params.pop("D_bound")
     params["D_Free"] = params.pop("D_free")
     params["Frac_Bound"] = params.pop("F_bound")
+
     
     ## ==== Perform the fit and compute the distribution
     fit = fastspt.fit_jump_length_distribution(JumpProb, JumpProbCDF,

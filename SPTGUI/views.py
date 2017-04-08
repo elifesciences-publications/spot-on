@@ -82,7 +82,7 @@ def analyze_api(request, url_basename):
     ana = get_object_or_404(Analysis, url_basename=url_basename)
 
     if request.method == 'GET': # return the '*_progress' object, if it exists
-        cha = compute_hash(request.GET['hashvalue'])
+        cha = compute_hash2(request.GET['hashvalue'], request.GET['hashvalueJLD'])
         pa = bf+"{}/{}_progress.pkl".format(url_basename, cha)
         po = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
         
@@ -98,8 +98,10 @@ def analyze_api(request, url_basename):
             return HttpResponse(json.dumps([pa+' not found']), content_type='application/json', status=400)
 
     elif request.method == 'POST': # Queue an analysis (but should be valid)
-        fitparams = json.loads(request.body)
-        cha = compute_hash(fitparams['hashvalue'])
+        (jldparams, fitparams) = json.loads(request.body)
+        cha_jld = compute_hash(jldparams['hashvalueJLD'])
+        cha_fit = compute_hash(fitparams['hashvalue'])
+        cha = cha_fit+cha_jld
         prog_p = bf+"{}/{}_progress.pkl".format(url_basename, cha)
         
         to_process = []
@@ -133,15 +135,17 @@ def analyze_api(request, url_basename):
         with open(prog_p, 'w') as f: ## Write the fitting parameters to file
                 pickle.dump(save_pars, f)
         for data_id in to_process:
-            tasks.fit_jld.delay((bf, url_basename, cha, data_id))
+            tasks.fit_jld.delay((bf, url_basename, cha_jld, data_id), cha_fit)
         if len(fitparams['include'])>1 and save_pars['queue']['pooled']['status']=='queued':
+            jldparams.pop('hashvalueJLD')
             tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
                                                   'pooled' : True,
                                                   'include':fitparams['include'],
                                                   'path': bf,
-                                                  'hash_prefix': cha,
+                                                  'hash_prefix': cha_jld,
+                                                  'compute_params' : jldparams,
                                                   'url_basename': url_basename},
-                                          link=tasks.fit_jld.s())
+                                          link=tasks.fit_jld.s(cha_fit))
         return HttpResponse(json.dumps(''), content_type='application/json')
     
 def get_analysis(request, url_basename, dataset_id, pooled=False):
@@ -149,7 +153,7 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
     If `pooled==True`, the fitted pool is returned and the `dataset_id` argument
     is then ignored."""
     
-    cha = compute_hash(request.GET['hashvalue'])    
+    cha = compute_hash2(request.GET['hashvalue'], request.GET['hashvalueJLD'])    
 
     ## ==== Handle pooling
     if pooled:
@@ -177,6 +181,7 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
                          'y': save_pars['fit']['y'].tolist()}
              }), content_type='application/json')
     else:
+        print pa
         return HttpResponse(json.dumps('nothing ready here'), content_type='application/json', status=400) ## TODO MW /!\ not sure we should return 400...
 
 def get_analysisp(request, url_basename):
@@ -193,10 +198,13 @@ def get_jldp(request, url_basename):
     name of this pickled file is generated based on the `include` parameters
     selected by the user. 
     Also, the jld is computed if it is not available."""
+
+    ## Sanity checks
+    ana = get_object_or_404(Analysis, url_basename=url_basename)    
     
     if request.method == "GET":
         ## ==== Generate the path
-        cha = compute_hash(request.GET['hashvalue'])    
+        cha = compute_hash(request.GET['hashvalueJLD'])    
         pa = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
 
         save_params = {"status" : "notrun"}
@@ -217,6 +225,7 @@ def get_jldp(request, url_basename):
             logging.info("computing for values: {}".format(include))
             ## /!\ TODO MW Should check that the datasets belong to the
             ## right owner. Else one can download everybody's dataset...
+            logging.warning("Should check that the datasets belong to the right owner. Else one can download everybody's dataset...")
             tasks.compute_jld.apply_async(
                 kwargs={'dataset_id': None,
                         'pooled': True,
@@ -227,9 +236,9 @@ def get_jldp(request, url_basename):
             
         return HttpResponse(json.dumps('computing'), content_type='application/json')
     
-def get_jld(request, url_basename, dataset_id):
+def get_jld_default(request, url_basename, dataset_id):
     """Returns the empirical jump length distribution (precomputed at the
-    upload stage."""
+    upload stage. That is, the default jump length distribution."""
 
     ## Sanity checks
     ana = get_object_or_404(Analysis, url_basename=url_basename)
@@ -241,7 +250,74 @@ def get_jld(request, url_basename, dataset_id):
         return HttpResponse(json.dumps([jld[2].tolist(), jld[3].tolist()]), content_type='application/json')
     else:
         return HttpResponse(json.dumps("JLD not ready"), content_type='application/json')
-                 
+
+def get_jld(request, url_basename):
+    """Returns the empirical jump length distribution based on a custom set of 
+    parameters. This does the job for all the uploaded datasets."""
+
+    ## Sanity checks
+    ana = get_object_or_404(Analysis, url_basename=url_basename)
+    dataset_ids = [d.id for d in Dataset.objects.filter(analysis=ana)]
+
+
+    ## Compute the distribution if we have a POST
+    if request.method == "POST":
+        for dataset_id in dataset_ids:
+            fitparams = json.loads(request.body)
+            cha = compute_hash(fitparams['hashvalueJLD'])    
+            pa = bf+"{}/jld_{}_{}.pkl".format(url_basename, cha, dataset_id)
+
+            if not os.path.exists(pa):
+                compute = True
+                pick = {'params' : fitparams,
+                        'jld' : None,
+                        'status' : 'queued'}
+            else:
+                with open(pa, 'r') as f:
+                    pick = pickle.load(f)
+                if 'status' in pick and pick['status'] not in ('queued', 'done'):
+                    compute = True
+                    pick['status'] = 'queued'
+                else:
+                    compute = False
+
+            ## Get ready to run the task
+            if compute:
+                with open(pa, 'w') as f: ## Save that we are computing
+                    pickle.dump(pick, f)
+                keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap"]
+                compute_params = {k: fitparams[k] for k in keys}
+                tasks.compute_jld.apply_async(
+                    kwargs={'dataset_id': dataset_id,
+                            'pooled' : False,
+                            'path': bf,
+                            'hash_prefix': cha,
+                            'compute_params': compute_params,
+                            'url_basename': url_basename})
+        return HttpResponse(json.dumps("computing"), content_type='application/json')
+    elif request.method == 'GET': ## Return what we have if this is a GET
+        ready = True
+        ret = []
+        for dataset_id in dataset_ids:
+            cha = compute_hash(request.GET['hashvalueJLD'])    
+            pa = bf+"{}/jld_{}_{}.pkl".format(url_basename, cha, dataset_id)
+
+            if os.path.exists(pa):
+                with open(pa, 'r') as f:
+                    pick = pickle.load(f)
+                    if 'status' in pick and pick['status']=='done':
+                        ret.append([pick['jld'][2].tolist(),
+                                    pick['jld'][3].tolist()])
+                    else:
+                        ready = False
+            else:
+                ready = False
+        if ready:
+            return  HttpResponse(json.dumps({'status': 'done', 'jld': ret}), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps("computing"), content_type='application/json')
+
+    
     
 ## ==== Auxiliary functions
 def check_jld(d):
@@ -259,6 +335,10 @@ def compute_hash(hashvalue):
         urlparse.urlsplit("http://ex.org/?"+hashvalue).query))
     cha = hashlib.sha1(json.dumps(cha, sort_keys=True)).hexdigest()[:hash_size]
     return cha
+
+def compute_hash2(h1, h2):
+    """Returns the concatenation of two hashes"""
+    return compute_hash(h1)+compute_hash(h2)
 
 def get_unused_namepage():
     """Function returns an unused, 10 chars identifier for an analysis"""

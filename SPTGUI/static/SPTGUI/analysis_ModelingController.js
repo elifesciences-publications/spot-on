@@ -76,15 +76,48 @@ angular.module('app')
 	    $scope.jlhist = null;
 	    $scope.jlfit = null;
 	    $scope.analysisState = 'notrun';
-
-	    // And initialize stuff again
-	    initView();
+	    
+	    initView(); // And initialize stuff again
 	}); // Look for updated datasets
 	
 	//
 	// ==== CRUD modeling parameters
 	//
 
+	$scope.jldParameters = {BinWidth : 0.01,
+				GapsAllowed : 1,
+				TimePoints : 8,
+				JumpsToConsider : 4,
+				MaxJump : 1.25,
+				TimeGap : 4.477}
+	$scope.jldParametersDefault = angular.copy($scope.jldParameters);
+	$scope.resetjldParameters = function() {
+	    $scope.jldParameters = angular.copy($scope.jldParametersDefault);
+	}
+	$scope.$watch('jldParameters', function(pars) {
+	    // Reset the variables
+	    $scope.jlfit = null;
+	    $scope.jlpfit = null;
+	    $scope.jlphist = null;
+	    $scope.probingJLD = true;
+	    $scope.analysisState = 'jld'; // Hide plot
+
+	    // Recompute jld with new parameters
+	    analysisService.setNonDefaultJLD(pars).then(function(resp1) {
+		$interval(function() {
+		    if (!$scope.probingJLD) {return false;}
+		    analysisService.getNonDefaultJLD(pars)
+			.then(function(dataResponse) {
+			    if (dataResponse.data.status == 'done') {
+				$scope.jlhist = dataResponse.data.jld;
+				$scope.analysisState = 'done';
+				$scope.probingJLD = false;
+			    }
+			});
+		}, 1500);
+	    });				       
+	}, true); // deep watch the object
+	
 	$scope.modelingParameters = {D_free : [0.15, 25],
 				     D_bound: [0.0005, 0.08],
 				     F_bound: [0, 1],
@@ -116,7 +149,7 @@ angular.module('app')
 		alert('no dataset included! Make a selection');
 		return;
 	    }
-	    analysisService.runAnalysis(parameters)   
+	    analysisService.runAnalysis($scope.jldParameters, parameters)   
 	    $scope.analysisState='running'; // 'running' for progress bar
 	}
 
@@ -131,7 +164,7 @@ angular.module('app')
 	    $scope.gettingPooledJLD = true;
 	    $interval(function() {
 		if ($scope.gettingPooledJLD) {
-		    analysisService.getPooledJLD($scope.modelingParameters).then(
+		    analysisService.getPooledJLD($scope.jldParameters, $scope.modelingParameters.include).then(
 			function(l) {
 			    if (l.data != 'computing') {
 				$scope.jlphist = l.data
@@ -185,17 +218,18 @@ angular.module('app')
 	    // This loops forever, but might become inactive
 	    if ($scope.analysisState=='running') {
 		$scope.fitAvailable = false;
-		pars = $scope.modelingParameters;
-		analysisService.checkAnalysis(pars)
+		FitPars = $scope.modelingParameters;
+		JLDPars = $scope.jldParameters;
+		analysisService.checkAnalysis(JLDPars, FitPars)
 		    .then(function(dataResponse) {
 			if (dataResponse['data'].allgood) {
-			    analysisService.getPooledFitted(pars).then(
+			    analysisService.getPooledFitted(JLDPars, FitPars).then(
 				function(l) {
 				    $scope.jlpfit = l.data;
 				}
 			    );
-			    $q.all(pars.include.map(function(data_id) {
-				return analysisService.getFitted(data_id, pars);
+			    $q.all(FitPars.include.map(function(data_id) {
+				return analysisService.getFitted(data_id, JLDPars, FitPars);
 			    })).then(function(l) {
 				$scope.jlfit = l.map(function(ll){return ll.data});
 				$scope.fitAvailable = true;

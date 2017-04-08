@@ -45,7 +45,8 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     url(r'^analysis/(?P<url_basename>.+)/api/analyze/pooled$', views.get_analysisp, name='get_analysisp'),
     url(r'^analysis/(?P<url_basename>.+)/api/analyze/(?P<dataset_id>[0-9]+)$', views.get_analysis, name='get_analysis'),
     url(r'^analysis/(?P<url_basename>.+)/api/jld/pooled$', views.get_jldp, name='get_jldp'),
-    url(r'^analysis/(?P<url_basename>.+)/api/jld/(?P<dataset_id>[0-9]+)$', views.get_jld, name='get_jld'),
+    url(r'^analysis/(?P<url_basename>.+)/api/jld_default/(?P<dataset_id>[0-9]+)$', views.get_jld_default, name='get_jld_default'),
+    url(r'^analysis/(?P<url_basename>.+)/api/jld/$', views.get_jld, name='get_jld'),
     
     url(r'^analysis/(?P<url_basename>.+)/', views.analysis, name='analysis'),
     url(r'^$', views.index, name='index'),

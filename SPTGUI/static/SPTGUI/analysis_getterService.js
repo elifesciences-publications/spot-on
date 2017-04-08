@@ -12,7 +12,7 @@ angular.module('app')
 	
 	// Get some statistics on the uploaded and preprocessed datasets
 	this.getJLD = function(dataset_id) {
-	    return $http.get('./api/jld/'+dataset_id);
+	    return $http.get('./api/jld_default/'+dataset_id);
 	};
 	
 	// Delete a dataset, provided its id (filename used for validation)

@@ -293,60 +293,98 @@
 		</tr>
 	      </table>
 
-	      <h2> Modeling parameters </h2>
-	      <form ng-submit="runAnalysis(modelingParameters);">
+	      <h2> Parameters </h2>
+	      <div class="col-md-6">
+		<h3> Jump length distribution </h3>
 		<table>
 		  <tr>
-		    <td> D<sub>free</sub>: </td>
-		    <td>
-		      <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any">
-		      <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any">
-		    </td>
+		    <td>Bin width</td>
+		    <td><input ng-model= "jldParameters.BinWidth"  type="number" step="any"></td>
 		  </tr>
 		  <tr>
-		    <td> D<sub>bound</sub>: </td>
-		    <td>
-		      <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any">
-		      <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any">
-		    </td>
+		    <td>Number of gaps allowed</td>
+		    <td><input ng-model= "jldParameters.GapsAllowed"  type="number"></td>
 		  </tr>
 		  <tr>
-		    <td> F<sub>bound</sub>: </td>
-		    <td>
-		      <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any">
-		      <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any">
-		    </td>
+		    <td>Number of timepoints</td>
+		    <td><input ng-model= "jldParameters.TimePoints"  type="number"></td>
 		  </tr>
 		  <tr>
-		    <td> Localization error: </td>
-		    <td><input ng-model="modelingParameters.LocError" type="number" step="any"></td>
+		    <td>Jumps to consider</td>
+		    <td><input ng-model= "jldParameters.JumpsToConsider"  type="number"></td>
+		  </tr>
+		  <tr>
+		    <td>Max jump (µm)</td>
+		    <td><input ng-model= "jldParameters.MaxJump"  type="number" step="any"></td>
 		  </tr>
 		  <tr>
 		    <td> dT: </td>
-		    <td><input ng-model="modelingParameters.dT" type="number" step="any"></td>
+		    <td><input ng-model="jldParameters.TimeGap" type="number" step="any"></td>
 		  </tr>
 		  <tr>
-		    <td> dZ: </td>
-		    <td><input ng-model="modelingParameters.dZ" type="number" step="any"></td>
-		  </tr>
-		  <tr>
-		    <td> Model Fit: </td>
-		    <td><input type="number" ng-model="modelingParameters.ModelFit"></td>
-		  </tr>
-		  <tr>
-		    <td> Iterations: </td>
-		    <td><input type="number" ng-model="modelingParameters.iterations"></td>
-		  </tr>			  
-		  <tr>
-		    <td>&nbsp;</td>
-		    <td>
-		      <button type="submit" class="btn btn-default">Run the analysis</button>
-		      
-		    </td>
+		    <td></td>		    
+		    <td><button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button></td>
 		  </tr>
 		</table>
-	      </form>
-
+		
+		
+	      </div>
+	      <div class="col-md-6">
+		<h3> Model fitting </h3>
+		<form ng-submit="runAnalysis(modelingParameters);">
+		  <table>
+		    <tr>
+		      <td> D<sub>free</sub>: </td>
+		      <td>
+			<input ng-model= "modelingParameters.D_free[0]"  type="number" step="any">
+			<input ng-model= "modelingParameters.D_free[1]"  type="number" step="any">
+		      </td>
+		    </tr>
+		    <tr>
+		      <td> D<sub>bound</sub>: </td>
+		      <td>
+			<input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any">
+			<input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any">
+		      </td>
+		    </tr>
+		    <tr>
+		      <td> F<sub>bound</sub>: </td>
+		      <td>
+			<input ng-model= "modelingParameters.F_bound[0]" type="number" step="any">
+			<input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any">
+		      </td>
+		    </tr>
+		    <tr>
+		      <td> Localization error: </td>
+		      <td><input ng-model="modelingParameters.LocError" type="number" step="any"></td>
+		    </tr>
+		    <tr>
+		      <td> dT: </td>
+		      <td><input ng-model="modelingParameters.dT" type="number" step="any"></td>
+		    </tr>
+		    <tr>
+		      <td> dZ: </td>
+		      <td><input ng-model="modelingParameters.dZ" type="number" step="any"></td>
+		    </tr>
+		    <tr>
+		      <td> Model Fit: </td>
+		      <td><input type="number" ng-model="modelingParameters.ModelFit"></td>
+		    </tr>
+		    <tr>
+		      <td> Iterations: </td>
+		      <td><input type="number" ng-model="modelingParameters.iterations"></td>
+		    </tr>			  
+		    <tr>
+		      <td>&nbsp;</td>
+		      <td>
+			<button type="submit" class="btn btn-default">Run the analysis</button>
+			
+		      </td>
+		    </tr>
+		  </table>
+		</form>
+		</div>
+		
 	      <h2> Results of the simulation </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
 		No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
@@ -354,6 +392,10 @@
 	      <div ng-if="analysisState=='running'" class="alert alert-warning" role="alert">
 		Running, please wait...
 	      </div>
+	      <div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
+		Recomputing jump length histogram...
+	      </div>
+	      
 	      <div ng-if="analysisState=='done'">
 		<div ng-if="fitAvailable">
 		  <em>Fit parameters for cell {{ce}}.</em>
