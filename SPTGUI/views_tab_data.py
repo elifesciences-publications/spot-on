@@ -19,8 +19,13 @@ def statistics(request, url_basename):
         """Compute a weighted mean, given a list of individual means (m)
         and a list of 'effectifs'"""
         return sum([i*j for (i,j) in zip(m,e)])/sum(e)
-        
-    ana = get_object_or_404(Analysis, url_basename=url_basename)
+
+    try:
+        ana = get_object_or_404(Analysis, url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps({'status': 'error',
+                                        'message': 'analysis does not exist'}),
+                            content_type='application/json')
     try:
         da = Dataset.objects.filter(analysis=ana, preanalysis_status='ok')
     except:
@@ -60,8 +65,12 @@ def datasets_api(request, url_basename):
     (that is, a given url, specified by the `url_basename` (str) parameter, it is
     a view on the Datasets library
     """
+    try:
+        ana = get_object_or_404(Analysis, url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps([]),
+                            content_type='application/json')
     
-    ana = get_object_or_404(Analysis, url_basename=url_basename)
     ret = [{'id': d.id, ## the id of the Dataset in the database
             'unique_id': d.unique_id,
             'filename' : d.data.name,

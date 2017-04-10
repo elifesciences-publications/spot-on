@@ -98,7 +98,7 @@ angular.module('app')
 		$scope.datasets = dataResponse['data'];
 		$scope.successfullyUploaded=dataResponse['data'].length;
 		$scope.poolPreprocessing = true; // start the watcher.
-		getterService.broadcastDataset($scope.datasets);
+		//getterService.broadcastDataset($scope.datasets);
 	    });
 	    getterService.getStatistics().then(function(dataResponse) {
 		$scope.statistics = dataResponse['data'];
@@ -131,7 +131,7 @@ angular.module('app')
 		    // Check if all the dataset is "ok", if yes, switch the flag
 		    if (_.every(dataResponse['data'], function(el) {return el.state==='ok'})) {
 			//getterService.broadcastDataset($scope.datasets);
-			$scope.poolPreprocessing = false;
+			//$scope.poolPreprocessing = false;
 		    }
 		});
 	    }

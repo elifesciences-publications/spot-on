@@ -263,7 +263,12 @@ def get_jld(request, url_basename):
     parameters. This does the job for all the uploaded datasets."""
 
     ## Sanity checks
-    ana = get_object_or_404(Analysis, url_basename=url_basename)
+    try: 
+        ana = get_object_or_404(Analysis, url_basename=url_basename)
+    except:
+        return HttpResponse(json.dumps([]),
+                            content_type='application/json')
+    
     dataset_ids = [d.id for d in Dataset.objects.filter(analysis=ana)]
 
 
@@ -271,7 +276,8 @@ def get_jld(request, url_basename):
     if request.method == "POST":
         for dataset_id in dataset_ids:
             fitparams = json.loads(request.body)
-            cha = compute_hash(fitparams['hashvalueJLD'])    
+            cha = compute_hash(fitparams['hashvalueJLD'])
+            bn = bf+url_basename
             pa = bf+"{}/jld_{}_{}.pkl".format(url_basename, cha, dataset_id)
 
             if not os.path.exists(pa):
@@ -290,6 +296,9 @@ def get_jld(request, url_basename):
 
             ## Get ready to run the task
             if compute:
+                if not os.path.isdir(bn):
+                    logging.info("Creating directory for analysis: {}".format(url_basename))
+                    os.mkdir(bn)
                 with open(pa, 'w') as f: ## Save that we are computing
                     pickle.dump(pick, f)
                 keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap"]

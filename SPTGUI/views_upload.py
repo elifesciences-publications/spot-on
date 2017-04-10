@@ -5,7 +5,7 @@
 # Here we store views that relate to the upload of datasets
 
 ## ==== Imports
-import os, json
+import os, json, pickle
 import fileuploadutils2 as fuu
 from django.http import HttpResponse
 from flask import Response
@@ -13,6 +13,9 @@ from .models import Analysis, Dataset
 from django.core.files import File
 import celery, tasks
 from django.utils import timezone
+
+bf = "./static/analysis/" ## Location to save the fitted datasets
+
 
 ## ==== Views
 def upload(request, url_basename):
@@ -54,7 +57,7 @@ def upload(request, url_basename):
                            name='',
                            description='')
             ana.save()
-            os.makedirs("./static/analysis/"+url_basename) # Create folder for analyses
+            os.makedirs(bf+url_basename) # Create folder for analyses
 
 
         ## 2. Create a database entry
@@ -73,9 +76,29 @@ def upload(request, url_basename):
         ## Here we first perform the "check_input_file" task. If this one returns
         ## properly, the histogram of jump lengths distribution is computed
         ## (compute_jld).
+        compute_params = {'BinWidth' : 0.01,
+                          'GapsAllowed' : 1,
+                          'TimePoints' : 8,
+                          'JumpsToConsider' : 4,
+                          'MaxJump' : 1.25,
+                          'TimeGap' : 4.477}
+        pick = {'params' : compute_params,
+                'jld' : None,
+                'status' : 'queued'}
+        cha = 'c0f7e565600c3bf5'
+        pa = bf+"{}/jld_{}_{}.pkl".format(url_basename, cha, da.id)
+        with open(pa, 'w') as f: ## Save that we are computing
+            pickle.dump(pick, f)
+        
         da.preanalysis_status='queued'
-        ta = tasks.check_input_file.apply_async((da.data.path, da.id),
-                                                link=tasks.compute_jld.s())
+        ta = tasks.check_input_file.apply_async(
+            (da.data.path, da.id),
+            link=tasks.compute_jld.s(pooled=False,
+                                     path=bf,
+                                     hash_prefix=cha,
+                                     compute_params=compute_params,
+                                     url_basename=url_basename,
+                                     default=True))
         da.preanalysis_token = ta.id
         da.save()
 

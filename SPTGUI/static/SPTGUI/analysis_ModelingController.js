@@ -4,6 +4,7 @@ angular.module('app')
 
 	// Scope variables
 	$scope.analysisState = 'notrun';
+	$scope.showModelingTab = false;
 
 	initView = function() {
 	// Initiate the window with what we have
@@ -48,7 +49,8 @@ angular.module('app')
 		    return ll.data
 		});
 		$scope.jlfit = l.map(function(ll) {return null;}); // init fit
-		$scope.analysisState = 'done'; // Hide progress bar
+		$scope.showModelingTab = true; // Hide progress bar
+		$scope.analysisState = 'done';
 	    });
 	}
 	//); // Populate the scope with the already uploaded datasets
@@ -76,7 +78,7 @@ angular.module('app')
 	    $scope.jlhist = null;
 	    $scope.jlfit = null;
 	    $scope.analysisState = 'notrun';
-	    
+
 	    initView(); // And initialize stuff again
 	}); // Look for updated datasets
 	
@@ -111,6 +113,8 @@ angular.module('app')
 			    if (dataResponse.data.status == 'done') {
 				$scope.jlhist = dataResponse.data.jld;
 				$scope.analysisState = 'done';
+				$scope.probingJLD = false;
+			    } else if (dataResponse.data.length==0) {
 				$scope.probingJLD = false;
 			    }
 			});

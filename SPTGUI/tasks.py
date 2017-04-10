@@ -38,7 +38,7 @@ logger = get_task_logger(__name__)
 @shared_task
 def compute_jld(dataset_id, pooled=False, include=None,
                 path=None, hash_prefix=None, url_basename=None,
-                compute_params=None):
+                compute_params=None, default=False):
     """
     This function computes the histogram of jump length of an uploaded 
     dataset and save it in the corresponding dataset slot. It does not 
@@ -105,14 +105,14 @@ def compute_jld(dataset_id, pooled=False, include=None,
     logger.info("DONE: Computed JLD for dataset(s) {}".format(include))
         
     ## ==== Save results
-    if not savefile:
+    if not savefile or default:
         with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
             fil = File(f)
             pickle.dump(an, fil)
             da.jld = fil
             da.jld.name = da.data.name + '.jld'
             da.save()
-    else:
+    if savefile:
         with fasteners.InterProcessLock(prog_p+'.lock'):
             if pooled:
                 with open(prog_p, 'w') as f:
