@@ -397,7 +397,7 @@
 	      </div>
 	      
 	      <div ng-if="analysisState=='done'">
-		<div ng-if="fitAvailable">
+		<div class="col-md-3" ng-if="fitAvailable">
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
 		    <li>D<sub>free</sub> : {{jlfit[ce].fitparams.D_free}} </li>
@@ -405,6 +405,14 @@
 		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound}}</li>
 		  </ul>
 		</div>
+		<div class="col-md-3" ng-if="jlpfit">
+		  <em>Global fit parameters for cells {{modelingParameters.include}}.</em>
+		  <ul>
+		    <li>D<sub>free</sub> : {{jlpfit.fitparams.D_free}} </li>
+		    <li>D<sub>bound</sub> : {{jlpfit.fitparams.D_bound}} </li>
+		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound}}</li>
+		  </ul>
+		</div>		
 		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
 		
 		<input ng-model="dt" type="number" min="1" max="{{jlhist[0][1].length-1}}">

@@ -244,12 +244,4 @@ angular.module('app')
 	    }
 	    return(true)
 	}, 2000);
-
-	// A small debug function to get the pooled fit (if available)
-	$scope.gimmeTheFitP = function(params) {
-	    analysisService.getPooledFitted(params).then(function(l) {
-		console.log(l.data);
-		alert("Not yet man!");
-	    });
-	};
     }]);
