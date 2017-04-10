@@ -50,7 +50,10 @@ angular.module('app')
 		});
 		$scope.jlfit = l.map(function(ll) {return null;}); // init fit
 		$scope.showModelingTab = true; // Hide progress bar
-		$scope.analysisState = 'done';
+		console.log($scope.jlhist);
+		if ($scope.jlhist.length>0) {
+		    $scope.analysisState = 'done';
+		}
 	    });
 	}
 	//); // Populate the scope with the already uploaded datasets

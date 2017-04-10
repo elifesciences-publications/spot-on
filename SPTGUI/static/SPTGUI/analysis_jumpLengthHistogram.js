@@ -18,6 +18,8 @@ angular.module('app')
 	};
 	function link(scope, el, attr){
 	    // Get input and parse it
+	    if (!scope.data[0]){return;}
+	    
 	    dt = scope.data[2];
 	    data = fmt_data([scope.data[0][0], scope.data[0][1][dt]]);
 	    
