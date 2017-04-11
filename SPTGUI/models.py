@@ -47,3 +47,13 @@ class Dataset(models.Model):
     pre_mean_particles_per_frame = models.FloatField(null=True, blank=True)
     pre_median_jump_length = models.FloatField(null=True, blank=True)
     pre_mean_jump_length = models.FloatField(null=True, blank=True)
+
+class Download(models.Model):
+    """Contain instructions for a download"""
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE) 
+    params = models.FileField(upload_to='downloads/', null=True, blank=True)
+    export_svg = models.FileField(upload_to='downloads/', null=True, blank=True)
+    export_eps = models.FileField(upload_to='downloads/', null=True, blank=True)
+    export_png = models.FileField(upload_to='downloads/', null=True, blank=True)
+    export_zip =  models.FileField(upload_to='downloads/', null=True, blank=True)
+
