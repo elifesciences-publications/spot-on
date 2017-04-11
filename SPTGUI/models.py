@@ -55,10 +55,12 @@ class Download(models.Model):
     data = models.FileField(upload_to='downloads/', null=True, blank=True)
     export_svg = models.FileField(upload_to='downloads/', null=True, blank=True)
     export_eps = models.FileField(upload_to='downloads/', null=True, blank=True)
+    export_pdf = models.FileField(upload_to='downloads/', null=True, blank=True)
     export_png = models.FileField(upload_to='downloads/', null=True, blank=True)
     export_zip =  models.FileField(upload_to='downloads/', null=True, blank=True)
     
     status_svg = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     status_eps = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     status_png = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
+    status_pdf = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     status_zip = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
