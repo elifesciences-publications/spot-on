@@ -5,7 +5,7 @@
 # Here we store views that relate to the upload of datasets
 
 ## ==== Imports
-import os, json, pickle
+import os, json, pickle, re
 import fileuploadutils2 as fuu
 from django.http import HttpResponse
 from flask import Response
@@ -43,15 +43,20 @@ def upload(request, url_basename):
     fuu.chunkOperationUtil(request,resp);
 
     # Transfer to a real object
-    re = HttpResponse()
-    re.content = resp.data
-    re.status_code = int(resp.status)
+    res = HttpResponse()
+    res.content = resp.data
+    res.status_code = int(resp.status)
 
-    if re.status_code == 200 and resp.ok:
+    if res.status_code == 200 and resp.ok:
         ## 1. Get the analysis object, or create it if it doesn't exist
         try:
             ana = Analysis.objects.get(url_basename=url_basename)
         except:
+            if re.match('^[\w-]+$', url_basename) is None: ## contains non allowed chars
+                logging.error("tried to create an analyis with non-allowed characters in the name")
+                return "character not allowed"
+            
+                
             ana = Analysis(url_basename=url_basename,
                            pub_date=timezone.now(),
                            name='',
@@ -61,12 +66,12 @@ def upload(request, url_basename):
 
 
         ## 2. Create a database entry
-        fi = File(open(json.loads(re.content)['address'], 'r')) ## This could be handled differently
-        fi.name = json.loads(re.content)['filename']
+        fi = File(open(json.loads(res.content)['address'], 'r')) ## This could be handled differently
+        fi.name = json.loads(res.content)['filename']
         da = Dataset(analysis=ana,
                      name=request.POST['flowFilename'],
                      description='',
-                     unique_id = json.loads(re.content)['unique_id'],
+                     unique_id = json.loads(res.content)['unique_id'],
                      upload_status=True, # Upload is complete
                      preanalysis_status='uploaded', # Preanalysis not launched
                      data=fi)
@@ -102,4 +107,4 @@ def upload(request, url_basename):
         da.preanalysis_token = ta.id
         da.save()
 
-    return re
+    return res
