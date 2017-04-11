@@ -50,14 +50,15 @@ class Dataset(models.Model):
 
 class Download(models.Model):
     """Contain instructions for a download"""
+    bf = 'SPTGUI/static/SPTGUI/downloads'
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE) 
-    params = models.FileField(upload_to='downloads/', null=True, blank=True)
-    data = models.FileField(upload_to='downloads/', null=True, blank=True)
-    export_svg = models.FileField(upload_to='downloads/', null=True, blank=True)
-    export_eps = models.FileField(upload_to='downloads/', null=True, blank=True)
-    export_pdf = models.FileField(upload_to='downloads/', null=True, blank=True)
-    export_png = models.FileField(upload_to='downloads/', null=True, blank=True)
-    export_zip =  models.FileField(upload_to='downloads/', null=True, blank=True)
+    params = models.FileField(upload_to=bf, null=True, blank=True)
+    data = models.FileField(upload_to=bf, null=True, blank=True)
+    export_svg = models.FileField(upload_to=bf, null=True, blank=True)
+    export_eps = models.FileField(upload_to=bf, null=True, blank=True)
+    export_pdf = models.FileField(upload_to=bf, null=True, blank=True)
+    export_png = models.FileField(upload_to=bf, null=True, blank=True)
+    export_zip =  models.FileField(upload_to=bf, null=True, blank=True)
     
     status_svg = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     status_eps = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
