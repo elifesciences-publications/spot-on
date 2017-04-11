@@ -1,5 +1,5 @@
 angular.module('app')
-    .controller('ModelingController', ['analysisService', 'getterService', '$scope', '$interval', '$q', function(analysisService, getterService, $scope, $interval, $q) {
+    .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', '$scope', '$interval', '$q', function(analysisService, getterService, downloadService, $scope, $interval, $q) {
 	// This is the controller for the modeling tab
 
 	// Scope variables
@@ -218,7 +218,22 @@ angular.module('app')
 		else {$scope.showJLPf = false;}
 	    }
 	    else {return $scope.showJLPf;}
-	}	
+	}
+
+	// The function to mark the current SVG view to download
+	$scope.toDownloads = function() {
+	    dwnlPars = {svg : $('#mainHist').html(),
+			format : 'svg',
+			cell : $scope.datasets[$scope.ce].id,
+			jldParams : angular.copy($scope.jldParameters),
+			fitParams : angular.copy($scope.modelingParameters),
+			jld : angular.copy($scope.jlhist),
+			jldp: angular.copy($scope.jlphist),
+			fit : angular.copy($scope.jlfit),
+			fitp: angular.copy($scope.jlpfit)}
+	    downloadService.setDownload(dwnlPars);
+	    alert("Analysis marked for download");
+	}
 
 	// A watcher that periodically checks the state of the computation
 	processingWaiter = $interval(function() {

@@ -7,7 +7,7 @@
 
 ## General imports
 from __future__ import absolute_import, unicode_literals
-import os, sys, tempfile, json, pickle, fasteners
+import os, sys, tempfile, json, pickle, fasteners, subprocess, shutil
 import numpy as np
 
 ## Celery imports
@@ -19,7 +19,7 @@ import django
 django.setup()
 
 from django.core.files import File
-from SPTGUI.models import Dataset
+from SPTGUI.models import Dataset, Download
 import SPTGUI.parsers as parsers
 
 ## Import analysis backend
@@ -293,3 +293,37 @@ def check_input_file(filepath, file_id):
     da.save()
 
     return file_id
+
+@shared_task
+def convert_svg_to(fmt, download_id):
+    """Converts the SVG file indexed by `download_id` to a given format `fmt`.
+    Uses Inkscape in the background."""
+
+    do = Download.objects.get(id=download_id)
+    
+    options = {'pdf' : ['-A'],
+               'png' : ['-e', '-d', '300'],
+               'eps' : ['-E']}
+    
+    tmpdirname = tempfile.mkdtemp()
+    out_file = 'export.{}'.format(fmt)
+    path = os.path.join(tmpdirname,out_file)
+    subprocess.call(["inkscape", "-f",
+                     do.export_svg.path,
+                     options[fmt][0],
+                     path]+options[fmt][1:])
+    with tempfile.NamedTemporaryFile(dir="SPTGUI/static/SPTGUI/downloads/", suffix=".{}".format(fmt), delete=False) as f:
+        F = File(f)
+        with open(path, 'r') as ff:
+            F.write(ff.read())
+        if fmt=='png':
+            do.export_png = F
+            do.status_png = 'done'
+        if fmt=='pdf':
+            do.export_pdf = F
+            do.status_pdf = 'done'
+        if fmt=='eps':
+            do.export_eps = F
+            do.status_eps = 'done'
+        do.save()
+    shutil.rmtree(tmpdirname)

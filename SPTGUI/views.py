@@ -271,7 +271,6 @@ def get_jld(request, url_basename):
     
     dataset_ids = [d.id for d in Dataset.objects.filter(analysis=ana)]
 
-
     ## Compute the distribution if we have a POST
     if request.method == "POST":
         for dataset_id in dataset_ids:

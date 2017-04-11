@@ -31,6 +31,8 @@
     <script src="{% static 'SPTGUI/analysis.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_getterService.js' %}"></script>    
     <script src="{% static 'SPTGUI/analysis_analysisService.js' %}"></script>    
+    <script src="{% static 'SPTGUI/analysis_downloadService.js' %}"></script>
+    <script src="{% static 'SPTGUI/analysis_DownloadController.js' %}"></script>  
     <script src="{% static 'SPTGUI/analysis_UploadController.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_ModelingController.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_jumpLengthHistogram.js' %}"></script>
@@ -397,7 +399,7 @@
 	      </div>
 	      
 	      <div ng-if="analysisState=='done'">
-		<div class="col-md-3" ng-if="fitAvailable">
+		<div class="col-md-6" ng-if="fitAvailable">
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
 		    <li>D<sub>free</sub> : {{jlfit[ce].fitparams.D_free}} </li>
@@ -405,7 +407,7 @@
 		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound}}</li>
 		  </ul>
 		</div>
-		<div class="col-md-3" ng-if="jlpfit">
+		<div class="col-md-6" ng-if="jlpfit">
 		  <em>Global fit parameters for cells {{modelingParameters.include}}.</em>
 		  <ul>
 		    <li>D<sub>free</sub> : {{jlpfit.fitparams.D_free}} </li>
@@ -413,7 +415,7 @@
 		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound}}</li>
 		  </ul>
 		</div>		
-		<jump-length-histogram data="[jlhist[ce], jlfit[ce], dt, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
+		<jump-length-histogram id="mainHist" data="[jlhist[ce], jlfit[ce], dt, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
 		
 		<input ng-model="dt" type="number" min="1" max="{{jlhist[0][1].length-1}}">
 		Displaying {{dt}} Delta t.
@@ -434,6 +436,8 @@
 		Show pooled jump length distribution:
 		<span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
 		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLP"></toggle-switch> <span ng-if="gettingPooledJLD">Please wait</span>
+
+		<button ng-click="toDownloads();" class="btn btn-default">Mark for download</button>
 	      </div>
 	    </div>
 
@@ -444,11 +448,43 @@
 	</tab><!-- End of the ModelingController controller -->
 	
 	<tab heading="Download">
-	  In this tab, you can download the results of your analysis
-	  <div>
-	    <div class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one!</div>
+	  In this tab, you can download the results of your analysis. To do so, you need to click the "Mark for download" button in the "Kinetic modeling" tab.
+	  <div ng-controller="DownloadController"><!-- Another controller -->
+	    <div class="alert alert-warning" role="alert" ng-hide="downloads.length>0">
+	      No data has been marked for download yet.
+	    </div>
+	    <div ng-if="downloads.length>0">
+	      <table class="table-striped">
+		<tr>
+		  <th class="col-md-2">id</th>
+		  <th class="col-md-6">Description</th>
+		  <th class="col-md-4">Download</th>
+		</tr>
+		<tr ng-repeat="dwl in downloads">
+		  <td class="col-md-2">{{$index+1}}</td>
+		  <td class="col-md-6">Lalala</td>
+		  <td class="col-md-4">
+		    <a href="#" ng-click="downloadFigure($index, 'svg')">SVG</a>,
+		    <a href="#" ng-click="downloadFigure($index, 'pdf')">PDF</a>,
+		    <a href="#" ng-click="downloadFigure($index, 'png')">PNG</a>,
+		    <a href="#" ng-click="downloadFigure($index, 'eps')">EPS</a>,
+		    <a href="#" ng-click="downloadFigure($index, 'zip')">ZIP</a>
+		  </td>
+		</tr>
+	      </table>
+	    </div>
+	    
 	  </div>
 	</tab>
+
+	<tab heading="Settings">
+	  In this tab, you can:
+	  <ul>
+	    <li>Erase the analysis</li>
+	    <li>Get a code to embed your analysis</li>
+	  </ul>
+	</tab>
+	
       </tabset>
       {% endverbatim %}
     </div>    

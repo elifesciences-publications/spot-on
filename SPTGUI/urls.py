@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from . import views, views_imports, views_tab_data, views_upload
+from . import views, views_imports, views_tab_data, views_upload, views_download
 
 app_name =  'SPTGUI'
 
@@ -47,7 +47,19 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     url(r'^analysis/(?P<url_basename>.+)/api/jld/pooled$', views.get_jldp, name='get_jldp'),
     url(r'^analysis/(?P<url_basename>.+)/api/jld_default/(?P<dataset_id>[0-9]+)$', views.get_jld_default, name='get_jld_default'),
     url(r'^analysis/(?P<url_basename>.+)/api/jld/$', views.get_jld, name='get_jld'),
-    
+
+    ##
+    ## ==== Download routes
+    ##
+    url(r'^analysis/(?P<url_basename>.+)/api/download/(?P<download_id>[0-9]+)/(?P<format>.+)$', views_download.get_download, name='get_download'),
+
+    url(r'^analysis/(?P<url_basename>.+)/api/download/$', views_download.set_download, name='set_download'),
+        
+
+    ##
+    ## ==== Default routes
+    ##
     url(r'^analysis/(?P<url_basename>.+)/', views.analysis, name='analysis'),
     url(r'^$', views.index, name='index'),
+    
 ]
