@@ -47,9 +47,21 @@ def read_file(fn):
     
 
 ## ==== Anders' file format
-def read_anders(fn):
+def read_anders(fn, new_format=True):
     """The file format sent by Anders. I don't really know where it 
-    comes from"""
+    comes from.
+    new_format tells whether we should perform weird column manipulations
+    to get it working again..."""
+    
+    def new_format(cel):
+        """Converts between the old and the new Matlab format. To do so, it 
+        swaps columns 1 and 2 of the detections and transposes the matrices"""
+        cell = cel.copy()
+        for i in range(len(cell)):
+            f = cell[i][2].copy()
+            cell[i][2] = cell[i][1].T.copy()
+            cell[i][1] = f.T
+        return cell
     
     ## Sanity checks
     if not os.path.isfile(fn):
@@ -61,6 +73,9 @@ def read_anders(fn):
     except:
         raise IOError("The file does not seem to be a .mat file ({})".format(fn))
 
+    if new_format:
+        m[0] = new_format(m[0])
+    
     ## Make the conversion
     traces_header = ('x','y','t','f')
     traces = []
