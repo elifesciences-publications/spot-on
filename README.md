@@ -33,8 +33,8 @@ pip install django-angular
 
 ## Install the `fastspt` backend
 ```{shell}
-wget http://www.eleves.ens.fr/home/woringer/fastspt-6.1.tar.gz
-pip install fastspt-6.1.tar.gz
+wget http://www.eleves.ens.fr/home/woringer/fastspt-6.2.tar.gz
+pip install fastspt-6.2.tar.gz
 ```
 
 ## Download and install the fastSPT repository
