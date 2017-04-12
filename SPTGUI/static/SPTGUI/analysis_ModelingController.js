@@ -88,7 +88,14 @@ angular.module('app')
 	//
 	// ==== CRUD modeling parameters
 	//
-
+	validateJLDparameters = function(pars) {
+	    isOk = true
+	    if (!pars.BinWidth>0) {return false;}
+	    if (!pars.GapsAllowed>=1) {return false;}
+	    if (!pars.JumpsToConsider>=3) {return false;}
+	    return isOk
+	}
+	
 	$scope.jldParameters = {BinWidth : 0.01,
 				GapsAllowed : 1,
 				TimePoints : 8,
@@ -107,22 +114,27 @@ angular.module('app')
 	    $scope.probingJLD = true;
 	    $scope.analysisState = 'jld'; // Hide plot
 
-	    // Recompute jld with new parameters
-	    analysisService.setNonDefaultJLD(pars).then(function(resp1) {
-		$interval(function() {
-		    if (!$scope.probingJLD) {return false;}
-		    analysisService.getNonDefaultJLD(pars)
-			.then(function(dataResponse) {
-			    if (dataResponse.data.status == 'done') {
-				$scope.jlhist = dataResponse.data.jld;
-				$scope.analysisState = 'done';
-				$scope.probingJLD = false;
-			    } else if (dataResponse.data.length==0) {
-				$scope.probingJLD = false;
-			    }
-			});
-		}, 1500);
-	    });				       
+	    // Check that the inputs are ok
+	    if (!validateJLDparameters(pars)) {
+		alert("Parameters are not good")
+	    } else {
+		// Recompute jld with new parameters
+		analysisService.setNonDefaultJLD(pars).then(function(resp1) {
+		    $interval(function() {
+			if (!$scope.probingJLD) {return false;}
+			analysisService.getNonDefaultJLD(pars)
+			    .then(function(dataResponse) {
+				if (dataResponse.data.status == 'done') {
+				    $scope.jlhist = dataResponse.data.jld;
+				    $scope.analysisState = 'done';
+				    $scope.probingJLD = false;
+				} else if (dataResponse.data.length==0) {
+				    $scope.probingJLD = false;
+				}
+			    });
+		    }, 1500);
+		});
+	    }
 	}, true); // deep watch the object
 	
 	$scope.modelingParameters = {D_free : [0.15, 25],
