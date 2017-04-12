@@ -5,21 +5,30 @@
 # Here we store views that relate to the upload of datasets
 
 ## ==== Imports
-import os, json, pickle, re
+import os, json, pickle
 import fileuploadutils2 as fuu
-from django.http import HttpResponse
 from flask import Response
+
 from .models import Analysis, Dataset
 from django.core.files import File
-import celery, tasks
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
+
+import celery, tasks
+
 
 bf = "./static/analysis/" ## Location to save the fitted datasets
 
 
 ## ==== Views
 def upload(request, url_basename):
-    """A backend for the upload debugging stuff"""
+    """A backend for the upload debugging stuff.
+    /!\ We used to create the analysis in this view. This is no longer the case
+    and now the creation is performed when the view is first displayed. This 
+    should avoid issues with an analysis being created multiple times."""
+
+    
     ## Call the original stuff
     ## Make sure we send the right stuff back.
     resp=Response()
@@ -28,12 +37,11 @@ def upload(request, url_basename):
     filename=None
     responseTotalChunks=None
     """
-    flow js always send a get befora a post, the first
-    one give some information for the program to use to
-    build the file when the upload is finished
+    flow js always send a GET before a post, the first one give some information
+    for the program to use to build the file when the upload is finished
     """
+    
     # Format the request object
-
     request.args = request.GET
     try:
         request.form = request.POST
@@ -49,19 +57,8 @@ def upload(request, url_basename):
 
     if res.status_code == 200 and resp.ok:
         ## 1. Get the analysis object, or create it if it doesn't exist
-        try:
-            ana = Analysis.objects.get(url_basename=url_basename)
-        except:
-            if re.match('^[\w-]+$', url_basename) is None: ## contains non allowed chars
-                logging.error("tried to create an analyis with non-allowed characters in the name")
-                return "character not allowed"
-            
-                
-            ana = Analysis(url_basename=url_basename,
-                           pub_date=timezone.now(),
-                           name='',
-                           description='')
-            ana.save()
+        ana = get_object_or_404(Analysis, url_basename=url_basename)
+        if not os.path.isdir(bf+url_basename):
             os.makedirs(bf+url_basename) # Create folder for analyses
 
 

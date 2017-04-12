@@ -5,7 +5,7 @@
 ##
 ## ==== Imports
 ##
-import random, string, json, os, hashlib, pickle, urlparse, logging
+import random, string, json, os, hashlib, pickle, urlparse, logging, re
 
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -59,6 +59,20 @@ def analysis_root(request):
 
 def analysis(request, url_basename):
     """Returns the analysis view. This is the main view of the system"""
+    ## Create the analysis if needed
+    try:
+        ana = Analysis.objects.get(url_basename=url_basename)
+    except:
+        if re.match('^[\w-]+$', url_basename) is None: ## contains forbidden chars
+            logging.error("tried to create an analyis with non-allowed characters in the name")
+            return HttpResponse("Analysis name not allowed", status=400)
+                
+        ana = Analysis(url_basename=url_basename,
+                       pub_date=timezone.now(),
+                       name='',
+                       description='')
+        ana.save()
+    
     template = loader.get_template('SPTGUI/analysis.html')
     context = {'url_basename': url_basename}
     return HttpResponse(template.render(context, request))
