@@ -6,15 +6,19 @@
 ## ==== Imports
 ##
 import random, string, json, os, hashlib, pickle, urlparse, logging, re
+from haikunator import Haikunator
 
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.db import transaction
 from .models import Analysis, Dataset
 from django.http import HttpResponse
 from django.template import loader
 
 import celery, tasks, config
 
+
+haikunator = Haikunator()
 ##
 ## ==== Global variables
 ##
@@ -59,13 +63,15 @@ def analysis_root(request):
 
 def analysis(request, url_basename):
     """Returns the analysis view. This is the main view of the system"""
+    ## Check that the required analysis is allowed
+    if re.match('^[\w-]+$', url_basename) is None: ## contains forbidden chars
+        logging.error("tried to create an analyis with non-allowed characters in the name")
+        return HttpResponse("Analysis name not allowed", status=400)
+    
     ## Create the analysis if needed
     try:
         ana = Analysis.objects.get(url_basename=url_basename)
     except:
-        if re.match('^[\w-]+$', url_basename) is None: ## contains forbidden chars
-            logging.error("tried to create an analyis with non-allowed characters in the name")
-            return HttpResponse("Analysis name not allowed", status=400)
                 
         ana = Analysis(url_basename=url_basename,
                        pub_date=timezone.now(),
@@ -370,9 +376,13 @@ def compute_hash2(h1, h2):
     return compute_hash(h1)+compute_hash(h2)
 
 def get_unused_namepage():
-    """Function returns an unused, 10 chars identifier for an analysis"""
-    N=10
-    ret = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(N))
-    while ret in [i.url_basename for i in Analysis.objects.all()]:
-        ret = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(N))
-    return ret
+    """Function returns an cool name for an analysis. Checks that it doesn't
+    already exist. Requires the haikunator plugin."""
+    
+    new_analysis = False
+    while not new_analysis:
+        with transaction.atomic():
+            url_basename = haikunator.haikunate()
+            if not Analysis.objects.filter(url_basename=url_basename).exists():
+                break
+    return url_basename
