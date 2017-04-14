@@ -112,13 +112,12 @@ angular.module('app')
 	    getterService.getGlobalStatistics().then(function(resp) {
 		$scope.statistics = resp;
 	    });
-	    $scope.currentlyUploading=false;
+	    //$scope.currentlyUploading=false;
 	});
 
 	// (3) Fired when testing if the download is complete
 	$interval(function() {
 	    if ($scope.currentlyUploading) {
-		console.log("uploading");
 		getterService.getDatasets2().then(function(resp) {
 		    $scope.datasets = resp;
 		    $scope.successfullyUploaded=resp.length;
@@ -139,13 +138,14 @@ angular.module('app')
 		    ProcessingQueue.addToQueue(celery_id, 'preprocessing')
 			.then(function(res){
 			    getterService.getDatasets2().then(function(resp) {
-				console.log("Successfully uploaded dataset"+resp[resp.length-1].id) 
+				console.log("Successfully uploaded the datasets") 
 				$scope.datasets = resp;
 				$scope.successfullyUploaded=resp.length;
 				getterService.broadcastAddedDataset(resp[resp.length-1], resp.length-1);
 			    });
 			})
 		    clearInterval(checkExist);
+		    message.cancel();		    
 		}
 	    }, 100);	    
 	});
