@@ -187,6 +187,7 @@ angular.module('app')
 		alert('no dataset included! Make a selection');
 		return;
 	    }
+	    $scope.jlfit = $scope.datasets.map(function(el){return null});
 	    analysisService.runAnalysis($scope.jldParameters, parameters).then(function(resp) {
 		if (resp.data) {
 		    resp.data.forEach(function(el) {
