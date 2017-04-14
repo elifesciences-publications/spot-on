@@ -90,7 +90,6 @@
 	    <div class="alert alert-danger" ng-hide="establishedConnexion">
 	      Cannot talk with the server...
 	    </div>
-	    <button class="btn btn-default" ng-click="queueMe()">Chaussette!</button>
 	    
 	    <h2>Upload datasets</h2>
 
@@ -295,7 +294,7 @@
 		  <td class="col-md-2"> Id </td>
 		  <td class="col-md-5"> File name </td>
 		  <td class="col-md-5"> Description </td>
-		  <td class="col-md-2"> Include </td>
+		  <td class="col-md-2"> Include (all/none)</td>
 		</tr>
 		<tr ng-repeat="data in datasets">
 		  <td class="col-md-2">{{$index+1}}</td>
@@ -337,10 +336,9 @@
 		  </tr>
 		  <tr>
 		    <td></td>		    
-		    <td><button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button></td>
+		    <td><button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button></td> 
 		  </tr>
 		</table>
-		
 		
 	      </div>
 	      <div class="col-md-6">
@@ -407,7 +405,7 @@
 		Running, please wait...
 	      </div>
 	      <div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
-		Recomputing jump length histogram...
+		Recomputing jump length histogram... (		{{computedJLD}}/{{datasets.length+1}})
 	      </div>
 	      
 	      <div ng-if="analysisState=='done'">

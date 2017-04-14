@@ -4,6 +4,7 @@ angular.module('app')
 
 	// Scope variables
 	$scope.analysisState = 'notrun';
+	$scope.computedJLD = 0	
 	$scope.showModelingTab = false;
 	$scope.jldParsInit = false; // To avoid initializing twice
 
@@ -125,18 +126,25 @@ angular.module('app')
 		alert("Parameters are not good")
 	    } else {
 		// Recompute jld with new parameters
+		incrementJLD = function(resp) {
+		    if (resp == 'OK') {
+			$scope.computedJLD = $scope.computedJLD+1;
+		    }
+		}
+		$scope.computedJLD = 0;
 		analysisService.setNonDefaultJLD(pars).then(function(resp1) {
 		    if (resp1.data) {
 			prom = []
 			resp1.data.forEach(function(el) {
 			    if (el.celery_id) {
-				prom.push(ProcessingQueue.addToQueue(el.celery_id, 'jld'))
+				prom.push(ProcessingQueue.addToQueue(el.celery_id, 'jld', incrementJLD))
 			    }
 			})
 			$q.all(prom).then(function(arr) {
 			    analysisService.getNonDefaultJLD(pars)
 				.then(function(resp2){
 				    if (resp2.data.status == 'done') {
+					$scope.computedJLD = 0;
 				    	$scope.jlhist = resp2.data.jld;
 				    	$scope.analysisState = 'done';
 				    	$scope.probingJLD = false;
