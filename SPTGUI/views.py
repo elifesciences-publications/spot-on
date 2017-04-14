@@ -118,6 +118,10 @@ def analyze_api(request, url_basename):
             return HttpResponse(json.dumps([pa+' not found']), content_type='application/json', status=400)
 
     elif request.method == 'POST': # Queue an analysis (but should be valid)
+        ids = []
+        noids = []
+        compute_pool = False
+        
         (jldparams, fitparams) = json.loads(request.body)
         cha_jld = compute_hash(jldparams['hashvalueJLD'])
         cha_fit = compute_hash(fitparams['hashvalue'])
@@ -148,25 +152,36 @@ def analyze_api(request, url_basename):
                 if data_id not in save_pars['queue'] or save_pars['queue'][data_id]['status'] == 'error':
                     save_pars['queue'][data_id] = {'status': 'queued'}
                     to_process.append(data_id)
+                else:
+                    noids.append({'celery_id': 'none', 'database_id': data_id})
         if len(fitparams['include'])>1 and not 'pooled' in save_pars['queue']: ## To avoid recomputing
             save_pars['queue']['pooled'] = {'status': 'queued'} 
             
         ## Queue to celery
         with open(prog_p, 'w') as f: ## Write the fitting parameters to file
                 pickle.dump(save_pars, f)
+
         for data_id in to_process:
-            tasks.fit_jld.delay((bf, url_basename, cha_jld, data_id), cha_fit)
+            ta = tasks.fit_jld.delay((bf, url_basename, cha_jld, data_id), cha_fit)
+            ids.append({'celery_id': ta.id, 'database_id': data_id})
         if len(fitparams['include'])>1 and save_pars['queue']['pooled']['status']=='queued':
             jldparams.pop('hashvalueJLD')
-            tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
-                                                  'pooled' : True,
-                                                  'include':fitparams['include'],
-                                                  'path': bf,
-                                                  'hash_prefix': cha_jld,
-                                                  'compute_params' : jldparams,
-                                                  'url_basename': url_basename},
-                                          link=tasks.fit_jld.s(cha_fit))
-        return HttpResponse(json.dumps(''), content_type='application/json')
+            ta = tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
+                                                       'pooled' : True,
+                                                       'include':fitparams['include'],
+                                                       'path': bf,
+                                                       'hash_prefix': cha_jld,
+                                                       'compute_params' : jldparams,
+                                                       'url_basename': url_basename},
+                                               link=tasks.fit_jld.s(cha_fit))
+            ids.append({'celery_id': ta.id, 'database_id': 'pooled'})
+            compute_pool = True
+
+        if not compute_pool:
+            noids.append({'celery_id': 'none', 'database_id': 'pooled'})
+        print "returning", ids, noids
+
+        return HttpResponse(json.dumps(ids+noids), content_type='application/json')
     
 def get_analysis(request, url_basename, dataset_id, pooled=False):
     """Returns the fitted model of a given dataset, or a wait/error message.
@@ -293,6 +308,7 @@ def get_jld(request, url_basename):
 
     ## Compute the distribution if we have a POST
     if request.method == "POST":
+        task_ids = []
         for dataset_id in dataset_ids:
             fitparams = json.loads(request.body)
             cha = compute_hash(fitparams['hashvalueJLD'])
@@ -322,14 +338,16 @@ def get_jld(request, url_basename):
                     pickle.dump(pick, f)
                 keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap"]
                 compute_params = {k: fitparams[k] for k in keys}
-                tasks.compute_jld.apply_async(
+                ta = tasks.compute_jld.apply_async(
                     kwargs={'dataset_id': dataset_id,
                             'pooled' : False,
                             'path': bf,
                             'hash_prefix': cha,
                             'compute_params': compute_params,
                             'url_basename': url_basename})
-        return HttpResponse(json.dumps("computing"), content_type='application/json')
+                task_ids.append({'celery_id': ta.id, 'database_id': dataset_id})
+        return HttpResponse(json.dumps(task_ids), content_type='application/json')
+    
     elif request.method == 'GET': ## Return what we have if this is a GET
         ready = True
         ret = []

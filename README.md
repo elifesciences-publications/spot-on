@@ -23,13 +23,15 @@ Some of the dependencies might already be installed on your system, or might be 
 You will also need the [`git` tool](https://git-scm.com/) to download the files.
 
 ```{shell}
-sudo apt-get install rabbitmq-server
+sudo apt-get install redis-server
 pip install Django
 pip install numpy # Useless if already installed on your system, compilation might be long
 pip install scipy # Useless if already installed on your system, compilation might be long
-pip install lmfit celery fasteners haikunator
+pip install lmfit celery fasteners haikunator channels redis_asgi
 pip install django-angular
 ```
+
+See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#conf-redis-result-backend 
 
 ## Install the `fastspt` backend
 ```{shell}

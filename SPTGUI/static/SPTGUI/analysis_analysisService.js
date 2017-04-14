@@ -65,5 +65,10 @@ angular.module('app')
 	    params.hashvalueJLD = encodeQueryData(params)	    
 	    return $http.get('./api/jld/?'+encodeQueryData(params));
 	}
+	
+	// Get some statistics on the uploaded and preprocessed datasets
+	this.getDefaultJLD = function(dataset_id) {
+	    return $http.get('./api/jld_default/'+dataset_id);
+	};
 
     }]);

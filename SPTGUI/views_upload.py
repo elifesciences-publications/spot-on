@@ -15,7 +15,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-import celery, tasks
+from celery import celery
+import tasks
 
 
 bf = "./static/analysis/" ## Location to save the fitted datasets
@@ -93,15 +94,18 @@ def upload(request, url_basename):
             pickle.dump(pick, f)
         
         da.preanalysis_status='queued'
-        ta = tasks.check_input_file.apply_async(
-            (da.data.path, da.id),
-            link=tasks.compute_jld.s(pooled=False,
-                                     path=bf,
-                                     hash_prefix=cha,
-                                     compute_params=compute_params,
-                                     url_basename=url_basename,
-                                     default=True))
+        
+        ta = celery.chain(tasks.check_input_file.s(da.data.path, da.id),
+                          tasks.compute_jld.s(pooled=False,
+                                              path=bf,
+                                              hash_prefix=cha,
+                                              compute_params=compute_params,
+                                              url_basename=url_basename,
+                                              default=True)).apply_async()
+        #print ta.id, ta.parent.id 
         da.preanalysis_token = ta.id
         da.save()
-
+        rr = json.loads(res.content)
+        rr['celery_id'] = [ta.parent.id, ta.id]
+        res.content = json.dumps(rr)
     return res

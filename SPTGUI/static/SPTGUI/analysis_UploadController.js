@@ -1,48 +1,69 @@
 angular.module('app')
-    .controller('UploadController', ['getterService', '$scope', '$cookies', '$interval', function(getterService, $scope, $cookies, $interval) {
+    .controller('UploadController', ['getterService', 'MainSocket', 'ProcessingQueue', '$scope', '$cookies', '$interval', '$q', function(getterService, MainSocket, ProcessingQueue, $scope, $cookies, $interval, $q) {
 	// This is the controller for the upload part of the app
 
 	//
 	// ==== Let's first define some global variables (on the $scope).
 	//
+	$scope.establishedConnexion=false;
 	$scope.currentlyUploading=false;
 	$scope.successfullyUploaded=0;
 	$scope.editingDataset=false;
 	$scope.editedDataset=null;
-	$scope.poolPreprocessing=false;
-	$scope.random = 0; // DEBUG
-	//$scope.statistics = null;
-	
+	$scope.showingStatistics=false;
+	$scope.shownStatistics=null;
+	$scope.statistics = null;
+
+	//
+	// ==== Initializing the view
+	//
 	$scope.uploadStart = function($flow){
 	    $flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
 	}; // Populate $flow with the CSRF cookie!
-	getterService.getDatasets().then(function(dataResponse) {
-	    $scope.datasets = dataResponse['data'];
-	    $scope.successfullyUploaded=dataResponse['data'].length;
-	}); // Populate the scope with the already uploaded datasets
-	getterService.getStatistics().then(function(dataResponse) {
-	    $scope.statistics = dataResponse['data'];
-	}); // Populate the scope with the already computed statistics
 
-	$scope.showingStatistics=false;
-	$scope.shownStatistics=null;
-	
-	
+
 	//
-	// ==== Handle the edition of the list of files
+	// ==== Get basic information. We need to wait for the socket to be
+	//      initiated for that.
 	//
-	$scope.deleteDataset = function(dataset) {
+	$scope.$on('socket:ready', function () {
+	    p1 = getterService.getDatasets2() // Retrieve existing datasets
+	    p2 = getterService.getGlobalStatistics() // Retrieve global statistics
+
+	    $q.all([p1,p2]).then(function(o){
+		// Update datasets
+		r1 = o[0]
+		$scope.datasets = r1;
+		$scope.successfullyUploaded=r1.length;
+
+		// Update statistics
+		r2 = o[1]
+		$scope.statistics = r2;
+
+		// Be done!
+		getterService.broadcastLoadedDatasets($scope.datasets)
+		$scope.establishedConnexion=true;
+	    })
+	});
+
+	//
+	// ==== CRUD: Handle the edition of the list of files
+	//
+	$scope.deleteDataset = function(dataset, idx) {
 	    getterService.deleteDataset(dataset.id, dataset.filename)
 		.then(function(dataResponse) {
-		    getterService.getDatasets().then(function(dataResponse) {
-			$scope.datasets = dataResponse['data'];
-			$scope.successfullyUploaded=dataResponse['data'].length;
-			getterService.broadcastDataset($scope.datasets);
-		    }); // Update the datasets variable when deleting sth.
-		    getterService.getStatistics().then(function(dataResponse) {
-			$scope.statistics = dataResponse['data'];
-		    }); // Populate the scope with the already computed statistics
-		    
+		    da_id = dataset.id
+		    $scope.datasets.splice(idx,1)
+		    getterService.broadcastDeletedDataset(da_id, idx);
+		    $scope.successfullyUploaded=$scope.successfullyUploaded-1;
+
+		    // Upload the global statistics
+		    // TODO: hide the statistics while uploading
+		    getterService.getGlobalStatistics().then(function(resp) {
+			$scope.statistics = resp;
+		    });
+
+		    console.log("Deleted dataset "+idx)
 		});
 	    if ($scope.showStatistics == dataset) {
 		$scope.shownStatistics = null;
@@ -66,8 +87,7 @@ angular.module('app')
 	    });
 	    // Finish by sending the updated entry to the server
 	    getterService.updateDataset(dataset.id, dataset)
-		.then(getterService.broadcastDataset($scope.datasets));
-
+		.then(getterService.broadcastEditedDataset(dataset.id));
 	    $scope.cancelEdit(dataset); // End edition
 	}
 
@@ -89,52 +109,44 @@ angular.module('app')
 
 	// (2) Fired when all downloads are complete
 	$scope.$on('flow::complete', function (event, $flow, flowFile) {
+	    getterService.getGlobalStatistics().then(function(resp) {
+		$scope.statistics = resp;
+	    });
 	    $scope.currentlyUploading=false;
 	});
 
-	// (3) Fired when one download completes
-	$scope.$on('flow::fileSuccess', function (file, message, chunk) {
-	    getterService.getDatasets().then(function(dataResponse) {
-		$scope.datasets = dataResponse['data'];
-		$scope.successfullyUploaded=dataResponse['data'].length;
-		$scope.poolPreprocessing = true; // start the watcher.
-		//getterService.broadcastDataset($scope.datasets);
-	    });
-	    getterService.getStatistics().then(function(dataResponse) {
-		$scope.statistics = dataResponse['data'];
-	    }); // Populate the scope with the already computed statistics
-	});
-
-	//
-	// ==== Server-side processing after the upload
-	//
-	$scope.preprocessingStartStop = function() {
-	    // A DEBUG function
-	    $scope.poolPreprocessing = !$scope.poolPreprocessing;
-	}
-	preprocessingWaiter = $interval(function() {
-	    // This loops forever, but might become inactive
-	    if ($scope.poolPreprocessing) {
-		getterService.getPreprocessing().then(function(dataResponse) {
-		    getterService.getDatasets().then(function(dataResp) {
-			$scope.datasets = dataResp['data'];
-			$scope.successfullyUploaded=dataResp['data'].length;
-			if (_.every(dataResponse['data'], function(el) {return el.state==='ok'})) {
-			    getterService.broadcastDataset($scope.datasets);
-			    $scope.poolPreprocessing = false;
-			}
-			
-		    }); // Populate the scope with the already uploaded datasets
-		    getterService.getStatistics().then(function(dataResponse) {
-			$scope.statistics = dataResponse['data'];
-		    }); // Populate the scope with the already computed statistics
-		    // Check if all the dataset is "ok", if yes, switch the flag
-		    if (_.every(dataResponse['data'], function(el) {return el.state==='ok'})) {
-			//getterService.broadcastDataset($scope.datasets);
-			//$scope.poolPreprocessing = false;
-		    }
+	// (3) Fired when testing if the download is complete
+	$interval(function() {
+	    if ($scope.currentlyUploading) {
+		console.log("uploading");
+		getterService.getDatasets2().then(function(resp) {
+		    $scope.datasets = resp;
+		    $scope.successfullyUploaded=resp.length;
+		    //getterService.broadcastAddedDataset(resp[resp.length-1], resp.length-1);
 		});
 	    }
-	    return(true)
-	}, 2000);
+	}, 2000)
+	
+
+	// (4) Fired when one download completes
+	$scope.$on('flow::fileSuccess', function (file, message, chunk) {
+	    if (message.file) {resp = message.file}
+	    else if (message.files) {resp = message.files[message.files.length-1]}
+	    else {console.log('not getting the right object')}
+	    var checkExist = setInterval(function() {
+		if (resp.msg) {
+		    celery_id = JSON.parse(resp.msg).celery_id;
+		    ProcessingQueue.addToQueue(celery_id, 'preprocessing')
+			.then(function(res){
+			    getterService.getDatasets2().then(function(resp) {
+				console.log("Successfully uploaded dataset"+resp[resp.length-1].id) 
+				$scope.datasets = resp;
+				$scope.successfullyUploaded=resp.length;
+				getterService.broadcastAddedDataset(resp[resp.length-1], resp.length-1);
+			    });
+			})
+		    clearInterval(checkExist);
+		}
+	    }, 100);	    
+	});
     }]);

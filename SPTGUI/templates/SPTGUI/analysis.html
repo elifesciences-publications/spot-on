@@ -15,8 +15,9 @@
     <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>
     <script src="{% static 'SPTGUI/dist/js/bootstrap.min.js' %}"></script>
     
-    <!-- Lodash library -->
+    <!-- Lodash and reconnecting websocketlibrary -->
     <script src="{% static 'SPTGUI/dist/js/lodash.min.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/reconnecting-websocket.min.js' %}"></script>
     
     <!-- Angular JS -->
     <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
@@ -29,6 +30,8 @@
 
     <!-- Custom app code -->   
     <script src="{% static 'SPTGUI/analysis.js' %}"></script>
+    <script src="{% static 'SPTGUI/analysis_socketsService.js' %}"></script>    
+    <script src="{% static 'SPTGUI/analysis_queueService.js' %}"></script>    
     <script src="{% static 'SPTGUI/analysis_getterService.js' %}"></script>    
     <script src="{% static 'SPTGUI/analysis_analysisService.js' %}"></script>    
     <script src="{% static 'SPTGUI/analysis_downloadService.js' %}"></script>
@@ -77,15 +80,19 @@
       
       <tabset>
 	<tab heading="Data">
-	  <h2>Upload datasets</h2>
-	  
 	  {% verbatim %}	  
 	  <div ng-controller="UploadController"
 	       flow-init="{target: './upload/'}"
 	       flow-files-submitted="$flow.upload()"
 	       flow-upload-started="uploadStart($flow);"
 	       flow-file-success="$file.msg = $message">
+
+	    <div class="alert alert-danger" ng-hide="establishedConnexion">
+	      Cannot talk with the server...
+	    </div>
+	    <button class="btn btn-default" ng-click="queueMe()">Chaussette!</button>
 	    
+	    <h2>Upload datasets</h2>
 
 	    <!-- Drag'n'drop box -->
 	    <div class="alert alert-info" flow-drop>
@@ -102,7 +109,6 @@
 	    <div class="alert alert-warning" ng-if="successfullyUploaded==0">
 	      No dataset has been uploaded yet.
 	    </div>
-
 	    <div ng-if="currentlyUploading">
 	      <table class="table-striped">
 		<tr>
@@ -148,7 +154,7 @@
 		    <td class="col-md-1">
 		      <span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open"></span>
 		      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil"></span>
-		      <span ng-click="deleteDataset(data);" class="glyphicon glyphicon-remove"></span>
+		      <span ng-click="deleteDataset(data, $index);" class="glyphicon glyphicon-remove"></span>
 		    </td>		  
 		  </tr>
 		</table>	      
@@ -440,10 +446,6 @@
 		<button ng-click="toDownloads();" class="btn btn-default">Mark for download</button>
 	      </div>
 	    </div>
-
-	    
-	    <div ng-if="statistics.status!='ok';"
-		 class="alert alert-warning" role="alert">No data has been uploaded yet. Upload one!</div>
 	  </div>
 	</tab><!-- End of the ModelingController controller -->
 	

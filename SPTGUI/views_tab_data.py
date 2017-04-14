@@ -15,6 +15,8 @@ import SPTGUI.statistics as stats
 ## ==== Views
 def statistics(request, url_basename):
     """Function returns some global statistics about all the datasets"""
+    logging.warning('This function (views_tab_data.statistics) is deprecated')
+    
     def mean(m,e):
         """Compute a weighted mean, given a list of individual means (m)
         and a list of 'effectifs'"""
@@ -65,6 +67,9 @@ def datasets_api(request, url_basename):
     (that is, a given url, specified by the `url_basename` (str) parameter, it is
     a view on the Datasets library
     """
+
+    logging.warning('This function (views_tab_data.datasets_api) is deprecated')
+    
     try:
         ana = get_object_or_404(Analysis, url_basename=url_basename)
     except:

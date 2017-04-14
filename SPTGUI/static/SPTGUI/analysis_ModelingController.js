@@ -1,17 +1,18 @@
 angular.module('app')
-    .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', '$scope', '$interval', '$q', function(analysisService, getterService, downloadService, $scope, $interval, $q) {
+    .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', 'ProcessingQueue', '$scope', '$interval', '$q', function(analysisService, getterService, downloadService, ProcessingQueue, $scope, $interval, $q) {
 	// This is the controller for the modeling tab
 
 	// Scope variables
 	$scope.analysisState = 'notrun';
 	$scope.showModelingTab = false;
+	$scope.jldParsInit = false; // To avoid initializing twice
 
 	initView = function() {
-	// Initiate the window with what we have
-	//getterService.getDatasets().then(function(dataResponse) {
-	    //$scope.datasets = dataResponse['data'];
+	    // Initiate the window with what we have
 	    $scope.datasets = $scope.datasets.map(function(el) {
 		el.incl=false; return el})
+
+	    // Toggle buttons
 	    $scope.datasetsf = $scope.datasets.map(function(el) {
 		return function(newVal) {
 		    function add(array, value) {
@@ -38,36 +39,35 @@ angular.module('app')
 			return el.incl
 		    }
 		}});
-	    $q.all($scope.datasets.map(function(el) { // Get JLD when available
+
+	    // Get the jump length distributions
+	    // Should go through the pooled queue
+	    // Then GET the jld
+	    $scope.jlhist = $scope.datasets.map(function(el){return null;})
+	    $scope.datasets.forEach(function(el, i) {
 		if (el.jld_available) {
-		    return getterService.getJLD(el.id);
-		}
-		else {return null;}
-	    })).then(function(l) {
-		$scope.jlhist = l.map(function(ll){
-		    if (!ll) {return null;}
-		    return ll.data
-		});
-		$scope.jlfit = l.map(function(ll) {return null;}); // init fit
-		$scope.showModelingTab = true; // Hide progress bar
-		console.log($scope.jlhist);
-		if ($scope.jlhist.length>0) {
-		    $scope.analysisState = 'done';
+		    analysisService.getDefaultJLD(el.id).then(function(resp) {
+			$scope.jlhist[i] = resp.data
+			$scope.showModelingTab = true; // Hide progress bar
+			$scope.analysisState = 'done';
+			console.log("Retrieved default JLD for dataset "+el.id)
+		    })
+		} else {
+		    console.log("No JLD available for this dataset, weird")
 		}
 	    });
+
+	    $scope.jlfit = $scope.datasets.map(function(ll) {return null;}); // init fit
 	}
-	//); // Populate the scope with the already uploaded datasets
-	
-	getterService.getDatasets().then(function(dataResponse) {
-	    // In an ideal world this function should only be called when the tab is displayed
-	    $scope.datasets = dataResponse['data'];
-	    initView(); // Initialize the view
+
+	// When the datasets object has been loaded, it is stored there
+	$scope.$on('datasets:loaded', function(event, datasets) {
+	    $scope.datasets = datasets;
+	    initView();
 	});
-	getterService.getStatistics().then(function(dataResponse) {
-	    $scope.statistics = dataResponse['data'];
-	}); // Populate the scope with the already computed statistics
-	
+
 	$scope.$on('datasets:updated', function(event,data) {
+	    console.load("updated dataset Modeling controller. DEPRECATED")
 	    $scope.datasets = data
 	    
 	    // Now reset everything
@@ -79,15 +79,23 @@ angular.module('app')
 	    $scope.showJLPf = false;
 	    $scope.modelingParameters.include = [];
 	    $scope.jlhist = null;
-	    $scope.jlfit = null;
+	    $scope.jlfit = $scope.datasets.map(function(el){return null;})
 	    $scope.analysisState = 'notrun';
 
 	    initView(); // And initialize stuff again
-	}); // Look for updated datasets
+	});
 	
 	//
 	// ==== CRUD modeling parameters
 	//
+	$scope.jldParameters = {BinWidth : 0.01,
+				GapsAllowed : 1,
+				TimePoints : 8,
+				JumpsToConsider : 4,
+				MaxJump : 1.25,
+				TimeGap : 4.477}
+	$scope.jldParametersDefault = angular.copy($scope.jldParameters);
+	
 	validateJLDparameters = function(pars) {
 	    isOk = true
 	    if (!pars.BinWidth>0) {return false;}
@@ -96,19 +104,17 @@ angular.module('app')
 	    return isOk
 	}
 	
-	$scope.jldParameters = {BinWidth : 0.01,
-				GapsAllowed : 1,
-				TimePoints : 8,
-				JumpsToConsider : 4,
-				MaxJump : 1.25,
-				TimeGap : 4.477}
-	$scope.jldParametersDefault = angular.copy($scope.jldParameters);
 	$scope.resetjldParameters = function() {
 	    $scope.jldParameters = angular.copy($scope.jldParametersDefault);
 	}
+	
 	$scope.$watch('jldParameters', function(pars) {
 	    // Reset the variables
-	    $scope.jlfit = null;
+	    if (!$scope.jldParsInit) {
+		$scope.jldParsInit = true
+		return
+	    }
+	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;
 	    $scope.probingJLD = true;
@@ -120,20 +126,27 @@ angular.module('app')
 	    } else {
 		// Recompute jld with new parameters
 		analysisService.setNonDefaultJLD(pars).then(function(resp1) {
-		    $interval(function() {
-			if (!$scope.probingJLD) {return false;}
-			analysisService.getNonDefaultJLD(pars)
-			    .then(function(dataResponse) {
-				if (dataResponse.data.status == 'done') {
-				    $scope.jlhist = dataResponse.data.jld;
-				    $scope.analysisState = 'done';
-				    $scope.probingJLD = false;
-				} else if (dataResponse.data.length==0) {
-				    $scope.probingJLD = false;
-				}
-			    });
-		    }, 1500);
-		});
+		    if (resp1.data) {
+			prom = []
+			resp1.data.forEach(function(el) {
+			    if (el.celery_id) {
+				prom.push(ProcessingQueue.addToQueue(el.celery_id, 'jld'))
+			    }
+			})
+			$q.all(prom).then(function(arr) {
+			    analysisService.getNonDefaultJLD(pars)
+				.then(function(resp2){
+				    if (resp2.data.status == 'done') {
+				    	$scope.jlhist = resp2.data.jld;
+				    	$scope.analysisState = 'done';
+				    	$scope.probingJLD = false;
+				    } else if (resp2.data.length==0) {
+				    	$scope.probingJLD = false;
+				    }
+				})
+			})
+		    }
+		})
 	    }
 	}, true); // deep watch the object
 	
@@ -162,16 +175,82 @@ angular.module('app')
 
 	// Function that runs the analysis
 	$scope.runAnalysis = function(parameters) {
-	    // Show a progress bar (synced from messages from the broker)
-	    // $scope.$applyAsync();
 	    if (parameters.include.length == 0){
 		alert('no dataset included! Make a selection');
 		return;
 	    }
-	    analysisService.runAnalysis($scope.jldParameters, parameters)   
+	    analysisService.runAnalysis($scope.jldParameters, parameters).then(function(resp) {
+		if (resp.data) {
+		    resp.data.forEach(function(el) {
+			if (el.celery_id != 'none') {
+			    ProcessingQueue.addToQueue(el.celery_id, 'fit').then(function(resp2) {
+				console.log("Fit done for dataset: "+ el.database_id)
+				if (el.database_id == 'pooled') {
+				    analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
+					$scope.jlpfit = l.data;
+				    })
+				} else {
+				    analysisService.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
+					idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
+					$scope.jlfit[idd] = l.data
+					$scope.fitAvailable = true;
+					$scope.analysisState = 'done'; // Hide progress bar
+				    })
+				}
+			    })
+			} else {
+			    console.log("Direct download of fit:" +el.database_id)
+			    if (el.database_id == 'pooled') {
+				    analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
+					$scope.jlpfit = l.data;
+				    })				
+				} else {
+				    analysisService
+					.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
+					    idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
+			    		    $scope.jlfit[idd] = l.data
+			    		    $scope.fitAvailable = true;
+			    		    $scope.analysisState = 'done';
+					})
+				}
+			}
+		    })
+		}
+	    })
 	    $scope.analysisState='running'; // 'running' for progress bar
+	    $scope.fitAvailable = false;
+	    FitPars = $scope.modelingParameters;
+	    JLDPars = $scope.jldParameters;
 	}
-
+	
+	// A watcher that periodically checks the state of the computation
+	// processingWaiter = $interval(function() {
+	//     // This loops forever, but might become inactive
+	//     if ($scope.analysisState=='running') {
+	// 	$scope.fitAvailable = false;
+	// 	FitPars = $scope.modelingParameters;
+	// 	JLDPars = $scope.jldParameters;
+	// 	analysisService.checkAnalysis(JLDPars, FitPars)
+	// 	    .then(function(dataResponse) {
+	// 		if (dataResponse['data'].allgood) {
+	// 		    analysisService.getPooledFitted(JLDPars, FitPars).then(
+	// 			function(l) {
+	// 			    $scope.jlpfit = l.data;
+	// 			}
+	// 		    );
+	// 		    $q.all(FitPars.include.map(function(data_id) {
+	// 			return analysisService.getFitted(data_id, JLDPars, FitPars);
+	// 		    })).then(function(l) {
+	// 			$scope.jlfit = l.map(function(ll){return ll.data});
+	// 			$scope.fitAvailable = true;
+	// 			$scope.analysisState = 'done'; // Hide progress bar
+	// 		    });
+	// 		}
+	// 	    });
+	//     }
+	//     return(true)
+	// }, 2000);
+	
 	// Function that does everything to display a pooled jld
 	$scope.getPooledJLD = function() {
 	    if (!$scope.modelingParameters.include||$scope.modelingParameters.include.length==0)
@@ -246,32 +325,4 @@ angular.module('app')
 	    downloadService.setDownload(dwnlPars);
 	    alert("Analysis marked for download");
 	}
-
-	// A watcher that periodically checks the state of the computation
-	processingWaiter = $interval(function() {
-	    // This loops forever, but might become inactive
-	    if ($scope.analysisState=='running') {
-		$scope.fitAvailable = false;
-		FitPars = $scope.modelingParameters;
-		JLDPars = $scope.jldParameters;
-		analysisService.checkAnalysis(JLDPars, FitPars)
-		    .then(function(dataResponse) {
-			if (dataResponse['data'].allgood) {
-			    analysisService.getPooledFitted(JLDPars, FitPars).then(
-				function(l) {
-				    $scope.jlpfit = l.data;
-				}
-			    );
-			    $q.all(FitPars.include.map(function(data_id) {
-				return analysisService.getFitted(data_id, JLDPars, FitPars);
-			    })).then(function(l) {
-				$scope.jlfit = l.map(function(ll){return ll.data});
-				$scope.fitAvailable = true;
-				$scope.analysisState = 'done'; // Hide progress bar
-			    });
-			}
-		    });
-	    }
-	    return(true)
-	}, 2000);
     }]);

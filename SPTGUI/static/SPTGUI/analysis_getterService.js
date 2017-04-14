@@ -1,28 +1,62 @@
 angular.module('app')
-    .service('getterService', ['$http', '$rootScope', function($http, $rootScope) {
-	// This service handles $http requests to get the list for the datasets
+    .service('getterService', ['MainSocket', '$http', '$rootScope', function(MainSocket, $http, $rootScope) {
+	// The purpose of this service is to retrieve the list of uploaded datasets
+	// It used to rely on Ajax request but it is now moving to Sockets!
+	
+	this.getDatasets2 = function() {
+	    var request = {
+		type: "list_datasets"
+	    }
+	    var promise = MainSocket.sendRequest(request); 
+	    return promise;
+	}
+
+	this.getGlobalStatistics = function() {
+	    var request = {
+		type: "global_statistics"
+	    }
+	    var promise = MainSocket.sendRequest(request); 
+	    return promise;
+	}
+
+	// Fired when all the datasets have been loaded ($scope.datasets exists)
+	this.broadcastLoadedDatasets = function(data) {
+	    $rootScope.$broadcast('datasets:loaded', data);
+	}
+
+	this.broadcastAddedDataset =  function(database_id,dataset_id) {
+	    $rootScope.$broadcast('datasets:added',{database_id: database_id,
+						    dataset_id: dataset_id});
+	    console.log("Added dataset signal");
+	}
+	
+	this.broadcastDeletedDataset =  function(database_id,dataset_id) {
+	    $rootScope.$broadcast('datasets:deleted',{database_id: database_id,
+						      dataset_id: dataset_id});
+	    console.log("Deleted dataset signal");
+	}
+	
 	this.getDatasets = function(callback) {
+	    console.log('getterService.getDatasets is deprecated. Use the socket');
 	    return $http.get('./api/datasets/');
 	};
 
 	// Get some statistics on the uploaded and preprocessed datasets
 	this.getStatistics = function(callback) {
+	    console.log('getterService.getStatistics is deprecated. Use the socket');
 	    return $http.get('./statistics/');
 	};
-	
-	// Get some statistics on the uploaded and preprocessed datasets
-	this.getJLD = function(dataset_id) {
-	    return $http.get('./api/jld_default/'+dataset_id);
-	};
-	
+		
 	// Delete a dataset, provided its id (filename used for validation)
 	this.deleteDataset = function(database_id, filename) {
+	    console.log('getterService.deleteDataset is deprecated. Use the socket');
 	    return $http.post('./api/delete/',
 			      {'id': database_id,
 			       'filename': filename});
 	};
 
 	this.updateDataset = function(database_id, dataset) {
+	    console.log('getterService.updateDataset is deprecated. Use the socket');
 	    return $http.post('./api/edit/',
 			      {'id': database_id,
 			       'dataset': dataset});
@@ -34,6 +68,7 @@ angular.module('app')
 	
 	this.broadcastDataset = function(datasets) {
 	    // Broadcast a message that a dataset has been edited
+	    console.log("DEPRECATED: Broadcaster 'updated' dataset. ")
 	    $rootScope.$broadcast('datasets:updated',datasets);
 	};
 	

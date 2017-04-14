@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 import os
+import celery
 from celery import Celery
 
 
@@ -28,15 +29,15 @@ app.autodiscover_tasks()
 
 
 ## Some debug stuff...
-@app.task(bind=True)
-def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
+# @app.task(bind=True)
+# def debug_task(self):
+#     print('Request: {0!r}'.format(self.request))
 
-@app.task()
-def loong():
-    """ Get some rest, asynchronously, and update the state all the time """
-    for i in range(1000):
-        time.sleep(0.1)
-        print i
-        app.current_task.update_state(state='PROGRESS',
-            meta={'current': i, 'total': 100})
+# @app.task()
+# def loong():
+#     """ Get some rest, asynchronously, and update the state all the time """
+#     for i in range(1000):
+#         time.sleep(0.1)
+#         print i
+#         app.current_task.update_state(state='PROGRESS',
+#             meta={'current': i, 'total': 100})
