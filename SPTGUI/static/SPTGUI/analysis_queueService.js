@@ -4,7 +4,7 @@ angular.module('app')
 	celery_ids = []
 	
 	addToQueue =  function(celery_id, queue, callback, params) {
-	    var defer = $q.defer();
+	    defer = $q.defer();
 	    celery_ids.push({celery_id: celery_id,
 			     queue: queue,
 			     callback: callback,

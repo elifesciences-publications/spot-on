@@ -46,7 +46,8 @@ def poll_jld_queue(idd):
     else:
         return r.status
 
-def poll_preprocessing_queue(idd) :
+def poll_preprocessing_queue(idd_str) :
+    idd = idd_str.split('@')
     r_chk = tasks.check_input_file.AsyncResult(idd[0])
     r_jld = tasks.check_input_file.AsyncResult(idd[1])
     print idd, r_chk.status,  r_jld.status

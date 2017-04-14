@@ -132,19 +132,20 @@ angular.module('app')
 	    if (message.file) {resp = message.file}
 	    else if (message.files) {resp = message.files[message.files.length-1]}
 	    else {console.log('not getting the right object')}
-	    var checkExist = setInterval(function() {
+	    var checkExist = $interval(function() {
 		if (resp.msg) {
 		    celery_id = JSON.parse(resp.msg).celery_id;
-		    ProcessingQueue.addToQueue(celery_id, 'preprocessing')
+		    celid = celery_id[0]+'@'+celery_id[1]
+		    ProcessingQueue.addToQueue(celid, 'preprocessing')
 			.then(function(res){
+			    console.log(res)
 			    getterService.getDatasets2().then(function(resp) {
-				console.log("Successfully uploaded the datasets") 
 				$scope.datasets = resp;
 				$scope.successfullyUploaded=resp.length;
 				getterService.broadcastAddedDataset(resp[resp.length-1], resp.length-1);
 			    });
 			})
-		    clearInterval(checkExist);
+		    $interval.cancel(checkExist);
 		    message.cancel();		    
 		}
 	    }, 100);	    
