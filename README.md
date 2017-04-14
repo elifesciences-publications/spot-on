@@ -28,7 +28,7 @@ pip install Django
 pip install numpy # Useless if already installed on your system, compilation might be long
 pip install scipy # Useless if already installed on your system, compilation might be long
 pip install lmfit celery fasteners haikunator channels redis_asgi
-pip install django-angular
+pip install django-angular celery[redis]
 ```
 
 See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#conf-redis-result-backend 
