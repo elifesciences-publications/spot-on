@@ -292,12 +292,10 @@ angular.module('app')
 				
 				if (el.database_id == 'pooled') {
 				    analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
-					console.log(l)
 					$scope.jlpfit = l.data;
 				    })
 				} else {
 				    analysisService.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
-					console.log(l)
 					idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
 					$scope.jlfit[idd] = l.data
 					$scope.fitAvailable = true;
@@ -309,13 +307,11 @@ angular.module('app')
 			    console.log("Direct download of fit:" +el.database_id)
 			    if (el.database_id == 'pooled') {
 				analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
-				    console.log(l)    
 				    $scope.jlpfit = l.data;
 				})				
 				} else {
 				    analysisService
 					.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
-					    console.log(l)
 					    idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
 			    		    $scope.jlfit[idd] = l.data
 			    		    $scope.fitAvailable = true;

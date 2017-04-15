@@ -2,10 +2,9 @@ angular.module('app')
     .directive('jumpLengthHistogram', function() {
 	function fmt_data(dat) {
 	    data = [];
-	    data.push({date: 0, close: 0});
 	    for (i=1; i<dat[0].length; i++) {
-		data.push({date: dat[0][i-1], close: dat[1][i]});
-		data.push({date: dat[0][i], close: dat[1][i]});
+		data.push({date: dat[0][i-1], close: dat[1][i-1]});
+		data.push({date: dat[0][i], close: dat[1][i-1]});
 	    }
 	    return data;
 	};
