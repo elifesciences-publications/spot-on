@@ -50,15 +50,18 @@ angular.module('app')
 	// ==== CRUD: Handle the edition of the list of files
 	//
 	$scope.deleteDataset = function(dataset, idx) {
+	    dataset = angular.copy(dataset)
+	    $scope.datasets.splice(idx,1)
+	    $scope.successfullyUploaded=$scope.successfullyUploaded-1;
+	    
 	    getterService.deleteDataset(dataset.id, dataset.filename)
 		.then(function(dataResponse) {
 		    da_id = dataset.id
-		    $scope.datasets.splice(idx,1)
 		    getterService.broadcastDeletedDataset(da_id, idx);
-		    $scope.successfullyUploaded=$scope.successfullyUploaded-1;
 
 		    // Upload the global statistics
 		    // TODO: hide the statistics while uploading
+		    $scope.statistics = null;
 		    getterService.getGlobalStatistics().then(function(resp) {
 			$scope.statistics = resp;
 		    });
@@ -121,7 +124,6 @@ angular.module('app')
 		getterService.getDatasets2().then(function(resp) {
 		    $scope.datasets = resp;
 		    $scope.successfullyUploaded=resp.length;
-		    //getterService.broadcastAddedDataset(resp[resp.length-1], resp.length-1);
 		});
 	    }
 	}, 2000)

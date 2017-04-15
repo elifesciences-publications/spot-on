@@ -11,7 +11,7 @@ angular.module('app')
 	initView = function() {
 	    // Initiate the window with what we have
 	    $scope.datasets = $scope.datasets.map(function(el) {
-		el.incl=false; return el})
+		el.incl=true; return el})
 
 	    // Toggle buttons
 	    $scope.datasetsToggle = $scope.datasets.map(function(el) {
@@ -51,7 +51,6 @@ angular.module('app')
 		if ($scope.jlpfit) {return n+1}
 		else {return n}
 	    }
-	    $scope.datasetsToggleAll(true);
 
 	    // Get the jump length distributions
 	    // Should go through the pooled queue
@@ -78,6 +77,23 @@ angular.module('app')
 	    $scope.datasets = datasets;
 	    initView();
 	});
+
+	$scope.$on('datasets:deleted', function(event, data) {
+	    // Updates the following arrays when a dataset is deleted
+	    // datasets, datasetsToggle, jlhist, jlfit
+	    da_id = data.dataset_id;
+	    $scope.datasets = $scope.datasets
+		.filter(function(el,i){return i!=da_id})
+	    $scope.datasetsToggle = $scope.datasetsToggle
+		.filter(function(el,i){return i!=da_id})
+	    $scope.jlhist = $scope.jlhist.filter(function(el,i){return i!=da_id})
+	    $scope.jlfit = $scope.jlfit.filter(function(el,i){return i!=da_id})
+
+	    // Reset the pooled values
+	    $scope.jlpfit = null;
+	    $scope.jlphist = null;
+	    
+	})
 
 	$scope.$on('datasets:updated', function(event,data) {
 	    console.load("updated dataset Modeling controller. DEPRECATED")

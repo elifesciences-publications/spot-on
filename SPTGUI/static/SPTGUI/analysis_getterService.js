@@ -4,17 +4,13 @@ angular.module('app')
 	// It used to rely on Ajax request but it is now moving to Sockets!
 	
 	this.getDatasets2 = function() {
-	    var request = {
-		type: "list_datasets"
-	    }
+	    var request = { type: "list_datasets" }
 	    var promise = MainSocket.sendRequest(request); 
 	    return promise;
 	}
 
 	this.getGlobalStatistics = function() {
-	    var request = {
-		type: "global_statistics"
-	    }
+	    var request = { type: "global_statistics" }
 	    var promise = MainSocket.sendRequest(request); 
 	    return promise;
 	}
@@ -33,7 +29,6 @@ angular.module('app')
 	this.broadcastDeletedDataset =  function(database_id,dataset_id) {
 	    $rootScope.$broadcast('datasets:deleted',{database_id: database_id,
 						      dataset_id: dataset_id});
-	    console.log("Deleted dataset signal");
 	}
 	
 	this.getDatasets = function(callback) {
@@ -49,7 +44,6 @@ angular.module('app')
 		
 	// Delete a dataset, provided its id (filename used for validation)
 	this.deleteDataset = function(database_id, filename) {
-	    console.log('getterService.deleteDataset is deprecated. Use the socket');
 	    return $http.post('./api/delete/',
 			      {'id': database_id,
 			       'filename': filename});
