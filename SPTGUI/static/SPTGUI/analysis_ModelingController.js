@@ -4,7 +4,7 @@ angular.module('app')
 
 	// Scope variables
 	$scope.analysisState = 'notrun';
-	$scope.computedJLD = 0	
+	$scope.computedJLD = 0
 	$scope.showModelingTab = false;
 	$scope.jldParsInit = false; // To avoid initializing twice
 
@@ -14,7 +14,7 @@ angular.module('app')
 		el.incl=false; return el})
 
 	    // Toggle buttons
-	    $scope.datasetsf = $scope.datasets.map(function(el) {
+	    $scope.datasetsToggle = $scope.datasets.map(function(el) {
 		return function(newVal) {
 		    function add(array, value) {
 			if (array.indexOf(value) === -1) {array.push(value);}
@@ -40,6 +40,17 @@ angular.module('app')
 			return el.incl
 		    }
 		}});
+	    $scope.datasetsToggleAll = function(val) {
+		// Select all/none
+		$scope.datasetsToggle.forEach(function(el){el(val)})
+	    }
+	    $scope.getNumberFittedDatasets = function() {
+		// Returns the number of fitted datasets
+		n = $scope.jlfit.filter(function(el){if (el) {return true}
+						     else {return false}}).length
+		if ($scope.jlpfit) {return n+1}
+		else {return n}
+	    }
 
 	    // Get the jump length distributions
 	    // Should go through the pooled queue
@@ -109,7 +120,9 @@ angular.module('app')
 	    $scope.jldParameters = angular.copy($scope.jldParametersDefault);
 	}
 	
-	$scope.$watch('jldParameters', function(pars) {
+	$scope.$watch('jldParameters', function(pars, oldpars) {
+	    if (angular.equals(pars, oldpars)) {return}
+	    
 	    // Reset the variables
 	    if (!$scope.jldParsInit) {
 		$scope.jldParsInit = true
@@ -131,8 +144,8 @@ angular.module('app')
 			$scope.computedJLD = $scope.computedJLD+1;
 		    }
 		}
-		$scope.computedJLD = 0;
 		analysisService.setNonDefaultJLD(pars).then(function(resp1) {
+		    $scope.computedJLD = 0;
 		    if (resp1.data) {
 			prom = []
 			resp1.data.forEach(function(el) {
@@ -194,6 +207,7 @@ angular.module('app')
 			if (el.celery_id != 'none') {
 			    ProcessingQueue.addToQueue(el.celery_id, 'fit').then(function(resp2) {
 				console.log("Fit done for dataset: "+ el.database_id)
+				
 				if (el.database_id == 'pooled') {
 				    analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
 					$scope.jlpfit = l.data;
@@ -231,35 +245,7 @@ angular.module('app')
 	    FitPars = $scope.modelingParameters;
 	    JLDPars = $scope.jldParameters;
 	}
-	
-	// A watcher that periodically checks the state of the computation
-	// processingWaiter = $interval(function() {
-	//     // This loops forever, but might become inactive
-	//     if ($scope.analysisState=='running') {
-	// 	$scope.fitAvailable = false;
-	// 	FitPars = $scope.modelingParameters;
-	// 	JLDPars = $scope.jldParameters;
-	// 	analysisService.checkAnalysis(JLDPars, FitPars)
-	// 	    .then(function(dataResponse) {
-	// 		if (dataResponse['data'].allgood) {
-	// 		    analysisService.getPooledFitted(JLDPars, FitPars).then(
-	// 			function(l) {
-	// 			    $scope.jlpfit = l.data;
-	// 			}
-	// 		    );
-	// 		    $q.all(FitPars.include.map(function(data_id) {
-	// 			return analysisService.getFitted(data_id, JLDPars, FitPars);
-	// 		    })).then(function(l) {
-	// 			$scope.jlfit = l.map(function(ll){return ll.data});
-	// 			$scope.fitAvailable = true;
-	// 			$scope.analysisState = 'done'; // Hide progress bar
-	// 		    });
-	// 		}
-	// 	    });
-	//     }
-	//     return(true)
-	// }, 2000);
-	
+		
 	// Function that does everything to display a pooled jld
 	$scope.getPooledJLD = function() {
 	    if (!$scope.modelingParameters.include||$scope.modelingParameters.include.length==0)

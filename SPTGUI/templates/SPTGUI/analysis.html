@@ -88,16 +88,16 @@
 	       flow-file-success="$file.msg = $message">
 
 	    <div class="alert alert-danger" ng-hide="establishedConnexion">
-	      Cannot talk with the server...
+	      Cannot talk with the server or loading files...
 	    </div>
 	    
 	    <h2>Upload datasets</h2>
 
 	    <!-- Drag'n'drop box -->
 	    <div class="alert alert-info" flow-drop>
-	      <div flow-drag-enter="style={border:'4px solid green'}" flow-drag-leave="style={}"
+	      <div flow-drag-enter="style={border:'4px solid green'}"
+		   flow-drag-leave="style={}"
 		   ng-style="style">
-		
 		Drag And Drop your file here
 	      </div>
 	    </div>
@@ -108,23 +108,6 @@
 	    <div class="alert alert-warning" ng-if="successfullyUploaded==0">
 	      No dataset has been uploaded yet.
 	    </div>
-	    <!-- <div ng-if="currentlyUploading"> -->
-	    <!--   <table class="table-striped"> -->
-	    <!-- 	<tr> -->
-	    <!-- 	  <th class="col-md-2">id</th> -->
-	    <!-- 	  <th class="col-md-5">File name</th> -->
-	    <!-- 	  <th class="col-md-5">Comment</th> -->
-	    <!-- 	  <th class="col-md-5">Options</th> -->
-	    <!-- 	</tr> -->
-	    <!-- 	<tr ng-repeat="file in $flow.files"> -->
-	    <!-- 	  <td class="col-md-2">{{$index+1}}</td> -->
-	    <!-- 	  <td class="col-md-5">{{file.name}}</td> -->
-	    <!-- 	  <td class="col-md-5">{{file.msg.msg}}</td> -->
-	    <!-- 	  <td class="col-md-1"> </td>		   -->
-	    <!-- 	</tr> -->
-	    <!--   </table> -->
-	    <!-- </div> -->
-
 	    
 	    <div ng-if="successfullyUploaded>0">
 		<ul>
@@ -291,17 +274,23 @@
 	      Make sure that only valid datasets are visible.
 	      <table class="table-striped">
 		<tr>
-		  <td class="col-md-2"> Id </td>
+		  <td class="col-md-1"> Id </td>
 		  <td class="col-md-5"> File name </td>
 		  <td class="col-md-5"> Description </td>
-		  <td class="col-md-2"> Include (all/none)</td>
+		  <td class="col-md-1"> Status </td>
+		  <td class="col-md-2"> Include
+		    (<a ng-click="datasetsToggleAll(true)" href="#">all</a>/<a ng-click="datasetsToggleAll(false)" href="#">none</a>)
+		  </td>
 		</tr>
 		<tr ng-repeat="data in datasets">
-		  <td class="col-md-2">{{$index+1}}</td>
+		  <td class="col-md-1">{{$index+1}}</td>
 		  <td class="col-md-5">{{data.name}}</td>
 		  <td class="col-md-5">{{data.description}}</td>
+		  <td class="col-md-1">
+		    <span ng-if="jlfit[$index];" class="glyphicon glyphicon-stats"></span>
+		  </td>
 		  <td class="col-md-2">
-		    <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="datasetsf[$index]"></toggle-switch>
+		    <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="datasetsToggle[$index]"></toggle-switch>
 		  </td>
 		</tr>
 	      </table>
@@ -389,7 +378,7 @@
 		    <tr>
 		      <td>&nbsp;</td>
 		      <td>
-			<button type="submit" class="btn btn-default">Run the analysis</button>
+			<button type="submit" class="btn btn-default">Run the analysis</button> Fitted distributions {{getNumberFittedDatasets()}}/{{modelingParameters.include.length+1}}
 			
 		      </td>
 		    </tr>
@@ -405,7 +394,7 @@
 		Running, please wait...
 	      </div>
 	      <div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
-		Recomputing jump length histogram... (		{{computedJLD}}/{{datasets.length+1}})
+		Recomputing jump length histogram... (		{{computedJLD}}/{{datasets.length}})
 	      </div>
 	      
 	      <div ng-if="analysisState=='done'">

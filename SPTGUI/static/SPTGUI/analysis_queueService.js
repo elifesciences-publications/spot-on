@@ -11,7 +11,8 @@ angular.module('app')
 			     params: params,
 			     memory: null,
 			     cb: defer,
-			     resolved: false})
+			     resolved: false,
+			     sentok: false})
 	    console.log("Added id: " + celery_id + " to the polling queue")
 	    return defer.promise
 	}
@@ -31,13 +32,15 @@ angular.module('app')
 		    rem = []
 		    if (resp.length==clids.length) {
 			resp.forEach(function(el,i) {
-			    if (clids[i].memory != el){
+			    if (el!='OK' & clids[i].memory != el &!clids[i].sentok){
 				if (clids[i].callback) {
 		 		    clids[i].callback(el, clids[i].params)
 				    clids[i].memory = el
 				}
 			    }
 			    if (el=='OK') { // resolve promise
+				clids[i].callback(el, clids[i].params)
+				clids[i].sentok=true;
 				rem.push({celery_id: clids[i].celery_id, ok: true})
 			    } else if (el=='FAILURE') {
 				console.log('Job failed:'+  clids[i]);

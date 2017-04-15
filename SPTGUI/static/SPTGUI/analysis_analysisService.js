@@ -37,8 +37,10 @@ angular.module('app')
 
 	this.getPooledFitted = function(paramsJLD, paramsFit) {
 	    //This either contains the progress report or the result
+	    paramsJLD = angular.copy(paramsJLD)
 	    paramsJLD.hashvalueJLD = 'null';	    
 	    paramsJLD.hashvalueJLD = encodeQueryData(paramsJLD);
+	    paramsFit = angular.copy(paramsFit)
 	    paramsFit.hashvalue = 'null';
 	    paramsFit.hashvalue = encodeQueryData(paramsFit);
 	    return $http.get('./api/analyze/pooled?'+encodeQueryData( Object.assign({}, paramsJLD, paramsFit)));
@@ -56,11 +58,13 @@ angular.module('app')
 
 	// Functions to compute a custom JLD (with custom modeling parameters)
 	this.setNonDefaultJLD = function(params) {
+	    params = angular.copy(params)
 	    params.hashvalueJLD ='null'
 	    params.hashvalueJLD = encodeQueryData(params)	    
 	    return $http.post('./api/jld/', params);
 	}
 	this.getNonDefaultJLD = function(params) {
+	    params = angular.copy(params)
 	    params.hashvalueJLD ='null'
 	    params.hashvalueJLD = encodeQueryData(params)	    
 	    return $http.get('./api/jld/?'+encodeQueryData(params));
