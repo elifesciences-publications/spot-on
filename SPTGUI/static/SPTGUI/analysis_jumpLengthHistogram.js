@@ -24,7 +24,7 @@ angular.module('app')
 	    
 	    var svg = d3.select(el[0]).append('svg')
 	    margin = {top: 20, right: 20, bottom: 30, left: 50},
-	    width = 600;
+	    width = 900;
 	    height = 400;
 	    
 	    svg.attr("width", width).attr("height", height);
@@ -41,6 +41,7 @@ angular.module('app')
 		.y0(function(d) {return y(0);});
 	    
 	    var line = d3.line()
+	    	.curve(d3.curveBasis)
 		.x(function(d) { return x(d.x); })
 		.y(function(d) { return y(d.y); });
 

@@ -212,7 +212,6 @@ angular.module('app')
 	
 	$scope.$watch('jldParameters', function(pars, oldpars) {
 	    if (angular.equals(pars, oldpars)) {return}
-	    
 	    // Reset the variables
 	    if (!$scope.jldParsInit) {
 		$scope.jldParsInit = true
