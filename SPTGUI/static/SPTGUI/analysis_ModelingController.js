@@ -51,6 +51,7 @@ angular.module('app')
 		if ($scope.jlpfit) {return n+1}
 		else {return n}
 	    }
+	    $scope.datasetsToggleAll(true);
 
 	    // Get the jump length distributions
 	    // Should go through the pooled queue
