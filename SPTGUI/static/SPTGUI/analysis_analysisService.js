@@ -43,6 +43,7 @@ angular.module('app')
 	    paramsFit = angular.copy(paramsFit)
 	    paramsFit.hashvalue = 'null';
 	    paramsFit.hashvalue = encodeQueryData(paramsFit);
+	    //console.log('./api/analyze/pooled?'+encodeQueryData( Object.assign({}, paramsJLD, paramsFit)))
 	    return $http.get('./api/analyze/pooled?'+encodeQueryData( Object.assign({}, paramsJLD, paramsFit)));
 	}
 	

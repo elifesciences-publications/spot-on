@@ -5,6 +5,7 @@ angular.module('app')
 	//
 	// ==== Let's first define some global variables (on the $scope).
 	//
+	socketReady = false;
 	$scope.establishedConnexion=false;
 	$scope.currentlyUploading=false;
 	$scope.successfullyUploaded=0;
@@ -27,23 +28,26 @@ angular.module('app')
 	//      initiated for that.
 	//
 	$scope.$on('socket:ready', function () {
-	    p1 = getterService.getDatasets2() // Retrieve existing datasets
-	    p2 = getterService.getGlobalStatistics() // Retrieve global statistics
+	    if (!socketReady) {
+		p1 = getterService.getDatasets2() // Retrieve existing datasets
+		p2 = getterService.getGlobalStatistics() // Retrieve global statistics
 
-	    $q.all([p1,p2]).then(function(o){
-		// Update datasets
-		r1 = o[0]
-		$scope.datasets = r1;
-		$scope.successfullyUploaded=r1.length;
+		$q.all([p1,p2]).then(function(o){
+		    // Update datasets
+		    r1 = o[0]
+		    $scope.datasets = r1;
+		    $scope.successfullyUploaded=r1.length;
+		    
+		    // Update statistics
+		    r2 = o[1]
+		    $scope.statistics = r2;
 
-		// Update statistics
-		r2 = o[1]
-		$scope.statistics = r2;
-
-		// Be done!
-		getterService.broadcastLoadedDatasets($scope.datasets)
-		$scope.establishedConnexion=true;
-	    })
+		    // Be done!
+		    getterService.broadcastLoadedDatasets($scope.datasets)
+		    $scope.establishedConnexion=true;
+		    socketReady = true; // avoid doing that again when conn. lost
+		})
+	    }
 	});
 
 	//
