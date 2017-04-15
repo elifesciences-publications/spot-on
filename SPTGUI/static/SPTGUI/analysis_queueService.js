@@ -39,7 +39,9 @@ angular.module('app')
 				}
 			    }
 			    if (el=='OK') { // resolve promise
-				clids[i].callback(el, clids[i].params)
+				if (clids[i].callback) {
+				    clids[i].callback(el, clids[i].params)
+				}
 				clids[i].sentok=true;
 				rem.push({celery_id: clids[i].celery_id, ok: true})
 			    } else if (el=='FAILURE') {
