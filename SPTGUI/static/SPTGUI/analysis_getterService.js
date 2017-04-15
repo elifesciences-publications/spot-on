@@ -20,10 +20,9 @@ angular.module('app')
 	    $rootScope.$broadcast('datasets:loaded', data);
 	}
 
-	this.broadcastAddedDataset =  function(database_id,dataset_id) {
-	    $rootScope.$broadcast('datasets:added',{database_id: database_id,
-						    dataset_id: dataset_id});
-	    console.log("Added dataset signal");
+	this.broadcastAddedDatasets =  function(datasets) {
+	    $rootScope.$broadcast('datasets:added', vdatasets);
+	    console.log("Added dataset signal: "+datasets.length);
 	}
 	
 	this.broadcastDeletedDataset =  function(database_id,dataset_id) {

@@ -115,16 +115,24 @@ angular.module('app')
 	    getterService.getGlobalStatistics().then(function(resp) {
 		$scope.statistics = resp;
 	    });
-	    //$scope.currentlyUploading=false;
 	});
 
-	// (3) Fired when testing if the download is complete
+	// (3) Fired when testing if the download is complete, until the
+	// last dataset has been processed
+	currentlyUploadingPrevious = false
 	$interval(function() {
-	    if ($scope.currentlyUploading) {
+	    if ($scope.currentlyUploading||currentlyUploadingPrevious) {
 		getterService.getDatasets2().then(function(resp) {
+		    le = $scope.datasets.length
 		    $scope.datasets = resp;
 		    $scope.successfullyUploaded=resp.length;
+		    if (le<resp.length) {
+			getterService.broadcastAddedDatasets($scope.datasets);
+		    }
 		});
+	    }
+	    if ($scope.currentlyUploading != currentlyUploadingPrevious) {
+		currentlyUploadingPrevious = $scope.currentlyUploading
 	    }
 	}, 2000)
 	
@@ -140,12 +148,11 @@ angular.module('app')
 		    celid = celery_id[0]+'@'+celery_id[1]
 		    ProcessingQueue.addToQueue(celid, 'preprocessing')
 			.then(function(res){
-			    console.log(res)
-			    getterService.getDatasets2().then(function(resp) {
-				$scope.datasets = resp;
-				$scope.successfullyUploaded=resp.length;
-				getterService.broadcastAddedDataset(resp[resp.length-1], resp.length-1);
-			    });
+			    $scope.currentlyUploading=false;
+			    // getterService.getDatasets2().then(function(resp) {
+			    // 	$scope.datasets = resp;
+			    // 	$scope.successfullyUploaded=resp.length;
+			    // });
 			})
 		    $interval.cancel(checkExist);
 		    message.cancel();		    
