@@ -126,7 +126,7 @@ angular.module('app')
 				console.log('JLD #'+el.id+' is still computing')
 			    }
 			})
-		    }, 1000)
+		    }, 2000)
 		}
 	    })
 
