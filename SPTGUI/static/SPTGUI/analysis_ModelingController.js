@@ -53,6 +53,14 @@ angular.module('app')
 		if ($scope.jlpfit) {return n+1}
 		else {return n}
 	    }
+	    $scope.numberComputedJLD = 0
+	    getNumberComputedJLD = function(resp) {
+		// Returns the number of computed datasets
+		if (resp==='OK') {
+		    $scope.numberComputedJLD++
+		}
+	    }
+
 	    $scope.datasetsToggleAll(true);
 	    
 	    // Get the jump length distributions
@@ -193,6 +201,8 @@ angular.module('app')
 	    if (!pars.BinWidth>0) {return false;}
 	    if (!pars.GapsAllowed>=1) {return false;}
 	    if (!pars.JumpsToConsider>=3) {return false;}
+	    if (!pars.MaxJump>0) {return false;}
+	    if (!pars.TimeGap>0) {return false;}
 	    return isOk
 	}
 	
@@ -213,24 +223,19 @@ angular.module('app')
 	    $scope.jlphist = null;
 	    $scope.probingJLD = true;
 	    $scope.analysisState = 'jld'; // Hide plot
-
 	    // Check that the inputs are ok
 	    if (!validateJLDparameters(pars)) {
 		alert("Parameters are not good")
 	    } else {
+		$scope.jlhist = $scope.jlhist.map(function(el){return null});
+		$scope.numberComputedJLD = 0
 		// Recompute jld with new parameters
-		incrementJLD = function(resp) {
-		    if (resp == 'OK') {
-			$scope.computedJLD = $scope.computedJLD+1;
-		    }
-		}
 		analysisService.setNonDefaultJLD(pars).then(function(resp1) {
-		    $scope.computedJLD = 0;
 		    if (resp1.data) {
 			prom = []
 			resp1.data.forEach(function(el) {
 			    if (el.celery_id) {
-				prom.push(ProcessingQueue.addToQueue(el.celery_id, 'jld', incrementJLD))
+				prom.push(ProcessingQueue.addToQueue(el.celery_id, 'jld', getNumberComputedJLD))
 			    }
 			})
 			$q.all(prom).then(function(arr) {
