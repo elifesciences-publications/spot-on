@@ -211,13 +211,13 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
             for k in save_pars['fitparams'].keys():
                 fitparams[k] = save_pars['fitparams'][k].value
             return HttpResponse(json.dumps(
-                {'fitparams': fitparams,
+                {'status': 'done',
+                 'fitparams': fitparams,
                  'fit': {'x': save_pars['fit']['x'].tolist(),
                          'y': save_pars['fit']['y'].tolist()}
              }), content_type='application/json')
     else:
-        print pa
-        return HttpResponse(json.dumps('nothing ready here'), content_type='application/json', status=400) ## TODO MW /!\ not sure we should return 400...
+        return HttpResponse(json.dumps({'status': 'notready'}), content_type='application/json', status=400) ## TODO MW /!\ not sure we should return 400...
 
 def get_analysisp(request, url_basename):
     """Returns the fitted model for the currently selected datasets
@@ -289,7 +289,10 @@ def get_jld_default(request, url_basename, dataset_id):
     if check_jld(da): ## If the jld field is available in the database
         with open(da.jld.path, 'r') as f:
             jld = pickle.load(f)
-        return HttpResponse(json.dumps([jld[2].tolist(), jld[3].tolist()]), content_type='application/json')
+        return HttpResponse(
+            json.dumps({'status': 'done',
+                        'jld': [jld[2].tolist(), jld[3].tolist()]}),
+                       content_type='application/json')
     else:
         return HttpResponse(json.dumps("JLD not ready"), content_type='application/json')
 

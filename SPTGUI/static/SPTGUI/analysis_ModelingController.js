@@ -59,10 +59,12 @@ angular.module('app')
 	    $scope.datasets.forEach(function(el, i) {
 		if (el.jld_available) {
 		    analysisService.getDefaultJLD(el.id).then(function(resp) {
-			$scope.jlhist[i] = resp.data
-			$scope.showModelingTab = true; // Hide progress bar
-			$scope.analysisState = 'done';
-			console.log("Retrieved default JLD for dataset "+el.id)
+			if (resp.data.status == 'done') {
+			    $scope.jlhist[i] = resp.data.jld
+			    $scope.showModelingTab = true;
+			    $scope.analysisState = 'done';
+			    console.log("Retrieved default JLD #"+el.id)
+			}
 		    })
 		} else {
 		    console.log("No JLD available for this dataset, weird")
@@ -77,6 +79,54 @@ angular.module('app')
 	    $scope.datasets = datasets;
 	    initView();
 	});
+
+	// When some datasets have been added to the list, we find the indices
+	// of the old one and create blank slots for the new one
+	$scope.$on('datasets:added', function(event, newDatasets) {
+	    oldDatasets = angular.copy($scope.datasets)
+	    oldIds = oldDatasets.map(function(el){return el.id})
+	    
+	    ids = newDatasets.map(function(el) {return el.id})
+	    newids = ids.map(function(da_id, newId){
+		oldid = oldIds.indexOf(da_id)
+		if (oldid<0) {return null}
+		else {return oldid}
+	    })
+	    $scope.datasetsToggle = $scope.datasetsToggle.map(function(el,i){
+		if (newids[i]) {return $scope.datasetsToggle[newids[i]]}
+	    })
+	    $scope.jlhist = $scope.jlhist.map(function(el,i){
+		if (newids[i]) {return $scope.jlhist[newids[i]]}
+	    })
+	    $scope.jlfit = $scope.jlfit.map(function(el,i){
+		if (newids[i]) {return $scope.jlfit[newids[i]]}
+	    })
+	    
+	    // Download the jump length distributions of the new values
+	    newDatasets.forEach(function(el, i) {
+		if (!newids[i]) {
+		    var myint = $interval(function() {
+			analysisService.getDefaultJLD(el.id).then(function(resp) {
+			    if (resp.data.status=='done') {
+				$interval.cancel(myint)
+				$scope.jlhist[i] = resp.data.jld
+				$scope.showModelingTab = true;
+				$scope.analysisState = 'done';
+				console.log("Retrieved default JLD #"+el.id)
+			    } else {
+				console.log('JLD #'+el.id+' is still computing')
+			    }
+			})
+		    }, 1000)
+		}
+	    })
+
+	    $scope.datasets = newDatasets
+	    
+	    // Reset the pooled values
+	    $scope.jlpfit = null;
+	    $scope.jlphist = null;   
+	})
 
 	$scope.$on('datasets:deleted', function(event, data) {
 	    // Updates the following arrays when a dataset is deleted
