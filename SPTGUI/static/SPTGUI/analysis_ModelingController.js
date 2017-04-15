@@ -14,7 +14,7 @@ angular.module('app')
 		el.incl=true; return el})
 
 	    // Toggle buttons
-	    $scope.datasetsToggle = $scope.datasets.map(function(el) {
+	    initToggle = function(el) {
 		return function(newVal) {
 		    function add(array, value) {
 			if (array.indexOf(value) === -1) {array.push(value);}
@@ -39,7 +39,9 @@ angular.module('app')
 		    } else {
 			return el.incl
 		    }
-		}});
+		}
+	    };
+	    $scope.datasetsToggle = $scope.datasets.map(initToggle)
 	    $scope.datasetsToggleAll = function(val) {
 		// Select all/none
 		$scope.datasetsToggle.forEach(function(el){el(val)})
@@ -51,7 +53,8 @@ angular.module('app')
 		if ($scope.jlpfit) {return n+1}
 		else {return n}
 	    }
-
+	    $scope.datasetsToggleAll(true);
+	    
 	    // Get the jump length distributions
 	    // Should go through the pooled queue
 	    // Then GET the jld
@@ -92,15 +95,21 @@ angular.module('app')
 		if (oldid<0) {return null}
 		else {return oldid}
 	    })
-	    $scope.datasetsToggle = $scope.datasetsToggle.map(function(el,i){
-		if (newids[i]) {return $scope.datasetsToggle[newids[i]]}
+
+	    // Update arrays
+	    NdatasetsToggle = newids.map(function(el,i){
+		if (el!==null) {return $scope.datasetsToggle[el]}
+		else {return initToggle(newDatasets[i])}
 	    })
-	    $scope.jlhist = $scope.jlhist.map(function(el,i){
-		if (newids[i]) {return $scope.jlhist[newids[i]]}
-	    })
-	    $scope.jlfit = $scope.jlfit.map(function(el,i){
-		if (newids[i]) {return $scope.jlfit[newids[i]]}
-	    })
+	    $scope.datasetsToggle = NdatasetsToggle
+	    
+	    Njlhist = newids.map(function(el){
+		if (el!==null) {return $scope.jlhist[el]}})
+	    $scope.jlhist = Njlhist
+
+	    Njlfit = newids.map(function(el){
+		if (el!==null) {return $scope.jlfit[el]}})
+	    $scope.jlfit = Njlfit
 	    
 	    // Download the jump length distributions of the new values
 	    newDatasets.forEach(function(el, i) {
@@ -142,6 +151,10 @@ angular.module('app')
 	    // Reset the pooled values
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;
+	    
+	    newIncl = $scope.modelingParameters.include
+		.filter(function(el){return el != data.database_id})
+	    $scope.modelingParameters.include = newIncl
 	    
 	})
 
