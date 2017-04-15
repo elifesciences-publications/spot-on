@@ -28,7 +28,8 @@
     <!-- concatenated flow.js + ng-flow libraries -->
     <script src="{% static 'SPTGUI/dist/js/ng-flow-standalone.min.js' %}"></script>
 
-    <!-- Custom app code -->   
+    <!-- Custom app code & CSS -->
+    <link href="{% static 'SPTGUI/analysis.css' %}" rel="stylesheet">
     <script src="{% static 'SPTGUI/analysis.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_socketsService.js' %}"></script>    
     <script src="{% static 'SPTGUI/analysis_queueService.js' %}"></script>    
@@ -140,9 +141,9 @@
 		    <td class="col-md-5">{{data.description}}</td>
 		    <td class="col-md-2">{{data.preanalysis_status}}</td>
 		    <td class="col-md-1">
-		      <span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open"></span>
-		      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil"></span>
-		      <span ng-click="deleteDataset(data, $index);" class="glyphicon glyphicon-remove"></span>
+		      <span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open clickable"></span>
+		      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil clickable"></span>
+		      <span ng-click="deleteDataset(data, $index);" class="glyphicon glyphicon-remove clickable"></span>
 		    </td>		  
 		  </tr>
 		</table>	      
@@ -379,6 +380,7 @@
 		      <td>&nbsp;</td>
 		      <td>
 			<button type="submit" class="btn btn-default">Fit kinetic model</button> Fitted distributions {{getNumberFittedDatasets()}}/{{modelingParameters.include.length+1}}
+			Button: compute single cell fit.
 			
 		      </td>
 		    </tr>
