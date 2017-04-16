@@ -59,6 +59,7 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     ##
     ## ==== Default routes
     ##
+    url(r'^analysis/new/', views.new_analysis, name='newanalysis'),
     url(r'^analysis/(?P<url_basename>.+)/', views.analysis, name='analysis'),
     url(r'^$', views.index, name='index'),
     

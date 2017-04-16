@@ -8,15 +8,16 @@
 import random, string, json, os, hashlib, pickle, urlparse, logging, re
 from haikunator import Haikunator
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.db import transaction
 from .models import Analysis, Dataset
 from django.http import HttpResponse
 from django.template import loader
+import fastSPT.custom_settings as custom_settings
 
 from celery import celery
-import tasks, config
+import tasks, config, recaptcha
 
 
 haikunator = Haikunator()
@@ -52,34 +53,44 @@ if config.debug_views:
 ##
 ## ==== Main views
 ##
-def index(request):
-    """Main view, returns the homepage template"""
-    template = loader.get_template('SPTGUI/homepage.html')
-    context = {'url_basename': get_unused_namepage()}
-    return HttpResponse(template.render(context, request))
-
 def analysis_root(request):
     """A simple placeholder text for the root of the analysis/ route"""
     return HttpResponse("There's nothing here...")
 
-def analysis(request, url_basename):
-    """Returns the analysis view. This is the main view of the system"""
-    ## Check that the required analysis is allowed
-    if re.match('^[\w-]+$', url_basename) is None: ## contains forbidden chars
-        logging.error("tried to create an analyis with non-allowed characters in the name")
-        return HttpResponse("Analysis name not allowed", status=400)
-    
-    ## Create the analysis if needed
-    try:
-        ana = Analysis.objects.get(url_basename=url_basename)
-    except:
-                
+def new_analysis(request):
+    """The view that create a new analysis. This is the only way to create 
+    a new analysis."""
+    if request.method == "POST":
+        ## Validate CAPTCHA
+        ip = recaptcha.get_client_ip(request)
+        captcha_ok = recaptcha.grecaptcha_verify(request, custom_settings.RECAPTCHA_SECRET)
+
+        if not captcha_ok['message']:
+            return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
+        
+        ## Generate a name
+        url_basename = get_unused_namepage()
+        
+        
+        ## Create the analysis if needed
         ana = Analysis(url_basename=url_basename,
                        pub_date=timezone.now(),
                        name='',
                        description='')
         ana.save()
-    
+        return redirect('../{}'.format(url_basename))
+    else:
+        return redirect('../..')
+
+def index(request):
+    """Main view, returns the homepage template"""
+    template = loader.get_template('SPTGUI/homepage.html')
+    context = {'url_basename': 'new'}
+    return HttpResponse(template.render(context, request))
+
+def analysis(request, url_basename):
+    """Returns the analysis view. This is the main view of the system"""
+    ana = get_object_or_404(Analysis, url_basename=url_basename)
     template = loader.get_template('SPTGUI/analysis.html')
     context = {'url_basename': url_basename}
     return HttpResponse(template.render(context, request))

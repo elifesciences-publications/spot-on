@@ -12,7 +12,10 @@
     <link rel="icon" href="../../favicon.ico">
 
     <title>Carousel Template for Bootstrap</title>
- 
+
+    <!-- Captcha -->
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    
     <!-- Bootstrap core CSS -->
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     
@@ -90,7 +93,7 @@
             <div class="carousel-caption">
               <h1>SpasMod is cool.</h1>
               <p>The man who moves a mountain begins by carrying away small stones. <em>Confucius</em>.</p>
-              <p><a class="btn btn-lg btn-primary" href="{% url 'SPTGUI:analysis' url_basename %}" role="button">Start with my dataset</a></p>
+              <p><a class="btn btn-lg btn-primary" href="#start" role="button">Start with my dataset</a></p>
             </div>
           </div>
         </div>
@@ -160,6 +163,31 @@
       <hr class="featurette-divider">
 
       <div class="row featurette">
+        <div class="col-md-7" id="start">
+          <h2 class="featurette-heading">Get started<span class="text-muted">(in a nutshell)</span></h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+	  <form action="{% url 'SPTGUI:analysis' url_basename %}"
+		onsubmit="return validateCAPTCHA();"
+		method="POST">
+	    {% csrf_token %}
+	    <p>
+	      <div class="g-recaptcha" id="main-recaptcha" data-sitekey="6LfYSx0UAAAAAJ-3hzGSZsT2HQRA6ww1TzxQM_Z-"></div>
+	      <div id="recaptcha-response"></div>
+	    </p>
+	    <p><input type="submit" class="btn btn-primary"
+		      value="Start with my dataset"></p>
+	    
+	  </form>
+
+        </div>
+        <div class="col-md-5">
+          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+        </div>
+      </div>
+      
+      <hr class="featurette-divider">
+      
+      <div class="row featurette">
         <div class="col-md-7">
           <h2 class="featurette-heading">SpasMod workflow. <span class="text-muted">(in a nutshell)</span></h2>
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
@@ -211,12 +239,13 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static 'SPTGUI/assets/js/vendor/jquery.min.js' %}"></script>
     <script>window.jQuery || document.write('<script src="{% static 'SPTGUI/assets/js/vendor/jquery.min.js' %}"><\/script>')</script>
     <script src="{% static 'SPTGUI/dist/js/bootstrap.min.js' %}"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="{% static 'SPTGUI/assets/js/vendor/holder.min.js' %}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static 'SPTGUI/assets/js/ie10-viewport-bug-workaround.js' %}"></script>
+    <script src="{% static 'SPTGUI/homepage.js' %}"></script>
   </body>
 </html>
