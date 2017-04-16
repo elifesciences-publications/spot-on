@@ -1,4 +1,4 @@
-import os,shutil,logging,configimpl,json
+import os,shutil,logging,json
 
 ## TODO: handle tmp files in a better way!
 
