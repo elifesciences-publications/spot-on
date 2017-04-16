@@ -1,2 +1,4 @@
 *.pyc
 *~
+/fastSPT/custom_settings.py
+## Contains our little secrets ;)
