@@ -85,7 +85,7 @@ def new_analysis(request):
 def index(request):
     """Main view, returns the homepage template"""
     template = loader.get_template('SPTGUI/homepage.html')
-    context = {'url_basename': 'new'}
+    context = {'url_basename': 'new', 'recaptchakey': custom_settings.RECAPTCHA_PUBLIC}
     return HttpResponse(template.render(context, request))
 
 def analysis(request, url_basename):

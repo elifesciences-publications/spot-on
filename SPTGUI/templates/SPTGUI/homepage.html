@@ -171,7 +171,7 @@
 		method="POST">
 	    {% csrf_token %}
 	    <p>
-	      <div class="g-recaptcha" id="main-recaptcha" data-sitekey="6LfYSx0UAAAAAJ-3hzGSZsT2HQRA6ww1TzxQM_Z-"></div>
+	      <div class="g-recaptcha" id="main-recaptcha" data-sitekey="{{recaptchakey}}"></div>
 	      <div id="recaptcha-response"></div>
 	    </p>
 	    <p><input type="submit" class="btn btn-primary"
