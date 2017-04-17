@@ -74,11 +74,11 @@ def get_downloads(message, data, url_basename) :
 def get_download(message, data, url_basename):
     """Function that either returns the link to the zip archive or a 
     wait message"""
-    print data
     fmt = data['format']
     download_id = data['download_id']
 
-    do = Download.objects.get(id=download_id)
+    ana = get_object_or_404(Analysis, url_basename=url_basename)
+    do = Download.objects.get(id=download_id, analysis=ana)
 
     fil = {'svg': do.export_svg,
            'eps': do.export_eps,
@@ -104,3 +104,15 @@ def get_download(message, data, url_basename):
         
     else:
         return {'status': 'success', 'url':  os.path.basename(fil[fmt].name)}
+
+def del_download(message, data, url_basename) :
+    """Deletes a download entry"""
+    download_id = data['download_id']
+    ana = get_object_or_404(Analysis, url_basename=url_basename)
+    do = Download.objects.get(id=download_id, analysis=ana)
+
+    try:
+        do.delete()
+        return {"status": "success"}
+    except:
+        return {"status": "error"}

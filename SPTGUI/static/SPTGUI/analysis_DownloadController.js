@@ -35,4 +35,19 @@ angular.module('app')
 	    })
 	};
 
+	//
+	// ==== Basic CRUD operations
+	// 
+	$scope.deleteDownload = function(do_id) {
+	    console.log("Deleting download with id: "+ do_id)
+	    downloadService.deleteDownload(do_id).then(function(resp) {
+		if (resp.status=="success") {
+		    console.log("Download deleted: "+do_id)
+		    $scope.downloads = $scope.downloads.filter(function(el){
+			return el.do_id != do_id
+		    })
+		}
+		else {alert("Something went wrong")}
+	    })
+	}
     }]);

@@ -14,7 +14,8 @@ routes = {'list_datasets' : sockets_tab_data.list_datasets,
           'set_download': sockets_download.set_download,
           'set_download': sockets_download.set_download,
           'get_downloads': sockets_download.get_downloads,
-          'get_download': sockets_download.get_download}
+          'get_download': sockets_download.get_download,
+          'del_download': sockets_download.del_download}
 
 @channel_session
 def ws_connect(message):

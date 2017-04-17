@@ -460,20 +460,24 @@
 	    <div ng-if="downloads.length>0">
 	      <table class="table-striped">
 		<tr>
-		  <th class="col-md-2">id</th>
-		  <th class="col-md-6">Description</th>
-		  <th class="col-md-4">Download</th>
+		  <th class="col-md-1">id</th>
+		  <th class="col-md-2">Created</th>
+		  <th class="col-md-5">Description</th>
+		  <th class="col-md-3">Download</th>
+		  <th class="col-md-1">Delete</th>
 		</tr>
 		<tr ng-repeat="dwl in downloads">
-		  <td class="col-md-2">{{$index+1}}</td>
-		  <td class="col-md-6">Lalala</td>
-		  <td class="col-md-4">
+		  <td class="col-md-1">{{$index+1}}</td>
+		  <td class="col-md-2">{{dwl.date}}</td>
+		  <td class="col-md-5">Lalala</td>
+		  <td class="col-md-3">
 		    <a href="#" ng-click="downloadFigure($index, 'svg')">SVG</a>,
 		    <a href="#" ng-click="downloadFigure($index, 'pdf')">PDF</a>,
 		    <a href="#" ng-click="downloadFigure($index, 'png')">PNG</a>,
 		    <a href="#" ng-click="downloadFigure($index, 'eps')">EPS</a>,
 		    <a href="#" ng-click="downloadFigure($index, 'zip')">ZIP</a>
 		  </td>
+		  <td class="col-md-1"><span ng-click="deleteDownload(dwl.do_id);" class="glyphicon glyphicon-remove clickable"></span></td>
 		</tr>
 	      </table>
 	    </div>

@@ -27,6 +27,12 @@ angular.module('app')
 	    })
 	};
 
+	this.deleteDownload = function(id) {
+	    var request = { type: "del_download",
+			    download_id: id }
+	    return MainSocket.sendRequest(request)
+	}
+
 	// Send the request to get a figure
 	this.download = function(params, fmt) {
 	    request = { type: "get_download",
