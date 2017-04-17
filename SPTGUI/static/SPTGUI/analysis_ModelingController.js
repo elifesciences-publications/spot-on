@@ -1,6 +1,17 @@
 angular.module('app')
-    .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', 'ProcessingQueue', '$scope', '$interval', '$q', function(analysisService, getterService, downloadService, ProcessingQueue, $scope, $interval, $q) {
+    .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', 'ProcessingQueue', '$scope', '$rootScope', '$interval', '$q', function(analysisService, getterService, downloadService, ProcessingQueue, $scope, $rootScope, $interval, $q) {
 	// This is the controller for the modeling tab
+	$scope.downloads = []
+	socketReady = false // not to double initialize after lost connexion
+	$scope.$on('socket:ready', function() {
+	    if (!socketReady) {
+		console.log("Getting the list of downloads")
+		downloadService.getDownloads()
+		socketReady = true;
+	    }
+	})
+
+	// When the socket is ready, initialize the downloads
 
 	// Scope variables
 	$scope.analysisState = 'notrun';
@@ -395,14 +406,15 @@ angular.module('app')
 	// The function to mark the current SVG view to download
 	$scope.toDownloads = function() {
 	    dwnlPars = {svg : $('#mainHist').html(),
-			format : 'svg',
 			cell : $scope.datasets[$scope.ce].id,
 			jldParams : angular.copy($scope.jldParameters),
 			fitParams : angular.copy($scope.modelingParameters),
 			jld : angular.copy($scope.jlhist),
 			jldp: angular.copy($scope.jlphist),
 			fit : angular.copy($scope.jlfit),
-			fitp: angular.copy($scope.jlpfit)}
+			fitp: angular.copy($scope.jlpfit),
+			description: 'lalala',
+			date: new Date()}
 	    downloadService.setDownload(dwnlPars);
 	    alert("Analysis marked for download");
 	}

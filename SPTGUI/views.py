@@ -178,14 +178,6 @@ def analyze_api(request, url_basename):
             ids.append({'celery_id': ta.id, 'database_id': data_id})
         if len(fitparams['include'])>1 and save_pars['queue']['pooled']['status']=='queued':
             jldparams.pop('hashvalueJLD')
-            # ta = tasks.compute_jld.apply_async(kwargs={'dataset_id': None,
-            #                                            'pooled' : True,
-            #                                            'include':fitparams['include'],
-            #                                            'path': bf,
-            #                                            'hash_prefix': cha_jld,
-            #                                            'compute_params' : jldparams,
-            #                                            'url_basename': url_basename},
-            #                                    link=tasks.fit_jld.s(cha_fit))
             ta = celery.chain(tasks.compute_jld.s(dataset_id=None,
                                                   pooled=True,
                                                   include=fitparams['include'],

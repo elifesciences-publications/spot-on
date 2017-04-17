@@ -27,7 +27,7 @@ angular.module('app')
 	// ==== Get basic information. We need to wait for the socket to be
 	//      initiated for that.
 	//
-	$scope.$on('socket:ready', function () {
+	$scope.$on('socket:ready', function() {
 	    if (!socketReady) {
 		p1 = getterService.getDatasets2() // Retrieve existing datasets
 		p2 = getterService.getGlobalStatistics() // Retrieve global statistics

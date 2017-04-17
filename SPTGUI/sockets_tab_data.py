@@ -25,13 +25,23 @@ def poll_queue(message, data, url_basename):
             res.append(poll_jld_queue(idd))
         elif queue_type == 'fit':
             res.append(poll_fit_queue(idd))
+        elif queue_type == 'download':
+            res.append(poll_download_queue(idd))
         else:
             logging.error("Unknown queue: {}".format(queue_type))
 
     return res
 
+def poll_download_queue(idd):
+    r = tasks.convert_svg_to.AsyncResult(idd)
+    print idd, r.status
+    if r.status == 'SUCCESS':
+        return 'OK'
+    else:
+        return r.status
+
 def poll_fit_queue(idd):
-    r = tasks.fit_jld.AsyncResult(idd)
+    r = tasks.compute_jld.AsyncResult(idd)
     print idd, r.status
     if r.status == 'SUCCESS':
         return 'OK'

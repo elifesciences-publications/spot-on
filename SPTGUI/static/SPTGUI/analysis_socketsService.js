@@ -42,8 +42,10 @@ angular.module('app')
 	    // If an object exists with callback_id in our callbacks object, resolve it
 	    if(callbacks.hasOwnProperty(messageObj.callback_id)) {
 		//console.log(callbacks[messageObj.callback_id]);
-		$rootScope.$apply(callbacks[messageObj.callback_id].cb.resolve(messageObj.data));
+		$rootScope.$evalAsync(callbacks[messageObj.callback_id].cb.resolve(messageObj.data));
+		//$rootScope.$apply(callbacks[messageObj.callback_id].cb.resolve(messageObj.data));
 		delete callbacks[messageObj.callbackID];
+		
 	    }
 	}
 	// This creates a new callback ID for a request

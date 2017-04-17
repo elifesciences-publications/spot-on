@@ -6,11 +6,15 @@
 import json, logging
 from channels import Group
 from channels.sessions import channel_session
-import sockets_tab_data
+import sockets_tab_data, sockets_download
 
 routes = {'list_datasets' : sockets_tab_data.list_datasets,
           'global_statistics': sockets_tab_data.global_statistics,
-          'poll_queue': sockets_tab_data.poll_queue}
+          'poll_queue': sockets_tab_data.poll_queue,
+          'set_download': sockets_download.set_download,
+          'set_download': sockets_download.set_download,
+          'get_downloads': sockets_download.get_downloads,
+          'get_download': sockets_download.get_download}
 
 @channel_session
 def ws_connect(message):

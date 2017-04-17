@@ -143,6 +143,7 @@ def preprocessing_api(request, url_basename):
     """Function to poll the state of the preprocessing for all the datasets.
     Preprocessing mostly consists of the asynchronous task `check_input_file`."""
 
+    print "This 'preprocessing_api' is deprecated. Don't use it"
     ## Filter the request
     if not request.method == 'GET':
         return HttpResponse(json.dumps(['error']), content_type='application/json')
