@@ -126,17 +126,17 @@ angular.module('app')
 		if (dat[4]&!dat[5]) {
 		    pool = true;
 		    col = "orchid";
-		    data = dat[3]
+		    data_id = 3
 		} else {
 		    pool = false;
 		    col = "steelblue";
-		    data = dat[0]
+		    data_id = 0
 		}
 		if (!dt) {return;}
 
 		// Compute data structure
-		data_mult = scope.data[0][1].map(function(el) {
-		    return fmt_data([scope.data[0][0], el])
+		data_mult = scope.data[data_id][1].map(function(el) {
+		    return fmt_data([scope.data[data_id][0], el])
 		})
 		n_dt = data_mult.length // number of dt
 
@@ -148,6 +148,8 @@ angular.module('app')
 		// Clear
 		bars.selectAll("path").remove()
 		legend.selectAll("g").remove()
+		fitline.selectAll("path").remove()
+		fitlinepooled.selectAll("path").remove()
 
 		// Display
 		console.log("Redrawing "+n_dt+" histograms")
@@ -181,35 +183,35 @@ angular.module('app')
 			    .attr("text-anchor", "middle")
 			    .text("jump distance (µm)")	    
 		    }
+		    // Handle fit plotting
+		    if (dat[1] && !pool) { // Add the line graph of the fit
+			fit = dat[1].fit;
+			fitline.append("path")
+			    .attr("transform", "translate(0," + (i*rat) + ")")
+		    	    .datum(fmt_fit(fit.x, fit.y[i]))
+			    .attr("fill", "none")
+			    .attr("stroke", "black")
+			    .attr("stroke-width", 1.5)
+			    .attr("d", line);
+		    }
+
+		    // Handle pooled fit plotting
+		    if (dat[7]) { // Show the pooled fit
+			fit = dat[6].fit;
+			fitlinepooled.append("path")
+			    .attr("transform", "translate(0," + (i*rat) + ")")
+		    	    .datum(fmt_fit(fit.x, fit.y[i]))
+			    .attr("fill", "none")
+			    .attr("stroke", "grey")
+			    .attr("stroke-width", 3)
+			    .style("stroke-dasharray", ("6, 6"))
+			    .attr("d", line);
+		    }
 		})
-		
-		// Handle fit plotting
-		if (dat[1] && !pool) { // Add the line graph of the fit
-		    fit = dat[1].fit;
-		    fitline.selectAll("path")
-		    	.datum(fmt_fit(fit.x, fit.y[dt]))
-			.attr("fill", "none")
-			.attr("stroke", "grey")
-			.attr("stroke-width", 1.5)
-			.attr("d", line);
-		} else { // Erase the line
-		    fitline.selectAll("path")
-		    .attr("stroke", "transparent")
+		if (pool) {
+		    bars.selectAll("path").attr("stroke", "black")
 		}
-		// Handle pooled fit plotting
-		if (dat[7]) { // Show the pooled fit
-		    fit = dat[6].fit;
-		    fitlinepooled.selectAll("path")
-		    	.datum(fmt_fit(fit.x, fit.y[dt]))
-			.attr("fill", "none")
-			.attr("stroke", "orange")
-			.attr("stroke-width", 3)
-			.style("stroke-dasharray", ("6, 6"))
-			.attr("d", line);		    
-		} else {
-		    fitlinepooled.selectAll("path")
-		    .attr("stroke", "transparent")		    
-		}
+		    
 	    }); 
 	}
 	return {
