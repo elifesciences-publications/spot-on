@@ -10,20 +10,6 @@ angular.module('app')
 	    $scope.downloads = downloads
 	})
 
-	// $scope.intervalRunning = false;
-	
-	// interval = $interval(function() {
-	//     if (!$scope.intervalRunning) {return false;}
-	//     downloadService.checkDownload($scope.tmpId, $scope.tmpFormat)
-	// 	.then(function(dataR) {
-	// 	    if (dataR.data.status=='success') {
-	// 		$scope.intervalRunning = false;
-	// 		$window.open('/static/SPTGUI/downloads/'+dataR.data.url, "_blank");
-	// 	    }
-	// 	})
-	// }, 500);
-
-
 	// ==== The binding function
 	$scope.downloadFigure = function(dwnl_id, format) {
 	    params = angular.copy(downloads[dwnl_id]);
