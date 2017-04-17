@@ -30,10 +30,8 @@ d3.json(url, function(error, dat) {
     var x = d3.scaleLinear().rangeRound([0, width]);
     if (n_dt>1) {
 	var y = d3.scaleLinear().rangeRound([1.5*height/n_dt, 0]);
-	var skl = .5
     } else {
 	var y = d3.scaleLinear().rangeRound([height/n_dt, 0]);
-	var skl = 0
     }
     var yfull = d3.scaleLinear().rangeRound([height, 0]);    
 
@@ -78,7 +76,7 @@ d3.json(url, function(error, dat) {
 		.attr("text-anchor", "middle")
 		.text("jump distance (µm)")	    
 	}
-    })  
+    })
 
     g.append("g")
 	.call(d3.axisLeft(yfull).ticks(0))
