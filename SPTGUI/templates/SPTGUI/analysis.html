@@ -298,96 +298,104 @@
 
 	      <h2> Parameters </h2>
 	      <div class="col-md-6">
-		<h3> Jump length distribution </h3>
-		<table>
-		  <tr>
-		    <td>Bin width</td>
-		    <td><input ng-model= "jldParameters.BinWidth" type="number" step="any" min="0"></td>
-		  </tr>
-		  <tr>
-		    <td>Number of gaps allowed</td>
-		    <td><input min="0" ng-model= "jldParameters.GapsAllowed"  type="number">What should be a max number of gaps?</td>
-		  </tr>
-		  <tr>
-		    <td>Number of timepoints</td>
-		    <td><input ng-model= "jldParameters.TimePoints"  type="number">What should be a min/max number of timepoints?</td>
-		  </tr>
-		  <tr>
-		    <td>Jumps to consider</td>
-		    <td><input ng-model= "jldParameters.JumpsToConsider"  type="number">What should be a min/max number of jumps to consider?</td>
-		  </tr>
-		  <tr>
-		    <td>Max jump (µm)</td>
-		    <td><input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0">What should be a max value?</td>
-		  </tr>
-		  <tr>
-		    <td> dT: </td>
-		    <td><input ng-model="jldParameters.TimeGap" type="number" step="any" min="0"></td>
-		  </tr>
-		  <tr>
-		    <td></td>		    
-		    <td><button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button></td> 
-		  </tr>
-		</table>
-		
-	      </div>
-	      <div class="col-md-6">
-		<h3> Model fitting </h3>
-		<form ng-submit="runAnalysis(modelingParameters);">
-		  <table>
-		    <tr>
-		      <td> D<sub>free</sub>: </td>
-		      <td>
-			min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0">
-			max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0"> What should be a good range?
-		      </td>
-		    </tr>
-		    <tr>
-		      <td> D<sub>bound</sub>: </td>
-		      <td>
-			min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0">
-			max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0"> What should be a good range?
-		      </td>
-		    </tr>
-		    <tr>
-		      <td> F<sub>bound</sub>: </td>
-		      <td>
-			min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
-			max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
-		      </td>
-		    </tr>
-		    <tr>
-		      <td> Localization error: </td>
-		      <td><input ng-model="modelingParameters.LocError" type="number" step="any" min="0"></td>
-		    </tr>
-		    <tr>
-		      <td> dT: </td>
-		      <td><input ng-model="modelingParameters.dT" type="number" step="any" min="0"></td>
-		    </tr>
-		    <tr>
-		      <td> dZ: </td>
-		      <td><input ng-model="modelingParameters.dZ" type="number" step="any" min="0"></td> What should be a good range?
-		    </tr>
-		    <tr>
-		      <td> Model Fit: </td>
-		      <td><input type="number" ng-model="modelingParameters.ModelFit"></td> Replace by a toggle
-		    </tr>
-		    <tr>
-		      <td> Iterations: </td>
-		      <td><input type="number" ng-model="modelingParameters.iterations" min="0" max="10"></td> Put a max number here (10 so far)
-		    </tr>			  
-		    <tr>
-		      <td>&nbsp;</td>
-		      <td>
-			<button type="submit" class="btn btn-default">Fit kinetic model</button> Fitted distributions {{getNumberFittedDatasets()}}/{{modelingParameters.include.length+1}}
-			Button: compute single cell fit.
-			
-		      </td>
-		    </tr>
-		  </table>
-		</form>
+		<div class="panel panel-default">
+		  <div class="panel-heading"><h3 class="panel-title">Jump length distribution</h3></div>
+		  <div class="panel-body">
+		    <table>
+		      <tr>
+			<td>Bin width</td>
+			<td><input ng-model= "jldParameters.BinWidth" type="number" step="any" min="0"></td>
+		      </tr>
+		      <tr>
+			<td>Number of gaps allowed</td>
+			<td><input min="0" ng-model= "jldParameters.GapsAllowed"  type="number">What should be a max number of gaps?</td>
+		      </tr>
+		      <tr>
+			<td>Number of timepoints</td>
+			<td><input ng-model= "jldParameters.TimePoints"  type="number">What should be a min/max number of timepoints?</td>
+		      </tr>
+		      <tr>
+			<td>Jumps to consider</td>
+			<td><input ng-model= "jldParameters.JumpsToConsider"  type="number">What should be a min/max number of jumps to consider?</td>
+		      </tr>
+		      <tr>
+			<td>Max jump (µm)</td>
+			<td><input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0">What should be a max value?</td>
+		      </tr>
+		      <tr>
+			<td> dT: </td>
+			<td><input ng-model="jldParameters.TimeGap" type="number" step="any" min="0"></td>
+		      </tr>
+		      <tr>
+			<td></td>		    
+			<td><button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button></td> 
+		      </tr>
+		    </table>
+		  </div>
 		</div>
-		
+	      </div>
+	      
+	      <!-- Fitting parameters -->
+	      <div class="col-md-6">
+		<div class="panel panel-default">
+		  <div class="panel-heading"><h3 class="panel-title"> Model fitting </h3></div>
+		  <div class="panel-body">
+		    <form ng-submit="runAnalysis(modelingParameters);">
+		      <table>
+			<tr>
+			  <td> D<sub>free</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0">
+			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0"> What should be a good range?
+			  </td>
+			</tr>
+			<tr>
+			  <td> D<sub>bound</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0">
+			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0"> What should be a good range?
+			  </td>
+			</tr>
+			<tr>
+			  <td> F<sub>bound</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
+			    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
+			  </td>
+			</tr>
+			<tr>
+			  <td> Localization error: </td>
+			  <td><input ng-model="modelingParameters.LocError" type="number" step="any" min="0"></td>
+			</tr>
+			<tr>
+			  <td> dT: </td>
+			  <td><input ng-model="modelingParameters.dT" type="number" step="any" min="0"></td>
+			</tr>
+			<tr>
+			  <td> dZ: </td>
+			  <td><input ng-model="modelingParameters.dZ" type="number" step="any" min="0"></td> What should be a good range?
+			</tr>
+			<tr>
+			  <td> Model Fit: </td>
+			  <td><input type="number" ng-model="modelingParameters.ModelFit"></td> Replace by a toggle
+			</tr>
+			<tr>
+			  <td> Iterations: </td>
+			  <td><input type="number" ng-model="modelingParameters.iterations" min="0" max="10"></td> Put a max number here (10 so far)
+			</tr>			  
+			<tr>
+			  <td>&nbsp;</td>
+			  <td>
+			    <button type="submit" class="btn btn-default">Fit kinetic model</button> Fitted distributions {{getNumberFittedDatasets()}}/{{modelingParameters.include.length+1}}
+			    Button: compute single cell fit.
+			  </td>
+			</tr>
+		      </table>
+		    </form>
+		  </div>
+		</div>
+	      </div>
+	      
 	      <h2> Results of the simulation </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
 		No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
