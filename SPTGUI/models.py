@@ -52,6 +52,10 @@ class Download(models.Model):
     """Contain instructions for a download"""
     bf = 'SPTGUI/static/SPTGUI/downloads'
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE) 
+    analysis = models.ForeignKey(Analysis, on_delete=models.CASCADE)
+    pub_date = models.DateTimeField('date created')
+    description =  models.CharField(default='', max_length=400)
+    
     params = models.FileField(upload_to=bf, null=True, blank=True)
     data = models.FileField(upload_to=bf, null=True, blank=True)
     export_svg = models.FileField(upload_to=bf, null=True, blank=True)
