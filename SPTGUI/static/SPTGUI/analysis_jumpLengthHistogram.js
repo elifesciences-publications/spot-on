@@ -23,7 +23,6 @@ angular.module('app')
 	    // Get input and parse it
 	    if (!scope.data[0]){return;}
 	    
-	    dt = scope.data[2];
 	    data_mult = scope.data[0][1].map(function(el) {
 		return fmt_data([scope.data[0][0], el])
 	    })
@@ -132,7 +131,6 @@ angular.module('app')
 		    col = "steelblue";
 		    data_id = 0
 		}
-		if (!dt) {return;}
 
 		// Compute data structure
 		data_mult = scope.data[data_id][1].map(function(el) {

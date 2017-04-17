@@ -415,30 +415,29 @@
 		    <li>D<sub>bound</sub> : {{jlpfit.fitparams.D_bound}} </li>
 		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound}}</li>
 		  </ul>
-		</div>		
-		<jump-length-histogram id="mainHist" data="[jlhist[ce], jlfit[ce], dt, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
+		</div>	
+		<jump-length-histogram id="mainHist" data="[jlhist[ce], jlfit[ce], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
+
+		<div class="controls">
+		  <div ng-hide="showJLP">
+		    <input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
+		    Displaying cell {{ce}}.
+		  </div>
+		  <div ng-if="showJLP">
+		    Displaying group {{modelingParameters.include}}
+		  </div>
+
+		  <div ng-if="jlpfit!=null">
+		    Show pooled fit <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
+		    <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLPf"></toggle-switch>
+		  </div>
 		
-		<input ng-model="dt" type="number" min="1" max="{{jlhist[0][1].length-1}}">
-		Displaying {{dt}} Delta t.
+		  Show pooled jump length distribution:
+		  <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
+		  <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLP"></toggle-switch> <span ng-if="gettingPooledJLD">Please wait</span>
 
-		<div ng-hide="showJLP">
-		  <input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
-		  Displaying cell {{ce}}.
+		  <button ng-click="toDownloads();" class="btn btn-default">Mark for download</button>
 		</div>
-		<div ng-if="showJLP">
-		  Displaying group {{modelingParameters.include}}
-		</div>
-
-		<div ng-if="jlpfit!=null">
-		  Show pooled fit <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
-		  <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLPf"></toggle-switch>
-		</div>
-		
-		Show pooled jump length distribution:
-		<span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
-		<toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLP"></toggle-switch> <span ng-if="gettingPooledJLD">Please wait</span>
-
-		<button ng-click="toDownloads();" class="btn btn-default">Mark for download</button>
 	      </div>
 	    </div>
 	  </div>
