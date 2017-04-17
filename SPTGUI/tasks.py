@@ -266,7 +266,11 @@ def check_input_file(filepath, file_id):
     except: # exit
         da.preanalysis_token = ''
         da.preanalysis_status = 'error'
+        toremove = da.data.path
+        da.data.delete()
         da.save()
+        if os.path.isfile(toremove):
+            os.remove(toremove)
         return
 
     ## ==== Save the parsed result!
