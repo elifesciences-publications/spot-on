@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Index of views for the fastSPT-GUI app
 # A graphical user interface to the fastSPT tool by Anders S. Hansen, 2016
 # By MW, GPLv3+, Feb.-Apr. 2017
@@ -51,7 +52,7 @@ def set_download(request, url_basename) :
             do.save()
         with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f3:
             fil3 = File(f3)
-            f3.write(body['svg'])
+            f3.write(body['svg'].encode('utf-8'))
             do.export_svg = fil3
             do.export_svg.name = "{}_{}.svg".format(url_basename, "addStuffHere")
             do.status_svg = 'done'
