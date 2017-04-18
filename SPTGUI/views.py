@@ -91,6 +91,42 @@ def new_analysis(request):
     else:
         return redirect('../..')
 
+def new_demo(request):
+    """Function that initiates a new demo analysis (with default datasets)"""
+    if request.method == "POST":
+        ## Validate CAPTCHA
+        ip = recaptcha.get_client_ip(request)
+        captcha_ok = recaptcha.grecaptcha_verify(request, custom_settings.RECAPTCHA_SECRET)
+
+        if not captcha_ok['message']:
+            return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
+        
+        ## Generate a name
+        url_basename = get_unused_namepage()
+        
+        ## Duplicate the related datasets
+        dem = Analysis.objects.get(id=11)
+        da = Dataset.objects.filter(analysis=dem)        
+
+        ## Duplicate a demo analysis
+        dem.id = None
+        dem.pk = None
+        dem.url_basename = url_basename
+        dem.pub_date=timezone.now()
+        dem.save()
+
+        for d in da:
+            d.pk = None
+            d.id = None
+            d.analysis = dem
+            d.save()
+
+        print "New id: ", dem.id, " new name ", url_basename
+        return redirect('../{}'.format(url_basename))
+    else:
+        return redirect('../..')
+    
+    
 def index(request):
     """Main view, returns the homepage template"""
     template = loader.get_template('SPTGUI/homepage.html')

@@ -32,6 +32,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/style.css' %}" rel="stylesheet">
   </head>
 <!-- NAVBAR
 ================================================== -->
@@ -166,16 +167,20 @@
         <div class="col-md-7" id="start">
           <h2 class="featurette-heading">Get started<span class="text-muted">(in a nutshell)</span></h2>
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-	  <form action="{% url 'SPTGUI:analysis' url_basename %}"
-		onsubmit="return validateCAPTCHA();"
+	  <form onsubmit="return validateCAPTCHA();"
 		method="POST">
 	    {% csrf_token %}
 	    <p>
 	      <div class="g-recaptcha" id="main-recaptcha" data-sitekey="{{recaptchakey}}"></div>
 	      <div id="recaptcha-response"></div>
 	    </p>
-	    <p><input type="submit" class="btn btn-primary"
-		      value="Start with my dataset"></p>
+	    <p><input formaction="{% url 'SPTGUI:new_analysis' %}"
+		      type="submit" class="btn btn-primary"
+		      value="Start with my dataset"> or 
+	      <input formaction="{% url 'SPTGUI:new_demo' %}"
+		     type="submit" class="link-button"
+		     value="start with a demo file">.
+	    </p>
 	    
 	  </form>
 
