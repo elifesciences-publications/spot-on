@@ -152,7 +152,7 @@ def global_statistics(message, data, url_basename):
            'pre_median_particles_per_frame' : comp_ppf['median'],
            'pre_mean_particles_per_frame' : comp_ppf['mean'],
            'pre_median_jump_length' : comp_jlength['median'],
-           'pre_mean_jump_length' : comp_jlength['median'],
+           'pre_mean_jump_length' : comp_jlength['mean'],
        }
                             
     return res
