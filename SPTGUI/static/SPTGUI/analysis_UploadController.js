@@ -18,9 +18,9 @@ angular.module('app')
 	//
 	// ==== Initializing the view
 	//
-	$scope.uploadStart = function($flow){
+	$scope.uploadStart = function($flow){ // Populate $flow with the CSRF cookie!
 	    $flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
-	}; // Populate $flow with the CSRF cookie!
+	};
 
 
 	//
@@ -136,6 +136,12 @@ angular.module('app')
 		});
 	    }
 	    if ($scope.currentlyUploading != currentlyUploadingPrevious) {
+		if (currentlyUploadingPrevious) {
+		    console.log("Getting global statistics")
+		    getterService.getGlobalStatistics().then(function(resp) {
+			$scope.statistics = resp;
+		    });
+		}
 		currentlyUploadingPrevious = $scope.currentlyUploading
 	    }
 	}, 2000)
@@ -153,10 +159,6 @@ angular.module('app')
 		    ProcessingQueue.addToQueue(celid, 'preprocessing')
 			.then(function(res){
 			    $scope.currentlyUploading=false;
-			    // getterService.getDatasets2().then(function(resp) {
-			    // 	$scope.datasets = resp;
-			    // 	$scope.successfullyUploaded=resp.length;
-			    // });
 			})
 		    $interval.cancel(checkExist);
 		    message.cancel();		    

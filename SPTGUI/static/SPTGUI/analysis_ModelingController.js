@@ -71,7 +71,6 @@ angular.module('app')
 		    $scope.numberComputedJLD++
 		}
 	    }
-
 	    $scope.datasetsToggleAll(true);
 	    
 	    // Get the jump length distributions
@@ -177,24 +176,24 @@ angular.module('app')
 	    
 	})
 
-	$scope.$on('datasets:updated', function(event,data) {
-	    console.load("updated dataset Modeling controller. DEPRECATED")
-	    $scope.datasets = data
+	// $scope.$on('datasets:updated', function(event,data) {
+	//     console.load("updated dataset Modeling controller. DEPRECATED")
+	//     $scope.datasets = data
 	    
-	    // Now reset everything
-	    $scope.jlphist = null;
-	    $scope.jlpfit = null;
-	    $scope.ce = 0;
-	    $scope.dt = 1;
-	    $scope.showJLP = false;
-	    $scope.showJLPf = false;
-	    $scope.modelingParameters.include = [];
-	    $scope.jlhist = null;
-	    $scope.jlfit = $scope.datasets.map(function(el){return null;})
-	    $scope.analysisState = 'notrun';
+	//     // Now reset everything
+	//     $scope.jlphist = null;
+	//     $scope.jlpfit = null;
+	//     $scope.ce = 0;
+	//     $scope.dt = 1;
+	//     $scope.showJLP = false;
+	//     $scope.showJLPf = false;
+	//     $scope.modelingParameters.include = [];
+	//     $scope.jlhist = null;
+	//     $scope.jlfit = $scope.datasets.map(function(el){return null;})
+	//     $scope.analysisState = 'notrun';
 
-	    initView(); // And initialize stuff again
-	});
+	//     initView(); // And initialize stuff again
+	// });
 	
 	//
 	// ==== CRUD modeling parameters
