@@ -273,7 +273,7 @@ angular.module('app')
 				     iterations: 3,
 				     dT: 4.477/1000,
 				     dZ: 0.700,
-				     ModelFit: 1, //1: PDF fit, 2: CDF fit
+				     ModelFit: false, //false: PDF, true: CDF fit
 				     include : [] // Populated later
 				    };
 	$scope.dt = 1; // Display parameter

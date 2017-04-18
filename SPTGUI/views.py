@@ -180,6 +180,7 @@ def analyze_api(request, url_basename):
         compute_pool = False
         
         (jldparams, fitparams) = json.loads(request.body)
+        fitparams['ModelFit'] = [1,2][fitparams['ModelFit']]
         cha_jld = compute_hash(jldparams['hashvalueJLD'])
         cha_fit = compute_hash(fitparams['hashvalue'])
         cha = cha_fit+cha_jld

@@ -378,7 +378,12 @@
 			</tr>
 			<tr>
 			  <td> Model Fit: </td>
-			  <td><input type="number" ng-model="modelingParameters.ModelFit"></td> Replace by a toggle
+			  <td>
+			    <toggle-switch
+			       ng-model="modelingParameters.ModelFit"
+			       off-label="PDF"
+			       on-label="CDF"></toggle-switch>
+			  </td>
 			</tr>
 			<tr>
 			  <td> Iterations: </td>
