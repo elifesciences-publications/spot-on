@@ -314,22 +314,30 @@ angular.module('app')
 					$scope.jlfit[idd] = l.data
 					$scope.fitAvailable = true;
 					$scope.analysisState = 'done'; // Hide progress bar
+					if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
+					    $scope.jlpfit = l.data;
+					}
 				    })
 				}
 			    })
 			} else {
 			    console.log("Direct download of fit:" +el.database_id)
-			    if (el.database_id == 'pooled') {
+			    if (el.database_id == 'pooled' & $scope.modelingParameters.include.length>1) {
 				analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
 				    $scope.jlpfit = l.data;
-				})				
-				} else {
+				})
+			    } else if (el.database_id == 'pooled' & $scope.modelingParameters.include.length==1) {
+				console.log('The pooled fit will be uploaded later')
+			    } else {
 				    analysisService
 					.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
 					    idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
 			    		    $scope.jlfit[idd] = l.data
 			    		    $scope.fitAvailable = true;
 			    		    $scope.analysisState = 'done';
+					    if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
+						$scope.jlpfit = l.data;
+					    }
 					})
 				}
 			}
