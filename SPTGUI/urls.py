@@ -30,7 +30,7 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     ##
     ## ==== Statistics
     ##
-    url(r'^analysis/(?P<url_basename>.+)/statistics/$', views_tab_data.statistics, name='statistics'),
+    ##url(r'^analysis/(?P<url_basename>.+)/statistics/$', views_tab_data.statistics, name='statistics'),
 
     ##
     ## ==== CRUD datasets

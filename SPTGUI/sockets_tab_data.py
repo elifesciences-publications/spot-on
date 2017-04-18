@@ -137,7 +137,7 @@ def global_statistics(message, data, url_basename):
                 'message': 'no properly uploaded dataset'}
 
     comp_ltraj = stats.global_mean_median(da, stats.length_of_trajectories)
-    comp_ppf = stats.global_mean_median(da, stats.particles_per_frame)
+    comp_ppf = stats.global_mean_median(da, stats.particles_per_frame, reindex_frames=True)
     comp_jlength = stats.global_mean_median(da, stats.jump_length)
     
     res = {'status' : 'ok',

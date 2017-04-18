@@ -13,53 +13,53 @@ from .models import Analysis, Dataset
 import SPTGUI.statistics as stats
 
 ## ==== Views
-def statistics(request, url_basename):
-    """Function returns some global statistics about all the datasets"""
-    logging.warning('This function (views_tab_data.statistics) is deprecated')
+# def statistics(request, url_basename):
+#     """Function returns some global statistics about all the datasets"""
+#     logging.warning('This function (views_tab_data.statistics) is deprecated')
     
-    def mean(m,e):
-        """Compute a weighted mean, given a list of individual means (m)
-        and a list of 'effectifs'"""
-        return sum([i*j for (i,j) in zip(m,e)])/sum(e)
+#     def mean(m,e):
+#         """Compute a weighted mean, given a list of individual means (m)
+#         and a list of 'effectifs'"""
+#         return sum([i*j for (i,j) in zip(m,e)])/sum(e)
 
-    try:
-        ana = get_object_or_404(Analysis, url_basename=url_basename)
-    except:
-        return HttpResponse(json.dumps({'status': 'error',
-                                        'message': 'analysis does not exist'}),
-                            content_type='application/json')
-    try:
-        da = Dataset.objects.filter(analysis=ana, preanalysis_status='ok')
-    except:
-        return HttpResponse(json.dumps({'status': 'error',
-                                        'message': 'dataset not found'}),
-                            content_type='application/json', status=400)
-    if len(da)==0:
-        return HttpResponse(
-            json.dumps({'status': 'empty',
-                        'message': 'no properly uploaded dataset'}),
-            content_type='application/json')
+#     try:
+#         ana = get_object_or_404(Analysis, url_basename=url_basename)
+#     except:
+#         return HttpResponse(json.dumps({'status': 'error',
+#                                         'message': 'analysis does not exist'}),
+#                             content_type='application/json')
+#     try:
+#         da = Dataset.objects.filter(analysis=ana, preanalysis_status='ok')
+#     except:
+#         return HttpResponse(json.dumps({'status': 'error',
+#                                         'message': 'dataset not found'}),
+#                             content_type='application/json', status=400)
+#     if len(da)==0:
+#         return HttpResponse(
+#             json.dumps({'status': 'empty',
+#                         'message': 'no properly uploaded dataset'}),
+#             content_type='application/json')
 
-    comp_ltraj = stats.global_mean_median(da, stats.length_of_trajectories)
-    comp_ppf = stats.global_mean_median(da, stats.particles_per_frame)
-    comp_jlength = stats.global_mean_median(da, stats.jump_length)
+#     comp_ltraj = stats.global_mean_median(da, stats.length_of_trajectories)
+#     comp_ppf = stats.global_mean_median(da, stats.particles_per_frame, reindex_frames=True)
+#     comp_jlength = stats.global_mean_median(da, stats.jump_length)
     
-    res = {'status' : 'ok',
-           'ok_traces' : len(da),
-           'pre_ntraces' : sum([i.pre_ntraces for i in da]),
-           'pre_npoints' : sum([i.pre_npoints for i in da]),
-           'pre_ntraces3': sum([i.pre_ntraces3 for i in da]),
-           'pre_nframes' : sum([i.pre_nframes for i in da]),
-           'pre_njumps'  : sum([i.pre_njumps for i in da]),
-           'pre_median_length_of_trajectories' : comp_ltraj['median'],
-           'pre_mean_length_of_trajectories' : comp_ltraj['mean'],
-           'pre_median_particles_per_frame' : comp_ppf['median'],
-           'pre_mean_particles_per_frame' : comp_ppf['mean'],
-           'pre_median_jump_length' : comp_jlength['median'],
-           'pre_mean_jump_length' : comp_jlength['median'],
-       }
+#     res = {'status' : 'ok',
+#            'ok_traces' : len(da),
+#            'pre_ntraces' : sum([i.pre_ntraces for i in da]),
+#            'pre_npoints' : sum([i.pre_npoints for i in da]),
+#            'pre_ntraces3': sum([i.pre_ntraces3 for i in da]),
+#            'pre_nframes' : sum([i.pre_nframes for i in da]),
+#            'pre_njumps'  : sum([i.pre_njumps for i in da]),
+#            'pre_median_length_of_trajectories' : comp_ltraj['median'],
+#            'pre_mean_length_of_trajectories' : comp_ltraj['mean'],
+#            'pre_median_particles_per_frame' : comp_ppf['median'],
+#            'pre_mean_particles_per_frame' : comp_ppf['mean'],
+#            'pre_median_jump_length' : comp_jlength['median'],
+#            'pre_mean_jump_length' : comp_jlength['median'],
+#        }
                             
-    return HttpResponse(json.dumps(res), content_type='application/json')    
+#     return HttpResponse(json.dumps(res), content_type='application/json')    
 
 def datasets_api(request, url_basename):
     """

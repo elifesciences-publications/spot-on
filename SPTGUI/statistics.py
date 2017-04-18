@@ -62,12 +62,24 @@ def jump_length(fi):
     l = np.asarray(l)
     return {"median": np.median(l), "mean": l.mean()}
 
-def global_mean_median(da, fu):
+def global_mean_median(da, fu, reindex_frames=False):
     """A function to compute global stuff.
     It first loads all the datasets, then send it to the corresponding function"""
     AllData = []
+    fr = 0
     for d in da:
         with open(d.parsed.path, 'r') as f:
-            AllData += json.load(f)
+            if reindex_frames:
+                nf = json.load(f)
+                mf = []
+                for tr in nf:
+                    mf.append(max([p[3] for p in tr]))
+                    new_tr = []
+                    for p in tr:
+                        p[3]+=fr
+                        new_tr.append(p)
+                    AllData.append(new_tr)
+                fr += max(mf)
+            else:
+                AllData += json.load(f)
     return fu(AllData)
-            
