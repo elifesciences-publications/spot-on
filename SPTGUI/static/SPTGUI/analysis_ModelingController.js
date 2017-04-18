@@ -405,6 +405,8 @@ angular.module('app')
 
 	// The function to mark the current SVG view to download
 	$scope.toDownloads = function() {
+	    var d = new Date()
+	    var date_fmt = d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()+' '+d.getHours()+":"+d.getMinutes()
 	    dwnlPars = {svg : $('#mainHist').html(),
 			cell : $scope.datasets[$scope.ce].id,
 			jldParams : angular.copy($scope.jldParameters),
@@ -414,7 +416,7 @@ angular.module('app')
 			fit : angular.copy($scope.jlfit),
 			fitp: angular.copy($scope.jlpfit),
 			description: $scope.downloadPopover.description,
-			date: new Date()}
+			date: date_fmt}
 	    downloadService.setDownload(dwnlPars);
 	    $scope.downloadPopover.isOpen = false;
 	}
