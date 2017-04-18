@@ -57,6 +57,8 @@ if config.debug_views:
         template = loader.get_template('SPTGUI/popover.html')
         context = {}
         return HttpResponse(template.render(context, request))        
+if not custom_settings.RECAPTCHA_USE:
+    logging.warning("RECAPTCHA_USE is False in custome_settings.py, the reCAPTCHA will be ignored. Anyone can create an analysis and upload files to your server")        
     
     
 ##
@@ -69,13 +71,14 @@ def analysis_root(request):
 def new_analysis(request):
     """The view that create a new analysis. This is the only way to create 
     a new analysis."""
-    if request.method == "POST":
+    if request.method == "POST" or not custom_settings.RECAPTCHA_USE:
         ## Validate CAPTCHA
-        ip = recaptcha.get_client_ip(request)
-        captcha_ok = recaptcha.grecaptcha_verify(request, custom_settings.RECAPTCHA_SECRET)
+        if custom_settings.RECAPTCHA_USE:
+            ip = recaptcha.get_client_ip(request)
+            captcha_ok = recaptcha.grecaptcha_verify(request, custom_settings.RECAPTCHA_SECRET)
 
-        if not captcha_ok['message']:
-            return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
+            if not captcha_ok['message']:
+                return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
         
         ## Generate a name
         url_basename = get_unused_namepage()
