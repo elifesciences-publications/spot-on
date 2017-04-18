@@ -340,4 +340,79 @@ def convert_svg_to(fmt, download_id):
             do.export_eps = F
             do.status_eps = 'done'
         do.save()
-    shutil.rmtree(tmpdirname)
+
+@shared_task
+def get_zip(download_id):
+    """Function that zips the results of an analysis and generate all the
+    required reports to be sent for download. This function is to be called
+    from the celery backend directly."""
+
+    ## ==== Initialize the exports
+    convert_svg_to('png', download_id) ## Get the png
+    convert_svg_to('pdf', download_id) ## Get the pdf
+    convert_svg_to('eps', download_id) ## Get the eps
+
+    ## ==== Initialize objects
+    basename = os.path.basename
+    do = Download.objects.get(id=download_id)
+    ana = do.analysis
+    da = Dataset.objects.filter(analysis=ana)
+    
+    ## ==== Save everything to the tmp folder
+    tmpdirname = tempfile.mkdtemp() ## Create the temp dir
+
+    ## Create the folder architecture
+    os.mkdir(os.path.join(tmpdirname, 'raw'))
+    os.mkdir(os.path.join(tmpdirname, 'fit'))
+    os.mkdir(os.path.join(tmpdirname, 'jld'))
+    os.mkdir(os.path.join(tmpdirname, 'graphs'))
+
+    ## Get the raw files
+    raw = os.path.join(tmpdirname, 'raw')
+    for d in da:
+        shutil.copyfile(d.data.path, "{}/{}_{}".format(raw, d.id, basename(d.data.name)))
+        shutil.copyfile(d.parsed.path, "{}/{}_{}".format(raw,d.id, basename(d.parsed.name)))
+
+    ## Get graphs
+    gra = os.path.join(tmpdirname, 'graphs')
+    shutil.copyfile(do.export_png.path, "{}/{}".format(gra, basename(do.export_png.name)))
+    shutil.copyfile(do.export_pdf.path, "{}/{}".format(gra, basename(do.export_pdf.name)))
+    shutil.copyfile(do.export_eps.path, "{}/{}".format(gra, basename(do.export_eps.name)))
+    shutil.copyfile(do.export_svg.path, "{}/{}".format(gra, basename(do.export_svg.name)))
+    
+    ## Get the raw fitted values
+    bn = tmpdirname
+    shutil.copyfile(do.data.path, "{}/fit_{}".format(bn, basename(d.data.name)))
+    shutil.copyfile(do.params.path, "{}/params_{}".format(bn, basename(do.params.name)))
+
+    ## Get statistics    
+    with open(os.path.join(bn, "statistics.txt"), "w") as f: 
+        f.write("Statistics should go there\n")
+
+    ## zip and move it at the right place
+    fname = ''
+    with tempfile.NamedTemporaryFile(dir="SPTGUI/static/SPTGUI/downloads/", suffix="_{}".format(ana.url_basename), delete=False) as f:
+        fname = f.name
+    os.remove(fname)
+    shutil.make_archive(fname, 'zip', bn)
+    with open(fname+".zip", 'r') as f2:
+        fi = File(f2)
+        do.export_zip = fi
+        do.save()
+    
+    ## Get a table formatting for the analysis parameters    
+    shutil.rmtree(tmpdirname) ## Delete the temporary dir
+
+    ## say that we are done
+    do.status_zip = 'done'
+    do.save()
+    
+## ==== Helper functions
+
+def check_filefield(d):
+    """Returns if a file of a FileField exists"""
+    try:
+        return os.path.exists(d.path)
+    except:
+        return False
+        

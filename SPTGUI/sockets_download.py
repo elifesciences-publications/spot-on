@@ -86,21 +86,27 @@ def get_download(message, data, url_basename):
     fil = {'svg': do.export_svg,
            'eps': do.export_eps,
            'pdf': do.export_pdf,
-           'png': do.export_png}
+           'png': do.export_png,
+           'zip': do.export_zip}
     sta = {'svg': do.status_svg,
            'eps': do.status_eps,
            'pdf': do.status_pdf,
-           'png': do.status_png}
+           'png': do.status_png,
+           'zip': do.status_zip}
 
     if sta[fmt] != 'done':
         if sta[fmt] == 'na':
-            if fmt == 'eps':
-                do.status_eps = 'queued'
-            if fmt == 'pdf':
-                do.status_pdf = 'queued'
-            if fmt == 'png':
-                do.status_png = 'queued'
-            ta = tasks.convert_svg_to.apply_async((fmt, download_id))
+            if fmt in ('eps', 'pdf', 'png'):
+                if fmt == 'eps':
+                    do.status_eps = 'queued'
+                if fmt == 'pdf':
+                    do.status_pdf = 'queued'
+                if fmt == 'png':
+                    do.status_png = 'queued'
+                ta = tasks.convert_svg_to.apply_async((fmt, download_id))
+            elif fmt == 'zip':
+                do.status_zip = 'queued'
+                ta = tasks.get_zip.apply_async((download_id,))
             do.save()
             return {'status': 'queued', 'celery_id': ta.id}
         return {'status': sta[fmt]}

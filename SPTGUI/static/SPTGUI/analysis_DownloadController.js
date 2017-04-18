@@ -19,7 +19,7 @@ angular.module('app')
 			downloadService.download(params, format)
 			    .then(function(resp3){
 				if (resp3.status=="success") {
-				    console.log("Download ready")
+				    console.log("Download ready at "+resp3.url)
 				    $window.open('/static/SPTGUI/downloads/'+resp3.url, "_blank");
 				} else {
 				    alert("Oops, something went wrong")
