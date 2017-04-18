@@ -413,9 +413,18 @@ angular.module('app')
 			jldp: angular.copy($scope.jlphist),
 			fit : angular.copy($scope.jlfit),
 			fitp: angular.copy($scope.jlpfit),
-			description: 'lalala',
+			description: $scope.downloadPopover.description,
 			date: new Date()}
 	    downloadService.setDownload(dwnlPars);
-	    alert("Analysis marked for download");
+	    $scope.downloadPopover.isOpen = false;
 	}
+
+	$scope.downloadPopover = {
+	    isOpen: false,
+	    templateUrl: 'myPopoverTemplate.html',
+	    description: '',
+	    open: function open() {
+		$scope.downloadPopover.isOpen = true;
+            }
+	};
     }]);

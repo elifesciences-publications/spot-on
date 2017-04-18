@@ -23,6 +23,7 @@
     <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
     <script src="{% static 'SPTGUI/dist/js/angular-cookies.js' %}"></script>
     <script src="{% static 'SPTGUI/dist/js/angular-toggle-switch.min.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/ui-bootstrap-tpls-2.5.0.min.js' %}"></script>
     <link href="{% static 'SPTGUI/dist/css/angular-toggle-switch.css' %}" rel="stylesheet">
 
     <!-- concatenated flow.js + ng-flow libraries -->
@@ -444,7 +445,25 @@
 		  <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
 		  <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLP"></toggle-switch> <span ng-if="gettingPooledJLD">Please wait</span>
 
-		  <button ng-click="toDownloads();" class="btn btn-default">Mark for download</button>
+		  <button uib-popover-template="downloadPopover.templateUrl"
+			  popover-title="Enter a short description"
+			  popover-is-open="downloadPopover.isOpen"
+			  ng-click="downloadPopover.open()"
+			  type="button" class="btn btn-default">
+		    Mark for download
+		  </button>
+
+		  <script type="text/ng-template" id="myPopoverTemplate.html">
+		    <div>
+		      all the parameters will be saved anyway
+		    </div>
+		    <div class="form-group">
+		      <label>Description:</label>
+		      <input type="text" ng-model="downloadPopover.description" class="form-control">
+		    </div>
+		    <button ng-click="toDownloads();" class="btn btn-default">Ok</button>
+		  </script>
+		  
 		</div>
 	      </div>
 	    </div>
@@ -469,7 +488,7 @@
 		<tr ng-repeat="dwl in downloads">
 		  <td class="col-md-1">{{$index+1}}</td>
 		  <td class="col-md-2">{{dwl.date}}</td>
-		  <td class="col-md-5">Lalala</td>
+		  <td class="col-md-5">{{dwl.description}}</td>
 		  <td class="col-md-3">
 		    <a href="#" ng-click="downloadFigure($index, 'svg')">SVG</a>,
 		    <a href="#" ng-click="downloadFigure($index, 'pdf')">PDF</a>,

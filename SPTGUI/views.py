@@ -48,6 +48,14 @@ if config.debug_views:
         a = celery.app.control.inspect().reserved()['celery@alice']
         b = celery.app.control.inspect().active()['celery@alice']
         return HttpResponse(str(a)+str(b)+str(len(a))+" "+str(len(b)) )
+
+    def popover(request):
+        """Returns a simple popover, inspired from:
+        http://plnkr.co/edit/ccb5MR?p=preview"""
+        logging.warning("you called the `popover` function, which is a 'debug' function, avoid that in production")
+        template = loader.get_template('SPTGUI/popover.html')
+        context = {}
+        return HttpResponse(template.render(context, request))        
     
     
 ##

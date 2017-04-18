@@ -11,6 +11,7 @@ urlpatterns = [
     #url(r'^queue/status/$', views.queue_status, name='queue_status'),## TEMPORARY
     #url(r'^queue/new/$', views.queue_new, name='queue_new'),## TEMPORARY
     url(r'^barchart/$', views.barchart, name='barchart'),## TEMPORARY
+    url(r'^popover/$', views.popover, name='popover'),## TEMPORARY
 
     ##
     ## ==== Main routes

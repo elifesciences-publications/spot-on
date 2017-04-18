@@ -27,7 +27,10 @@ def set_download(message, data, url_basename) :
 
     ana = get_object_or_404(Analysis, url_basename=url_basename)
     da = get_object_or_404(Dataset, analysis=ana, id=params['cell'])
-    do = Download(analysis=ana, dataset=da, pub_date=timezone.now())
+    do = Download(analysis=ana,
+                  dataset=da,
+                  pub_date=timezone.now(),
+                  description=params['description'])
 
     # Save params and export_svg here, defer what should be deferred to a task
     with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f1:
