@@ -14,6 +14,7 @@ from django.db import transaction
 from .models import Analysis, Dataset
 from django.http import HttpResponse
 from django.template import loader
+from django.conf import settings
 import fastSPT.custom_settings as custom_settings
 
 from celery import celery
@@ -100,7 +101,7 @@ def analysis(request, url_basename):
     """Returns the analysis view. This is the main view of the system"""
     ana = get_object_or_404(Analysis, url_basename=url_basename)
     template = loader.get_template('SPTGUI/analysis.html')
-    context = {'url_basename': url_basename}
+    context = {'url_basename': url_basename, 'version': settings.APP_VERSION}
     return HttpResponse(template.render(context, request))
 
 
