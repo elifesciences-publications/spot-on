@@ -81,9 +81,9 @@ angular.module('app')
 		if (el.jld_available) {
 		    analysisService.getDefaultJLD(el.id).then(function(resp) {
 			if (resp.data.status == 'done') {
-			    $scope.jlhist[i] = resp.data.jld
 			    $scope.showModelingTab = true;
 			    $scope.analysisState = 'done';
+			    $scope.jlhist[i] = resp.data.jld
 			    console.log("Retrieved default JLD #"+el.id)
 			}
 		    })
@@ -139,9 +139,9 @@ angular.module('app')
 			analysisService.getDefaultJLD(el.id).then(function(resp) {
 			    if (resp.data.status=='done') {
 				$interval.cancel(myint)
-				$scope.jlhist[i] = resp.data.jld
 				$scope.showModelingTab = true;
 				$scope.analysisState = 'done';
+				$scope.jlhist[i] = resp.data.jld
 				console.log("Retrieved default JLD #"+el.id)
 			    } else {
 				console.log('JLD #'+el.id+' is still computing')
