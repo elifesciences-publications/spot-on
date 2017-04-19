@@ -82,187 +82,190 @@
       
       <tabset>
 	<tab heading="Data">
-	  {% verbatim %}	  
+	  {% verbatim %}
 	  <div ng-controller="UploadController"
 	       flow-init="{target: './upload/'}"
 	       flow-files-submitted="$flow.upload()"
 	       flow-upload-started="uploadStart($flow);"
 	       flow-file-success="$file.msg = $message">
-
+	    
 	    <div class="alert alert-danger" ng-hide="establishedConnexion">
 	      Cannot talk with the server or loading files...
 	    </div>
-	    
-	    <h2>Upload datasets</h2>
+	    <div ng-hide="!establishedConnexion">
+	      <h2>Upload datasets</h2>
 
-	    <!-- Drag'n'drop box -->
-	    <div class="alert alert-info" flow-drop>
-	      <div flow-drag-enter="style={border:'4px solid green'}"
-		   flow-drag-leave="style={}"
-		   ng-style="style">
-		Drag And Drop your file here
+	      <!-- Drag'n'drop box -->
+	      <div class="alert alert-info" flow-drop>
+		<div flow-drag-enter="style={border:'4px solid green'}"
+		     flow-drag-leave="style={}"
+		     ng-style="style">
+		  Drag And Drop your file here
+		</div>
 	      </div>
-	    </div>
-	    <input type="file" flow-btn/>
+	      <input type="file" flow-btn/>
 
-	    <h2>Uploaded datasets</h2>
-	    
-	    <div class="alert alert-warning" ng-if="successfullyUploaded==0">
-	      No dataset has been uploaded yet.
-	    </div>
-	    
-	    <div ng-if="successfullyUploaded>0">
-		<ul>
-		  <li>Number of uploaded files: {{successfullyUploaded}}/{{successfullyUploaded+$flow.files.length}}</li>
-		</ul>
+	      <h2>Uploaded datasets</h2>
 
-		<table class="table-striped">
-		  <tr>
-		    <th class="col-md-2">id</th>
-		    <th class="col-md-5">File name</th>
-		    <th class="col-md-5">Description</th>
-		    <th class="col-md-2">Status</th>
-		    <th class="col-md-5">Options</th>
-		  </tr>
-		  
-		  <tr ng-repeat="file in $flow.files">
-		    <td class="col-md-2">{{$index+1}}</td>
-		    <td class="col-md-5">{{file.name}}</td>
-		    <td class="col-md-5"> </td>	
-		    <td class="col-md-2">Uploading</td>
-		    <td class="col-md-1"> </td>		  
-		  </tr>
-		  
-		  <tr ng-repeat="data in datasets">
-		    <td class="col-md-2">{{$flow.files.length+$index+1}}</td>
-		    <td class="col-md-5">{{data.name}}
-		      (<a href="datasets/{{data.id}}/original/" title="View the uploaded file" data-placement="top" data-html="true" tooltip >uploaded</a>,
-		      <a href="datasets/{{data.id}}/parsed/" title="View the file as interpreted by our system, in a standardized format" data-placement="top" data-html="true" tooltip >parsed</a>, <a href="datasets/{{data.id}}/report/" title="View the importation report" data-placement="top" data-html="true" tooltip >importation report</a>).
-		    </td>
-		    <td class="col-md-5">{{data.description}}</td>
-		    <td class="col-md-2">{{data.preanalysis_status}}</td>
-		    <td class="col-md-1">
-		      <span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open clickable"></span>
-		      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil clickable"></span>
-		      <span ng-click="deleteDataset(data, $index);" class="glyphicon glyphicon-remove clickable"></span>
-		    </td>		  
-		  </tr>
-		</table>	      
-	    </div>
-
-	    <div ng-if="editingDataset">
-	      <h3>Editing dataset: {{editedDataset.name}}</h3>
-	      <form ng-submit="saveEdit(editedDataset)">
-		<table>
-		  <tr>
-		    <td> Name: </td>
-		    <td><input type="text" ng-model="editedDataset.name"></td>
-		  </tr>
-		  <tr>
-		    <td> Description: </td>
-		    <td><textarea ng-model="editedDataset.description"></textarea></td>
-		  </tr>
-		  <tr>
-		    <td>&nbsp;</td>
-		    <td>
-		      <button class="btn btn-default" ng-click="cancelEdit(editedDataset)">Cancel</button>
-		      <button type="submit" class="btn btn-default">Submit</button>
-		    </td>
-		  </tr>
-		</table>
-	      </form>
-	    </div>
-	    
-	    <div>
-	      <div class="col-md-6">
-		<h2> Information about a dataset </h2>
-		<div ng-if="showingStatistics">
-		  <h3>Selected dataset: {{shownStatistics.name}}</h3>
-
-		  <table class="table table-responsive">
-		    <tr>
-		      <td>Number of traces</td>
-		      <td>{{shownStatistics.pre_ntraces}}</td>
-		    </tr>		    <tr>
-		      <td>Number of frames</td>
-		      <td>{{shownStatistics.pre_nframes}}</td>
-		    </tr>
-		    <tr>
-		      <td>Number of detections</td>
-		      <td>{{shownStatistics.pre_npoints}}</td>
-		    </tr>
-		    <tr>
-		      <td>Number of traces with >=3 detections</td>
-		      <td>{{shownStatistics.pre_ntraces3}}</td>
-		    </tr>
-		    <tr>
-		      <td>Number of jumps</td>
-		      <td>{{shownStatistics.pre_njumps}}</td>
-		    </tr>
-		    <tr>
-		      <td>Length of trajectories (in number of frames)</td>
-		      <td>median: {{shownStatistics.pre_median_length_of_trajectories}}, mean: {{shownStatistics.pre_mean_length_of_trajectories | number}}</td>
-		    </tr>
-		    <tr>
-		      <td>Particles per frame</td>
-		      <td>median: {{shownStatistics.pre_median_particles_per_frame}}, mean: {{shownStatistics.pre_mean_particles_per_frame | number}}</td>
-		    </tr>
-		    <tr>
-		      <td>Jump length</td>
-		      <td>median: {{shownStatistics.pre_median_jump_length | number}}, Mean: {{shownStatistics.pre_mean_jump_length | number}}</td>
-		    </tr>
-		  </table>
+	      <div class="alert alert-warning" ng-hide="datasetsReady">
+		Loading datasets...
+	      </div>
+	      <div ng-hide="!datasetsReady">
+		<div class="alert alert-warning" ng-if="successfullyUploaded==0">
+		  No dataset has been uploaded yet.
 		</div>
 		
-		<div ng-if="!showingStatistics"
-		     class="alert alert-warning" role="alert">
-		  Click on the <span class="glyphicon glyphicon-eye-open"></span> label to display information and statistics about the dataset.
-		</div>
-	      </div>
+		<div ng-if="successfullyUploaded>0">
+		  <ul>
+		    <li>Number of uploaded files: {{successfullyUploaded}}/{{successfullyUploaded+$flow.files.length}}</li>
+		  </ul>
 
-	      <div class="col-md-6">
-		<h2> Global statistics </h2>
-		<div ng-if="statistics.status=='ok';">
-		  <table class="table table-responsive">
+		  <table class="table-striped">
 		    <tr>
-		      <td>Number of traces</td>
-		      <td>{{statistics.pre_ntraces}}</td>
-		    </tr>		    <tr>
-		      <td>Number of frames</td>
-		      <td>{{statistics.pre_nframes}}</td>
+		      <th class="col-md-2">id</th>
+		      <th class="col-md-5">File name</th>
+		      <th class="col-md-5">Description</th>
+		      <th class="col-md-2">Status</th>
+		      <th class="col-md-5">Options</th>
 		    </tr>
-		    <tr>
-		      <td>Number of detections</td>
-		      <td>{{statistics.pre_npoints}}</td>
+		    
+		    <tr ng-repeat="file in $flow.files">
+		      <td class="col-md-2">{{$index+1}}</td>
+		      <td class="col-md-5">{{file.name}}</td>
+		      <td class="col-md-5"> </td>	
+		      <td class="col-md-2">Uploading</td>
+		      <td class="col-md-1"> </td>		  
 		    </tr>
-		    <tr>
-		      <td>Number of traces with >=3 detections</td>
-		      <td>{{statistics.pre_ntraces3}}</td>
+		    
+		    <tr ng-repeat="data in datasets">
+		      <td class="col-md-2">{{$flow.files.length+$index+1}}</td>
+		      <td class="col-md-5">{{data.name}}
+			(<a href="datasets/{{data.id}}/original/" title="View the uploaded file" data-placement="top" data-html="true" tooltip >uploaded</a>,
+			<a href="datasets/{{data.id}}/parsed/" title="View the file as interpreted by our system, in a standardized format" data-placement="top" data-html="true" tooltip >parsed</a>, <a href="datasets/{{data.id}}/report/" title="View the importation report" data-placement="top" data-html="true" tooltip >importation report</a>).
+		      </td>
+		      <td class="col-md-5">{{data.description}}</td>
+		      <td class="col-md-2">{{data.preanalysis_status}}</td>
+		      <td class="col-md-1">
+			<span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open clickable"></span>
+			<span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil clickable"></span>
+			<span ng-click="deleteDataset(data, $index);" class="glyphicon glyphicon-remove clickable"></span>
+		      </td>		  
 		    </tr>
-		    <tr>
-		      <td>Number of jumps</td>
-		      <td>{{statistics.pre_njumps}}</td>
-		    </tr>
-		    <tr>
-		      <td>Length of trajectories (in number of frames)</td>
-		      <td>median: {{statistics.pre_median_length_of_trajectories | number}}, mean: {{statistics.pre_mean_length_of_trajectories | number}}</td>
-		    </tr>
-		    <tr>
-		      <td>Particles per frame</td>
-		      <td>median: {{statistics.pre_median_particles_per_frame}}, mean: {{statistics.pre_mean_particles_per_frame | number}}</td>
-		    </tr>
-		    <tr>
-		      <td>Jump length</td>
-		      <td>median: {{statistics.pre_median_jump_length | number}}, Mean: {{statistics.pre_mean_jump_length | number}}</td>
-		    </tr>
-		  </table>		  
+		  </table>	      
+		</div>
+
+		<div ng-if="editingDataset">
+		  <h3>Editing dataset: {{editedDataset.name}}</h3>
+		  <form ng-submit="saveEdit(editedDataset)">
+		    <table>
+		      <tr>
+			<td> Name: </td>
+			<td><input type="text" ng-model="editedDataset.name"></td>
+		      </tr>
+		      <tr>
+			<td> Description: </td>
+			<td><textarea ng-model="editedDataset.description"></textarea></td>
+		      </tr>
+		      <tr>
+			<td>&nbsp;</td>
+			<td>
+			  <button class="btn btn-default" ng-click="cancelEdit(editedDataset)">Cancel</button>
+			  <button type="submit" class="btn btn-default">Submit</button>
+			</td>
+		      </tr>
+		    </table>
+		  </form>
 		</div>
 		
+		<div>
+		  <div class="col-md-6">
+		    <h2> Information about a dataset </h2>
+		    <div ng-if="showingStatistics">
+		      <h3>Selected dataset: {{shownStatistics.name}}</h3>
+
+		      <table class="table table-responsive">
+			<tr>
+			  <td>Number of traces</td>
+			  <td>{{shownStatistics.pre_ntraces}}</td>
+			</tr>		    <tr>
+			  <td>Number of frames</td>
+			  <td>{{shownStatistics.pre_nframes}}</td>
+			</tr>
+			<tr>
+			  <td>Number of detections</td>
+			  <td>{{shownStatistics.pre_npoints}}</td>
+			</tr>
+			<tr>
+			  <td>Number of traces with >=3 detections</td>
+			  <td>{{shownStatistics.pre_ntraces3}}</td>
+			</tr>
+			<tr>
+			  <td>Number of jumps</td>
+			  <td>{{shownStatistics.pre_njumps}}</td>
+			</tr>
+			<tr>
+			  <td>Length of trajectories (in number of frames)</td>
+			  <td>median: {{shownStatistics.pre_median_length_of_trajectories}}, mean: {{shownStatistics.pre_mean_length_of_trajectories | number}}</td>
+			</tr>
+			<tr>
+			  <td>Particles per frame</td>
+			  <td>median: {{shownStatistics.pre_median_particles_per_frame}}, mean: {{shownStatistics.pre_mean_particles_per_frame | number}}</td>
+			</tr>
+			<tr>
+			  <td>Jump length</td>
+			  <td>median: {{shownStatistics.pre_median_jump_length | number}}, Mean: {{shownStatistics.pre_mean_jump_length | number}}</td>
+			</tr>
+		      </table>
+		    </div>
+		    
+		    <div ng-if="!showingStatistics"
+			 class="alert alert-warning" role="alert">
+		      Click on the <span class="glyphicon glyphicon-eye-open"></span> label to display information and statistics about the dataset.
+		    </div>
+		  </div>
+
+		  <div class="col-md-6">
+		    <h2> Global statistics </h2>
+		    <div ng-if="statistics.status=='ok';">
+		      <table class="table table-responsive">
+			<tr>
+			  <td>Number of traces</td>
+			  <td>{{statistics.pre_ntraces}}</td>
+			</tr>		    <tr>
+			  <td>Number of frames</td>
+			  <td>{{statistics.pre_nframes}}</td>
+			</tr>
+			<tr>
+			  <td>Number of detections</td>
+			  <td>{{statistics.pre_npoints}}</td>
+			</tr>
+			<tr>
+			  <td>Number of traces with >=3 detections</td>
+			  <td>{{statistics.pre_ntraces3}}</td>
+			</tr>
+			<tr>
+			  <td>Number of jumps</td>
+			  <td>{{statistics.pre_njumps}}</td>
+			</tr>
+			<tr>
+			  <td>Length of trajectories (in number of frames)</td>
+			  <td>median: {{statistics.pre_median_length_of_trajectories | number}}, mean: {{statistics.pre_mean_length_of_trajectories | number}}</td>
+			</tr>
+			<tr>
+			  <td>Particles per frame</td>
+			  <td>median: {{statistics.pre_median_particles_per_frame}}, mean: {{statistics.pre_mean_particles_per_frame | number}}</td>
+			</tr>
+			<tr>
+			  <td>Jump length</td>
+			  <td>median: {{statistics.pre_median_jump_length | number}}, Mean: {{statistics.pre_mean_jump_length | number}}</td>
+			</tr>
+		      </table>		  
+		    </div>
+		  </div>		  
+		</div>
 	      </div>
-	    </div>
-	    
-	    
-	  </div><!-- End of the UploadController controller -->
+	    </div><!-- End of the UploadController controller -->
+	  </div>
 	</tab>
 
 	
@@ -402,7 +405,6 @@
 			  <td>&nbsp;</td>
 			  <td>
 			    <button type="submit" class="btn btn-default">Fit kinetic model</button> Fitted distributions {{getNumberFittedDatasets()}}/{{modelingParameters.include.length+1}}
-			    Button: compute single cell fit.
 			  </td>
 			</tr>
 		      </table>
