@@ -433,30 +433,49 @@
 		<jump-length-histogram id="mainHist" data="[jlhist[ce], jlfit[ce], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
 
 		<div class="controls">
-		  <div ng-hide="showJLP">
-		    <input ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
-		    Displaying cell {{ce}}.
-		  </div>
-		  <div ng-if="showJLP">
-		    Displaying group {{modelingParameters.include}}
-		  </div>
+		  <table>
+		    <tr ng-hide="showJLP">
+		      <td>Display dataset</td>
+		      <td>
+			<input ng-hide="showJLP" ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
+		      </td>
+		    </tr>
+		    
+		    <tr ng-hide="!showJLP">
+		      <td >Displayed group</td>
+		      <td> {{modelingParameters.include}}</td>
+		    </tr>
+		    
+		    <tr>
+		      <td>Show pooled jump length distribution: </td>
+		      <td>
+			<toggle-switch ng-model-options="{ getterSetter: true }"
+				       ng-model="displayJLP"></toggle-switch>
+			<span ng-if="gettingPooledJLD">Please wait</span>
+		      </td>
+		    </tr>
 
-		  <div ng-if="jlpfit!=null">
-		    Show pooled fit <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
-		    <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLPf"></toggle-switch>
-		  </div>
-		
-		  Show pooled jump length distribution:
-		  <span class="glyphicon glyphicon-eye-open"  title="Pool from datasets {{modelingParameters.include}}" data-placement="top" tooltip ></span>:
-		  <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="displayJLP"></toggle-switch> <span ng-if="gettingPooledJLD">Please wait</span>
+		    <tr ng-if="jlpfit!==null">
+		      <td>Show pooled fit: </td>
+		      <td>
+			<toggle-switch ng-model-options="{ getterSetter: true }"
+				       ng-model="displayJLPf"></toggle-switch>
+		      </td>
+		    </tr>
 
-		  <button uib-popover-template="downloadPopover.templateUrl"
-			  popover-title="Enter a short description"
-			  popover-is-open="downloadPopover.isOpen"
-			  ng-click="downloadPopover.open()"
-			  type="button" class="btn btn-default">
-		    Mark for download
-		  </button>
+		    <tr>
+		      <td>
+			<button uib-popover-template="downloadPopover.templateUrl"
+				popover-title="Enter a short description"
+				popover-is-open="downloadPopover.isOpen"
+				ng-click="downloadPopover.open()"
+				type="button" class="btn btn-default">
+			  Mark for download
+			</button>
+		      </td>
+		    </tr>
+		  </table>
+
 
 		  <script type="text/ng-template" id="myPopoverTemplate.html">
 		    <div>
@@ -464,9 +483,12 @@
 		    </div>
 		    <div class="form-group">
 		      <label>Description:</label>
-		      <input type="text" ng-model="downloadPopover.description" class="form-control">
+		      <input type="text"
+			     ng-model="downloadPopover.description"
+			     class="form-control">
 		    </div>
-		    <button ng-click="toDownloads();" class="btn btn-default">Ok</button>
+		    <button ng-click="toDownloads();"
+			    class="btn btn-default">Ok</button>
 		  </script>
 		  
 		</div>
