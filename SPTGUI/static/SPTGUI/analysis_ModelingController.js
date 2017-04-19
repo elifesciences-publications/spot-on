@@ -273,6 +273,7 @@ angular.module('app')
 				     dT: 4.477/1000,
 				     dZ: 0.700,
 				     ModelFit: false, //false: PDF, true: CDF fit
+				     SingleCellFit: false,
 				     include : [] // Populated later
 				    };
 	$scope.dt = 1; // Display parameter

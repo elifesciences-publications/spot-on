@@ -386,6 +386,15 @@
 			  </td>
 			</tr>
 			<tr>
+			  <td> Perform single cell fit: </td>
+			  <td>
+			    <toggle-switch
+			       ng-model="modelingParameters.SingleCellFit"
+			       off-label="No"
+			       on-label="Yes"></toggle-switch> (long)
+			  </td>
+			</tr>			
+			<tr>
 			  <td> Iterations: </td>
 			  <td><input type="number" ng-model="modelingParameters.iterations" min="0" max="10"></td> Put a max number here (10 so far)
 			</tr>			  

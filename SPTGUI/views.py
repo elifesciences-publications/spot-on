@@ -184,6 +184,9 @@ def analyze_api(request, url_basename):
         
         (jldparams, fitparams) = json.loads(request.body)
         fitparams['ModelFit'] = [1,2][fitparams['ModelFit']]
+        scf = fitparams['SingleCellFit']
+        fitparams.pop('SingleCellFit')
+        
         cha_jld = compute_hash(jldparams['hashvalueJLD'])
         cha_fit = compute_hash(fitparams['hashvalue'])
         cha = cha_fit+cha_jld
@@ -201,20 +204,21 @@ def analyze_api(request, url_basename):
                 pickle.dump(save_pars, f)
                 
             ## Queue to Celery: loop over the datasets
-            for data_id in fitparams['include']:
-                save_pars['queue'][data_id] = {'status': 'queued'}
-                to_process.append(data_id)
+            if scf or len(fitparams['include'])==1:
+                for data_id in fitparams['include']:
+                    save_pars['queue'][data_id] = {'status': 'queued'}
+                    to_process.append(data_id)
                 
         else: ## Determine the new stuff to be run
             with open(prog_p, 'r') as f:
                 save_pars = pickle.load(f)
-            
-            for data_id in fitparams['include'] : ## Difference in the queue dict
-                if data_id not in save_pars['queue'] or save_pars['queue'][data_id]['status'] == 'error':
-                    save_pars['queue'][data_id] = {'status': 'queued'}
-                    to_process.append(data_id)
-                else:
-                    noids.append({'celery_id': 'none', 'database_id': data_id})
+            if scf or len(fitparams['include'])==1:
+                for data_id in fitparams['include'] : ## Difference in the queue dict
+                    if data_id not in save_pars['queue'] or save_pars['queue'][data_id]['status'] == 'error':
+                        save_pars['queue'][data_id] = {'status': 'queued'}
+                        to_process.append(data_id)
+                    else:
+                        noids.append({'celery_id': 'none', 'database_id': data_id})
         if len(fitparams['include'])>1 and not 'pooled' in save_pars['queue']: ## To avoid recomputing
             save_pars['queue']['pooled'] = {'status': 'queued'} 
             
