@@ -91,7 +91,9 @@ angular.module('app')
 		    console.log("No JLD available for this dataset, weird")
 		}
 	    });
-	    $scope.displayJLP(true)
+	    if ($scope.modelingParameters.include.length>0) {
+		$scope.displayJLP(true)
+	    }
 
 	    $scope.jlfit = $scope.datasets.map(function(ll) {return null;}); // init fit
 	}
