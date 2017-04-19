@@ -91,6 +91,7 @@ angular.module('app')
 		    console.log("No JLD available for this dataset, weird")
 		}
 	    });
+	    $scope.displayJLP(true)
 
 	    $scope.jlfit = $scope.datasets.map(function(ll) {return null;}); // init fit
 	}
@@ -176,25 +177,6 @@ angular.module('app')
 	    
 	})
 
-	// $scope.$on('datasets:updated', function(event,data) {
-	//     console.load("updated dataset Modeling controller. DEPRECATED")
-	//     $scope.datasets = data
-	    
-	//     // Now reset everything
-	//     $scope.jlphist = null;
-	//     $scope.jlpfit = null;
-	//     $scope.ce = 0;
-	//     $scope.dt = 1;
-	//     $scope.showJLP = false;
-	//     $scope.showJLPf = false;
-	//     $scope.modelingParameters.include = [];
-	//     $scope.jlhist = null;
-	//     $scope.jlfit = $scope.datasets.map(function(el){return null;})
-	//     $scope.analysisState = 'notrun';
-
-	//     initView(); // And initialize stuff again
-	// });
-	
 	//
 	// ==== CRUD modeling parameters
 	//
@@ -308,6 +290,8 @@ angular.module('app')
 				if (el.database_id == 'pooled') {
 				    analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
 					$scope.jlpfit = l.data;
+					$scope.analysisState = 'done';
+					$scope.showJLPf = true;
 				    })
 				} else {
 				    analysisService.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
@@ -317,6 +301,7 @@ angular.module('app')
 					$scope.analysisState = 'done'; // Hide progress bar
 					if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 					    $scope.jlpfit = l.data;
+					    $scope.showJLPf = true;
 					}
 				    })
 				}
@@ -326,6 +311,8 @@ angular.module('app')
 			    if (el.database_id == 'pooled' & $scope.modelingParameters.include.length>1) {
 				analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
 				    $scope.jlpfit = l.data;
+				    $scope.analysisState = 'done';
+				    $scope.showJLPf = true;
 				})
 			    } else if (el.database_id == 'pooled' & $scope.modelingParameters.include.length==1) {
 				console.log('The pooled fit will be uploaded later')
@@ -334,10 +321,12 @@ angular.module('app')
 					.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
 					    idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
 			    		    $scope.jlfit[idd] = l.data
-			    		    $scope.fitAvailable = true;
 			    		    $scope.analysisState = 'done';
 					    if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 						$scope.jlpfit = l.data;
+						$scope.showJLPf = true;
+					    } else {
+						$scope.fitAvailable = true;
 					    }
 					})
 				}
@@ -396,6 +385,7 @@ angular.module('app')
 		return $scope.showJLP;
 	    }
 	}
+	
 
 	// The logic behind the toggle switch to show the JLPf
 	// The logic behind the toggle switch to show the JLP
