@@ -201,15 +201,15 @@
 		    </tr>
 		    <tr>
 		      <td>Length of trajectories (in number of frames)</td>
-		      <td>median: {{shownStatistics.pre_median_length_of_trajectories}}, mean: {{shownStatistics.pre_mean_length_of_trajectories}}</td>
+		      <td>median: {{shownStatistics.pre_median_length_of_trajectories}}, mean: {{shownStatistics.pre_mean_length_of_trajectories | number}}</td>
 		    </tr>
 		    <tr>
 		      <td>Particles per frame</td>
-		      <td>median: {{shownStatistics.pre_median_particles_per_frame}}, mean: {{shownStatistics.pre_mean_particles_per_frame}}</td>
+		      <td>median: {{shownStatistics.pre_median_particles_per_frame}}, mean: {{shownStatistics.pre_mean_particles_per_frame | number}}</td>
 		    </tr>
 		    <tr>
 		      <td>Jump length</td>
-		      <td>median: {{shownStatistics.pre_median_jump_length}}, Mean: {{shownStatistics.pre_mean_jump_length}}</td>
+		      <td>median: {{shownStatistics.pre_median_jump_length | number}}, Mean: {{shownStatistics.pre_mean_jump_length | number}}</td>
 		    </tr>
 		  </table>
 		</div>
@@ -245,15 +245,15 @@
 		    </tr>
 		    <tr>
 		      <td>Length of trajectories (in number of frames)</td>
-		      <td>median: {{statistics.pre_median_length_of_trajectories}}, mean: {{statistics.pre_mean_length_of_trajectories}}</td>
+		      <td>median: {{statistics.pre_median_length_of_trajectories | number}}, mean: {{statistics.pre_mean_length_of_trajectories | number}}</td>
 		    </tr>
 		    <tr>
 		      <td>Particles per frame</td>
-		      <td>median: {{statistics.pre_median_particles_per_frame}}, mean: {{statistics.pre_mean_particles_per_frame}}</td>
+		      <td>median: {{statistics.pre_median_particles_per_frame}}, mean: {{statistics.pre_mean_particles_per_frame | number}}</td>
 		    </tr>
 		    <tr>
 		      <td>Jump length</td>
-		      <td>median: {{statistics.pre_median_jump_length}}, Mean: {{statistics.pre_mean_jump_length}}</td>
+		      <td>median: {{statistics.pre_median_jump_length | number}}, Mean: {{statistics.pre_mean_jump_length | number}}</td>
 		    </tr>
 		  </table>		  
 		</div>
@@ -410,24 +410,24 @@
 		Running, please wait...
 	      </div>
 	      <div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
-		Recomputing jump length histogram... (		{{numberComputedJLD}}/{{datasets.length}})
+		Recomputing jump length histogram... ({{numberComputedJLD}}/{{datasets.length}})
 	      </div>
 	      
 	      <div ng-if="analysisState=='done'">
 		<div class="col-md-6" ng-if="fitAvailable">
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
-		    <li>D<sub>free</sub> : {{jlfit[ce].fitparams.D_free}} </li>
-		    <li>D<sub>bound</sub> : {{jlfit[ce].fitparams.D_bound}} </li>
-		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound}}</li>
+		    <li>D<sub>free</sub> : {{jlfit[ce].fitparams.D_free | number}} </li>
+		    <li>D<sub>bound</sub> : {{jlfit[ce].fitparams.D_bound | number}} </li>
+		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound | number}}</li>
 		  </ul>
 		</div>
 		<div class="col-md-6" ng-if="jlpfit">
 		  <em>Global fit parameters for cells {{modelingParameters.include}}.</em>
 		  <ul>
-		    <li>D<sub>free</sub> : {{jlpfit.fitparams.D_free}} </li>
-		    <li>D<sub>bound</sub> : {{jlpfit.fitparams.D_bound}} </li>
-		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound}}</li>
+		    <li>D<sub>free</sub> : {{jlpfit.fitparams.D_free | number}} </li>
+		    <li>D<sub>bound</sub> : {{jlpfit.fitparams.D_bound | number}} </li>
+		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound | number}}</li>
 		  </ul>
 		</div>	
 		<jump-length-histogram id="mainHist" data="[jlhist[ce], jlfit[ce], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
