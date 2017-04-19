@@ -120,7 +120,7 @@
 		    <li>Number of uploaded files: {{successfullyUploaded}}/{{successfullyUploaded+$flow.files.length}}</li>
 		  </ul>
 
-		  <table class="table-striped">
+		  <table class="table">
 		    <tr>
 		      <th class="col-md-2">id</th>
 		      <th class="col-md-5">File name</th>
@@ -137,7 +137,8 @@
 		      <td class="col-md-1"> </td>		  
 		    </tr>
 		    
-		    <tr ng-repeat="data in datasets">
+		    <tr ng-repeat="data in datasets"
+			ng-class="{active: data.id == shownStatistics.id}">
 		      <td class="col-md-2">{{$flow.files.length+$index+1}}</td>
 		      <td class="col-md-5">{{data.name}}
 			(<a href="datasets/{{data.id}}/original/" title="View the uploaded file" data-placement="top" data-html="true" tooltip >uploaded</a>,
