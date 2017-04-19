@@ -117,21 +117,21 @@ angular.module('app')
 	    fitlinepooled.append("path");
 
 	    scope.$watch('data', function(dat){ // Angular connexion
+		console.log("Redrawing?")
 		// Parse inputs
 		if(!dat){ return; }
 		if(!dat[0]){ return; }
-		dt = dat[2];
 		
 		if (dat[4]&!dat[5]) {
 		    pool = true;
-		    col = "orchid";
 		    data_id = 3
 		} else {
 		    pool = false;
-		    col = "steelblue";
 		    data_id = 0
 		}
-
+		console.log(data_id)
+		console.log(angular.copy(scope.data))
+		
 		// Compute data structure
 		data_mult = scope.data[data_id][1].map(function(el) {
 		    return fmt_data([scope.data[data_id][0], el])

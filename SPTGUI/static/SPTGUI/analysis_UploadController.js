@@ -1,5 +1,5 @@
 angular.module('app')
-    .controller('UploadController', ['getterService', 'MainSocket', 'ProcessingQueue', '$scope', '$cookies', '$interval', '$q', function(getterService, MainSocket, ProcessingQueue, $scope, $cookies, $interval, $q) {
+    .controller('UploadController', ['getterService', 'MainSocket', 'ProcessingQueue', '$scope', '$cookies', '$interval', '$q', '$rootScope', function(getterService, MainSocket, ProcessingQueue, $scope, $cookies, $interval, $q, $rootScope) {
 	// This is the controller for the upload part of the app
 
 	//
@@ -22,7 +22,6 @@ angular.module('app')
 	$scope.uploadStart = function($flow){ // Populate $flow with the CSRF cookie!
 	    $flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
 	};
-
 
 	//
 	// ==== Get basic information. We need to wait for the socket to be
@@ -142,6 +141,8 @@ angular.module('app')
 		    console.log("Getting global statistics")
 		    getterService.getGlobalStatistics().then(function(resp) {
 			$scope.statistics = resp;
+			//$rootScope.$broadcast('datasets:redraw');
+			
 		    });
 		}
 		currentlyUploadingPrevious = $scope.currentlyUploading

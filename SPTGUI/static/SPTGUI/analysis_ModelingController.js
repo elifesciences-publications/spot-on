@@ -38,7 +38,7 @@ angular.module('app')
 		    
 		    if (arguments.length) {
 			$scope.showJLP = false; // plot-related
-			$scope.showJLPf
+			//$scope.showJLPf
 			$scope.jlphist = null; // reset the hist when include changes
 			$scope.jlpfit = null; // and the fit
 			if (newVal == true) {
@@ -104,11 +104,20 @@ angular.module('app')
 	    initView();
 	});
 
+	$scope.$on('datasets:redraw', function(event, datasets) {
+	    console.log('redrawing')
+	    $scope.dt = 1;
+	    $scope.dt = 0;
+	})
+
 	// When some datasets have been added to the list, we find the indices
 	// of the old one and create blank slots for the new one
 	$scope.$on('datasets:added', function(event, newDatasets) {
 	    oldDatasets = angular.copy($scope.datasets)
 	    oldIds = oldDatasets.map(function(el){return el.id})
+
+	    // Hide the plot
+	    $scope.displayJLP(false)
 	    
 	    ids = newDatasets.map(function(el) {return el.id})
 	    newids = ids.map(function(da_id, newId){
@@ -170,6 +179,7 @@ angular.module('app')
 	    $scope.jlfit = $scope.jlfit.filter(function(el,i){return i!=da_id})
 
 	    // Reset the pooled values
+	    $scope.displayJLP(false)
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;
 	    
