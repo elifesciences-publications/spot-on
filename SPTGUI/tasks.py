@@ -88,7 +88,10 @@ def compute_jld(dataset_id, pooled=False, include=None,
             with open(prog_p, 'r') as f:
                 save_params = pickle.load(f)
                 if save_params['status'] == 'done':
-                    return (path, url_basename, hash_prefix, include)
+                    if save_params['include']==include:
+                        return (path, url_basename, hash_prefix, include)
+                    else:
+                        print "Includes do not match, recomputing"
                 else:
                     save_params['status'] = 'computing'
             with open(prog_p, 'w') as f:
@@ -122,6 +125,7 @@ def compute_jld(dataset_id, pooled=False, include=None,
             if pooled:
                 with open(prog_p, 'w') as f:
                     pickle.dump({'jld': an,
+                                 'include': include,
                                  'status': 'done',
                                  'fit': None,
                                  'fitparams': None,
