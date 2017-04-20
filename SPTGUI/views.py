@@ -7,6 +7,7 @@
 ##
 import random, string, json, os, hashlib, pickle, urlparse, logging, re
 from haikunator import Haikunator
+import fastspt
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -140,7 +141,9 @@ def analysis(request, url_basename):
     """Returns the analysis view. This is the main view of the system"""
     ana = get_object_or_404(Analysis, url_basename=url_basename)
     template = loader.get_template('SPTGUI/analysis.html')
-    context = {'url_basename': url_basename, 'version': settings.APP_VERSION}
+    context = {'url_basename': url_basename,
+               'version': settings.APP_VERSION,
+               'versionbackend': fastspt.__version__}
     return HttpResponse(template.render(context, request))
 
 
