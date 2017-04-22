@@ -271,7 +271,7 @@ angular.module('app')
 				     include : [] // Populated later
 				    };
 	$scope.dt = 1; // Display parameter
-	$scope.ce = 0;
+	$scope.ce = 1;
 	$scope.fitAvailable = false;
 	$scope.gettingPooledJLD = false;
 	$scope.jlphist = null; // Pooled JLD

@@ -414,7 +414,7 @@
 		</div>
 	      </div>
 	      
-	      <h2> Results of the simulation </h2>
+	      <h2> Model fitting output </h2>
 	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
 		No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
 	      </div>
@@ -429,9 +429,9 @@
 		<div class="col-md-6" ng-if="fitAvailable">
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
-		    <li>D<sub>free</sub> : {{jlfit[ce].fitparams.D_free | number}} </li>
-		    <li>D<sub>bound</sub> : {{jlfit[ce].fitparams.D_bound | number}} </li>
-		    <li>F<sub>bound</sub> : {{jlfit[ce].fitparams.F_bound | number}}</li>
+		    <li>D<sub>free</sub> : {{jlfit[ce-1].fitparams.D_free | number}} </li>
+		    <li>D<sub>bound</sub> : {{jlfit[ce-1].fitparams.D_bound | number}} </li>
+		    <li>F<sub>bound</sub> : {{jlfit[ce-1].fitparams.F_bound | number}}</li>
 		  </ul>
 		</div>
 		<div class="col-md-6" ng-if="jlpfit">
@@ -442,14 +442,14 @@
 		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound | number}}</li>
 		  </ul>
 		</div>	
-		<jump-length-histogram id="mainHist" data="[jlhist[ce], jlfit[ce], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce]"></jump-length-histogram>
+		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1]"></jump-length-histogram>
 
 		<div class="controls">
 		  <table>
 		    <tr ng-hide="showJLP">
 		      <td>Display dataset</td>
 		      <td>
-			<input ng-hide="showJLP" ng-model="ce" type="number" min="0" max="{{jlhist.length-1}}">
+			<input ng-hide="showJLP" ng-model="ce" type="number" min="1" max="{{jlhist.length}}">
 		      </td>
 		    </tr>
 		    
