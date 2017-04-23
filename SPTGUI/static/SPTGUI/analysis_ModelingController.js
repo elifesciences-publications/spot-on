@@ -1,15 +1,13 @@
 angular.module('app')
     .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', 'ProcessingQueue', '$scope', '$rootScope', '$interval', '$q', function(analysisService, getterService, downloadService, ProcessingQueue, $scope, $rootScope, $interval, $q) {
 	// This is the controller for the modeling tab
+
+	// Get the list of the analyses saved for download.
 	$scope.downloads = []
-	socketReady = false // not to double initialize after lost connexion
-	$scope.$on('socket:ready', function() {
-	    if (!socketReady) {
-		console.log("Getting the list of downloads")
-		downloadService.getDownloads()
-		socketReady = true;
-	    }
+	$scope.$on('downloads:updated', function(downloads) {
+	    $scope.downloads = downloads;
 	})
+	    
 
 	// When the socket is ready, initialize the downloads
 

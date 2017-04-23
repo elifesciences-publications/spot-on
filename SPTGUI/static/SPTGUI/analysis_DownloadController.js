@@ -3,8 +3,12 @@ angular.module('app')
 
 	// ==== Initialize variables (populated when the socket is ready)
 	$scope.downloads = []
+	socketReady = false // not to double initialize after lost connexion
+	$scope.$on('socket:ready', function() {
+	    console.log("Getting the list of analyses saved for download")
+	    downloadService.getDownloads()
+	})
 	
-
 	// ==== Launch this function each time the downloads variable is updated
 	$scope.$on('downloads:updated', function(event, downloads) {
 	    $scope.downloads = downloads
