@@ -20,14 +20,6 @@ angular.module('app')
 	    .range(["red", "yellow", "green"])
 	
 	function link(scope, el, attr){
-	    // Get input and parse it
-	    //if (!scope.data[0]){return;}
-	    
-	    // data_mult = scope.data[0][1].map(function(el) {
-	    // 	return fmt_data([scope.data[0][0], el])
-	    // })
-	    // n_dt = data_mult.length // number of dt
-	    
 	    // Prepare the SVG canvas
 	    var svg = d3.select(el[0]).append('svg')
 	    margin = {top: 20, right: 20, bottom: 50, left: 10},
@@ -39,70 +31,13 @@ angular.module('app')
 	    height = height - margin.top - margin.bottom;
 	    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");	
 
-	    // maxy = data_mult.map(function(v) {return d3.max(v, function(d) { return d.close; })})
-	    // x.domain([0, d3.max(data_mult[0], function(d) { return d.date; })]);
-	    // y.domain([0, 1.1*d3.max(maxy)]);
-
 	    var bars = g.append("g");
 	    var fitline = g.append("g");
 	    var fitlinepooled = g.append("g");
 	    var legend = bars.append("g");
 	    var leftaxis = g.append("g")
-
-	    // // Display
-	    // console.log("Displaying "+n_dt+" histograms")
-	    // var incr=height/n_dt;
-	    // data_mult.forEach(function(data, i ) {
-	    // 	rat = (n_dt+i-2)/(n_dt+i-1)*incr
-	    // 	rat2 = i*rat+incr*1.5
-	    // 	bars.append("path") // Add the histogram
-	    // 	    .attr("transform", "translate(0," + (i*rat) + ")")
-	    // 	    .datum(data)
-	    // 	    .attr("fill", color(i/n_dt*2-1))
-	    // 	    .attr("d", area)
-	    // 	legend.append("g")
-	    // 	    .append("text")
-	    // 	    .attr("fill", "#000")
-	    // 	    .attr("transform", "translate("+0.8*width+","+ (rat2-.1*incr) +")")
-	    // 	    .attr("text-anchor", "middle")
-	    // 	    .text("\u0394\u03C4 = "+(i+1) + " dt")
-		
-	    // 	if (i+1 != data_mult.length) {
-	    // 	    legend.append("g")
-	    // 		.attr("transform", "translate(0," + rat2 + ")")
-	    // 		.call(d3.axisBottom(x).ticks(0))
-	    // 	} else {
-	    // 	    legend.append("g")
-	    // 		.attr("transform", "translate(0," + rat2 + ")")
-	    // 		.call(d3.axisBottom(x))
-	    // 		.append("text")
-	    // 		.attr("fill", "#000")
-	    // 		.attr("transform", "translate("+width/2+","+ "30" +")")
-	    // 		.attr("text-anchor", "middle")
-	    // 		.text("jump distance (µm)")	    
-	    // 	}
-	    // })
-
-	    // g.append("g")
-	    // 	.call(d3.axisLeft(yfull).ticks(0))
-	    // 	.append("text")
-	    // 	.attr("fill", "#000")
-	    // 	.attr("transform", "rotate(-90)")
-	    // 	.attr("y", 6)
-	    // 	.attr("dy", "0.71em")
-	    // 	.attr("text-anchor", "end")
-	    // 	.text("P(r)");
-	    
-	    
-	    // fitline.append("path");
-	    // fitlinepooled.append("path");
-
-	    scope.redraw = function() {
-		console.log('redrawing!');
-	    }
 	    
 	    scope.$watch('data', function(dat){ // Angular connexion
-		console.log("Redrawing?")
 		
 		// Clear
 		bars.selectAll("path").remove()
