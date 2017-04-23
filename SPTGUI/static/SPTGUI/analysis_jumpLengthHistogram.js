@@ -58,16 +58,15 @@ angular.module('app')
 		}
 
 		// define functions
-	    var area = d3.area()
-		.x(function(d) { return x(d.date); })
-		.y1(function(d) { return y(d.close); })
-		.y0(function(d) {return y(0);});
-	    
-	    var line = d3.line()
-	    	.curve(d3.curveBasis)
-		.x(function(d) { return x(d.x); })
-		.y(function(d) { return y(d.y); });
+		var area = d3.area()
+		    .x(function(d) { return x(d.date); })
+		    .y1(function(d) { return y(d.close); })
+		    .y0(function(d) {return y(0);});
 		
+		var line = d3.line()
+	    	    .curve(d3.curveBasis)
+		    .x(function(d) { return x(d.x); })
+		    .y(function(d) { return y(d.y); });
 		
 		// Compute data structure
 		data_mult = scope.data[data_id][1].map(function(el) {
@@ -76,13 +75,13 @@ angular.module('app')
 		n_dt = data_mult.length // number of dt
 
 		// Prepare display
-	    var x = d3.scaleLinear().rangeRound([0, width]);
-	    if (n_dt>1) {
-		var y = d3.scaleLinear().rangeRound([1.5*height/n_dt, 0]);
-	    } else {
-		var y = d3.scaleLinear().rangeRound([height/n_dt, 0]);
-	    }
-	    var yfull = d3.scaleLinear().rangeRound([height, 0]);    
+		var x = d3.scaleLinear().rangeRound([0, width]);
+		if (n_dt>1) {
+		    var y = d3.scaleLinear().rangeRound([1.5*height/n_dt, 0]);
+		} else {
+		    var y = d3.scaleLinear().rangeRound([height/n_dt, 0]);
+		}
+		var yfull = d3.scaleLinear().rangeRound([height, 0]);    
 
 		leftaxis.selectAll("g").remove()
 		leftaxis.append("g")
@@ -95,8 +94,10 @@ angular.module('app')
 	    	    .attr("text-anchor", "end")
 	    	    .text("P(r)");
 		
-		maxy = data_mult.map(function(v) {return d3.max(v, function(d) { return d.close; })})
-		x.domain([0, d3.max(data_mult[0], function(d) { return d.date; })]);
+		maxy = data_mult.map(function(v) {
+		    return d3.max(v, function(d) { return d.close; })})
+		x.domain([0, d3.max(data_mult[0], function(d) {
+		    return d.date; })]);
 		y.domain([0, 1.1*d3.max(maxy)]);
 
 		// Display
