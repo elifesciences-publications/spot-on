@@ -83,6 +83,7 @@ angular.module('app')
 			    $scope.analysisState = 'done';
 			    $scope.jlhist[i] = resp.data.jld
 			    console.log("Retrieved default JLD #"+el.id)
+			    $scope.$broadcast('datasets:redraw', $scope.datasets);
 			}
 		    })
 		} else {
@@ -101,12 +102,6 @@ angular.module('app')
 	    $scope.datasets = datasets;
 	    initView();
 	});
-
-	$scope.$on('datasets:redraw', function(event, datasets) {
-	    console.log('redrawing')
-	    $scope.dt = 1;
-	    $scope.dt = 0;
-	})
 
 	// When some datasets have been added to the list, we find the indices
 	// of the old one and create blank slots for the new one
@@ -150,6 +145,7 @@ angular.module('app')
 				$scope.analysisState = 'done';
 				$scope.jlhist[i] = resp.data.jld
 				console.log("Retrieved default JLD #"+el.id)
+				$scope.$broadcast('datasets:redraw', $scope.datasets);
 			    } else {
 				console.log('JLD #'+el.id+' is still computing')
 			    }
@@ -268,10 +264,10 @@ angular.module('app')
 				     SingleCellFit: false,
 				     include : [] // Populated later
 				    };
-	$scope.dt = 1; // Display parameter
+	//$scope.dt = 1; // Display parameter
 	$scope.ce = 1;
 	$scope.fitAvailable = false;
-	$scope.gettingPooledJLD = false;
+	$scope.gettingPooled
 	$scope.jlphist = null; // Pooled JLD
 	$scope.jlpfit = null; // Pooled fit
 	$scope.showJLP = false;
