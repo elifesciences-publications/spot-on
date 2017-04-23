@@ -146,6 +146,10 @@ angular.module('app')
 
 		    // Handle pooled fit plotting
 		    if (dat[7]) { // Show the pooled fit
+			if (!dat[6]) {
+			    console.log("No pooled fit provided but told to plot it. This is impossible.")
+			    return;
+			}
 			fit = dat[6].fit;
 			fitlinepooled.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
