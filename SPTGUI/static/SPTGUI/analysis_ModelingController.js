@@ -39,6 +39,7 @@ angular.module('app')
 			//$scope.showJLPf
 			$scope.jlphist = null; // reset the hist when include changes
 			$scope.jlpfit = null; // and the fit
+			$scope.showJLPf = false;
 			if (newVal == true) {
 			    add($scope.modelingParameters.include, el.id)
 			} else {
@@ -157,6 +158,7 @@ angular.module('app')
 	    $scope.datasets = newDatasets
 	    
 	    // Reset the pooled values
+	    $scope.showJLPf = false
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;   
 	})
@@ -174,6 +176,7 @@ angular.module('app')
 
 	    // Reset the pooled values
 	    $scope.displayJLP(false)
+	    $scope.showJLPf = false;
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;
 	    
@@ -216,6 +219,7 @@ angular.module('app')
 		return
 	    }
 	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
+	    $scope.showJLPf = false;
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;
 	    $scope.probingJLD = true;
@@ -268,10 +272,10 @@ angular.module('app')
 	$scope.ce = 1;
 	$scope.fitAvailable = false;
 	$scope.gettingPooled
-	$scope.jlphist = null; // Pooled JLD
-	$scope.jlpfit = null; // Pooled fit
 	$scope.showJLP = false;
 	$scope.showJLPf = false;
+	$scope.jlphist = null; // Pooled JLD
+	$scope.jlpfit = null; // Pooled fit
 	
 	//
 	// ==== Analysis computation logic
@@ -283,6 +287,7 @@ angular.module('app')
 		alert('no dataset included! Make a selection');
 		return;
 	    }
+	    $scope.showJLPf = false;
 	    $scope.jlpfit = null;
 	    $scope.fitAvailable = false;
 	    $scope.jlfit = $scope.datasets.map(function(el){return null});
