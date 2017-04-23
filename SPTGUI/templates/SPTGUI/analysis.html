@@ -274,7 +274,7 @@
 	  <div ng-controller="ModelingController"><!-- Another controller -->
 	    In this tab, you can perform a kinetic modeling of your data
 
-	    <div ng-if="showModelingTab;">
+	    <div ng-if="showModelingTab&&datasets.length>0;">
 	      <h2> Dataset selection </h2>
 
 	      Make sure that only valid datasets are visible.
