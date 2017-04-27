@@ -63,6 +63,14 @@ angular.module('app')
 		if ($scope.jlpfit) {return n+1}
 		else {return n}
 	    }
+	    $scope.getNumberDatasetsToFit = function() {
+		if ($scope.modelingParameters.SingleCellFit) {
+		    return $scope.modelingParameters.include.length+1;
+		} else {
+		    return 1; // Only fit the pooled distribution
+		}
+	    }
+	    
 	    $scope.numberComputedJLD = 0
 	    getNumberComputedJLD = function(resp) {
 		// Returns the number of computed datasets
