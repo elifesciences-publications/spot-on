@@ -412,6 +412,17 @@ angular.module('app')
 	    else {return $scope.showJLPf;}
 	}
 
+	// The function to get the ids of the selected datasets
+	$scope.getSelectedIds = function() {
+	    return $scope.modelingParameters.include.map(function(el) {
+		idd = -1
+		$scope.datasets.forEach(function(ell, i) {
+		    if (ell.id == el) {idd = i}
+		})
+		return idd+1 // shift by one
+	    })
+	}
+
 	// The function to mark the current SVG view to download
 	$scope.toDownloads = function() {
 	    var d = new Date()
