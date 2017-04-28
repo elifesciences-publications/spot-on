@@ -228,6 +228,7 @@ angular.module('app')
 	    }
 	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
 	    $scope.showJLPf = false;
+	    $scope.displayJLP(false);
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;
 	    $scope.probingJLD = true;
