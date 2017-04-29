@@ -17,7 +17,7 @@ angular.module('app')
 	$scope.showModelingTab = false;
 	$scope.jldParsInit = false; // To avoid initializing twice
 	$scope.fitComplete = true;
-
+	
 	initView = function() {
 	    // Initiate the window with what we have
 	    $scope.datasets = $scope.datasets.map(function(el) {
@@ -199,6 +199,7 @@ angular.module('app')
 	// ==== CRUD modeling parameters
 	//
 	$scope.jldParameters = {BinWidth : 0.01,
+				UseAllTraj: false,
 				GapsAllowed : 1,
 				TimePoints : 8,
 				JumpsToConsider : 4,
@@ -215,6 +216,10 @@ angular.module('app')
 	    if (!pars.TimeGap>0) {return false;}
 	    return isOk
 	}
+
+	$scope.showComputeJLDbutton =  function() {
+	    return ($scope.jlhist.length>=5)
+	}
 	
 	$scope.resetjldParameters = function() {
 	    $scope.jldParameters = angular.copy($scope.jldParametersDefault);
@@ -223,47 +228,19 @@ angular.module('app')
 	$scope.$watch('jldParameters', function(pars, oldpars) {
 	    if (angular.equals(pars, oldpars)) {return}
 	    // Reset the variables
-	    if (!$scope.jldParsInit) {
-		$scope.jldParsInit = true
-		return
-	    }
 	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
 	    $scope.showJLPf = false;
 	    $scope.displayJLP(false);
 	    $scope.jlpfit = null;
 	    $scope.jlphist = null;
 	    $scope.probingJLD = true;
-	    $scope.analysisState = 'jld'; // Hide plot
 	    // Check that the inputs are ok
 	    if (!validateJLDparameters(pars)) {
 		alert("Parameters are not good")
+	    } else if ($scope.showComputeJLDbutton()) {
+		$scope.analysisState = 'jld_notrun'; // Hide plot
 	    } else {
-		$scope.jlhist = $scope.jlhist.map(function(el){return null});
-		$scope.numberComputedJLD = 0
-		// Recompute jld with new parameters
-		analysisService.setNonDefaultJLD(pars).then(function(resp1) {
-		    if (resp1.data) {
-			prom = []
-			resp1.data.forEach(function(el) {
-			    if (el.celery_id) {
-				prom.push(ProcessingQueue.addToQueue(el.celery_id, 'jld', getNumberComputedJLD))
-			    }
-			})
-			$q.all(prom).then(function(arr) {
-			    analysisService.getNonDefaultJLD(pars)
-				.then(function(resp2){
-				    if (resp2.data.status == 'done') {
-					$scope.computedJLD = 0;
-				    	$scope.jlhist = resp2.data.jld;
-				    	$scope.analysisState = 'done';
-				    	$scope.probingJLD = false;
-				    } else if (resp2.data.length==0) {
-				    	$scope.probingJLD = false;
-				    }
-				})
-			})
-		    }
-		})
+		runJLD(pars)
 	    }
 	}, true); // deep watch the object
 	
@@ -278,7 +255,6 @@ angular.module('app')
 				     SingleCellFit: false,
 				     include : [] // Populated later
 				    };
-	//$scope.dt = 1; // Display parameter
 	$scope.ce = 1;
 	$scope.fitAvailable = null;
 	$scope.gettingPooled
@@ -290,6 +266,38 @@ angular.module('app')
 	//
 	// ==== Analysis computation logic
 	//
+
+	// Function that computes the JLD
+	runJLD = function(pars) {
+	    $scope.analysisState = 'jld'; // Hide plot
+	    $scope.jlhist = $scope.jlhist.map(function(el){return null});
+	    $scope.numberComputedJLD = 0
+	    // Recompute jld with new parameters
+	    analysisService.setNonDefaultJLD(pars).then(function(resp1) {
+		if (resp1.data) {
+		    prom = []
+		    resp1.data.forEach(function(el) {
+			if (el.celery_id) {
+			    prom.push(ProcessingQueue.addToQueue(el.celery_id, 'jld', getNumberComputedJLD))
+			}
+		    })
+		    $q.all(prom).then(function(arr) {
+			analysisService.getNonDefaultJLD(pars)
+			    .then(function(resp2){
+				if (resp2.data.status == 'done') {
+				    $scope.computedJLD = 0;
+				    $scope.jlhist = resp2.data.jld;
+				    $scope.analysisState = 'done';
+				    $scope.probingJLD = false;
+				} else if (resp2.data.length==0) {
+				    $scope.probingJLD = false;
+				}
+			    })
+		    })
+		}
+	    })
+	}
+	$scope.runJLD = runJLD
 
 	// Function that runs the analysis
 	$scope.runAnalysis = function(parameters) {

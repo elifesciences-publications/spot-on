@@ -336,7 +336,12 @@
 		      </tr>
 		      <tr>
 			<td></td>		    
-			<td><button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button></td> 
+			<td>
+			  <button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button>
+			  <button ng-hide="!showComputeJLDbutton()"
+				  ng-click="runJLD(jldParameters);"
+				  class="btn btn-default">Compute!</button>
+			</td> 
 		      </tr>
 		    </table>
 		  </div>
@@ -412,11 +417,11 @@
 				    class="btn btn-default">
 			      Fit kinetic model
 			    </button>
-			    
-			    <i ng-hide="!isFitting()"
-			       class="fa fa-spinner fa-spin"
-			       style="font-size:24px"></i>
-			    <span ng-hide="!isFitting()"> {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
+
+			    <span ng-hide="!isFitting()"> 
+			      <i class="fa fa-spinner fa-spin"
+				 style="font-size:24px"></i>
+ {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
 			    </span>
 			  </td>
 			</tr>
@@ -435,6 +440,9 @@
 	      </div>
 	      <div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
 		Recomputing jump length histogram... ({{numberComputedJLD}}/{{datasets.length}})
+	      </div>
+	      <div ng-if="analysisState=='jld_notrun'" class="alert alert-warning" role="alert">
+		Click the 'Compute' button to start the computation.
 	      </div>
 	      
 	      <div ng-if="analysisState=='done'">
@@ -475,7 +483,12 @@
 		      <td>
 			<toggle-switch ng-model-options="{ getterSetter: true }"
 				       ng-model="displayJLP"></toggle-switch>
-			<span ng-if="gettingPooledJLD">Please wait</span>
+			<span ng-hide="!gettingPooledJLD"> 
+			  <i class="fa fa-spinner fa-spin"
+			     style="font-size:24px"></i>
+			  Please wait...
+			</span>
+
 		      </td>
 		    </tr>
 
