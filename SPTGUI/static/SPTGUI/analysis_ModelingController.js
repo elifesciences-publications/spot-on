@@ -16,6 +16,7 @@ angular.module('app')
 	$scope.computedJLD = 0
 	$scope.showModelingTab = false;
 	$scope.jldParsInit = false; // To avoid initializing twice
+	$scope.fitComplete = true;
 
 	initView = function() {
 	    // Initiate the window with what we have
@@ -279,7 +280,7 @@ angular.module('app')
 				    };
 	//$scope.dt = 1; // Display parameter
 	$scope.ce = 1;
-	$scope.fitAvailable = false;
+	$scope.fitAvailable = null;
 	$scope.gettingPooled
 	$scope.showJLP = false;
 	$scope.showJLPf = false;
@@ -296,6 +297,7 @@ angular.module('app')
 		alert('no dataset included! Make a selection');
 		return;
 	    }
+	    $scope.fitComplete = false;
 	    $scope.showJLPf = false;
 	    $scope.jlpfit = null;
 	    $scope.fitAvailable = false;
@@ -312,6 +314,7 @@ angular.module('app')
 					$scope.jlpfit = l.data;
 					$scope.analysisState = 'done';
 					$scope.showJLPf = true;
+					$scope.fitAvailable = true;
 				    })
 				} else {
 				    analysisService.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
@@ -322,6 +325,7 @@ angular.module('app')
 					if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 					    $scope.jlpfit = l.data;
 					    $scope.showJLPf = true;
+					    $scope.fitAvailable = false
 					}
 				    })
 				}
@@ -333,6 +337,7 @@ angular.module('app')
 				    $scope.jlpfit = l.data;
 				    $scope.analysisState = 'done';
 				    $scope.showJLPf = true;
+				    $scope.fitAvailable = false
 				})
 			    } else if (el.database_id == 'pooled' & $scope.modelingParameters.include.length==1) {
 				console.log('The pooled fit will be uploaded later')
@@ -342,6 +347,7 @@ angular.module('app')
 					    idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
 			    		    $scope.jlfit[idd] = l.data
 			    		    $scope.analysisState = 'done';
+					    $scope.fitAvailable = false
 					    if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 						$scope.jlpfit = l.data;
 						$scope.showJLPf = true;
@@ -355,7 +361,6 @@ angular.module('app')
 		}
 	    })
 	    $scope.analysisState='running'; // 'running' for progress bar
-	    $scope.fitAvailable = false;
 	    FitPars = $scope.modelingParameters;
 	    JLDPars = $scope.jldParameters;
 	}
@@ -430,6 +435,17 @@ angular.module('app')
 		})
 		return idd+1 // shift by one
 	    })
+	}
+
+	// Returns if we should show the progress bar
+	$scope.isFitting = function() {
+	    if (($scope.fitAvailable === null)|($scope.fitComplete)){return false}
+	    else if ($scope.getNumberFittedDatasets()<$scope.getNumberDatasetsToFit()) {
+		return true
+	    } else if ($scope.getNumberFittedDatasets()==$scope.getNumberDatasetsToFit()) {
+		$scope.fitComplete = true;
+		return false
+	    }
 	}
 
 	// The function to mark the current SVG view to download

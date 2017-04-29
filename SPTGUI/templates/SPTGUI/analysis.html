@@ -9,6 +9,9 @@
     <link rel="icon" href="../../favicon.ico">
 
     <title>Analysis page</title>
+
+    <!-- Spinner CSS -->
+    <link href="{% static 'SPTGUI/dist/css/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
     
     <!-- Bootstrap core CSS and JS -->
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -405,7 +408,16 @@
 			<tr>
 			  <td>&nbsp;</td>
 			  <td>
-			    <button type="submit" class="btn btn-default">Fit kinetic model</button> Fitted distributions {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
+			    <button type="submit"
+				    class="btn btn-default">
+			      Fit kinetic model
+			    </button>
+			    
+			    <i ng-hide="!isFitting()"
+			       class="fa fa-spinner fa-spin"
+			       style="font-size:24px"></i>
+			    <span ng-hide="!isFitting()"> {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
+			    </span>
 			  </td>
 			</tr>
 		      </table>
