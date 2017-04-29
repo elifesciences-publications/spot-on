@@ -332,7 +332,7 @@ def get_jldp(request, url_basename):
             ## /!\ TODO MW Should check that the datasets belong to the
             ## right owner. Else one can download everybody's dataset...
             logging.warning("Should check that the datasets belong to the right owner. Else one can download everybody's dataset...")
-            keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap"]
+            keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap", "useAllTraj"]
             keytip = [float, int, int, int, float, float]
             compute_params = {k: t(float(fitparams[k])) for (k,t) in zip(keys,keytip)}
             print compute_params
@@ -408,7 +408,7 @@ def get_jld(request, url_basename):
                     os.mkdir(bn)
                 with open(pa, 'w') as f: ## Save that we are computing
                     pickle.dump(pick, f)
-                keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap"]
+                keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap", "useAllTraj"]
                 compute_params = {k: fitparams[k] for k in keys}
                 ta = tasks.compute_jld.apply_async(
                     kwargs={'dataset_id': dataset_id,

@@ -107,7 +107,7 @@ def compute_jld(dataset_id, pooled=False, include=None,
     ## ==== Compute the JLD
     compute_jld.update_state(state='PROGRESS', meta={'progress': 'computing JLD'})
 
-    an = fastspt.compute_jump_length_distribution(cell, CDF=True, useAllTraj=False, **compute_params) ## Perform the analysis
+    an = fastspt.compute_jump_length_distribution(cell, CDF=True, **compute_params) ## Perform the analysis
     logger.info("DONE: Computed JLD for dataset(s) {}".format(include))
 
     

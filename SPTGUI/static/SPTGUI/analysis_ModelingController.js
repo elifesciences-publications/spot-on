@@ -199,7 +199,7 @@ angular.module('app')
 	// ==== CRUD modeling parameters
 	//
 	$scope.jldParameters = {BinWidth : 0.01,
-				UseAllTraj: false,
+				useAllTraj: false,
 				GapsAllowed : 1,
 				TimePoints : 8,
 				JumpsToConsider : 4,
@@ -214,6 +214,9 @@ angular.module('app')
 	    if (!pars.JumpsToConsider>=3) {return false;}
 	    if (!pars.MaxJump>0) {return false;}
 	    if (!pars.TimeGap>0) {return false;}
+	    if (pars.useAllTraj) {
+		pars.JumpsToConsider = $scope.jldParametersDefault.JumpsToConsider
+	    }
 	    return isOk
 	}
 

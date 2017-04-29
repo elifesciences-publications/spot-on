@@ -324,7 +324,18 @@
 		      </tr>
 		      <tr>
 			<td>Jumps to consider</td>
-			<td><input ng-model= "jldParameters.JumpsToConsider"  type="number">What should be a min/max number of jumps to consider?</td>
+			<td>
+			  <input ng-model="jldParameters.JumpsToConsider"
+				 ng-disabled="jldParameters.useAllTraj"
+				 type="number">
+			  Use all trajectories?
+			  <toggle-switch
+			     ng-model="jldParameters.useAllTraj"
+			     off-label="No"
+			     on-label="Yes">
+			  </toggle-switch>
+			  What should be a min/max number of jumps to consider?
+			</td>
 		      </tr>
 		      <tr>
 			<td>Max jump (µm)</td>
