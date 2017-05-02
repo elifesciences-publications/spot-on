@@ -17,6 +17,7 @@ angular.module('app')
 	$scope.showModelingTab = false;
 	$scope.jldParsInit = false; // To avoid initializing twice
 	$scope.fitComplete = true;
+	$scope.displayCDF = false; // Commanded by toggle switch
 	
 	initView = function() {
 	    // Initiate the window with what we have

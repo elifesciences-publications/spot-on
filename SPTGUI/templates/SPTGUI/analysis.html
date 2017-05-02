@@ -473,10 +473,17 @@
 		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound | number}}</li>
 		  </ul>
 		</div>	
-		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1]"></jump-length-histogram>
+		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF]"></jump-length-histogram>
 
 		<div class="controls">
 		  <table>
+		    <tr>
+		      <td>Display PDF/CDF</td>
+		      <td><toggle-switch ng-model="displayCDF"
+					 off-label="PDF"
+					 on-label="CDF">
+		      </td>
+		    </tr>
 		    <tr ng-hide="showJLP">
 		      <td>Display dataset</td>
 		      <td>

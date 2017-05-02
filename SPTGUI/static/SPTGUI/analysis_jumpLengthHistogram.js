@@ -1,19 +1,42 @@
 angular.module('app')
     .directive('jumpLengthHistogram', function() {
-	function fmt_data(dat) {
+	function fmt_data(dat_raw, cdf) {
+	    dat = angular.copy(dat_raw)
 	    data = [];
 	    for (i=1; i<dat[0].length; i++) {
-		data.push({date: dat[0][i-1], close: dat[1][i-1]});
-		data.push({date: dat[0][i], close: dat[1][i-1]});
+		if (cdf) {
+		    dat[1][i] = dat[1][i-1]+dat[1][i]
+		    data.push({date: dat[0][i-1], close: dat[1][i-1]});
+		    data.push({date: dat[0][i], close: dat[1][i-1]});
+		} else {
+		    data.push({date: dat[0][i-1], close: dat[1][i-1]});
+		    data.push({date: dat[0][i], close: dat[1][i-1]});
+		}
 	    }
 	    return data;
 	};
-	function fmt_fit(x,y) {
+	function fmt_fit(x,y_raw, cdf) {
+	    if (cdf) {
+		y = cumsum(angular.copy(y_raw))
+	    } else {
+		y = y_raw
+	    }
 	    data = [];
 	    for (i=0; i<x.length; i++) {
 		data.push({x: x[i], y: y[i]});
 	    }
 	    return data;	    
+	};
+	function cumsum(d) {
+	    ds = 0.0
+	    for (i=1;i<d.length;i++) {
+		ds += d[i]
+		d[i]=d[i-1]+d[i]
+	    }
+	    for (i=0;i<d.length;i++) {
+		d[i]=d[i]/ds
+	    }
+	    return d
 	};
 	var color = d3.scaleLinear()
 	    .domain([-1, 0,1])
@@ -34,14 +57,14 @@ angular.module('app')
 	    var bars = g.append("g");
 	    var fitline = g.append("g");
 	    var fitlinepooled = g.append("g");
-	    var legend = bars.append("g");
+	    var legend = g.append("g");
 	    var leftaxis = g.append("g")
-	    
+	    var horiaxis = bars.append("g")
 	    scope.$watch('data', function(dat){ // Angular connexion
-		
 		// Clear
 		bars.selectAll("path").remove()
 		legend.selectAll("g").remove()
+		horiaxis.selectAll("g").remove()
 		fitline.selectAll("path").remove()
 		fitlinepooled.selectAll("path").remove()
 		
@@ -56,6 +79,7 @@ angular.module('app')
 		    pool = false;
 		    data_id = 0
 		}
+		cdf = dat[9]
 
 		// define functions
 		var area = d3.area()
@@ -70,7 +94,7 @@ angular.module('app')
 		
 		// Compute data structure
 		data_mult = scope.data[data_id][1].map(function(el) {
-		    return fmt_data([scope.data[data_id][0], el])
+		    return fmt_data([scope.data[data_id][0], el], cdf)
 		})
 		n_dt = data_mult.length // number of dt
 
@@ -100,6 +124,10 @@ angular.module('app')
 		    return d.date; })]);
 		y.domain([0, 1.1*d3.max(maxy)]);
 
+		// CDF-specific changes
+		if (cdf) {ratcdf = .9}
+		else {ratcdf = .1}
+
 		// Display
 		console.log("Redrawing "+n_dt+" histograms")
 		var incr=height/n_dt;
@@ -114,16 +142,16 @@ angular.module('app')
 		    legend.append("g") // This will fail
 			.append("text")
 			.attr("fill", "#000")
-			.attr("transform", "translate("+0.8*width+","+ (rat2-.1*incr) +")")
+			.attr("transform", "translate("+0.8*width+","+ (rat2-ratcdf*incr) +")")
 			.attr("text-anchor", "middle")
 			.text("\u0394\u03C4 = "+(i+1) + " dt")
 		
 		    if (i+1 != data_mult.length) {
-			legend.append("g") // This will fail
+			horiaxis.append("g") // This will fail
 			    .attr("transform", "translate(0," + rat2 + ")")
 			    .call(d3.axisBottom(x).ticks(0))
 		    } else {
-			legend.append("g")
+			horiaxis.append("g")
 			    .attr("transform", "translate(0," + rat2 + ")")
 			    .call(d3.axisBottom(x))
 			    .append("text")
@@ -137,7 +165,7 @@ angular.module('app')
 			fit = dat[1].fit;
 			fitline.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x, fit.y[i]))
+		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf))
 			    .attr("fill", "none")
 			    .attr("stroke", "black")
 			    .attr("stroke-width", 1.5)
@@ -153,7 +181,7 @@ angular.module('app')
 			fit = dat[6].fit;
 			fitlinepooled.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x, fit.y[i]))
+		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf))
 			    .attr("fill", "none")
 			    .attr("stroke", "grey")
 			    .attr("stroke-width", 3)
