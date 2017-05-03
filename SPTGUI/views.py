@@ -276,9 +276,10 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
         with open(pa, 'r') as f:
             save_pars = pickle.load(f)
             pa = save_pars['fit']
-            fitparams = {}
+            fitparams = {'l2': save_pars['fit_ssq2']}
             for k in save_pars['fitparams'].keys():
                 fitparams[k] = save_pars['fitparams'][k].value
+                fitparams[k+"_std"] = save_pars['fitparams'][k].stderr
             return HttpResponse(json.dumps(
                 {'status': 'done',
                  'fitparams': fitparams,

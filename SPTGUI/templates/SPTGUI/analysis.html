@@ -460,17 +460,49 @@
 		<div class="col-md-6" ng-if="fitAvailable">
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
-		    <li>D<sub>free</sub> : {{jlfit[ce-1].fitparams.D_free | number}} </li>
-		    <li>D<sub>bound</sub> : {{jlfit[ce-1].fitparams.D_bound | number}} </li>
-		    <li>F<sub>bound</sub> : {{jlfit[ce-1].fitparams.F_bound | number}}</li>
+		    <li>
+		      D<sub>free</sub> :
+		      {{jlfit[ce-1].fitparams.D_free | number}}
+		      &plusmn; {{jlfit[ce-1].fitparams.D_free_std | number:4}}
+		    </li>
+		    <li>
+		      D<sub>bound</sub> :
+		      {{jlfit[ce-1].fitparams.D_bound | number}}
+		      &plusmn; {{jlfit[ce-1].fitparams.D_bound_std | number:4}}
+		    </li>
+		    <li>
+		      F<sub>bound</sub> :
+		      {{jlfit[ce-1].fitparams.F_bound | number}}
+		      &plusmn; {{jlfit[ce-1].fitparams.F_bound_std | number:4}}
+		    </li>
+		    <li>
+		      l<sub>2</sub> error:
+		      {{jlfit[ce-1].fitparams.l2| number : 8}}
+		    </li>
 		  </ul>
 		</div>
 		<div class="col-md-6" ng-if="jlpfit">
 		  <em>Global fit parameters for cells {{getSelectedIds()}}.</em>
 		  <ul>
-		    <li>D<sub>free</sub> : {{jlpfit.fitparams.D_free | number}} </li>
-		    <li>D<sub>bound</sub> : {{jlpfit.fitparams.D_bound | number}} </li>
-		    <li>F<sub>bound</sub> : {{jlpfit.fitparams.F_bound | number}}</li>
+		    <li>D<sub>free</sub> :
+		      {{jlpfit.fitparams.D_free | number}}
+		      &plusmn; {{jlpfit.fitparams.D_free_std | number:4}}
+		    </li>
+		    <li>
+		      D<sub>bound</sub> :
+		      {{jlpfit.fitparams.D_bound | number}}
+		      &plusmn; {{jlpfit.fitparams.D_bound_std | number:4}}
+		    </li>
+		    <li>
+		      F<sub>bound</sub> :
+		      {{jlpfit.fitparams.F_bound | number}}
+		      &plusmn; {{jlpfit.fitparams.F_bound_std | number:4}}
+		    </li>
+		    <li>
+		      l<sub>2</sub> error:
+		      {{jlpfit.fitparams.l2| number : 8}}
+		    </li>
+		    
 		  </ul>
 		</div>	
 		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF]"></jump-length-histogram>
