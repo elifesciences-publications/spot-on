@@ -490,7 +490,7 @@ angular.module('app')
 	// Test function to get the nearest fit for the z correction
 	$scope.$watch('modelingParameters', function(params, oldparams) {
 	    if (angular.equals(params, oldparams)) {return}
-	    getterService.getNearestZcorr(params.dT, params.dZ).then(
+	    getterService.getNearestZcorr(params.dZ, params.dT).then(
 		function(ret) {
 		    //console.log(ret)
 		    $scope.modelingParameters.dTfit = ret.dT

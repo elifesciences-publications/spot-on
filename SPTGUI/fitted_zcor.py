@@ -11,7 +11,7 @@ from scipy.spatial import cKDTree as KDTree
 import pandas as pd
 
 ## ==== Main functions
-def init(path, scale_t=1.0):
+def init(path, scale_t=1000.0):
     """Function that instanciates the KD-tree.
     Inspired from: http://stackoverflow.com/questions/28177114/merge-join-2-dataframes-by-complex-criteria/28186940#28186940
     returns an object: kd_init
@@ -24,14 +24,14 @@ def init(path, scale_t=1.0):
     
     join_cols = ['dT', "dZ"]
     tree = KDTree(xy[join_cols])
-    return {"tree": tree, "df": xy, "path": path}
+    return {"tree": tree, "df": xy, "path": path, "scale_t": scale_t}
 
 def query_nearest(dT, dZ, tree_init):
     # Deparse
     tree = tree_init["tree"]
     df1 = tree_init["df"]
     path = tree_init["path"]
-    df2 = pd.DataFrame([{"dT":dT, "dZ":dZ}])
+    df2 = pd.DataFrame([{"dT":dT*tree_init["scale_t"], "dZ":dZ}])
     join_cols = ["dT", "dZ"]
     
     # Query and merge
@@ -47,6 +47,6 @@ def query_nearest(dT, dZ, tree_init):
     params = [i for i in data["params"]]
     
     ret = {"dT_query": float(dT), "dZ_query": float(dZ), 
-           "dT": merged["dT"][0], "dZ": merged["dZ"][0],
+           "dT": merged["dT"][0]/tree_init["scale_t"], "dZ": merged["dZ"][0],
            "fn": fn, "ssq2": data["ssq2"], "params": params, "path": path}
     return ret
