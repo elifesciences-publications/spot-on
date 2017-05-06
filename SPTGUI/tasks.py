@@ -212,14 +212,16 @@ def fit_jld(arg, hash_prefix):
                                                HistVecJumps, HistVecJumpsCDF,
                                                **params)
     ## Generate the PDF corresponding to the fitted parameters
-    y = fastspt.generate_jump_length_distribution(fit.params['D_free'],
-                                                  fit.params['D_bound'],
-                                                  fit.params['F_bound'],  
-                                                  JumpProb,
-                                                  HistVecJumpsCDF,
-                                                  params['LocError'],
-                                                  params['dT'],
-                                                  params['dZ'])
+    y = fastspt.generate_jump_length_distribution(D_free = fit.params['D_free'],
+                                                  D_bound = fit.params['D_bound'],
+                                                  F_bound =fit.params['F_bound'],  
+                                                  JumpProb = JumpProb,
+                                                  r = HistVecJumpsCDF,
+                                                  LocError = params['LocError'],
+                                                  dT = params['dT'],
+                                                  dZ = params['dZ'],
+                                                  a = params["a"],
+                                                  b = params["b"])
     ## Normalize it
     norm_y = np.zeros_like(y)
     for i in range(y.shape[0]): # Normalize y as a PDF

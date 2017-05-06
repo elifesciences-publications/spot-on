@@ -14,6 +14,13 @@ angular.module('app')
 	    var promise = MainSocket.sendRequest(request); 
 	    return promise;
 	}
+	// Get the nearest fitted z correction
+	this.getNearestZcorr = function(dZ, dT) {
+	    var promise = MainSocket.sendRequest({type: "get_fitted_zcor",
+						  dT: dT,
+						  dZ: dZ})
+	    return promise
+	}
 
 	// Fired when all the datasets have been loaded ($scope.datasets exists)
 	this.broadcastLoadedDatasets = function(data) {

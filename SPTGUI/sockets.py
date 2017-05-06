@@ -6,11 +6,12 @@
 import json, logging
 from channels import Group
 from channels.sessions import channel_session
-import sockets_tab_data, sockets_download
+import sockets_tab_data, sockets_download, sockets_kinetics
 
 routes = {'list_datasets' : sockets_tab_data.list_datasets,
           'global_statistics': sockets_tab_data.global_statistics,
           'poll_queue': sockets_tab_data.poll_queue,
+          'get_fitted_zcor': sockets_kinetics.get_fitted_zcor,
           'set_download': sockets_download.set_download,
           'set_download': sockets_download.set_download,
           'get_downloads': sockets_download.get_downloads,

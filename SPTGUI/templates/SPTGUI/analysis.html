@@ -393,11 +393,18 @@
 			</tr>
 			<tr>
 			  <td> dT: </td>
-			  <td><input ng-model="modelingParameters.dT" type="number" step="any" min="0"></td>
+			  <td>
+			    <input ng-model="modelingParameters.dT" type="number" step="any" min="0">
+			    (using {{modelingParameters.dTfit}} for the z correction (wth?))
+			  </td>
 			</tr>
 			<tr>
 			  <td> dZ: </td>
-			  <td><input ng-model="modelingParameters.dZ" type="number" step="any" min="0"></td> What should be a good range?
+			  <td>
+			    <input ng-model="modelingParameters.dZ" type="number" step="any" min="0">
+			    What should be a good range?
+			    (using {{modelingParameters.dZfit}} for the z correction (wth?))
+			  </td> 
 			</tr>
 			<tr>
 			  <td> Model Fit: </td>

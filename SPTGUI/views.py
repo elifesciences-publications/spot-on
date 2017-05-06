@@ -20,8 +20,11 @@ import fastSPT.custom_settings as custom_settings
 
 from celery import celery
 import tasks, config, recaptcha
+import fitted_zcor
 
-
+# ==== Initialization
+path = "./SPTGUI/fit_zcorr/"
+tree_init = fitted_zcor.init(path=path)
 haikunator = Haikunator()
 ##
 ## ==== Global variables
@@ -187,8 +190,19 @@ def analyze_api(request, url_basename):
         
         (jldparams, fitparams) = json.loads(request.body)
         fitparams['ModelFit'] = [1,2][fitparams['ModelFit']]
+
+        ## Get the corrected z_cor parameters
+        zcor = fitted_zcor.query_nearest(fitparams['dTfit'],
+                                         fitparams['dZfit'],
+                                         tree_init)
+        fitparams["a"] = zcor["params"][0]
+        fitparams["b"] = zcor["params"][1]
+        
+        ## Clean the params object
         scf = fitparams['SingleCellFit']
         fitparams.pop('SingleCellFit')
+        fitparams.pop('dZfit')
+        fitparams.pop('dTfit')
         
         cha_jld = compute_hash(jldparams['hashvalueJLD'])
         cha_fit = compute_hash(fitparams['hashvalue'])

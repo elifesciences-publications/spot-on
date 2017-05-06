@@ -486,4 +486,16 @@ angular.module('app')
 		$scope.downloadPopover.isOpen = true;
             }
 	};
+
+	// Test function to get the nearest fit for the z correction
+	$scope.$watch('modelingParameters', function(params, oldparams) {
+	    if (angular.equals(params, oldparams)) {return}
+	    getterService.getNearestZcorr(params.dT, params.dZ).then(
+		function(ret) {
+		    //console.log(ret)
+		    $scope.modelingParameters.dTfit = ret.dT
+		    $scope.modelingParameters.dZfit = ret.dZ
+		}
+	    )
+	}, true);
     }]);

@@ -75,5 +75,4 @@ angular.module('app')
 	this.getDefaultJLD = function(dataset_id) {
 	    return $http.get('./api/jld_default/'+dataset_id);
 	};
-
     }]);
