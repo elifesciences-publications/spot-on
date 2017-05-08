@@ -190,6 +190,7 @@ def analyze_api(request, url_basename):
         
         (jldparams, fitparams) = json.loads(request.body)
         fitparams['ModelFit'] = [1,2][fitparams['ModelFit']]
+        fitparams['fit2states'] = {'false': False, 'true': True}[fitparams["fit2states"]]
 
         ## Get the corrected z_cor parameters
         zcor = fitted_zcor.query_nearest(fitparams['dTfit'],
@@ -294,6 +295,8 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
             for k in save_pars['fitparams'].keys():
                 fitparams[k] = save_pars['fitparams'][k].value
                 fitparams[k+"_std"] = save_pars['fitparams'][k].stderr
+            fitparams["fit2states"] = save_pars['params']["fit2states"]
+            print fitparams
             return HttpResponse(json.dumps(
                 {'status': 'done',
                  'fitparams': fitparams,

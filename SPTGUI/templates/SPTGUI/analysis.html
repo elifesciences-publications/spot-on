@@ -367,26 +367,83 @@
 		    <form ng-submit="runAnalysis(modelingParameters);">
 		      <table>
 			<tr>
-			  <td> D<sub>free</sub>: </td>
+			  <td>Kinetic model:</td>
 			  <td>
-			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0">
-			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0"> What should be a good range?
+        		    <div class="col-xs-6">
+			      <label>
+				<input type="radio"
+				       ng-model="modelingParameters.fit2states"
+				       ng-click="init2states(2)"
+				       value="true">
+        			<img src="/static/SPTGUI/img/twostates.png"
+				     class="img-thumbnail float-left"
+				     width="128"
+				     alt="Two states model">
+			      </label>
+        		    </div>
+        		    <div class="col-xs-6">
+			      <label>
+				<input type="radio"
+				       ng-model="modelingParameters.fit2states"
+				       ng-click="init2states(3)"
+				       value="false">
+        			<img src="/static/SPTGUI/img/threestates.png"
+				     class="img-thumbnail float-right"
+				     width="128"
+				     alt="Three states model">
+			      </label>
+        		    </div>			    
 			  </td>
 			</tr>
-			<tr>
+			<tr ng-if="modelingParameters.fit2states!==null">
 			  <td> D<sub>bound</sub>: </td>
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0">
-			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0"> What should be a good range?
+			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0">
 			  </td>
 			</tr>
-			<tr>
+			<tr ng-if="modelingParameters.fit2states==='true'">
+			  <td> D<sub>free</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0">
+			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0">
+			  </td>
+			</tr>
+			<tr ng-if="modelingParameters.fit2states==='true'">
 			  <td> F<sub>bound</sub>: </td>
 			  <td>
 			    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
 			    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
 			  </td>
 			</tr>
+			<tr ng-if="modelingParameters.fit2states==='false'">
+			  <td> D<sub>slow</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.D_med[0]"  type="number" step="any" min="0">
+			    max: <input ng-model= "modelingParameters.D_med[1]"  type="number" step="any" min="0">
+			  </td>
+			</tr>
+			<tr ng-if="modelingParameters.fit2states==='false'">
+			  <td> D<sub>fast</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0">
+			    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0">
+			  </td>
+			</tr>			
+			<tr ng-if="modelingParameters.fit2states==='false'">
+			  <td> F<sub>bound</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
+			    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
+			  </td>
+			</tr>
+			<tr ng-if="modelingParameters.fit2states==='false'">
+			  <td> F<sub>fast</sub>: </td>
+			  <td>
+			    min: <input ng-model= "modelingParameters.F_fast[0]" type="number" step="any" min="0" max="1">
+			    max: <input ng-model= "modelingParameters.F_fast[1]"  type="number" step="any" min="0" max="1">
+			  </td>			  
+			</tr>		
 			<tr>
 			  <td> Localization error: </td>
 			  <td><input ng-model="modelingParameters.LocError" type="number" step="any" min="0"></td>
@@ -468,19 +525,42 @@
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
 		    <li>
+		      D<sub>bound</sub> :
+		      {{jlfit[ce-1].fitparams.D_bound | number}}
+		      &plusmn; {{jlfit[ce-1].fitparams.D_bound_std | number:4}}
+		    </li>
+		    <li ng-if="jlfit[ce-1].fitparams.fit2states===true">
 		      D<sub>free</sub> :
 		      {{jlfit[ce-1].fitparams.D_free | number}}
 		      &plusmn; {{jlfit[ce-1].fitparams.D_free_std | number:4}}
 		    </li>
-		    <li>
-		      D<sub>bound</sub> :
-		      {{jlfit[ce-1].fitparams.D_bound | number}}
-		      &plusmn; {{jlfit[ce-1].fitparams.D_bound_std | number:4}}
+		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+		      D<sub>slow</sub> :
+		      {{jlfit[ce-1].fitparams.D_med | number}}
+		      &plusmn; {{jlfit[ce-1].fitparams.D_med_std | number:4}}
+		    </li>
+		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+		      D<sub>fast</sub> :
+		      {{jlfit[ce-1].fitparams.D_fast | number}}
+		      &plusmn; {{jlfit[ce-1].fitparams.D_fast_std | number:4}}
 		    </li>
 		    <li>
 		      F<sub>bound</sub> :
 		      {{jlfit[ce-1].fitparams.F_bound | number}}
 		      &plusmn; {{jlfit[ce-1].fitparams.F_bound_std | number:4}}
+		    </li>
+		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+		      F<sub>slow</sub> :
+		      <!--{{jlfit[ce-1].fitparams.F_med| number}} -->
+		      <!-- &plusmn; {{jlfit[ce-1].fitparams.F_med_std | number:4}} -->
+		      {{1-jlfit[ce-1].fitparams.F_fast-jlfit[ce-1].fitparams.F_bound | number}}
+
+
+		    </li>
+		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+		      F<sub>fast</sub> :
+		      {{jlfit[ce-1].fitparams.F_fast | number}}
+		      &plusmn; {{jlfit[ce-1].fitparams.F_fast_std | number:4}}
 		    </li>
 		    <li>
 		      l<sub>2</sub> error:
@@ -491,26 +571,68 @@
 		<div class="col-md-6" ng-if="jlpfit">
 		  <em>Global fit parameters for cells {{getSelectedIds()}}.</em>
 		  <ul>
-		    <li>D<sub>free</sub> :
-		      {{jlpfit.fitparams.D_free | number}}
-		      &plusmn; {{jlpfit.fitparams.D_free_std | number:4}}
-		    </li>
 		    <li>
 		      D<sub>bound</sub> :
 		      {{jlpfit.fitparams.D_bound | number}}
 		      &plusmn; {{jlpfit.fitparams.D_bound_std | number:4}}
+		    </li>
+		    <li ng-if="jlpfit.fitparams.fit2states===true">
+		      D<sub>free</sub> :
+		      {{jlpfit.fitparams.D_free | number}}
+		      &plusmn; {{jlpfit.fitparams.D_free_std | number:4}}
+		    </li>
+		    <li ng-if="jlpfit.fitparams.fit2states===false">
+		      D<sub>slow</sub> :
+		      {{jlpfit.fitparams.D_med | number}}
+		      &plusmn; {{jlpfit.fitparams.D_med_std | number:4}}
+		    </li>
+		    <li ng-if="jlpfit.fitparams.fit2states===false">
+		      D<sub>fast</sub> :
+		      {{jlpfit.fitparams.D_fast | number}}
+		      &plusmn; {{jlpfit.fitparams.D_fast_std | number:4}}
 		    </li>
 		    <li>
 		      F<sub>bound</sub> :
 		      {{jlpfit.fitparams.F_bound | number}}
 		      &plusmn; {{jlpfit.fitparams.F_bound_std | number:4}}
 		    </li>
+		    <li ng-if="jlpfit.fitparams.fit2states===false">
+		      F<sub>slow</sub> :
+		      {{1-jlpfit.fitparams.F_fast-jlpfit.fitparams.F_bound | number}}
+		      <!-- {{jlpfit.fitparams.F_med | number}} -->
+		      <!-- &plusmn; {{jlpfit.fitparams.F_med_std | number:4}} -->
+		    </li>
+		    <li ng-if="jlpfit.fitparams.fit2states===false">
+		      F<sub>fast</sub> :
+		      {{jlpfit.fitparams.F_fast | number}}
+		      &plusmn; {{jlpfit.fitparams.F_fast_std | number:4}}
+		    </li>
 		    <li>
 		      l<sub>2</sub> error:
 		      {{jlpfit.fitparams.l2| number : 8}}
 		    </li>
-		    
 		  </ul>
+
+		  <!--   <li>D<sub>free</sub> : -->
+		  <!--     {{jlpfit.fitparams.D_free | number}} -->
+		  <!--     &plusmn; {{jlpfit.fitparams.D_free_std | number:4}} -->
+		  <!--   </li> -->
+		  <!--   <li> -->
+		  <!--     D<sub>bound</sub> : -->
+		  <!--     {{jlpfit.fitparams.D_bound | number}} -->
+		  <!--     &plusmn; {{jlpfit.fitparams.D_bound_std | number:4}} -->
+		  <!--   </li> -->
+		  <!--   <li> -->
+		  <!--     F<sub>bound</sub> : -->
+		  <!--     {{jlpfit.fitparams.F_bound | number}} -->
+		  <!--     &plusmn; {{jlpfit.fitparams.F_bound_std | number:4}} -->
+		  <!--   </li> -->
+		  <!--   <li> -->
+		  <!--     l<sub>2</sub> error: -->
+		  <!--     {{jlpfit.fitparams.l2| number : 8}} -->
+		  <!--   </li> -->
+		    
+		  <!-- </ul> -->
 		</div>	
 		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF]"></jump-length-histogram>
 

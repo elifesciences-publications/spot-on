@@ -200,28 +200,53 @@ def fit_jld(arg, hash_prefix):
 
     ## ==== Sanity format the dictionary of parameters
     params = save_pars['pars'].copy()
+    fit2states = params["fit2states"]
     params.pop("include")
     params.pop("hashvalue")
-    params["D_Bound"] = params.pop("D_bound")
-    params["D_Free"] = params.pop("D_free")
-    params["Frac_Bound"] = params.pop("F_bound")
-
+    
+    if fit2states:
+        params["LB"] = np.array([params["D_free"][0],
+                                 params["D_bound"][0],
+                                 params["F_bound"][0]])
+        params["UB"] = np.array([params["D_free"][1],
+                                 params["D_bound"][1],
+                                 params["F_bound"][1]])
+        params.pop("D_bound")
+        params.pop("D_free")
+        params.pop("F_bound")
+    else:
+        params["LB"] = np.array([params["D_fast"][0],
+                                 params["D_med"][0],
+                                 params["D_bound"][0],
+                                 params["F_fast"][0],
+                                 params["F_bound"][0]])
+        params["UB"] = np.array([params["D_fast"][1],
+                                 params["D_med"][1],
+                                 params["D_bound"][1],
+                                 params["F_fast"][1],
+                                 params["F_bound"][1]])
+        params.pop("D_fast")
+        params.pop("D_med")
+        params.pop("D_bound")
+        params.pop("F_fast")
+        params.pop("F_bound")
     
     ## ==== Perform the fit and compute the distribution
     fit = fastspt.fit_jump_length_distribution(JumpProb, JumpProbCDF,
                                                HistVecJumps, HistVecJumpsCDF,
                                                **params)
     ## Generate the PDF corresponding to the fitted parameters
-    y = fastspt.generate_jump_length_distribution(D_free = fit.params['D_free'],
-                                                  D_bound = fit.params['D_bound'],
-                                                  F_bound =fit.params['F_bound'],  
-                                                  JumpProb = JumpProb,
-                                                  r = HistVecJumpsCDF,
-                                                  LocError = params['LocError'],
-                                                  dT = params['dT'],
-                                                  dZ = params['dZ'],
-                                                  a = params["a"],
-                                                  b = params["b"])
+    y = fastspt.generate_jump_length_distribution(
+        fit.params,  
+        JumpProb = JumpProb,
+        r = HistVecJumpsCDF,
+        LocError = params['LocError'],
+        dT = params['dT'],
+        dZ = params['dZ'],
+        a = params["a"],
+        b = params["b"],
+        fit2states = fit2states)
+        
     ## Normalize it
     norm_y = np.zeros_like(y)
     for i in range(y.shape[0]): # Normalize y as a PDF

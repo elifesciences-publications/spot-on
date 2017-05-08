@@ -249,16 +249,21 @@ angular.module('app')
 	}, true); // deep watch the object
 	
 	$scope.modelingParameters = {D_free : [0.15, 25],
+				     D_fast : [0.15, 25],
+				     D_med : [0.15, 5], // D_slow
 				     D_bound: [0.0005, 0.08],
 				     F_bound: [0, 1],
+				     F_fast:  [0, 1],
 				     LocError: 0.035,
 				     iterations: 3,
 				     dT: 4.477/1000,
 				     dZ: 0.700,
 				     ModelFit: false, //false: PDF, true: CDF fit
 				     SingleCellFit: false,
-				     include : [] // Populated later
+				     include : [], // Populated later
+				     fit2states : null,
 				    };
+	modelingParametersDefault = angular.copy($scope.modelingParameters)
 	$scope.ce = 1;
 	$scope.fitAvailable = null;
 	$scope.gettingPooled
@@ -307,6 +312,10 @@ angular.module('app')
 	$scope.runAnalysis = function(parameters) {
 	    if (parameters.include.length == 0){
 		alert('no dataset included! Make a selection');
+		return;
+	    }
+	    if (parameters.fit2states === null) {
+		alert('No kinetic model selected! Make a selection, either two states or three states.');
 		return;
 	    }
 	    $scope.fitComplete = false;
@@ -436,6 +445,25 @@ angular.module('app')
 		else {$scope.showJLPf = false;}
 	    }
 	    else {return $scope.showJLPf;}
+	}
+
+	// The logic behind the switch between the two and three states model
+	$scope.init2states = function(nstates) {
+	    if (nstates==2) {
+		$scope.modelingParameters.D_free = modelingParametersDefault.D_free
+		delete $scope.modelingParameters.D_fast
+		delete $scope.modelingParameters.D_med
+		delete $scope.modelingParameters.F_fast
+	    } else if (nstates==3) {
+		delete $scope.modelingParameters.D_free
+		$scope.modelingParameters.D_fast = modelingParametersDefault.D_fast
+		$scope.modelingParameters.D_med = modelingParametersDefault.D_med
+		$scope.modelingParameters.F_fast = modelingParametersDefault.F_fast
+	    } else {
+		console.log("unknown number of states")
+		return
+	    }
+	    console.log("switching to a "+nstates+" states kinetic model")
 	}
 
 	// The function to get the ids of the selected datasets
