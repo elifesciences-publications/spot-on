@@ -27,7 +27,7 @@ sudo apt-get install redis-server
 pip install Django
 pip install numpy # Useless if already installed on your system, compilation might be long
 pip install scipy # Useless if already installed on your system, compilation might be long
-pip install lmfit celery fasteners haikunator requests channels redis_asgi
+pip install pandas lmfit celery fasteners haikunator requests channels redis_asgi
 pip install django-angular celery[redis]
 ```
 
