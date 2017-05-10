@@ -521,7 +521,7 @@
 	      </div>
 	      
 	      <div ng-if="analysisState=='done'">
-		<div class="col-md-6" ng-if="fitAvailable">
+		<div class="col-md-6" ng-if="jlfit[ce-1]!==null">
 		  <em>Fit parameters for cell {{ce}}.</em>
 		  <ul>
 		    <li>
@@ -551,11 +551,7 @@
 		    </li>
 		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
 		      F<sub>slow</sub> :
-		      <!--{{jlfit[ce-1].fitparams.F_med| number}} -->
-		      <!-- &plusmn; {{jlfit[ce-1].fitparams.F_med_std | number:4}} -->
-		      {{1-jlfit[ce-1].fitparams.F_fast-jlfit[ce-1].fitparams.F_bound | number}}
-
-
+{{1-jlfit[ce-1].fitparams.F_fast-jlfit[ce-1].fitparams.F_bound | number}}
 		    </li>
 		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
 		      F<sub>fast</sub> :
