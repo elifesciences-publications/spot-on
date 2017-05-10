@@ -566,6 +566,10 @@
 		      l<sub>2</sub> error:
 		      {{jlfit[ce-1].fitparams.l2| number : 8}}
 		    </li>
+		    <li>
+		      AIC: {{jlfit[ce-1].fitparams.aic}}, BIC: {{jlfit[ce-1].fitparams.bic}}
+		    </li>
+		    
 		  </ul>
 		</div>
 		<div class="col-md-6" ng-if="jlpfit">
@@ -599,8 +603,6 @@
 		    <li ng-if="jlpfit.fitparams.fit2states===false">
 		      F<sub>slow</sub> :
 		      {{1-jlpfit.fitparams.F_fast-jlpfit.fitparams.F_bound | number}}
-		      <!-- {{jlpfit.fitparams.F_med | number}} -->
-		      <!-- &plusmn; {{jlpfit.fitparams.F_med_std | number:4}} -->
 		    </li>
 		    <li ng-if="jlpfit.fitparams.fit2states===false">
 		      F<sub>fast</sub> :
@@ -611,28 +613,10 @@
 		      l<sub>2</sub> error:
 		      {{jlpfit.fitparams.l2| number : 8}}
 		    </li>
+		    <li>
+		      AIC: {{jlpfit.fitparams.aic}}, BIC: {{jlpfit.fitparams.bic}}
+		    </li>
 		  </ul>
-
-		  <!--   <li>D<sub>free</sub> : -->
-		  <!--     {{jlpfit.fitparams.D_free | number}} -->
-		  <!--     &plusmn; {{jlpfit.fitparams.D_free_std | number:4}} -->
-		  <!--   </li> -->
-		  <!--   <li> -->
-		  <!--     D<sub>bound</sub> : -->
-		  <!--     {{jlpfit.fitparams.D_bound | number}} -->
-		  <!--     &plusmn; {{jlpfit.fitparams.D_bound_std | number:4}} -->
-		  <!--   </li> -->
-		  <!--   <li> -->
-		  <!--     F<sub>bound</sub> : -->
-		  <!--     {{jlpfit.fitparams.F_bound | number}} -->
-		  <!--     &plusmn; {{jlpfit.fitparams.F_bound_std | number:4}} -->
-		  <!--   </li> -->
-		  <!--   <li> -->
-		  <!--     l<sub>2</sub> error: -->
-		  <!--     {{jlpfit.fitparams.l2| number : 8}} -->
-		  <!--   </li> -->
-		    
-		  <!-- </ul> -->
 		</div>	
 		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF]"></jump-length-histogram>
 

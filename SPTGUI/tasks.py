@@ -260,6 +260,8 @@ def fit_jld(arg, hash_prefix):
             out_pars['fit'] = {'x': HistVecJumpsCDF, 'y':scaled_y}
             out_pars['fitparams'] = fit.params
             out_pars['fit_ssq2'] = fit.params.ssq2
+            out_pars['fit_aic'] = fit.aic
+            out_pars['fit_bic'] = fit.bic
             out_pars['params'] = save_pars['pars']
             pickle.dump(out_pars, f)
     

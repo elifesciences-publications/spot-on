@@ -35,8 +35,8 @@ See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#c
 
 ## Install the `fastspt` backend
 ```{shell}
-wget http://www.eleves.ens.fr/home/woringer/fastspt-6.2.tar.gz
-pip install fastspt-6.2.tar.gz
+wget http://www.eleves.ens.fr/home/woringer/fastspt-8.3.tar.gz
+pip install fastspt-8.3.tar.gz
 ```
 
 ## Download and install the fastSPT repository

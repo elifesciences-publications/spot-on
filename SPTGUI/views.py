@@ -291,11 +291,21 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
         with open(pa, 'r') as f:
             save_pars = pickle.load(f)
             pa = save_pars['fit']
-            fitparams = {'l2': save_pars['fit_ssq2']}
+            fitparams = {'l2': save_pars['fit_ssq2'],
+                         'aic': save_pars['fit_aic'],
+                         'bic': save_pars['fit_bic']}
             for k in save_pars['fitparams'].keys():
                 fitparams[k] = save_pars['fitparams'][k].value
                 fitparams[k+"_std"] = save_pars['fitparams'][k].stderr
             fitparams["fit2states"] = save_pars['params']["fit2states"]
+            if not fitparams["fit2states"]:
+                if fitparams["D_med"]>fitparams["D_fast"]:
+                    tmp = fitparams["D_med"].copy()
+                    tmp_std = fitparams["D_med_std"].copy()
+                    fitparams["D_med"] = fitparams["D_fast"].copy()
+                    fitparams["D_med_std"] = fitparams["D_fast_std"].copy()
+                    fitparams["D_fast"] =tmp
+                    fitparams["D_fast_std"] = tmp_std
             print fitparams
             return HttpResponse(json.dumps(
                 {'status': 'done',
