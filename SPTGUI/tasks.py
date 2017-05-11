@@ -360,7 +360,10 @@ def convert_svg_to(fmt, download_id):
                      do.export_svg.path,
                      options[fmt][0],
                      path]+options[fmt][1:])
-    with tempfile.NamedTemporaryFile(dir="SPTGUI/static/SPTGUI/downloads/", suffix=".{}".format(fmt), delete=False) as f:
+    with tempfile.NamedTemporaryFile(dir="SPTGUI/static/SPTGUI/downloads/",
+                                     prefix="{}_".format(do.name),
+                                     suffix=".{}".format(fmt),
+                                     delete=False) as f:
         F = File(f)
         with open(path, 'r') as ff:
             F.write(ff.read())
@@ -387,14 +390,83 @@ def get_zip(download_id):
     convert_svg_to('eps', download_id) ## Get the eps
 
     ## ==== Initialize objects
-    basename = os.path.basename
     do = Download.objects.get(id=download_id)
     ana = do.analysis
     da = Dataset.objects.filter(analysis=ana)
     
     ## ==== Save everything to the tmp folder
     tmpdirname = tempfile.mkdtemp() ## Create the temp dir
+    collect_download_for_zip(tmpdirname, do, ana, da) ## Create the folder architecture
 
+    ## zip and move it at the right place
+    fname = ''
+    with tempfile.NamedTemporaryFile(dir="SPTGUI/static/SPTGUI/downloads/",
+                                     prefix="{}_".format(do.name),
+                                     suffix="_{}".format(ana.url_basename),
+                                     delete=False) as f:
+        fname = f.name
+    os.remove(fname)
+    shutil.make_archive(fname, 'zip', tmpdirname)
+    with open(fname+".zip", 'r') as f2:
+        fi = File(f2)
+        do.export_zip = fi
+        do.save()
+    
+    ## Get a table formatting for the analysis parameters    
+    shutil.rmtree(tmpdirname) ## Delete the temporary dir
+
+    ## say that we are done
+    do.status_zip = 'done'
+    do.save()
+    
+@shared_task
+def get_zip_all(download_ids):
+    """Function that collects all downloads in `download_ids` in a single zip
+    file and returns the path when done"""
+    # ==== Create the output folder
+    tmpdirname = tempfile.mkdtemp() ## Create the temp dir
+
+    # ==== Populate it
+    #if type(download_ids)==int:
+    #    download_ids=list(download_ids)
+    for (i,download_id) in enumerate(download_ids):
+        convert_svg_to('png', download_id) ## Get the png
+        convert_svg_to('pdf', download_id) ## Get the pdf
+        convert_svg_to('eps', download_id) ## Get the eps
+
+        ## ==== Initialize objects
+        do = Download.objects.get(id=download_id)
+        ana = do.analysis
+        da = Dataset.objects.filter(analysis=ana)
+    
+        ## ==== Save everything to the tmp folder
+        subpath=os.path.join(tmpdirname, str(i+1))
+        os.mkdir(subpath)
+        collect_download_for_zip(subpath, do, ana, da) ## Create the folder architecture
+
+    ## zip and move it at the right place
+    fname = ''
+    with tempfile.NamedTemporaryFile(dir="SPTGUI/static/SPTGUI/downloads/", prefix="{}_".format(ana.url_basename), delete=False) as f:
+        fname = f.name
+    os.remove(fname)
+    shutil.make_archive(fname, 'zip', tmpdirname)
+    #with open(fname+".zip", 'r') as f2:
+    #    fi = File(f2)
+    #    ana.export_zip_all = fi
+    #    ana.save()
+    
+    ## Get a table formatting for the analysis parameters    
+    shutil.rmtree(tmpdirname) ## Delete the temporary dir
+
+    return fname + ".zip"
+    
+
+
+## ==== Helper functions
+def collect_download_for_zip(tmpdirname, do, ana, da):
+    """Function that create the folder structure to be zipped. It takes one
+    download as input and create the folder structure at the `path` location."""
+    basename = os.path.basename
     ## Create the folder architecture
     os.mkdir(os.path.join(tmpdirname, 'raw'))
     os.mkdir(os.path.join(tmpdirname, 'fit'))
@@ -422,27 +494,7 @@ def get_zip(download_id):
     ## Get statistics    
     with open(os.path.join(bn, "statistics.txt"), "w") as f: 
         f.write("Statistics should go there\n")
-
-    ## zip and move it at the right place
-    fname = ''
-    with tempfile.NamedTemporaryFile(dir="SPTGUI/static/SPTGUI/downloads/", suffix="_{}".format(ana.url_basename), delete=False) as f:
-        fname = f.name
-    os.remove(fname)
-    shutil.make_archive(fname, 'zip', bn)
-    with open(fname+".zip", 'r') as f2:
-        fi = File(f2)
-        do.export_zip = fi
-        do.save()
     
-    ## Get a table formatting for the analysis parameters    
-    shutil.rmtree(tmpdirname) ## Delete the temporary dir
-
-    ## say that we are done
-    do.status_zip = 'done'
-    do.save()
-    
-## ==== Helper functions
-
 def check_filefield(d):
     """Returns if a file of a FileField exists"""
     try:

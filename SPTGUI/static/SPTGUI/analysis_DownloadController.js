@@ -3,6 +3,7 @@ angular.module('app')
 
 	// ==== Initialize variables (populated when the socket is ready)
 	$scope.downloads = []
+	$scope.downloadAllProcessing = false
 	var datasets = null;
 	socketReady = false // not to double initialize after lost connexion
 	$scope.$on('socket:ready', function() {
@@ -45,6 +46,26 @@ angular.module('app')
 	    })
 	};
 
+	$scope.downloadAll = function() {
+	    download_ids = downloads.map(function(el){return el.do_id})
+	    $scope.downloadAllProcessing = true
+	    downloadService.downloadAll(download_ids, null).then(function(resp) {
+		ProcessingQueue.addToQueue(resp.celery_id, 'download').then(function(resp2){
+		    downloadService.downloadAll(download_ids, resp.celery_id)
+			.then(function(resp3){
+			    if (resp3.status=="success") {
+				console.log("Download ready at "+resp3.url)
+				$window.open('/static/SPTGUI/downloads/'+resp3.url, "_blank");
+			    } else {
+				console.log(resp3)
+				alert("Oops, something went wrong")
+			    }
+			    $scope.downloadAllProcessing = false
+			})
+		})
+	    })
+	};
+	
 	//
 	// ==== Basic CRUD operations
 	// 

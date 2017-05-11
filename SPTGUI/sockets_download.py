@@ -30,6 +30,7 @@ def set_download(message, data, url_basename) :
     do = Download(analysis=ana,
                   dataset=da,
                   pub_date=timezone.now(),
+                  name=params['name'],
                   description=params['description'])
 
     # Save params and export_svg here, defer what should be deferred to a task
@@ -73,6 +74,7 @@ def get_downloads(message, data, url_basename) :
                         'jldParams': params['jld'],
                         'fitParams': params['fit'],
                         'display': params['display'],
+                        'name': d.name,
                         'description': d.description,
                         'date': d.pub_date.strftime("%d-%m-%Y %H:%M")})
     return res
@@ -129,5 +131,15 @@ def del_download(message, data, url_basename) :
     except:
         return {"status": "error"}
 
-def download_all(message, data, url_basename):
+def get_download_all(message, data, url_basename):
     """Returns a zip file that contains all the downloads"""
+    if data["celery_id"] == None:
+        ta = tasks.get_zip_all.apply_async((data["download_ids"],))
+        return {"status": "queued", "celery_id": ta.id}
+    else:
+        r = tasks.get_zip_all.AsyncResult(data['celery_id'])
+        if r.status == 'SUCCESS':
+            return {"status": "success",
+                    "url": "{}".format(r.result.split("/")[-1])}
+        else:
+            return {"status": "error", "message": "not ready"}

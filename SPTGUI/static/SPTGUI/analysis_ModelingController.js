@@ -506,6 +506,7 @@ angular.module('app')
 			    fit : angular.copy($scope.jlfit),
 			    fitp: angular.copy($scope.jlpfit),
 			    description: $scope.downloadPopover.description,
+			    name: $scope.downloadPopover.name,
 			    date: date_fmt,
 			    display: angular.copy(displayPars)}
 	    downloadService.setDownload(dwnlPars);
@@ -516,6 +517,7 @@ angular.module('app')
 	    isOpen: false,
 	    templateUrl: 'myPopoverTemplate.html',
 	    description: '',
+	    name: '',
 	    open: function open() {
 		$scope.downloadPopover.isOpen = true;
             }

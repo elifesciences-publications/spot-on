@@ -678,6 +678,10 @@
 		      all the parameters will be saved anyway
 		    </div>
 		    <div class="form-group">
+		      <label>Name:</label>
+		      <input type="text"
+			     ng-model="downloadPopover.name"
+			     class="form-control">		      
 		      <label>Description:</label>
 		      <input type="text"
 			     ng-model="downloadPopover.description"
@@ -705,6 +709,7 @@
 		  <tr>
 		    <th class="col-md-1">id</th>
 		    <th class="col-md-2">Created</th>
+		    <th class="col-md-2">Name</th>
 		    <th class="col-md-5">Description</th>
 		    <th class="col-md-1">Dataset(s)</th>
 		    <th class="col-md-1">Display</th>
@@ -714,6 +719,7 @@
 		  <tr ng-repeat="dwl in downloads">
 		    <td class="col-md-1">{{$index+1}}</td>
 		    <td class="col-md-2">{{dwl.date}}</td>
+		    <td class="col-md-2"><em>{{dwl.name}}</em></td>
 		    <td class="col-md-5">{{dwl.description}}</td>
 		    <td class="col-md-1">
 		      <a ng-repeat="incl in dwl.fitParams.include" href="#"
@@ -750,7 +756,13 @@
 		</table>
 	      </div>
 	      <div>
-		<button class="btn btn-default" ng-click="">Download all (zip)</button>
+		<button ng-show="!downloadAllProcessing"
+			class="btn btn-default"
+			ng-click="downloadAll()">Download all (zip)</button>
+		<div ng-show="downloadAllProcessing">
+		  <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+		  Please wait...
+		</div>
 	      </div>
 	    </div>
 	    

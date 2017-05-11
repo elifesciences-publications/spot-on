@@ -40,4 +40,10 @@ angular.module('app')
 			download_id: params.do_id }
 	    return MainSocket.sendRequest(request)
 	}
+	this.downloadAll = function(download_ids, celery_id) {
+	    request = { type: "get_download_all",
+			download_ids: download_ids,
+			celery_id: celery_id}
+	    return MainSocket.sendRequest(request)
+	}
     }]);

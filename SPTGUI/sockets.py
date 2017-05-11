@@ -16,6 +16,7 @@ routes = {'list_datasets' : sockets_tab_data.list_datasets,
           'set_download': sockets_download.set_download,
           'get_downloads': sockets_download.get_downloads,
           'get_download': sockets_download.get_download,
+          'get_download_all': sockets_download.get_download_all,
           'del_download': sockets_download.del_download}
 
 @channel_session
@@ -38,6 +39,7 @@ def ws_receive(message):
     url_basename = message.channel_session['url_basename']
     ##print "message from the {} analysis".format(url_basename)
     if data: ## Parse the input
+        print data
         res = routes[data['type']](message, data, url_basename)
         out = {'type': data['type'],
                'callback_id': data['callback_id'],

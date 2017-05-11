@@ -55,6 +55,7 @@ class Download(models.Model):
     analysis = models.ForeignKey(Analysis, on_delete=models.CASCADE)
     pub_date = models.DateTimeField('date created')
     description =  models.CharField(default='', max_length=400)
+    name =  models.CharField(default='', max_length=200)
     
     params = models.FileField(upload_to=bf, null=True, blank=True)
     data = models.FileField(upload_to=bf, null=True, blank=True)
