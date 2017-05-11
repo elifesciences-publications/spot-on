@@ -19,7 +19,7 @@ angular.module('app')
 	//
 	// ==== Initializing the view
 	//
-	$scope.uploadStart = function($flow){ // Populate $flow with the CSRF cookie!
+	$scope.uploadStart = function($flow){ //Populate $flow with the CSRF cookie
 	    $flow.opts.headers =  {'X-CSRFToken' : $cookies.get("csrftoken")};
 	};
 
@@ -62,7 +62,8 @@ angular.module('app')
 	    getterService.deleteDataset(dataset.id, dataset.filename)
 		.then(function(dataResponse) {
 		    da_id = dataset.id
-		    getterService.broadcastDeletedDataset(da_id, idx);
+		    getterService.broadcastDeletedDataset(da_id, idx,
+							  $scope.datasets);
 
 		    // Upload the global statistics
 		    // TODO: hide the statistics while uploading

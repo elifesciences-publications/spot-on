@@ -706,14 +706,39 @@
 		    <th class="col-md-1">id</th>
 		    <th class="col-md-2">Created</th>
 		    <th class="col-md-5">Description</th>
-		    <th class="col-md-3">Download</th>
+		    <th class="col-md-1">Dataset(s)</th>
+		    <th class="col-md-1">Display</th>
+		    <th class="col-md-2">Download</th>
 		    <th class="col-md-1">Delete</th>
 		  </tr>
 		  <tr ng-repeat="dwl in downloads">
 		    <td class="col-md-1">{{$index+1}}</td>
 		    <td class="col-md-2">{{dwl.date}}</td>
 		    <td class="col-md-5">{{dwl.description}}</td>
-		    <td class="col-md-3">
+		    <td class="col-md-1">
+		      <a ng-repeat="incl in dwl.fitParams.include" href="#"
+			 uib-tooltip="({{getDatasetInfo(incl, 'name')}}, {{getDatasetInfo(incl, 'description')}})">
+			  {{getDatasetInfo(incl, 'i')+1}}
+		      </a>
+		    </td>
+		    <td class="col-md-1">
+		      <a href="#" ng-show="dwl.display.pdfcdf===false"
+			 uib-tooltip="Showing PDF">P</a>
+		      <a ng-show="dwl.display.pdfcdf===true"
+			 uib-tooltip="Showing CDF">C</a>
+		      <a ng-show="dwl.display.fit===true"
+			 uib-tooltip="Fit displayed">f</a>
+		      <a ng-show="dwl.display.jldP===true"
+			 uib-tooltip="Showing pooled jump length distribution">JP</a>
+		      <a ng-show="dwl.display.fitP===true"
+			 uib-tooltip="Pooled fit displayed">F</a>
+		      
+		      <a ng-show="dwl.display.displayedDataset!==null"
+			 uib-tooltip="Displayed dataset">
+			d{{dwl.display.displayedDataset}}
+		      </a>
+		    </td>
+		    <td class="col-md-2">
 		      <a href="#" ng-click="downloadFigure($index, 'svg')">SVG</a>,
 		      <a href="#" ng-click="downloadFigure($index, 'pdf')">PDF</a>,
 		      <a href="#" ng-click="downloadFigure($index, 'png')">PNG</a>,
@@ -725,7 +750,7 @@
 		</table>
 	      </div>
 	      <div>
-		<button class="btn btn-default" ng-click="alert('not implemented')">Download all (zip)</button>
+		<button class="btn btn-default" ng-click="">Download all (zip)</button>
 	      </div>
 	    </div>
 	    

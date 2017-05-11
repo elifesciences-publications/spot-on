@@ -156,7 +156,7 @@ angular.module('app')
 				$scope.analysisState = 'done';
 				$scope.jlhist[i] = resp.data.jld
 				console.log("Retrieved default JLD #"+el.id)
-				$scope.$broadcast('datasets:redraw', $scope.datasets);
+				//$scope.$broadcast('datasets:redraw', $scope.datasets);
 			    } else {
 				console.log('JLD #'+el.id+' is still computing')
 			    }
@@ -492,16 +492,22 @@ angular.module('app')
 	$scope.toDownloads = function() {
 	    var d = new Date()
 	    var date_fmt = d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()+' '+d.getHours()+":"+d.getMinutes()
-	    dwnlPars = {svg : $('#mainHist').html(),
-			cell : $scope.datasets[$scope.ce].id,
-			jldParams : angular.copy($scope.jldParameters),
-			fitParams : angular.copy($scope.modelingParameters),
-			jld : angular.copy($scope.jlhist),
-			jldp: angular.copy($scope.jlphist),
-			fit : angular.copy($scope.jlfit),
-			fitp: angular.copy($scope.jlpfit),
-			description: $scope.downloadPopover.description,
-			date: date_fmt}
+	    var displayPars = {pdfcdf: $scope.displayCDF,
+			       fit:$scope.jlfit[$scope.ce-1]!==null& !$scope.showJLP,
+			       fitP: $scope.showJLPf,
+			       jldP: $scope.showJLP,
+			       displayedDataset: $scope.showJLP? null : $scope.ce}
+	    var dwnlPars = {svg : $('#mainHist').html(),
+			    cell : $scope.datasets[$scope.ce].id,
+			    jldParams : angular.copy($scope.jldParameters),
+			    fitParams : angular.copy($scope.modelingParameters),
+			    jld : angular.copy($scope.jlhist),
+			    jldp: angular.copy($scope.jlphist),
+			    fit : angular.copy($scope.jlfit),
+			    fitp: angular.copy($scope.jlpfit),
+			    description: $scope.downloadPopover.description,
+			    date: date_fmt,
+			    display: angular.copy(displayPars)}
 	    downloadService.setDownload(dwnlPars);
 	    $scope.downloadPopover.isOpen = false;
 	}

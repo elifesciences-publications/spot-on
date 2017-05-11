@@ -3,6 +3,7 @@ angular.module('app')
 
 	// ==== Initialize variables (populated when the socket is ready)
 	$scope.downloads = []
+	var datasets = null;
 	socketReady = false // not to double initialize after lost connexion
 	$scope.$on('socket:ready', function() {
 	    console.log("Getting the list of analyses saved for download")
@@ -12,6 +13,10 @@ angular.module('app')
 	// ==== Launch this function each time the downloads variable is updated
 	$scope.$on('downloads:updated', function(event, downloads) {
 	    $scope.downloads = downloads
+	})
+
+	$scope.$on('datasets:updated', function(event, data) {
+	    datasets = data;
 	})
 
 	// ==== The binding function
@@ -35,6 +40,7 @@ angular.module('app')
 		    $window.open('/static/SPTGUI/downloads/'+resp.url, "_blank");
 		} else {
 		    alert("Oops, something went wrong")
+		    console.log(resp.status)
 		}
 	    })
 	};
@@ -53,5 +59,17 @@ angular.module('app')
 		}
 		else {alert("Something went wrong")}
 	    })
+	}
+
+	// Get information about the included datasets
+	$scope.getDatasetInfo = function(idx, option) {
+	    if (!option|datasets===null) {return}
+	    da = angular.copy(datasets)
+	    da = da.map(function(el, i){el.i = i; return el})
+	    var dai = da.filter(function(el) {return el.id==idx})[0]
+	    return dai[option]
+	}
+	$scope.getDisplay = function(dwl) {
+	    console.log(dwl)
 	}
     }]);

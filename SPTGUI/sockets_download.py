@@ -35,7 +35,9 @@ def set_download(message, data, url_basename) :
     # Save params and export_svg here, defer what should be deferred to a task
     with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f1:
         fil1 = File(f1)
-        pickle.dump({'fit': params['fitParams'], 'jld': params['jldParams']}, f1)
+        pickle.dump({'fit': params['fitParams'],
+                     'jld': params['jldParams'],
+                     'display': params['display']}, f1)
         do.params = fil1
         do.save()
     with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f2:
@@ -70,6 +72,7 @@ def get_downloads(message, data, url_basename) :
                         'cell': d.dataset.id,
                         'jldParams': params['jld'],
                         'fitParams': params['fit'],
+                        'display': params['display'],
                         'description': d.description,
                         'date': d.pub_date.strftime("%d-%m-%Y %H:%M")})
     return res
@@ -125,3 +128,6 @@ def del_download(message, data, url_basename) :
         return {"status": "success"}
     except:
         return {"status": "error"}
+
+def download_all(message, data, url_basename):
+    """Returns a zip file that contains all the downloads"""
