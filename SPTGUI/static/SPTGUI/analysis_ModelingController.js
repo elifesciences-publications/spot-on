@@ -107,6 +107,7 @@ angular.module('app')
 
 	    $scope.jlfit = $scope.datasets.map(function(ll) {return null;}); // init fit
 	}
+	$scope.initView = initView // debug
 
 	// When the datasets object has been loaded, it is stored there
 	$scope.$on('datasets:loaded', function(event, datasets) {

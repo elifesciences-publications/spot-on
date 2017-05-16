@@ -12,9 +12,7 @@ angular.module('app')
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	var ws = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + window.location.pathname + 'ws');
 	//var ws = new WebSocket(ws_scheme + '://' + window.location.host + window.location.pathname + 'ws');	
-	
-	ws.onopen = function(){  
-            //console.log("Socket has been opened!");
+	ws.onopen = function(){
 	    $rootScope.$broadcast('socket:ready');	    
 	};
 	

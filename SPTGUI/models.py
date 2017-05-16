@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
+from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
+
 
 # Create your models here.
 @python_2_unicode_compatible
@@ -17,6 +20,8 @@ class Analysis(models.Model):
     
     def __str__(self):
         return self.url_basename
+    def get_absolute_url(self):
+        return reverse("SPTGUI:analysis", args=[self.url_basename])
 
 CHOICES_PREA = [('error', 'An unknown error occurred'),
                 ('na', 'Not available'),

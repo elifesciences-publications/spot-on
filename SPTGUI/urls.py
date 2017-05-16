@@ -50,18 +50,11 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     url(r'^analysis/(?P<url_basename>.+)/api/jld/$', views.get_jld, name='get_jld'),
 
     ##
-    ## ==== Download routes
-    ##
-    #url(r'^analysis/(?P<url_basename>.+)/api/download/(?P<download_id>[0-9]+)/(?P<format>.+)$', views_download.get_download, name='get_download'),
-
-    #url(r'^analysis/(?P<url_basename>.+)/api/download/$', views_download.set_download, name='set_download'),
-        
-
-    ##
     ## ==== Default routes
     ##
     url(r'^analysis/new/', views.new_analysis, name='new_analysis'),
     url(r'^analysis/demo/', views.new_demo, name='new_demo'),
+    url(r'^analysis/(?P<url_basename>.+)/debug', views.analysis_dbg, name='analysis_dbg'),
     url(r'^analysis/(?P<url_basename>.+)/', views.analysis, name='analysis'),
     url(r'^$', views.index, name='index'),
     

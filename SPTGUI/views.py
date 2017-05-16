@@ -140,17 +140,22 @@ def index(request):
     context = {'url_basename': 'new', 'recaptchakey': custom_settings.RECAPTCHA_PUBLIC}
     return HttpResponse(template.render(context, request))
 
-def analysis(request, url_basename):
+def analysis(request, url_basename, run_tests=False):
     """Returns the analysis view. This is the main view of the system"""
     ana = get_object_or_404(Analysis, url_basename=url_basename)
     ana.acc_date = timezone.now()
     template = loader.get_template('SPTGUI/analysis.html')
     context = {'url_basename': url_basename,
+               'run_tests': run_tests,
                'version': settings.APP_VERSION,
                'versionbackend': fastspt.__version__}
     ana.save()
     return HttpResponse(template.render(context, request))
 
+def analysis_dbg(request, url_basename):
+    if config.debug_views:
+        print "Executing debug view"
+        return analysis(request, url_basename, run_tests=True)
 
 ## ==== Where are the views gone?
 ## view_import.py -> views providing statistics on the imported datasets

@@ -46,9 +46,19 @@
     <script src="{% static 'SPTGUI/analysis_jumpLengthHistogram.js' %}"></script>
     <script src="{% static 'SPTGUI/analysis_tabs.js' %}"></script>
     
+    {% if run_tests %}    
+    <link rel="stylesheet" href="{% static 'SPTGUI/dist/js/jasmine-2.6.1/jasmine.css' %}">
+  <script src="{% static 'SPTGUI/dist/js/jasmine-2.6.1/jasmine.js' %}"></script>
+  <script src="{% static 'SPTGUI/dist/js/jasmine-2.6.1/jasmine-html.js' %}"></script>
+  <script src="{% static 'SPTGUI/dist/js/jasmine-2.6.1/boot.js' %}"></script>
+<script src="{% static 'SPTGUI/dist/js/angular-mocks.js' %}"></script>
+
+  
+  <script src="{% static 'SPTGUI/analysis_tests.js' %}"></script>
+  {% endif %}
+    
     <!-- D3.js -->
     <script src="{% static 'SPTGUI/dist/js/d3.v4.min.js' %}"></script>
-    
   </head>
   
   <body ng-app="app">

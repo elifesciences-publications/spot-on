@@ -2,7 +2,6 @@ angular.module('app')
     .service('getterService', ['MainSocket', '$http', '$rootScope', function(MainSocket, $http, $rootScope) {
 	// The purpose of this service is to retrieve the list of uploaded datasets
 	// It used to rely on Ajax request but it is now moving to Sockets!
-	
 	this.getDatasets2 = function() {
 	    var request = { type: "list_datasets" }
 	    var promise = MainSocket.sendRequest(request); 
