@@ -1,17 +1,22 @@
 from __future__ import unicode_literals
-
+from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 
 # Create your models here.
+@python_2_unicode_compatible
 class Analysis(models.Model):
     """This is the main object to be manipulated. 
     It is the container of the analysis app page."""
     
     url_basename = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
+    acc_date = models.DateTimeField('date accessed', null=True, blank=True)
+    mod_date = models.DateTimeField('date modified', null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2000)
-
+    
+    def __str__(self):
+        return self.url_basename
 
 CHOICES_PREA = [('error', 'An unknown error occurred'),
                 ('na', 'Not available'),
@@ -22,6 +27,7 @@ CHOICES_PREA = [('error', 'An unknown error occurred'),
                 ('fileformaterror', 'Unrecognized file format'),
                 ('ok', 'Preprocessing completed with success')]
 
+@python_2_unicode_compatible
 class Dataset(models.Model):
     """Contains datasets and some data about the dataset"""
     analysis = models.ForeignKey(Analysis, on_delete=models.CASCADE)
@@ -48,6 +54,8 @@ class Dataset(models.Model):
     pre_median_jump_length = models.FloatField(null=True, blank=True)
     pre_mean_jump_length = models.FloatField(null=True, blank=True)
 
+    def __str__(self):
+        return "{} ({})".format(self.name, self.analysis.url_basename)
 class Download(models.Model):
     """Contain instructions for a download"""
     bf = 'SPTGUI/static/SPTGUI/downloads'

@@ -143,10 +143,12 @@ def index(request):
 def analysis(request, url_basename):
     """Returns the analysis view. This is the main view of the system"""
     ana = get_object_or_404(Analysis, url_basename=url_basename)
+    ana.acc_date = timezone.now()
     template = loader.get_template('SPTGUI/analysis.html')
     context = {'url_basename': url_basename,
                'version': settings.APP_VERSION,
                'versionbackend': fastspt.__version__}
+    ana.save()
     return HttpResponse(template.render(context, request))
 
 
