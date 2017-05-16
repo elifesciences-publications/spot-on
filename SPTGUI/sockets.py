@@ -8,6 +8,8 @@ from channels import Group
 from channels.sessions import channel_session
 import sockets_tab_data, sockets_download, sockets_kinetics
 
+## This is the most important part of this script, since it defines the matching
+##+between the commands received by the socket and the corresponding functions.
 routes = {'list_datasets' : sockets_tab_data.list_datasets,
           'global_statistics': sockets_tab_data.global_statistics,
           'poll_queue': sockets_tab_data.poll_queue,
@@ -27,6 +29,7 @@ def ws_connect(message):
 
 @channel_session
 def ws_receive(message):
+    """This function is a callback ran each time the socket receives a message"""
     try:
         data = json.loads(message['text'])
     except ValueError:
@@ -37,7 +40,6 @@ def ws_receive(message):
         return
 
     url_basename = message.channel_session['url_basename']
-    ##print "message from the {} analysis".format(url_basename)
     if data: ## Parse the input
         print data
         res = routes[data['type']](message, data, url_basename)

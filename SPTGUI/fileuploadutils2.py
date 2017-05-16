@@ -133,11 +133,7 @@ def createTempFile(flowFileName,flowChunkNumber,chunk):
         logging.info(" %s allready exists" % tmppath)
     chunk_file = str(flowFileName)+'.part'+str(flowChunkNumber)
     chunkpath=tmppath+chunk_file
-    #try:
     chunkFile=open(chunkpath,'wb')
     chunkFile.write(chunk)
     chunkFile.close()
     logging.info('file completed name is %s ' % chunkpath)
-    #except Exception:
-    #    raise
-    #    logging.exception("message")

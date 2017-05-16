@@ -4,6 +4,14 @@
 #
 # Here we store views that are routes for the first tab (corresponding to the
 # uploadController in Angular.
+#
+# We also store the logic to have several queues running in parallel with
+#+different rules. The current queues are:
+# - preprocessing: for the preprocessing of a just uploaded file
+# - jld: to compute the jump length distribution
+# - fit: to fit a computed jld
+# - download: to compute the files to be downloaded (in the download tab)
+
 
 ## ==== Imports
 import logging, os
@@ -33,6 +41,7 @@ def poll_queue(message, data, url_basename):
     return res
 
 def poll_download_queue(idd):
+    """Relates to the `download` queue"""
     r = tasks.convert_svg_to.AsyncResult(idd)
     print idd, r.status
     if r.status == 'SUCCESS':
@@ -41,6 +50,7 @@ def poll_download_queue(idd):
         return r.status
 
 def poll_fit_queue(idd):
+    """Relates to the `fit` queue"""
     r = tasks.compute_jld.AsyncResult(idd)
     print idd, r.status
     if r.status == 'SUCCESS':
@@ -49,6 +59,7 @@ def poll_fit_queue(idd):
         return r.status
     
 def poll_jld_queue(idd):
+    """Relates to the `jld` queue"""
     r = tasks.compute_jld.AsyncResult(idd)
     print idd, r.status
     if r.status == 'SUCCESS':
@@ -57,6 +68,7 @@ def poll_jld_queue(idd):
         return r.status
 
 def poll_preprocessing_queue(idd_str) :
+    """Relates to the `preprocessing` queue"""
     idd = idd_str.split('@')
     r_chk = tasks.check_input_file.AsyncResult(idd[0])
     r_jld = tasks.check_input_file.AsyncResult(idd[1])

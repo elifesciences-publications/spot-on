@@ -27,6 +27,11 @@ def init(path, scale_t=1000.0):
     return {"tree": tree, "df": xy, "path": path, "scale_t": scale_t}
 
 def query_nearest(dT, dZ, tree_init):
+    """This function returns the nearest (dT,dZ) pair from the input dT, dZ. These
+    parameters are to be used for the fitting of the jump length distribution. This
+    allow to then load the (a,b) coefficients required for the z-depth correction.
+    This method allows to always find the nearest value in a context where (a,b)
+    coefficients have not be estimated on a regular grid."""
     # Deparse
     tree = tree_init["tree"]
     df1 = tree_init["df"]
