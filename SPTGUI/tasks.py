@@ -494,7 +494,18 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
         with open(do.params.name, 'r') as ff:
             params = pickle.load(ff)
             f.write("\n\n".join(get_export_fit(params)))
-
+    with open(os.path.join(bn, "fit_coefficients.txt"), "w") as f:
+        with open(do.data.name, 'r') as ff:
+            coefs = pickle.load(ff)
+            if "fitparams" in coefs["fit"]:
+                f.write("---- Individual fit")
+                f.write(get_export_coefficients(coefs['fit']['fitparams']))
+            elif "fitparams" in coefs["fitp"]:
+                f.write("---- Global fit")
+                f.write(get_export_coefficients(coefs['fitp']['fitparams']))
+            else:
+                f.write("No fit performed")
+            
     ## Get statistics    
     with open(os.path.join(bn, "statistics.txt"), "w") as f: 
         f.write("\n\n".join(get_export_statistics(da)))
@@ -516,16 +527,24 @@ def get_export_table():
     """
     pass
 
+def get_export_coefficients(co):
+    """Returns the fitted coefficients"""
+    t = "\n"
+    for k in co:
+        if k not in ('fit',):
+            t+="{}: {}\n".format(k, co[k])
+    return t
+    
+
 def get_export_fit(fi):
-    """
-    If there is a fit, returns the fitting parameters.
-    """
+    """If there is a fit, returns the fitting parameters 
+    (not the fitted coefficients)."""
     out = []
     for k in fi:
-        print k
         t = "---- {}\n".format(k)
         for kk in fi[k]:
-            t+="{}: {}\n".format(kk, fi[k][kk])
+            if kk not in ('hashvalue', 'hashvalueJLD'):
+                t+="{}: {}\n".format(kk, fi[k][kk])
         out.append(t)
     return out
 
