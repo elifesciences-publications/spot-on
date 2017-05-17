@@ -208,11 +208,11 @@ angular.module('app')
 				MaxJump : 3,
 				TimeGap : 4.477}
 	$scope.jldParametersDefault = angular.copy($scope.jldParameters);
-	$scope.maxJumpSlider = { value: 1.25,
+	$scope.maxJumpSlider = { value: 1.2,
 				 options: { floor: 0,
 					    ceil: $scope.jldParameters.MaxJump,
-					    step: 0.01,
-					    precision: 2}
+					    step: 0.1,
+					    precision: 1}
 			       };
 
 	validateJLDparameters = function(pars) {
