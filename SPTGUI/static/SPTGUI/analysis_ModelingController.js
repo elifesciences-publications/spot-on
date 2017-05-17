@@ -337,6 +337,7 @@ angular.module('app')
 					$scope.analysisState = 'done';
 					$scope.showJLPf = true;
 					$scope.fitAvailable = true;
+					$scope.displayJLP(true)
 				    })
 				} else {
 				    analysisService.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
