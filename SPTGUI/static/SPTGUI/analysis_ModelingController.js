@@ -1,5 +1,5 @@
 angular.module('app')
-    .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', 'ProcessingQueue', '$scope', '$rootScope', '$interval', '$q', function(analysisService, getterService, downloadService, ProcessingQueue, $scope, $rootScope, $interval, $q) {
+    .controller('ModelingController', ['analysisService', 'getterService', 'downloadService', 'ProcessingQueue', '$scope', '$rootScope', '$interval', '$q', '$timeout', function(analysisService, getterService, downloadService, ProcessingQueue, $scope, $rootScope, $interval, $q, $timeout) {
 	// This is the controller for the modeling tab
 
 	// Get the list of the analyses saved for download.
@@ -92,6 +92,7 @@ angular.module('app')
 			if (resp.data.status == 'done') {
 			    $scope.showModelingTab = true;
 			    $scope.analysisState = 'done';
+			    refreshMaxJumpSlider();
 			    $scope.jlhist[i] = resp.data.jld
 			    console.log("Retrieved default JLD #"+el.id)
 			    $scope.$broadcast('datasets:redraw', $scope.datasets);
@@ -155,6 +156,7 @@ angular.module('app')
 				$interval.cancel(myint)
 				$scope.showModelingTab = true;
 				$scope.analysisState = 'done';
+				refreshMaxJumpSlider();
 				$scope.jlhist[i] = resp.data.jld
 				console.log("Retrieved default JLD #"+el.id)
 				//$scope.$broadcast('datasets:redraw', $scope.datasets);
@@ -238,8 +240,9 @@ angular.module('app')
 	
 	$scope.$watch('jldParameters', function(pars, oldpars) {
 	    if (angular.equals(pars, oldpars)) {return}
-	    // Reset the variables
+	    // Update MaxJump slider
 	    $scope.maxJumpSlider.options.ceil = pars.MaxJump;
+	    // Reset the variables
 	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
 	    $scope.showJLPf = false;
 	    $scope.displayJLP(false);
@@ -305,6 +308,7 @@ angular.module('app')
 				    $scope.computedJLD = 0;
 				    $scope.jlhist = resp2.data.jld;
 				    $scope.analysisState = 'done';
+				    refreshMaxJumpSlider();
 				    $scope.probingJLD = false;
 				} else if (resp2.data.length==0) {
 				    $scope.probingJLD = false;
@@ -342,6 +346,7 @@ angular.module('app')
 				    analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
 					$scope.jlpfit = l.data;
 					$scope.analysisState = 'done';
+					refreshMaxJumpSlider();
 					$scope.showJLPf = true;
 					$scope.fitAvailable = true;
 					$scope.displayJLP(true)
@@ -352,6 +357,7 @@ angular.module('app')
 					$scope.jlfit[idd] = l.data
 					$scope.fitAvailable = true;
 					$scope.analysisState = 'done'; // Hide progress bar
+					refreshMaxJumpSlider();
 					if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 					    $scope.jlpfit = l.data;
 					    $scope.showJLPf = true;
@@ -366,6 +372,7 @@ angular.module('app')
 				analysisService.getPooledFitted(JLDPars, FitPars).then(function(l) {
 				    $scope.jlpfit = l.data;
 				    $scope.analysisState = 'done';
+				    refreshMaxJumpSlider();
 				    $scope.showJLPf = true;
 				    $scope.fitAvailable = false
 				})
@@ -377,6 +384,7 @@ angular.module('app')
 					    idd = $scope.datasets.map(function(ell){return ell.id}).indexOf(el.database_id)
 			    		    $scope.jlfit[idd] = l.data
 			    		    $scope.analysisState = 'done';
+					    refreshMaxJumpSlider();
 					    $scope.fitAvailable = false
 					    if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 						$scope.jlpfit = l.data;
@@ -505,6 +513,7 @@ angular.module('app')
 			       fit:$scope.jlfit[$scope.ce-1]!==null& !$scope.showJLP,
 			       fitP: $scope.showJLPf,
 			       jldP: $scope.showJLP,
+			       MaxJump: $scope.maxJumpSlider.value,
 			       displayedDataset: $scope.showJLP? null : $scope.ce}
 	    var dwnlPars = {svg : $('#mainHist').html(),
 			    cell : $scope.datasets[$scope.ce].id,
@@ -543,4 +552,10 @@ angular.module('app')
 		}
 	    )
 	}, true);
+
+	refreshMaxJumpSlider = function () {
+	    $timeout(function () {
+		$scope.$broadcast('rzSliderForceRender');
+	    });
+	}
     }]);
