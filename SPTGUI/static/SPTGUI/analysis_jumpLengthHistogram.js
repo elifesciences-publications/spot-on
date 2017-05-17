@@ -1,21 +1,23 @@
 angular.module('app')
     .directive('jumpLengthHistogram', function() {
-	function fmt_data(dat_raw, cdf) {
+	function fmt_data(dat_raw, cdf, maxjump) {
 	    dat = angular.copy(dat_raw)
 	    data = [];
 	    for (i=1; i<dat[0].length; i++) {
-		if (cdf) {
-		    dat[1][i] = dat[1][i-1]+dat[1][i]
-		    data.push({date: dat[0][i-1], close: dat[1][i-1]});
-		    data.push({date: dat[0][i], close: dat[1][i-1]});
-		} else {
-		    data.push({date: dat[0][i-1], close: dat[1][i-1]});
-		    data.push({date: dat[0][i], close: dat[1][i-1]});
+		if (dat[0][i]<= maxjump) {
+		    if (cdf) {
+			dat[1][i] = dat[1][i-1]+dat[1][i]
+			data.push({date: dat[0][i-1], close: dat[1][i-1]});
+			data.push({date: dat[0][i], close: dat[1][i-1]});
+		    } else {
+			data.push({date: dat[0][i-1], close: dat[1][i-1]});
+			data.push({date: dat[0][i], close: dat[1][i-1]});
+		    }
 		}
 	    }
 	    return data;
 	};
-	function fmt_fit(x,y_raw, cdf) {
+	function fmt_fit(x,y_raw, cdf, maxjump) {
 	    if (cdf) {
 		y = cumsum(angular.copy(y_raw))
 	    } else {
@@ -23,7 +25,9 @@ angular.module('app')
 	    }
 	    data = [];
 	    for (i=0; i<x.length; i++) {
-		data.push({x: x[i], y: y[i]});
+		if (x[i] <= maxjump) {
+		    data.push({x: x[i], y: y[i]});
+		}
 	    }
 	    return data;	    
 	};
@@ -80,7 +84,8 @@ angular.module('app')
 		    data_id = 0
 		}
 		cdf = dat[9]
-
+		maxjump = dat[10]
+		
 		// define functions
 		var area = d3.area()
 		    .x(function(d) { return x(d.date); })
@@ -94,7 +99,7 @@ angular.module('app')
 		
 		// Compute data structure
 		data_mult = scope.data[data_id][1].map(function(el) {
-		    return fmt_data([scope.data[data_id][0], el], cdf)
+		    return fmt_data([scope.data[data_id][0], el], cdf, maxjump)
 		})
 		n_dt = data_mult.length // number of dt
 
@@ -165,7 +170,7 @@ angular.module('app')
 			fit = dat[1].fit;
 			fitline.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf))
+		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf, maxjump))
 			    .attr("fill", "none")
 			    .attr("stroke", "black")
 			    .attr("stroke-width", 1.5)
@@ -181,7 +186,7 @@ angular.module('app')
 			fit = dat[6].fit;
 			fitlinepooled.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf))
+		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf, maxjump))
 			    .attr("fill", "none")
 			    .attr("stroke", "grey")
 			    .attr("stroke-width", 3)

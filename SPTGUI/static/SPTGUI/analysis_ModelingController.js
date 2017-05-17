@@ -205,10 +205,16 @@ angular.module('app')
 				GapsAllowed : 1,
 				TimePoints : 8,
 				JumpsToConsider : 4,
-				MaxJump : 1.25,
+				MaxJump : 3,
 				TimeGap : 4.477}
 	$scope.jldParametersDefault = angular.copy($scope.jldParameters);
-	
+	$scope.maxJumpSlider = { value: 1.25,
+				 options: { floor: 0,
+					    ceil: $scope.jldParameters.MaxJump,
+					    step: 0.01,
+					    precision: 2}
+			       };
+
 	validateJLDparameters = function(pars) {
 	    isOk = true
 	    if (!pars.BinWidth>0) {return false;}
@@ -233,6 +239,7 @@ angular.module('app')
 	$scope.$watch('jldParameters', function(pars, oldpars) {
 	    if (angular.equals(pars, oldpars)) {return}
 	    // Reset the variables
+	    $scope.maxJumpSlider.options.ceil = pars.MaxJump;
 	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
 	    $scope.showJLPf = false;
 	    $scope.displayJLP(false);

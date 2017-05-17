@@ -12,10 +12,11 @@
 
     <!-- Spinner CSS -->
     <link href="{% static 'SPTGUI/dist/css/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/dist/css/slider.css' %}" rel="stylesheet">
     
     <!-- Bootstrap core CSS and JS -->
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
-    <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>   
     <script src="{% static 'SPTGUI/dist/js/bootstrap.min.js' %}"></script>
     
     <!-- Lodash and reconnecting websocketlibrary -->
@@ -28,7 +29,11 @@
     <script src="{% static 'SPTGUI/dist/js/angular-toggle-switch.min.js' %}"></script>
     <script src="{% static 'SPTGUI/dist/js/ui-bootstrap-tpls-2.5.0.min.js' %}"></script>
     <link href="{% static 'SPTGUI/dist/css/angular-toggle-switch.css' %}" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.2/rzslider.min.css" rel="stylesheet">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.2/rzslider.min.js"></script>
+    
     <!-- concatenated flow.js + ng-flow libraries -->
     <script src="{% static 'SPTGUI/dist/js/ng-flow-standalone.min.js' %}"></script>
 
@@ -281,12 +286,11 @@
 	    </div><!-- End of the UploadController controller -->
 	  </div>
 	</tab>
-
 	
 	<tab heading="Kinetic modeling">
 	  <div ng-controller="ModelingController"><!-- Another controller -->
 	    In this tab, you can perform a kinetic modeling of your data
-
+	    
 	    <div ng-if="showModelingTab&&datasets.length>0;">
 	      <h2> Dataset selection </h2>
 
@@ -624,10 +628,18 @@
 		    </li>
 		  </ul>
 		</div>	
-		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF]"></jump-length-histogram>
-
+		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF, maxJumpSlider.value]"></jump-length-histogram>
+		
 		<div class="controls">
 		  <table>
+		    <tr>
+		      <td>Max jump displayed (&micro;m)</td>
+		      <td><rzslider
+			     rz-slider-model="maxJumpSlider.value"
+			     rz-slider-options="maxJumpSlider.options">
+			</rzslider>
+		      </td>
+		    </tr>
 		    <tr>
 		      <td>Display PDF/CDF</td>
 		      <td><toggle-switch ng-model="displayCDF"
