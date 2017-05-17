@@ -490,6 +490,10 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
     bn = tmpdirname
     shutil.copyfile(do.data.path, "{}/fit_{}".format(bn, basename(d.data.name)))
     shutil.copyfile(do.params.path, "{}/params_{}".format(bn, basename(do.params.name)))
+    with open(os.path.join(bn, "fit_parameters.txt"), "w") as f:
+        with open(do.params.name, 'r') as ff:
+            params = pickle.load(ff)
+            f.write("\n\n".join(get_export_fit(params)))
 
     ## Get statistics    
     with open(os.path.join(bn, "statistics.txt"), "w") as f: 
@@ -512,11 +516,18 @@ def get_export_table():
     """
     pass
 
-def get_export_fit():
+def get_export_fit(fi):
     """
     If there is a fit, returns the fitting parameters.
     """
-    pass
+    out = []
+    for k in fi:
+        print k
+        t = "---- {}\n".format(k)
+        for kk in fi[k]:
+            t+="{}: {}\n".format(kk, fi[k][kk])
+        out.append(t)
+    return out
 
 def get_export_statistics(da):
     """
