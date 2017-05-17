@@ -493,7 +493,7 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
 
     ## Get statistics    
     with open(os.path.join(bn, "statistics.txt"), "w") as f: 
-        f.write("Statistics should go there\n")
+        f.write("\n\n".join(get_export_statistics(da)))
     
 def check_filefield(d):
     """Returns if a file of a FileField exists"""
@@ -501,4 +501,52 @@ def check_filefield(d):
         return os.path.exists(d.path)
     except:
         return False
-        
+
+def get_export_table():
+    """
+    This function returns, either for the PDF or the CDF:
+    - the JLD/the pooled JLD
+    - the fit
+    - the corresponding jump distance
+    In a format that can easily be exported (easy to convert to CSV)
+    """
+    pass
+
+def get_export_fit():
+    """
+    If there is a fit, returns the fitting parameters.
+    """
+    pass
+
+def get_export_statistics(da):
+    """
+    Returns statistics about the datasets
+    Inputs:
+    - da: a Queryset
+    Output:
+    - A list of strings
+    """
+    out = []
+    for d in da:
+        t = """---- {}
+Description: {}
+Number of traces: {}
+Number of localizations: {}
+Number of traces with >=3 localizations: {},
+Number of frames: {}
+Number of jumps: {}
+Median length of trajectories: {}
+Mean length of trajectories: {}
+Median number of particles per frame: {}
+Mean number of particles per frame: {}
+Median jump length: {}
+Mean jump length: {}
+
+"""
+        out.append(t.format(d.name, d.description, d.pre_ntraces, d.pre_npoints,
+                 d.pre_ntraces3, d.pre_nframes, d.pre_njumps,
+                 d.pre_median_length_of_trajectories,
+                 d.pre_mean_length_of_trajectories,
+                 d.pre_median_particles_per_frame, d.pre_mean_particles_per_frame,
+                 d.pre_median_jump_length, d.pre_mean_jump_length))
+    return out
