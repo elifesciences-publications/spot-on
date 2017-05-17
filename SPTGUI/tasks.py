@@ -9,6 +9,7 @@
 from __future__ import absolute_import, unicode_literals
 import os, sys, tempfile, json, pickle, fasteners, subprocess, shutil
 import numpy as np
+import pandas as pd
 
 ## Celery imports
 from celery import shared_task
@@ -486,7 +487,7 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
     shutil.copyfile(do.export_eps.path, "{}/{}".format(gra, basename(do.export_eps.name)))
     shutil.copyfile(do.export_svg.path, "{}/{}".format(gra, basename(do.export_svg.name)))
     
-    ## Get the raw fitted values
+    ## Get the raw fitted coefficients & fit parameters
     bn = tmpdirname
     shutil.copyfile(do.data.path, "{}/fit_{}".format(bn, basename(d.data.name)))
     shutil.copyfile(do.params.path, "{}/params_{}".format(bn, basename(do.params.name)))
@@ -497,15 +498,23 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
     with open(os.path.join(bn, "fit_coefficients.txt"), "w") as f:
         with open(do.data.name, 'r') as ff:
             coefs = pickle.load(ff)
-            if "fitparams" in coefs["fit"]:
+            if "fit" in coefs and "fitparams" in coefs["fit"]:
                 f.write("---- Individual fit")
                 f.write(get_export_coefficients(coefs['fit']['fitparams']))
-            elif "fitparams" in coefs["fitp"]:
+            elif "fitp" in coefs and "fitparams" in coefs["fitp"]:
                 f.write("---- Global fit")
                 f.write(get_export_coefficients(coefs['fitp']['fitparams']))
             else:
                 f.write("No fit performed")
-            
+                
+    ## Export raw tables
+    with open(do.data.name, 'r') as f:
+        curves = pickle.load(f)
+        table_raw = get_export_tableJLD(curves)
+        table_raw.to_csv(os.path.join(bn, "raw_tables.csv"))
+        table_fit = get_export_tableFIT(curves)
+        table_fit.to_csv(os.path.join(bn, "fit_tables.csv"))
+        
     ## Get statistics    
     with open(os.path.join(bn, "statistics.txt"), "w") as f: 
         f.write("\n\n".join(get_export_statistics(da)))
@@ -517,15 +526,47 @@ def check_filefield(d):
     except:
         return False
 
-def get_export_table():
+def get_export_tableJLD(ta):
     """
     This function returns, either for the PDF or the CDF:
     - the JLD/the pooled JLD
     - the fit
     - the corresponding jump distance
     In a format that can easily be exported (easy to convert to CSV)
+    For now, the format is a Pandas DataFrame.
     """
-    pass
+    ## Generate the dict
+    di = {'time': ta['jld'][0][0]}
+    for cell in range(len(ta['jld'])): ## JLD
+        for i in range(len(ta['jld'][cell][1])):
+            di["cell{}_jl_{}dt".format(cell+1, i+1)] = ta['jld'][cell][1][i]
+    if 'jldp' in ta: ## Pooled JLD
+        for i in range(len(ta['jldp'][1])):
+            di["pooled_jl_{}dt".format(i+1)] = ta['jldp'][1][i]
+    
+    return pd.DataFrame(di) ## Convert it to Pandas
+
+def get_export_tableFIT(ta):
+    """
+    This function returns, either for the PDF or the CDF:
+    - the JLD/the pooled JLD
+    - the fit
+    - the corresponding jump distance
+    In a format that can easily be exported (easy to convert to CSV)
+    For now, the format is a Pandas DataFrame.
+    """
+    di = {}
+    for cell in range(len(ta["fit"])): ## Not sure this will work
+        if ta['fit'][cell] != None:
+            di['time'] = ta['fit'][cell][0]         
+            for i in range(len(ta['fit'][cell][1])):
+                di["cell{}_fit_{}dt".format(cell+1, i+1)] = ta['fit'][cell][1][i]
+    if 'fitp' in ta and ta['fitp']['status']=='done':
+        di['time'] = ta['fitp']['fit']['x']        
+        for i in range(len(ta['fitp']['fit']['y'])):
+            di["pooled_fit_{}dt".format(i+1)] = ta['fitp']['fit']['y'][i]
+            
+    return pd.DataFrame(di) ## Convert it to Pandas
 
 def get_export_coefficients(co):
     """Returns the fitted coefficients"""
