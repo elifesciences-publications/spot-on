@@ -137,4 +137,4 @@ STATIC_ROOT = os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(__fi
 STATIC_URL = '/static/'
 
 ## Version
-APP_VERSION = "v0.4.0a"
+APP_VERSION = "v0.5.0a"
