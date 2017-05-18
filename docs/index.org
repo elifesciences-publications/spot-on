@@ -1,0 +1,38 @@
+#+title: Spot-On documentation
+
+* Quickstart/tutorial
+** Import
+** Quality check
+** Analysis
+** Export
+** Extra features
+
+* Software reference
+(here detail all the options and how they are computed)
+
+* How to acquire a "good" dataset?
+
+* Methods
+
+* Acknowledgements
+
+* Frequently asked questions
+** What is Spot-On?
+** What is not Spot-On?
+** What type of input Spot-On accepts?
+** How fast is Spot-On?
+** What tracking software to use?
+** Are you just fitting a two-exponential model?
+** I'm afraid of uploading my dataset to your server. Is there an offline version?
+** Is there a command-line version?
+** What technology uses Spot-On?
+** What license uses Spot-On?
+** I have a question
+** How do you handle privacy?
+- No account required
+- Erase datasets
+** How to cite Spot-On?
+** How to contact you?
+** I found a bug, how can I report it?
+
+* Citation
