@@ -17,9 +17,9 @@ angular.module('app')
 	    }
 	    return data;
 	};
-	function fmt_fit(x,y_raw, cdf, maxjump) {
+	function fmt_fit(x,y_raw, cdf, maxjump, ds) {
 	    if (cdf) {
-		y = cumsum(angular.copy(y_raw))
+		y = cumsum(angular.copy(y_raw), ds)
 	    } else {
 		y = y_raw
 	    }
@@ -31,14 +31,19 @@ angular.module('app')
 	    }
 	    return data;	    
 	};
-	function cumsum(d) {
+	function precsum(d) {
 	    ds = 0.0
 	    for (i=1;i<d.length;i++) {
 		ds += d[i]
-		d[i]=d[i-1]+d[i]
 	    }
+	    return ds
+	}
+	function cumsum(d, ds) {
 	    for (i=0;i<d.length;i++) {
 		d[i]=d[i]/ds
+	    }
+	    for (i=1;i<d.length;i++) {
+		d[i]=d[i-1]+d[i]
 	    }
 	    return d
 	};
@@ -98,7 +103,7 @@ angular.module('app')
 		    .y(function(d) { return y(d.y); });
 		
 		// Compute data structure
-		data_mult = scope.data[data_id][1].map(function(el) {
+		data_mult = scope.data[data_id][1].map(function(el, i) {
 		    return fmt_data([scope.data[data_id][0], el], cdf, maxjump)
 		})
 		n_dt = data_mult.length // number of dt
@@ -170,7 +175,11 @@ angular.module('app')
 			fit = dat[1].fit;
 			fitline.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf, maxjump))
+		    	    .datum(fmt_fit(fit.x,
+					   fit.y[i],
+					   cdf,
+					   maxjump,
+					   precsum(fit.y[i])))
 			    .attr("fill", "none")
 			    .attr("stroke", "black")
 			    .attr("stroke-width", 1.5)
@@ -186,7 +195,11 @@ angular.module('app')
 			fit = dat[6].fit;
 			fitlinepooled.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x, fit.y[i], cdf, maxjump))
+		    	    .datum(fmt_fit(fit.x,
+					   fit.y[i],
+					   cdf,
+					   maxjump,
+					   precsum(fit.y[i])))
 			    .attr("fill", "none")
 			    .attr("stroke", "grey")
 			    .attr("stroke-width", 3)
