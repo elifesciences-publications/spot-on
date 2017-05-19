@@ -157,6 +157,15 @@ def analysis_dbg(request, url_basename):
         print "Executing debug view"
         return analysis(request, url_basename, run_tests=True)
 
+def static(request, page):
+    """Returns a static page"""
+    templates = {"docs": "documentation.html",
+                 "about": "about.html",
+                 "contact": "contact.html"}
+    if page in templates:
+        template = loader.get_template('SPTGUI/{}'.format(templates[page]))
+        context = {}
+        return HttpResponse(template.render(context, request))
 ## ==== Where are the views gone?
 ## view_import.py -> views providing statistics on the imported datasets
 ## views_tab_data.py -> Views involved in the display of the first tab (UploadController)
