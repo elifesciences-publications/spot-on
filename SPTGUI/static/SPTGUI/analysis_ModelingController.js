@@ -242,6 +242,8 @@ angular.module('app')
 	    if (angular.equals(pars, oldpars)) {return}
 	    // Update MaxJump slider
 	    $scope.maxJumpSlider.options.ceil = pars.MaxJump;
+	    // Update dT of modelingParameters
+	    $scope.modelingParameters.dT = pars.TimeGap/1000.;
 	    // Reset the variables
 	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
 	    $scope.showJLPf = false;
