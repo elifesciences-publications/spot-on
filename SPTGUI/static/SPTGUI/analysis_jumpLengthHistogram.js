@@ -107,7 +107,7 @@ angular.module('app')
 		    return fmt_data([scope.data[data_id][0], el], cdf, maxjump)
 		})
 		n_dt = data_mult.length // number of dt
-
+		
 		// Prepare display
 		var x = d3.scaleLinear().rangeRound([0, width]);
 		if (n_dt>1) {
@@ -133,7 +133,7 @@ angular.module('app')
 		x.domain([0, d3.max(data_mult[0], function(d) {
 		    return d.date; })]);
 		y.domain([0, 1.1*d3.max(maxy)]);
-
+		
 		// CDF-specific changes
 		if (cdf) {ratcdf = .9}
 		else {ratcdf = .1}

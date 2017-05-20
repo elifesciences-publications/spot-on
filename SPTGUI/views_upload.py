@@ -83,7 +83,7 @@ def upload(request, url_basename):
                           'GapsAllowed' : 1,
                           'TimePoints' : 8,
                           'JumpsToConsider' : 4,
-                          'MaxJump' : 1.25,
+                          'MaxJump' : 3,
                           'TimeGap' : 4.477}
         pick = {'params' : compute_params,
                 'jld' : None,
