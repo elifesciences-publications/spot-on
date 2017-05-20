@@ -51,7 +51,8 @@ def set_download(message, data, url_basename) :
         do.save()
     with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f3:
         fil3 = File(f3)
-        f3.write(params['svg'].encode('utf-8'))
+        f3.write('<?xml version="1.0" encoding="UTF-8" ?>\n')
+        f3.write(params['svg'].encode('utf-8').replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"'))
         do.export_svg = fil3
         do.export_svg.name = "{}_{}.svg".format(url_basename, "addStuffHere")
         do.status_svg = 'done'
