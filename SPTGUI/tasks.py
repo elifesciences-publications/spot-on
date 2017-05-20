@@ -498,10 +498,11 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
     with open(os.path.join(bn, "fit_coefficients.txt"), "w") as f:
         with open(do.data.name, 'r') as ff:
             coefs = pickle.load(ff)
-            if "fit" in coefs and "fitparams" in coefs["fit"]:
+            print "Coefs: ", coefs.keys()
+            if "fit" in coefs and coefs["fit"]!=None and "fitparams" in coefs["fit"]:
                 f.write("---- Individual fit")
                 f.write(get_export_coefficients(coefs['fit']['fitparams']))
-            elif "fitp" in coefs and "fitparams" in coefs["fitp"]:
+            elif "fitp" in coefs and coefs["fitp"]!=None and "fitparams" in coefs["fitp"]:
                 f.write("---- Global fit")
                 f.write(get_export_coefficients(coefs['fitp']['fitparams']))
             else:
@@ -540,7 +541,7 @@ def get_export_tableJLD(ta):
     for cell in range(len(ta['jld'])): ## JLD
         for i in range(len(ta['jld'][cell][1])):
             di["cell{}_jl_{}dt".format(cell+1, i+1)] = ta['jld'][cell][1][i]
-    if 'jldp' in ta: ## Pooled JLD
+    if 'jldp' in ta and ta['jldp']!=None: ## Pooled JLD
         for i in range(len(ta['jldp'][1])):
             di["pooled_jl_{}dt".format(i+1)] = ta['jldp'][1][i]
     
@@ -561,7 +562,7 @@ def get_export_tableFIT(ta):
             di['time'] = ta['fit'][cell][0]         
             for i in range(len(ta['fit'][cell][1])):
                 di["cell{}_fit_{}dt".format(cell+1, i+1)] = ta['fit'][cell][1][i]
-    if 'fitp' in ta and ta['fitp']['status']=='done':
+    if 'fitp' in ta and ta['fitp']!=None and ta['fitp']['status']=='done':
         di['time'] = ta['fitp']['fit']['x']        
         for i in range(len(ta['fitp']['fit']['y'])):
             di["pooled_fit_{}dt".format(i+1)] = ta['fitp']['fit']['y'][i]

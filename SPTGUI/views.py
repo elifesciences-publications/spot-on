@@ -379,7 +379,6 @@ def get_jldp(request, url_basename):
             keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap", "useAllTraj"]
             keytip = [float, int, int, int, float, float]
             compute_params = {k: t(float(fitparams[k])) for (k,t) in zip(keys,keytip)}
-            print compute_params
             tasks.compute_jld.apply_async(
                 kwargs={'dataset_id': None,
                         'pooled': True,

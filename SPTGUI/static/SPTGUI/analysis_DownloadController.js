@@ -47,7 +47,8 @@ angular.module('app')
 	};
 
 	$scope.downloadAll = function() {
-	    download_ids = downloads.map(function(el){return el.do_id})
+	    download_ids = $scope.downloads.map(function(el){return el.do_id})
+	    console.log('Preparing a zip of downloads '+ download_ids)
 	    $scope.downloadAllProcessing = true
 	    downloadService.downloadAll(download_ids, null).then(function(resp) {
 		ProcessingQueue.addToQueue(resp.celery_id, 'download').then(function(resp2){
