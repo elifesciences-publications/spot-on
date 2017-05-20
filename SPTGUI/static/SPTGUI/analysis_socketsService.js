@@ -10,7 +10,9 @@ angular.module('app')
 
     // When we're using HTTPS, use WSS too.
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-	var ws = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + window.location.pathname + 'ws');
+	var url = ws_scheme + '://' + window.location.host + window.location.pathname;
+	if (url.substr(-1) != '/') url += '/';
+	var ws = new ReconnectingWebSocket(url + 'ws');
 	//var ws = new WebSocket(ws_scheme + '://' + window.location.host + window.location.pathname + 'ws');	
 	ws.onopen = function(){
 	    $rootScope.$broadcast('socket:ready');	    

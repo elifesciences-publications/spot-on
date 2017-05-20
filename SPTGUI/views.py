@@ -94,9 +94,9 @@ def new_analysis(request):
                        name='',
                        description='')
         ana.save()
-        return redirect('../{}'.format(url_basename))
+        return redirect('SPTGUI:analysis', url_basename)
     else:
-        return redirect('../..')
+        return redirect('SPTGUI:index')
 
 def new_demo(request):
     """Function that initiates a new demo analysis (with default datasets)"""

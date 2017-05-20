@@ -56,7 +56,7 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     url(r'^analysis/demo/', views.new_demo, name='new_demo'),
     url(r'^analysis/(?P<url_basename>.+)/debug', views.analysis_dbg, name='analysis_dbg'),
     url(r'^analysis/(?P<url_basename>.+)/', views.analysis, name='analysis'),
-    url(r'^analysis/(?P<url_basename>.+)', views.analysis, name='analysis'),
+    url(r'^analysis/(?P<url_basename>.+)', views.analysis, name='analysis_noslash'),
     url(r'^$', views.index, name='index'),
     url(r'^(?P<page>.+)/', views.static, name='staticpage'),
 ]
