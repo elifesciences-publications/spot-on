@@ -6,7 +6,7 @@
 import json, logging
 from channels import Group
 from channels.sessions import channel_session
-import sockets_tab_data, sockets_download, sockets_kinetics
+import sockets_tab_data, sockets_download, sockets_kinetics, sockets_settings
 
 ## This is the most important part of this script, since it defines the matching
 ##+between the commands received by the socket and the corresponding functions.
@@ -19,7 +19,8 @@ routes = {'list_datasets' : sockets_tab_data.list_datasets,
           'get_downloads': sockets_download.get_downloads,
           'get_download': sockets_download.get_download,
           'get_download_all': sockets_download.get_download_all,
-          'del_download': sockets_download.del_download}
+          'del_download': sockets_download.del_download,
+          'erase': sockets_settings.erase}
 
 @channel_session
 def ws_connect(message):

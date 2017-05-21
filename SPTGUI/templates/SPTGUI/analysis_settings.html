@@ -1,7 +1,17 @@
 {% verbatim %}
-In this tab, you can:
-<ul>
-  <li>Erase the analysis</li>
-  <li>Get a code to embed your analysis</li>
-</ul>
+<div ng-controller="SettingsController">
+  <p>&nbsp;</p>
+  <div class="panel panel-danger">
+    <div class="panel-heading">
+      <h3 class="panel-title">Erase this analysis (<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> you are entering the danger zone)</h3>
+    </div>
+    <div class="panel-body">
+	<button type="button" class="btn btn-danger" ng-click="erase()">
+	  <span class="glyphicon glyphicon-erase" aria-hidden="true"></span> Erase this analysis
+	</button>
+	All your uploaded datasets and analyses will be deleted. There is no way back!
+
+    </div>
+  </div>  
+</div>
 {% endverbatim %}
