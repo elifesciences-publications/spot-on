@@ -173,8 +173,9 @@ def fit_jld(arg, hash_prefix):
         da =  Dataset.objects.get(id=dataset_id)
         with open(prog_jld, 'r') as f: ## Open the pickle file
             jld = pickle.load(f)['jld']
-        prog_da = os.path.join(path,url_basename, "{}_{}.pkl".format(hash_prefix+hash_jld,
-                                                                     dataset_id))
+        prog_da = os.path.join(path,url_basename,
+                               "{}_{}.pkl".format(hash_prefix+hash_jld,
+                                                  dataset_id))
         out_pars = {}
     else:
         prog_jld = os.path.join(path,url_basename, "{}_pooled.pkl".format(hash_jld))
