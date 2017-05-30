@@ -235,10 +235,17 @@
 	  <div class="thumbnail center well well-small text-center">
             <form ng-submit="subscribe(email)">
               <div class="input-prepend"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-		<input type="text" ng-model="email" id="" name="" placeholder="your@email.org">
+		<input type="email" ng-model="email" id="" name="" placeholder="your@email.org" required>
 		<input type="submit" value="Subscribe Now!" class="btn btn-large btn-primary" />
               </div>
             </form>
+	    <br/>
+	    <div class="alert alert-danger" ng-show="message_error!==null">
+	     {{message_error}}
+	    </div>
+	    <div class="alert alert-success" ng-show="message_success!==null">
+	     {{message_success}}
+	    </div>
 	  </div>
         </div>
 	{% endverbatim %}

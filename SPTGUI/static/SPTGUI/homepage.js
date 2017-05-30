@@ -16,18 +16,23 @@
 
 angular.module('app')
     .controller('EmailController', ['$scope', '$http', function($scope, $http) {
-	console.log("hehe")
 	// This is the controller for the "Subscribe to the newsletter part
-	$scope.email = ""
-	$scope.message = null;
+	$scope.email = "";
+	$scope.message_error = null;
+	$scope.message_success = null;
 	$scope.subscribe = function(email) {
 	    // The function that does the POST
-	    console.log('submitting')
-	    $scope.message =  null;
-	    $http.post('./email/subscribe/',{'email': email}).then(function(resp) {
-		alert("Got response")
-	    })
-	    
+	    $scope.message_error =  null;
+	    $scope.message_success =  null;
+	    $http.post('./email/subscribe/',{'email': email}).then(
+		function success(resp) {
+		    $scope.message_success = resp.data.message
+		    console.log(resp)
+		},
+		function error(resp) {
+		    $scope.message_error = resp.data.message
+		    console.log(resp)		    
+		})
 	}
     }]);
 
