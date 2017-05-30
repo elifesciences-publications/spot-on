@@ -18,6 +18,7 @@ angular.module('app')
 	$scope.jldParsInit = false; // To avoid initializing twice
 	$scope.fitComplete = true;
 	$scope.displayCDF = false; // Commanded by toggle switch
+	$scope.zcorr = {a: null, b: null}
 	
 	initView = function() {
 	    // Initiate the window with what we have
@@ -551,6 +552,8 @@ angular.module('app')
 		    //console.log(ret)
 		    $scope.modelingParameters.dTfit = ret.dT
 		    $scope.modelingParameters.dZfit = ret.dZ
+		    $scope.zcorr.a = ret.params[0]
+		    $scope.zcorr.b = ret.params[1]
 		}
 	    )
 	}, true);

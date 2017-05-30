@@ -20,6 +20,7 @@
     // Misc directives
 	.directive('tooltip', function(){
 	    // To display tooltips :)
+	    console.log("This tooltip function is deprecated, replace by ui-bootstrap")
 	    return {
 		restrict: 'A',
 		link: function(scope, element, attrs){

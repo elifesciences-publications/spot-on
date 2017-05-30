@@ -176,9 +176,15 @@
 			<tr>
 			  <td> dZ: </td>
 			  <td>
-			    <input ng-model="modelingParameters.dZ" type="number" step="any" min="0">
-			    What should be a good range?
-			    (using (dZ={{modelingParameters.dZfit}} &micro;m, dT={{modelingParameters.dTfit*1000.}} ms) for the z correction (wth?))
+			    <input ng-model="modelingParameters.dZ"
+				   type="number" step="any" min="0">
+			    (using (dZ={{modelingParameters.dZfit}} &micro;m,
+			    dT={{modelingParameters.dTfit*1000.}} ms)
+			    for the z correction
+			    <a href="#"
+			       uib-tooltip="a={{zcorr.a|number}},
+					    b={{zcorr.b|number}} 
+					    (units please ?)">?</a>.
 			  </td> 
 			</tr>
 			<tr>
