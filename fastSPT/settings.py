@@ -11,9 +11,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-#import mimetypes
+import custom_settings
 
-#mimetypes.add_type("image/svg+xml", ".svg", True)
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -141,3 +140,10 @@ STATIC_URL = '/static/'
 
 ## Version
 APP_VERSION = "v0.5.0a"
+
+## Import custom settings
+EMAIL_USE_TLS = custom_settings.EMAIL_USE_TLS
+EMAIL_HOST = custom_settings.EMAIL_HOST
+EMAIL_PORT = custom_settings.EMAIL_PORT
+EMAIL_HOST_USER = custom_settings.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = custom_settings.EMAIL_HOST_PASSWORD

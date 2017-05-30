@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from . import views, views_imports, views_tab_data, views_upload
+from . import views, views_imports, views_tab_data, views_upload, views_email
 
 app_name =  'SPTGUI'
 
@@ -10,9 +10,16 @@ urlpatterns = [
     #url(r'^upload/$', views.upload_tmp_bknd, name='upload_tmp_bknd'),    ## TEMPORARY
     #url(r'^queue/status/$', views.queue_status, name='queue_status'),## TEMPORARY
     #url(r'^queue/new/$', views.queue_new, name='queue_new'),## TEMPORARY
-    url(r'^barchart/$', views.barchart, name='barchart'),## TEMPORARY
-    url(r'^popover/$', views.popover, name='popover'),## TEMPORARY
+    #url(r'^barchart/$', views.barchart, name='barchart'),## TEMPORARY
+    #url(r'^popover/$', views.popover, name='popover'),## TEMPORARY
 
+    ##
+    ## ==== Email
+    ##
+    url(r'^email/subscribe/$', views_email.email, name='email_subscribe'),
+    url(r'^email/unsubscribe/(?P<token>.+)$',views_email.email_unsubscribe, name='email_unsubscribe'),
+    url(r'^email/confirm/(?P<token>.+)$', views_email.email, name='email_confirm'),
+    
     ##
     ## ==== Main routes
     ##
@@ -27,10 +34,6 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/parsed/$', views_imports.dataset_parsed, name='dataset_parsed'),
     url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/report/$', views_imports.dataset_report, name='datasets_report'),
 
-    ##
-    ## ==== Statistics
-    ##
-    ##url(r'^analysis/(?P<url_basename>.+)/statistics/$', views_tab_data.statistics, name='statistics'),
 
     ##
     ## ==== CRUD datasets
