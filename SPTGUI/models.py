@@ -61,6 +61,7 @@ class Dataset(models.Model):
 
     def __str__(self):
         return "{} ({})".format(self.name, self.analysis.url_basename)
+    
 class Download(models.Model):
     """Contain instructions for a download"""
     bf = 'SPTGUI/static/SPTGUI/downloads'
@@ -83,3 +84,14 @@ class Download(models.Model):
     status_png = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     status_pdf = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     status_zip = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
+
+class Email(models.Model):
+    """Contains people registering to the newsletter. For privacy reasons,
+    these are not linked to the uploaded analyses."""
+
+    email = models.CharField(default='', max_length=1000)
+    validated = models.BooleanField(default=False)
+    token = models.CharField(default='', max_length=256)
+    add_date = models.DateTimeField('date created')
+    validation_date = models.DateTimeField('date validated', null=True, blank=True)
+    
