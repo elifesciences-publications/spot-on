@@ -46,15 +46,17 @@
 		      <p ng-show="uploadFormat.params[1].params.length==0">
 			No additional parameters are required for this file format
 		      </p>
-		      <div ng-repeat="par in uploadFormat.params[1].params">
-			<label>{{par.name}}</label>
-			<input type="{{par.type}}"
-			       ng-model="uploadFormat.currentParams[par.model]"
+		      <table>
+			  <tr ng-repeat="par in uploadFormat.params[1].params">
+			    <td><label>{{par.name}}</label></td>
+			    <td>
+			      <input type="{{par.type}}"  ng-model="uploadFormat.currentParams[par.model]"
 			       value="{{par.value}}"> 
-			<span ng-show="par.info!=''"
-			      class="glyphicon glyphicon-info-sign"
-			      uib-tooltip="{{par.info}}"></span>
-		      </div>
+			      <span ng-show="par.info!=''"
+				    class="glyphicon glyphicon-info-sign"
+				    uib-tooltip="{{par.info}}"></span>
+			    </td>
+		      </table>
 
 		      <div ng-hide="showUploadZone()">
 			<br/>
