@@ -18,22 +18,22 @@
 	}])
 
     // Misc directives
-	.directive('tooltip', function(){
-	    // To display tooltips :)
-	    console.log("This tooltip function is deprecated, replace by ui-bootstrap")
-	    return {
-		restrict: 'A',
-		link: function(scope, element, attrs){
-		    $(element).hover(function(){
-			// on mouseenter
-			$(element).tooltip('show');
-		    }, function(){
-			// on mouseleave
-			$(element).tooltip('hide');
-		    });
-		}
-	    };
-	});
+	// .directive('tooltip', function(){
+	//     // To display tooltips :)
+	//     console.log("This tooltip function is deprecated, replace by ui-bootstrap")
+	//     return {
+	// 	restrict: 'A',
+	// 	link: function(scope, element, attrs){
+	// 	    $(element).hover(function(){
+	// 		// on mouseenter
+	// 		$(element).tooltip('show');
+	// 	    }, function(){
+	// 		// on mouseleave
+	// 		$(element).tooltip('hide');
+	// 	    });
+	// 	}
+	//     };
+	// });
     
 })(window);
 

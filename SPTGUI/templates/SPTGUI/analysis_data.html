@@ -116,8 +116,12 @@
 			  ng-class="{active: data.id == shownStatistics.id}">
 			<td class="col-md-2">{{$flow.files.length+$index+1}}</td>
 			<td class="col-md-5">{{data.name}}
-			  (<a href="datasets/{{data.id}}/original/" title="View the uploaded file" data-placement="top" data-html="true" tooltip >uploaded</a>,
-			  <a href="datasets/{{data.id}}/parsed/" title="View the file as interpreted by our system, in a standardized format" data-placement="top" data-html="true" tooltip >parsed</a>, <a href="datasets/{{data.id}}/report/" title="View the importation report" data-placement="top" data-html="true" tooltip >importation report</a>).
+			  (<a href="datasets/{{data.id}}/original/"
+			      uib-tooltip="View the uploaded file">uploaded</a>,
+			  <a href="datasets/{{data.id}}/parsed/"
+			     uib-tooltip="View the file as interpreted by our system, in a standardized format">parsed</a>,
+			  <a href="datasets/{{data.id}}/report/"
+			     uib-tooltip="View the importation report">importation report</a>).
 			</td>
 			<td class="col-md-5">{{data.description}}</td>
 			<td class="col-md-2">{{data.preanalysis_status}}</td>
