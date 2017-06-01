@@ -9,25 +9,13 @@
 #
 #+The current file format is a list of traces. Each trace is a list of tuples:
 #+ (x,y,t,f), with either t (time) or f (frame number) that can have a NA value.
-
+#
+# IMPORTANT: to add a file format, you need to edit the 'inits' list at the end
+#+of this file.
 
 ## ==== Imports
-import scipy.io, os, json
+import scipy.io, os, json, xmltodict
 import numpy as np
-
-##
-## ==== This are some helper functions
-##
-
-def traces_to_csv(traces):
-    """Returns a CSV file with the format 
-    trace_number,x,y,t,f
-    """
-    csv = ""
-    for (tr_n, tr) in enumerate(traces):
-        for pt in tr:
-            csv +="{},{},{},{},{}\n".format(tr_n, pt[0],pt[1],pt[2],pt[3])
-    return csv
 
 ##
 ## ==== This is the real parser section
@@ -55,7 +43,6 @@ def read_file(fn, fmt, fmtParams):
         raise IOError("File not found: {}".format(fn))
 
     da = initsDict[fmt]['parser'](fn, **fmtParams)
-    #da = read_anders(fn)
 
     return da
 
@@ -63,7 +50,8 @@ def read_file(fn, fmt, fmtParams):
 def init_evalspt():
     return {'name': 'evalSPT', 'info': "not implemented", 'anchor': 'evalspt',
             'active': False, 'params': []}
-
+def read_evalspt(fn):
+    pass
 ## ==== MOSAIC suite file format
 def init_mosaic():
     pars = [{'name': 'framerate (ms)', 'info': '', 'type': 'number',
@@ -72,12 +60,17 @@ def init_mosaic():
              'value': 'pixelsize', 'model': 'pixelsize'}]
     return {'name': 'MOSAIC suite', 'info': "not implemented", 'anchor': 'mosaic',
             'active': True, 'params': pars}
+def read_mosaic(fn, framerate, pixelsize):
+    return read_arbitrary_csv(fn, col_traj="Trajectory", col_x="x", col_y="y", col_frame="Frame", framerate=framerate, pixelsize=pixelsize)
 
+    
 ## ==== UTrack file format
 def init_utrack():
     return {'name': 'UTrack', 'info': "not implemented", 'anchor': 'utrack',
             'active': False, 'params': []}
-
+def read_utrack(fn):
+    pass
+    
 ## ==== TrackMate file format
 def init_trackmate():
     pars = [{'name': 'XML', 'type': 'radio', 'info': '',
@@ -89,11 +82,43 @@ def init_trackmate():
     return {'name': 'TrackMate', 'info': "not implemented", 'anchor': 'trackmate',
             'active': True, 'params': pars}
 
+def read_trackmate_csv(fn, framerate):
+    """Do not call directly, wrapped into `read_trackmate`"""    
+    def cb(da):
+        return da[da.TRACK_ID!=None]
+    return read_arbitrary_csv(fn, col_traj="TRACK_ID", col_x="POSITION_X", col_y="POSITION_Y", col_frame="FRAME", framerate=framerate, cb=cb)
+
+def read_trackmate_xml(fn):
+    """Do not call directly, wrapped into `read_trackmate`"""
+    x=xmltodict.parse(open(fn, 'r').read())
+    # Checks
+    if x['Tracks']['@spaceUnits'] != 'micron':
+        raise IOError("Spatial unit not recognized")
+        
+    # parameters
+    framerate = float(x['Tracks']['@frameInterval'])
+    traces = []
+    
+    for particle in x['Tracks']['particle']:  
+        traces.append([(float(d['@x']), float(d['@y']), float(d['@t'])*framerate, float(d['@t'])) for d in particle['detection']])
+    return traces
+
+def read_trackmate(fn, format, framerate):
+    if format == 'xml':
+        return read_trackmate_xml(fn)
+    elif format == 'csv':
+        return read_trackmate_csv(fn, framerate)
+    else:
+        raise IOError("It doesn't work, dammit")
+    
 ## ==== CSV file format
 def init_csv():
     return {'name': 'CSV', 'info': "not implemented", 'anchor': 'csv',
             'active': True, 'params': []}
+def read_csv(fn):
+    return read_arbitrary_csv(fn, col_traj="trajectory", col_x="x", col_y="y", col_frame="frame", col_t="t")
 
+    
 ## ==== Anders' file format
 def init_anders():
     """Returns a list of extra parameters to be entered by the user.
@@ -175,11 +200,59 @@ def to_fastSPT(f):
                            np.array([Frame], dtype='uint16')))
     return np.asarray(trackedPar, dtype=dt)
 
+##
+## ==== This are some helper functions
+##
+
+def traces_to_csv(traces):
+    """Returns a CSV file with the format 
+    trajectory,x,y,t,frame
+    """
+    csv = "trajectory,x,y,t,frame\n"
+    for (tr_n, tr) in enumerate(traces):
+        for pt in tr:
+            csv +="{},{},{},{},{}\n".format(tr_n, pt[0],pt[1],pt[2],pt[3])
+    return csv
+
+def read_arbitrary_csv(fn, col_x="", col_y="", col_frame="", col_t="t",
+                       col_traj="", framerate=None, pixelsize=None, cb=None):
+    """This function takes the file name of a CSV file as input and parses it to
+    the list of list format required by Spot-On. This function is called by various
+    CSV importers and it is advised not to call it directly."""
+    
+    da = pd.read_csv(fn) # Read file
+    
+    # Check that all the columns are present:
+    cols = da.columns
+    if (not (col_traj in cols and col_x in cols and col_y in cols and col_frame in cols)) or (not (col_t in cols) and framerate==None):
+        raise IOError("Missing columns in the file, or wrong header")
+        
+    # Correct units if needed
+    if framerate != None:
+        da[col_t]=da[col_frame]*framerate
+    if pixelsize != None:
+        da[col_x]*=pixelsize
+        da[col_y]*=pixelsize
+        
+    # Apply potential callback
+    if cb != None:
+        da = cb(da)
+        
+    # Split by traj
+    out = []
+    for (idx,t) in da.sort_values(col_traj).groupby(col_traj):
+        tr = [(tt[1][col_x], tt[1][col_y], tt[1][col_t], tt[1][col_frame]) for tt in t.sort_values(col_frame).iterrows()] # Order by trace, then by frame
+        out.append(tr)
+    
+    return out
+
+##
 ## ==== Inits
-inits = [{'name': 'csv',       'init': init_csv, 'parser': read_anders},
-         {'name': 'trackmate', 'init': init_trackmate, 'parser': read_anders},
-         {'name': 'utrack',    'init': init_utrack, 'parser': read_anders},
-         {'name': 'mosaic',    'init': init_mosaic, 'parser': read_anders},
-         {'name': 'evalspt',   'init': init_evalspt, 'parser': read_anders},
+##
+inits = [{'name': 'csv',       'init': init_csv, 'parser': read_csv},
+         {'name': 'trackmate', 'init': init_trackmate, 'parser': read_trackmate},
+         {'name': 'utrack',    'init': init_utrack, 'parser': read_utrack},
+         {'name': 'mosaic',    'init': init_mosaic, 'parser': read_mosaic},
+         {'name': 'evalspt',   'init': init_evalspt, 'parser': read_evalspt},
          {'name': 'anders',    'init': init_anders, 'parser': read_anders}]
 initsDict = {i['name']: i for i in inits}
