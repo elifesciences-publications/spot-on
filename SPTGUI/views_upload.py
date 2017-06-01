@@ -57,7 +57,11 @@ def upload(request, url_basename):
     res.status_code = int(resp.status)
 
     if res.status_code == 200 and resp.ok:
-        ## 1. Get the analysis object, or create it if it doesn't exist
+        ## 0. Extract format/parser info
+        fmt = request.POST['parserName']
+        fmtParams = json.loads(request.POST['parserParams'])
+        
+        ## 1. Get the analysis object
         ana = get_object_or_404(Analysis, url_basename=url_basename)
         if not os.path.isdir(bf+url_basename):
             os.makedirs(bf+url_basename) # Create folder for analyses
@@ -75,10 +79,8 @@ def upload(request, url_basename):
                      data=fi)
         da.save()
 
-        ## 3. Defer to the celery analysis
-        ## Here we first perform the "check_input_file" task. If this one returns
-        ## properly, the histogram of jump lengths distribution is computed
-        ## (compute_jld).
+        ## 3. Parameters and init to compute the JLD (if the celery task
+        ##    `check_input_file` returns successfully.
         compute_params = {'BinWidth' : 0.01,
                           'GapsAllowed' : 1,
                           'TimePoints' : 8,
@@ -92,17 +94,18 @@ def upload(request, url_basename):
         pa = bf+"{}/jld_{}_{}.pkl".format(url_basename, cha, da.id)
         with open(pa, 'w') as f: ## Save that we are computing
             pickle.dump(pick, f)
-        
+
+        ## 3. Defer to the celery analysis
         da.preanalysis_status='queued'
-        
-        ta = celery.chain(tasks.check_input_file.s(da.data.path, da.id),
-                          tasks.compute_jld.s(pooled=False,
-                                              path=bf,
-                                              hash_prefix=cha,
-                                              compute_params=compute_params,
-                                              url_basename=url_basename,
-                                              default=True)).apply_async()
-        #print ta.id, ta.parent.id 
+        ta = celery.chain(
+            tasks.check_input_file.s(da.data.path, da.id, fmt, fmtParams),
+            tasks.compute_jld.s(pooled=False,
+                                path=bf,
+                                hash_prefix=cha,
+                                compute_params=compute_params,
+                                url_basename=url_basename,
+                                default=True)).apply_async()
+
         da.preanalysis_token = ta.id
         da.save()
         rr = json.loads(res.content)

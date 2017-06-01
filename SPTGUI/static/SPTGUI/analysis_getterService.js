@@ -15,10 +15,12 @@ angular.module('app')
 	}
 	// Get the nearest fitted z correction
 	this.getNearestZcorr = function(dZ, dT) {
-	    var promise = MainSocket.sendRequest({type: "get_fitted_zcor",
-						  dT: dT,
-						  dZ: dZ})
-	    return promise
+	    return MainSocket.sendRequest({type: "get_fitted_zcor", dT: dT, dZ: dZ})
+	}
+
+	// Get the list of accepted file formats
+	this.getFileFormats = function() {
+	    return MainSocket.sendRequest({type: "list_formats"})
 	}
 
 	// Fired when all the datasets have been loaded ($scope.datasets exists)

@@ -280,13 +280,15 @@ def fit_jld(arg, hash_prefix):
     
 #@shared_task(ignore_result=True)
 @shared_task(ignore_result=False)
-def check_input_file(filepath, file_id):
+def check_input_file(filepath, file_id, fmt, fmtParams):
     """This function checks that the uploaded file has the right format and
     can be analyzed. It is further saved in the database
     
     Inputs:
     - filepath: the path to the file to be checked
     - file_id: the id of the file in the database.
+    - fmt (str): the file format, coming from the user
+    - fmtParams (dict): a dictionary of format-specific parameters for the parser
 
     Returns: None
     - Update the Dataset entry with the appropriately parsed information
@@ -297,8 +299,9 @@ def check_input_file(filepath, file_id):
     da = Dataset.objects.get(id=file_id)
     
     ## ==== Check file format
+    fi = parsers.read_file(da.data.path, fmt, fmtParams) ## DEBUG, should be in the try
     try: # try to parse the file
-        fi = parsers.read_file(da.data.path)
+        fi = parsers.read_file(da.data.path, fmt, fmtParams)
     except: # exit
         da.preanalysis_token = ''
         da.preanalysis_status = 'error'

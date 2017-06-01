@@ -43,7 +43,7 @@ def poll_queue(message, data, url_basename):
 def poll_download_queue(idd):
     """Relates to the `download` queue"""
     r = tasks.convert_svg_to.AsyncResult(idd)
-    print idd, r.status
+    #print idd, r.status
     if r.status == 'SUCCESS':
         return 'OK'
     else:
@@ -52,7 +52,7 @@ def poll_download_queue(idd):
 def poll_fit_queue(idd):
     """Relates to the `fit` queue"""
     r = tasks.compute_jld.AsyncResult(idd)
-    print idd, r.status
+    #print idd, r.status
     if r.status == 'SUCCESS':
         return 'OK'
     else:
@@ -61,7 +61,7 @@ def poll_fit_queue(idd):
 def poll_jld_queue(idd):
     """Relates to the `jld` queue"""
     r = tasks.compute_jld.AsyncResult(idd)
-    print idd, r.status
+    #print idd, r.status
     if r.status == 'SUCCESS':
         return 'OK'
     else:
@@ -72,7 +72,7 @@ def poll_preprocessing_queue(idd_str) :
     idd = idd_str.split('@')
     r_chk = tasks.check_input_file.AsyncResult(idd[0])
     r_jld = tasks.check_input_file.AsyncResult(idd[1])
-    print idd, r_chk.status,  r_jld.status
+    #print idd, r_chk.status,  r_jld.status
     if r_chk.status == 'PENDING':
         res = 'PENDING'
     elif r_chk.status == 'PROGRESS':

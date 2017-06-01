@@ -15,6 +15,7 @@ angular.module('app')
 	$scope.showingStatistics=false;
 	$scope.shownStatistics=null;
 	$scope.statistics = null;
+	$scope.uploadFormat = {format: null, params: null, currentParams: null};
 
 	//
 	// ==== Initializing the view
@@ -30,7 +31,7 @@ angular.module('app')
 	$scope.$on('socket:ready', function() {
 	    if (!socketReady) {
 		p1 = getterService.getDatasets2() // Retrieve existing datasets
-		p2 = getterService.getGlobalStatistics() // Retrieve global statistics
+		p2 = getterService.getGlobalStatistics() // Get global statistics
 		$scope.establishedConnexion=true;
 		socketReady = true; // avoid doing that again when conn. lost
 		
@@ -48,9 +49,45 @@ angular.module('app')
 		    getterService.broadcastLoadedDatasets($scope.datasets)
 		    $scope.datasetsReady = true;
 		})
+
+		// Retrieve available file formats
+		getterService.getFileFormats().then(function success(resp) {
+		    $scope.acceptedFormats = resp;
+		    console.log(resp)
+		}, function error(resp) {
+		    alert('could not retrieve the list of available file formats')
+		})
 	    }
 	});
 
+	//
+	// ==== CRUD: handle format selection
+	//
+	$scope.setFormat = function(format) {
+	    $scope.uploadFormat.params = format;
+	    $scope.uploadFormat.currentParams = {};
+	    format[1].params.forEach(function(el) {
+		$scope.uploadFormat.currentParams[el.model] = null;
+	    })
+	}
+
+	// Function to determine whether the Upload Drag'n'drop box should be
+	//+displayed. We only display it when all the parameters required for the
+	//+selected format have been filled in, because these are directly sent to
+	//+the server.
+	$scope.showUploadZone = function() {
+	    curPars = $scope.uploadFormat.currentParams; // shortcut name
+	    if ($scope.uploadFormat.format!==null & curPars !== null) {
+		out = true
+		for (var property in curPars) {
+		    if (curPars.hasOwnProperty(property)) {
+			if (curPars[property]===null) { out = false }
+		    }
+		}
+		return out
+	    }
+	    return false
+	}
 	//
 	// ==== CRUD: Handle the edition of the list of files
 	//
@@ -113,6 +150,8 @@ angular.module('app')
 	//
 	// (1) Fired when a file is added to the download list
 	$scope.$on('flow::fileAdded', function (event, $flow, flowFile) {
+	    $flow.opts.query = { parserName: $scope.uploadFormat.params[0], 
+				 parserParams: JSON.stringify($scope.uploadFormat.currentParams) }; // Send file type info
 	    $scope.currentlyUploading=true;
 	});
 
