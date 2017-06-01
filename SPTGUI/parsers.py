@@ -16,6 +16,7 @@
 ## ==== Imports
 import scipy.io, os, json, xmltodict
 import numpy as np
+import pandas as pd
 
 ##
 ## ==== This is the real parser section
@@ -61,7 +62,7 @@ def init_mosaic():
     return {'name': 'MOSAIC suite', 'info': "not implemented", 'anchor': 'mosaic',
             'active': True, 'params': pars}
 def read_mosaic(fn, framerate, pixelsize):
-    return read_arbitrary_csv(fn, col_traj="Trajectory", col_x="x", col_y="y", col_frame="Frame", framerate=framerate, pixelsize=pixelsize)
+    return read_arbitrary_csv(fn, col_traj="Trajectory", col_x="x", col_y="y", col_frame="Frame", framerate=framerate/1000., pixelsize=pixelsize/1000.)
 
     
 ## ==== UTrack file format
@@ -85,8 +86,8 @@ def init_trackmate():
 def read_trackmate_csv(fn, framerate):
     """Do not call directly, wrapped into `read_trackmate`"""    
     def cb(da):
-        return da[da.TRACK_ID!=None]
-    return read_arbitrary_csv(fn, col_traj="TRACK_ID", col_x="POSITION_X", col_y="POSITION_Y", col_frame="FRAME", framerate=framerate, cb=cb)
+        return da[da.TRACK_ID!="None"]
+    return read_arbitrary_csv(fn, col_traj="TRACK_ID", col_x="POSITION_X", col_y="POSITION_Y", col_frame="FRAME", framerate=framerate/1000., cb=cb)
 
 def read_trackmate_xml(fn):
     """Do not call directly, wrapped into `read_trackmate`"""
