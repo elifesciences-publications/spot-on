@@ -116,8 +116,8 @@
     <div class="container">
       <footer>
 	<p class="pull-right"><a href="#">Back to top</a></p>
-	<p>&copy; 2017 name. &middot; <a href="#">Privacy</a> &middot; <a href="#">License</a></p>
-	<p>Spot-On version {{version}} using the <em>fastspt</em> backend version {{versionbackend}}, an open source software, 2017.</p>
+	<p>&copy; 2017 name. &middot; <a href="#">Privacy</a> &middot; <a href="{% url 'SPTGUI:staticpage' 'license' %}">License</a></p>
+	<p>Spot-On version {{version}} using the <em>fastspt</em> backend version {{versionbackend}}, an open source software released under the <a href="{% url 'SPTGUI:staticpage' 'license' %}">AGPL license</a>, 2017.</p>
       </footer>
     </div>
   </body>
