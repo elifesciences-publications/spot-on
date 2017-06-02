@@ -39,7 +39,8 @@ def email(request, token=None):
                 else: ## Resend confirmation email
                     send_confirmation_email(email, em_entry.token, reminder=False)
             else: # Send confirmation email
-                em = Email(email=email, add_date=timezone.now(), token=make_token())
+                token = make_token()
+                em = Email(email=email, add_date=timezone.now(), token=token)
                 em.save()
                 send_confirmation_email(email, token, reminder=False)
             
