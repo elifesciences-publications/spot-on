@@ -162,7 +162,7 @@ def static(request, page):
     templates = {"docs": "documentation.html",
                  "about": "about.html",
                  "contact": "contact.html",
-                 "license": "AGPL.html"}
+                 "license": "license.html"}
     if page in templates:
         template = loader.get_template('SPTGUI/{}'.format(templates[page]))
         context = {}
