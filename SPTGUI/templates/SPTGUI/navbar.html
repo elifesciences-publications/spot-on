@@ -21,7 +21,7 @@
                 <li {% if active == 'home' %} class="active" {% endif %}>
 		  <a href="#">Home</a>
 		</li>
-		<li><a class="startspoton" href="#start">
+		<li><a class="startspoton" href="{% url 'SPTGUI:index' %}#start">
 		    <span class="glyphicon glyphicon-transfer"></span>&nbsp;Start spotting!</a>
 		</li>
                 <li {% if active == 'about' %} class="active" {% endif %}>
