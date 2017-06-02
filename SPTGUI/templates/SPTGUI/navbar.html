@@ -18,15 +18,22 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
+                <li {% if active == 'home' %} class="active" {% endif %}>
+		  <a href="#">Home</a>
+		</li>
 		<li><a class="startspoton" href="#start">
 		    <span class="glyphicon glyphicon-transfer"></span>&nbsp;Start spotting!</a>
 		</li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#about">Documentation</a></li>
+                <li {% if active == 'about' %} class="active" {% endif %}>
+		  <a href="#about">About</a></li>
+                <li {% if active == 'docs' %} class="active" {% endif %}>
+		  <a href="{% url 'SPTGUI:staticpage' 'docs' %}">Documentation</a>
+		</li>
 		<li><a href="#code">Methods</a></li>
                 <li><a href="#code">Code</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li {% if active == 'contact' %} class="active" {% endif %}>
+		  <a href="#contact">Contact</a>
+		</li>
               </ul>
             </div>
           </div>
