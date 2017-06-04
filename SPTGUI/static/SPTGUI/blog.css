@@ -151,6 +151,10 @@
   color: #999;
 }
 
+.blog-post > p {
+    text-align: justify;
+}
+
 
 /*
  * Footer

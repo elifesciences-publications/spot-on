@@ -58,18 +58,71 @@
 	  <div class="blog-header">
 	    <h1 class="blog-title">Spot-On documentation</h1>
 	    <p class="lead blog-description">The official Spot-On documentation.</p>
-	    
-	    <img src="/static/SPTGUI/img/spoton_logo_square.png"
-		 class="img-responsive center-block"
-		 style="max-width: 50%;"
-		 alt="Responsive image">
-	  </div>	
+	    <div class="col-md-7">
+	      <p class="lead"> Spot-On allows you to analyze single particle tracking datasets. Spot-On fits a realistic kinetic model to the distribution of jump lengths and provides estimates of the fraction bound (\(F\)) and diffusion coefficients (\(D\)) for either a two state (bound-free) or a three state (bound-free1-free2) model.</p>
+	      <p class="lead"> Spot-On is a libre/open-source software and exists both as a web-application and a command-line version.</p>
+	    </div>
+	    <div class="col-md-5">
+	      <img src="/static/SPTGUI/img/spoton_logo_square.png"
+		   class="img-responsive center-block"
+		   style="max-width: 80%;"
+		   alt="Spot-On logo">
+	      {% if False %}
+	      <p> This documentation can be downloaded as a PDF or HTML version:</p>
+	      <div class="col-md-6">
+		<img src="/static/SPTGUI/img/icons/html.png"
+		     class="img-responsive center-block"
+		     style="max-width: 80%;"
+		     alt="Download documentation in HTML">
+	      </div>
+	      <div class="col-md-6">
+		<img src="/static/SPTGUI/img/icons/pdf.png"
+		     class="img-responsive center-block"
+		     style="max-width: 80%;"
+		     alt="Download documentation in PDF">
+	      </div>
+	      TODO: automatically export the docs to PDF & HTML & credit flaticon authors.
+	      {% endif %}
+	      
+	    </div>
+	  </div>
 	</div>
 	<!-- End Header =========================-->
 
 	<!-- Main docs =========================-->
-      
-	<h2>Quickstart/tutorial</h2>
+        <div class="blog-post" id="tutorial">
+	  {% include 'SPTGUI/tutorial.html' %}
+	</div>
+	
+        <div class="blog-post">
+	  {% include 'SPTGUI/reference.html' %}
+	</div>
+
+        <div class="blog-post">
+	  <h2 class="blog-post-title">How to acquire a "good" dataset?</h2>
+	  <div class="alert alert-info">
+	    Maybe some day somebody will tell us. 
+	  </div>
+	</div>
+	
+        <div id="methods" class="blog-post">
+	  {% include 'SPTGUI/methods.html' %}
+	</div>
+	
+	<div id="code" class="blog-post">
+	  <h2> Code </h2>
+	  - Web
+	  - Gitlab
+	  - Python standalone version
+	  - Matlab version
+	  + license
+	</div>
+        <div class="blog-post">
+	  {% include 'SPTGUI/faq.html' %}
+	</div>
+	
+
+	
       </div><!-- Close Left column -->
       
       <div class="col-sm-3 col-sm-offset-1 blog-sidebar"><!-- Right column -->
