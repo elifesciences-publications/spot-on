@@ -37,55 +37,21 @@
     
     <!-- Custom styles for this template -->
     <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
-    <link href="{% static 'SPTGUI/style.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/homepage.css' %}" rel="stylesheet">
 
     <!-- Custom app code & CSS -->
     <script src="{% static 'SPTGUI/homepage.js' %}"></script>    
   </head>
-<!-- NAVBAR
-================================================== -->
+  
   <body ng-app="app">
     {% csrf_token %}
-    <div class="navbar-wrapper">
-      <div class="container">
-
-        <nav class="navbar navbar-inverse navbar-static-top">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">
-		<img style="max-width:128px; margin-top: -10px;"
-		     src="/static/SPTGUI/img/spoton_logo_small_inv.png"
-		     alt="Spot-On logo">
-	      </a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-		<li><a class="startspoton" href="#start">
-		    <span class="glyphicon glyphicon-transfer"></span>&nbsp;Start spotting!</a>
-		</li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#about">Documentation</a></li>
-		<li><a href="#code">Methods</a></li>
-                <li><a href="#code">Code</a></li>
-                <li><a href="#contact">Contact</a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-
-      </div>
-    </div>
+    <!-- NAVBAR ================================================== -->
 
 
-    <!-- Carousel
-    ================================================== -->
+    
+    {% include 'SPTGUI/navbar.html' %}
+
+    <!-- Carousel ================================================== -->
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
       <!-- Indicators -->
       <ol class="carousel-indicators">
@@ -145,21 +111,27 @@
       <!-- Three columns of text below the carousel -->
       <div class="row">
         <div class="col-lg-4">
-          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+          <img class="img-circle"
+	       src="{% static 'SPTGUI/img/shadoks/Shadok_import.jpg' %}"
+	       alt="Import pictogram" width="140" height="140">
           <h2>Import...</h2>
           <p> from a wide range of tracking softwares.
 	    The man who moves a mountain begins by carrying away small stones. <em>Confucius</em></p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
-          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+          <img class="img-circle"
+	       src="{% static 'SPTGUI/img/shadoks/Shadok_analyze.jpg' %}"
+	       alt="Analyze pictogram" width="140" height="140">
           <h2>Analyze</h2>
           <p>People know what they do; frequently they know why they do what they do; but what they don't know is what what they do does.”
 ― <em>Michel Foucault, Madness and Civilization: A History of Insanity in the Age of Reason</em> </p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
-          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+          <img class="img-circle"
+	       src="{% static 'SPTGUI/img/shadoks/shadok_export.jpg' %}"
+	       alt="Export pictogram" width="140" height="140">
           <h2>...Export!</h2>
           <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
@@ -252,30 +224,10 @@
         </div>
       </div>
 
-      <hr class="featurette-divider">
-
       <!-- /END THE FEATURETTES -->
 
-
-      <!-- FOOTER -->
-      <footer>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2017 name. &middot; <a href="#">Privacy</a> &middot; <a href="#">License</a></p>
-      </footer>
-
-    </div><!-- /.container -->
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static 'SPTGUI/assets/js/vendor/jquery.min.js' %}"></script>
-    <script>window.jQuery || document.write('<script src="{% static 'SPTGUI/assets/js/vendor/jquery.min.js' %}"><\/script>')</script>
-    <script src="{% static 'SPTGUI/dist/js/bootstrap.min.js' %}"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="{% static 'SPTGUI/assets/js/vendor/holder.min.js' %}"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static 'SPTGUI/assets/js/ie10-viewport-bug-workaround.js' %}"></script>
+      <!-- /FOOTER -->
+      {% include 'SPTGUI/footer.html' %}
     <script src="{% static 'SPTGUI/homepage.js' %}"></script>
   </body>
 </html>

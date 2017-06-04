@@ -1,0 +1,114 @@
+{% load static %}
+<h2 class="blog-post-title">Software reference</h2>
+
+<p>This section describes in detail the function of all the features and options implemented into Spot-On.</p>
+
+<h3>Input formats </h3>
+<p>Spot-On accepts tracking files from the following software and raw CSV (column naming below): <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a>, <a href="http://mosaic.mpi-cbg.de/?q=downloads/imageJ">MOSAIC suite</a>. Sometimes, the importer can be a little bit picky. We provide sample files for these formats so that you can potentially study them. In case you have a problematic file, do not hesitate to <a href="{% url 'SPTGUI:staticpage' 'contact' %}">contact us</a> and email us the problematic file.</p>
+
+
+<h4> CSV (Comma-separated values)</h4>
+
+<p> Files can be uploaded as raw CSV files. Make sure that the separator indeed is a comma (<em>,</em>). Importing from a tab-separated or semicolon-separated file will not work. The CSV file should have a header line and contain the following columns. Any other column will be ignored. The order of the columns does not matter. Note that the header naming convention is <em>case sensitive</em>. This importer assumes that the tracking has been performes and that sets of detections were assigned a numerical index (or trajectory id). </p>
+
+<table class="table table-striped">
+  <tr>
+    <th>&nbsp;</th>
+    <th>frame</th>
+    <th>  t</th>
+    <th>  trajectory</th>
+    <th>  x</th>
+    <th>  y</th>
+  </tr>
+  <tr>
+    <th>Format</th>
+    <td>(integer)</td>
+    <td>(float)</td>
+    <td>(integer)</td>
+    <td>(float)</td>
+    <td>(float)</td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td> Frame number</td>
+    <td> Time (in s)</td>
+    <td> The trajectory id</td>
+    <td> x position of the particle (in µm)</td>
+    <td> y position of the particle (in µm)</td>
+  </tr>
+
+</table>
+
+
+<a href="{% static 'SPTGUI/sample/standard_csv.csv' %}"
+   role="button"
+   class="btn btn-default">Download sample file
+  <span class="glyphicon glyphicon-download"></span>
+</a>
+
+<h4> TrackMate </h4>
+
+<p>
+  <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform various types of tracking and export the traces to various file formats. Spot-On can import from its XML and CSV export. Note that the file have to be exported from the last panel of the wizard (clicking the "Save" button at the bottom of the window will produce a XML file that cannot be read by Spot-On). A screenshot of TrackMate's export interface is displayed below.
+</p>
+
+<img src="/static/SPTGUI/sample/trackmate.png"
+     class="img-responsive center-block"
+     style="max-width: 40%;"
+     alt="TrackMate export window">
+
+<p>Again, the export can be performed by selecting either "Export tracks to a XML file" or "Export tracks to a CSV file". Clicking on "Save" will not work.</p>
+
+
+<a href="{% static 'SPTGUI/sample/TrackMate.csv' %}"
+   role="button"
+   class="btn btn-default">Download sample file (CSV)
+  <span class="glyphicon glyphicon-download"></span>
+</a>
+
+<a href="{% static 'SPTGUI/sample/TrackMate.xml' %}"
+   role="button"
+   class="btn btn-default">Download sample file (XML)
+  <span class="glyphicon glyphicon-download"></span>
+</a>
+
+<h4> UTrack </h4>
+<div class="alert alert-danger">
+  This format is not implemented yet, unfortunately.
+</div>
+
+<h4> MOSAIC suite </h4>
+
+<p>
+  <a href="http://mosaic.mpi-cbg.de/?q=downloads/imageJ">MOSAIC suite</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform tracking and export the traces an ImageJ table. This table can be further exported to CSV. The table is displayed by clicking the "All Trajectoried to table" and "Selected Trajectories to table" at the end of the wizard.
+</p>
+
+<p>
+<img src="/static/SPTGUI/sample/mosaic.png"
+     class="img-responsive center-block"
+     style="max-width: 50%;"
+     alt="MOSAIC suite export window">
+</p>
+<p>
+  <a href="{% static 'SPTGUI/sample/MOSAIC.csv' %}"
+     role="button"
+     class="btn btn-default">Download sample file (XML)
+    <span class="glyphicon glyphicon-download"></span>
+  </a>
+</p>
+
+<h4> evalSPT </h4>
+<div class="alert alert-danger">
+  This format is not implemented yet, unfortunately.
+</div>
+
+<h4> Matlab file format </h4>
+<p>Spot-On also accepts a custom Matlab file format. An example is provided below. The <code>trackedPar</code> variable is a structured array. Each element of this array corresponds to one trajectory. Each trajectory contains several fields: <code>xy</code>, <code>t</code>, <code>frame</code>. Each of these fields is a 2D-matrix with 2, 1 and 1 columns, respectively and a number of rows corresponding to the number of detections for this trajectory.</p>
+
+<p>Note that this format (in particulat the shape of the objects) has to be followed rigorously for Spot-On to be able to import it. In particular, a \(N\times 1\) matrix is different from a \(1\times N\) matrix. </p>
+
+<a href="{% static 'SPTGUI/sample/anders.mat' %}"
+   role="button"
+   class="btn btn-default">Download sample file
+  <span class="glyphicon glyphicon-download"></span>
+</a>

@@ -137,7 +137,9 @@ def new_demo(request):
 def index(request):
     """Main view, returns the homepage template"""
     template = loader.get_template('SPTGUI/homepage.html')
-    context = {'url_basename': 'new', 'recaptchakey': custom_settings.RECAPTCHA_PUBLIC}
+    context = {'url_basename': 'new',
+               'active': 'home',
+               'recaptchakey': custom_settings.RECAPTCHA_PUBLIC}
     return HttpResponse(template.render(context, request))
 
 def analysis(request, url_basename, run_tests=False):
@@ -146,6 +148,7 @@ def analysis(request, url_basename, run_tests=False):
     ana.acc_date = timezone.now()
     template = loader.get_template('SPTGUI/analysis.html')
     context = {'url_basename': url_basename,
+               'active': 'analysis',
                'run_tests': run_tests,
                'version': settings.APP_VERSION,
                'versionbackend': fastspt.__version__}
@@ -161,10 +164,11 @@ def static(request, page):
     """Returns a static page"""
     templates = {"docs": "documentation.html",
                  "about": "about.html",
-                 "contact": "contact.html"}
+                 "contact": "contact.html",
+                 "license": "license.html"}
     if page in templates:
         template = loader.get_template('SPTGUI/{}'.format(templates[page]))
-        context = {}
+        context = {'active': page}
         return HttpResponse(template.render(context, request))
 ## ==== Where are the views gone?
 ## view_import.py -> views providing statistics on the imported datasets
