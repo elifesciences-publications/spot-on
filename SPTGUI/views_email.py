@@ -64,7 +64,10 @@ def email_unsubscribe(request, token):
     return HttpResponse('Your address email {} has been removed from our database. Go to the <a href="{}">Spot-On homepage</a>.'.format(email, reverse('SPTGUI:index')))
 
 def contactform(request):
-    """Handles the logic of the contact form"""
+    """Handles the logic of the contact form. A very gross system with little
+    checks. In particular, note that no CAPTCHA is implemented and that a copy
+    of the message is sent to the specified email address, which is potentially
+    a source of spam. Be careful."""
     if request.method=="POST":
         email = request.POST['email']
         subject = request.POST['subject']
