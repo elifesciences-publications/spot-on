@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'SPTGUI/img/favicon.ico' %}">
+
+    <title>Spot-On: kinetic modeling of SPT data</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>   
+
+    <!-- add after bootstrap.min.css -->
+    <link rel="stylesheet" href="{% static 'SPTGUI/dist/css/bootstrap-toc.min.css' %}">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'SPTGUI/assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script><![endif]-->
+    <script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script>
+
+    
+    <!-- Angular JS -->
+    <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/angular-cookies.js' %}"></script>
+    
+    <!-- Custom styles for this template -->
+    <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/style.css' %}" rel="stylesheet">
+
+    <!-- Custom app code & CSS -->
+
+  </head>
+  <body data-spy="scroll" data-target="#toc">
+    {% csrf_token %}
+    
+    <!-- NAVBAR ================================================== -->
+    {% include 'SPTGUI/navbar.html' %}
+    <div class="container"><!-- Main container =========================-->
+      <h1> Contact us</h1>
+
+      <p>Please fill out this form. You will receive a copy of your message by email and we will get back to you as soon as possible. Thanks!</p>
+      
+      <div>
+	<form action="{% url 'SPTGUI:contactform' %}" method="POST">
+	  {% csrf_token %}
+	  <table>
+	    <tr>
+	      <td class="col-md-2"><label>Your email address</label></td>
+	      <td class="col-md-8">
+		<input type="email" name="email" placeholder="your@email.org" required>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td class="col-md-2"><label>Your subject</label></td>
+	      <td class="col-md-8"><input id="la" type="text" name="subject" required></td>
+	    </tr>
+	    <tr>
+	      <td class="col-md-2"><label>Your message</label></td>
+	      <td class="col-md-8"><textarea rows="10" name="message" required></textarea></td>
+	    </tr>
+	    <tr>
+	      <td class="col-md-2">&nbsp;</td>
+	      <td class="col-md-8"><input type="submit" value="Send" class="btn btn-large btn-primary" /></td>
+	    </tr>
+	  </table>
+	</form>
+      </div>
+
+    </div><!-- Close Main container =========================-->
+    
+    <div class="container">
+      {% include 'SPTGUI/footer.html' %}
+    </div>
+    <!-- add after bootstrap.min.js -->
+    <script src="{% static 'SPTGUI/dist/js/bootstrap-toc.min.js' %}"></script>
+  </body>
+</html>

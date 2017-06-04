@@ -10,7 +10,7 @@ from .models import Email
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 ##
 ## ==== Views
@@ -62,6 +62,31 @@ def email_unsubscribe(request, token):
     email = em.email
     em.remove()
     return HttpResponse('Your address email {} has been removed from our database. Go to the <a href="{}">Spot-On homepage</a>.'.format(email, reverse('SPTGUI:index')))
+
+def contactform(request):
+    """Handles the logic of the contact form"""
+    if request.method=="POST":
+        email = request.POST['email']
+        subject = request.POST['subject']
+        message = request.POST['message']
+
+        ## Validate email address
+        print "Validating : {}".format(email)
+        try:
+            validate_email(email) # Check email address
+        except ValidationError as e:
+            return HttpResponse(json.dumps({'status': 'error',
+                                            'message': 'Invalid email address'}),
+                                content_type='application/json', status=400)
+
+        ## Send email
+        send_message(email, subject, message)
+
+        ## Return
+        # Should return a nice JSON /!\ TODO MW: Angularify this.
+        return HttpResponse('Your message has been sent to the Spot-On team. We will answer you as soon as possible. Go to the <a href="{}">Spot-On homepage</a>.'.format(reverse('SPTGUI:index')))
+    else:
+        return redirect('SPTGUI:staticpage', 'contact') 
 
 ##
 ## ==== Helper functions
@@ -117,6 +142,18 @@ PS: You can always unsubscribe by clicking this link: {}"""
     )
     print "done"
 
+def send_message(cc, subject, message):
+    """Helper function to send a message to the Spot-On team"""
+    msg = """Hi\n\nThe following message was submitted to the Spot-On contact form:\n\n============================================\n{}\n============================================\n\n -- The Spot-On team."""
+    send_mail(
+        '[Spot-On contact form] {}'.format(subject),
+        msg.format(message),
+        'the Spot-On Team <spot-on@gmx.us>',
+        [cc, 'spot-on@gmx.us'],
+        fail_silently=False,
+    )
+    print "done"    
+    
 def make_token(n=30):
     """Returns an hexadecimal number"""
     return '%030x' % random.randrange(16**n)

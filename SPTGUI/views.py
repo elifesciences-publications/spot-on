@@ -170,6 +170,7 @@ def static(request, page):
         template = loader.get_template('SPTGUI/{}'.format(templates[page]))
         context = {'active': page}
         return HttpResponse(template.render(context, request))
+
 ## ==== Where are the views gone?
 ## view_import.py -> views providing statistics on the imported datasets
 ## views_tab_data.py -> Views involved in the display of the first tab (UploadController)
