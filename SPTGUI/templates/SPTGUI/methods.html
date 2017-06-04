@@ -179,7 +179,13 @@ D^{MIN}_{fast} \leq D_{fast} \leq D^{MAX}_{fast} \\
 F_{bound} + F_{slow} + F_{fast} = 1
 \end{align}$$
 
-<p>The first six constraints are easy to enforce since they constrain the optimization inside an hypercube, and is built-in the solver. However, the last constraint, \(F_{bound} + F_{slow} + F_{fast} = 1\) is a triangular constraint for which a specific cost function was written. Indeed: \(F_{bound} + F_{fast} \leq 1\). Thus the cost function was modified to penalize parameters sets where \(F_{bound} + F_{fast} > 1\).
+<p>The first six constraints are easy to enforce since they constrain the optimization inside an hypercube, and is built-in the solver. However, the last constraint, \(F_{bound} + F_{slow} + F_{fast} = 1\) is a triangular constraint for which a specific cost function was written. Indeed: \(F_{bound} + F_{fast} \leq 1\). Thus the cost function was modified to penalize parameters sets where \(F_{bound} + F_{fast} > 1\).</p>
+
+<p> In practice, denoting \(X_i, i \in [0,N]\) the bins of the empirical histogram with \(N\) the number of bins (\(N = \lfloor \frac{\text{MaxJump}}{\text{BinWidth}}\rfloor\), and \(X^*_i, i \in [0,N]\) the model resulting a set of candidate parameters, the algorithm minimizes the cost function \(L(X,X^*)\):</p>
+
+$$L(X,X^*) = \sum_{i=0}^N \left(X_i-X^*_i\right)^2 + 10^4\left(F_{bound}+F_{fast}-1\right)\mathbf{1}_{F_{bound} + F_{fast} > 1}$$
+
+<p> where \(\mathbf{1}\) denotes the indicator function. This in practice constrains the optimization to the half-plane where \(F_{bound} + F_{fast} \leq 1\).
 
 
 <h3 id="footnote-label">References</h3>
