@@ -25,11 +25,7 @@
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script><![endif]-->
     <script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script>
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
+
     
     <!-- Angular JS -->
     <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
@@ -37,13 +33,10 @@
     
     <!-- Custom styles for this template -->
     <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
-    <link href="{% static 'SPTGUI/blog.css' %}" rel="stylesheet">
     <link href="{% static 'SPTGUI/style.css' %}" rel="stylesheet">
 
     <!-- Custom app code & CSS -->
-    <script src="{% static 'SPTGUI/homepage.js' %}"></script>
-    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link href="{% static 'SPTGUI/footnotes.css' %}" rel="stylesheet"> 
+
   </head>
   <body data-spy="scroll" data-target="#toc">
     {% csrf_token %}
@@ -56,22 +49,22 @@
       <p>Please fill out this form. You will receive a copy of your message by email and we will get back to you as soon as possible. Thanks!</p>
       
       <div>
-	<form action="{% url 'SPTGUI:contactform' %}">
+	<form action="{% url 'SPTGUI:contactform' %}" method="POST">
 	  {% csrf_token %}
 	  <table>
 	    <tr>
 	      <td class="col-md-2"><label>Your email address</label></td>
 	      <td class="col-md-8">
-		<input type="email" name="" placeholder="your@email.org" required>
+		<input type="email" name="email" placeholder="your@email.org" required>
 	      </td>
 	    </tr>
 	    <tr>
 	      <td class="col-md-2"><label>Your subject</label></td>
-	      <td class="col-md-8"><input type="text" name="" required></td>
+	      <td class="col-md-8"><input id="la" type="text" name="subject" required></td>
 	    </tr>
 	    <tr>
 	      <td class="col-md-2"><label>Your message</label></td>
-	      <td class="col-md-8"><textarea rows="10" required></textarea></td>
+	      <td class="col-md-8"><textarea rows="10" name="message" required></textarea></td>
 	    </tr>
 	    <tr>
 	      <td class="col-md-2">&nbsp;</td>
