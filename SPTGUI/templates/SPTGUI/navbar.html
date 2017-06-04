@@ -32,7 +32,7 @@
 		<li><a href="{% url 'SPTGUI:staticpage' 'docs' %}#methods">Methods</a></li>
                 <li><a href="{% url 'SPTGUI:staticpage' 'docs' %}#code">Code</a></li>
                 <li {% if active == 'contact' %} class="active" {% endif %}>
-		  <a href="#contact">Contact</a>
+		  <a href="{% url 'SPTGUI:staticpage' 'contact' %}">Contact</a>
 		</li>
               </ul>
             </div>
