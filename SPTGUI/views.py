@@ -166,6 +166,8 @@ def static(request, page):
                  "about": "about.html",
                  "contact": "contact.html",
                  "license": "license.html"}
+    if config.debug_views:
+        templates["docs_viz"] ="docs_viz.html"
     if page in templates:
         template = loader.get_template('SPTGUI/{}'.format(templates[page]))
         context = {'active': page}

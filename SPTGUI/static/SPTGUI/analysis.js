@@ -16,24 +16,5 @@
 	    // And here we properly populate it (cannot be done before)
 	    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
 	}])
-
-    // Misc directives
-	// .directive('tooltip', function(){
-	//     // To display tooltips :)
-	//     console.log("This tooltip function is deprecated, replace by ui-bootstrap")
-	//     return {
-	// 	restrict: 'A',
-	// 	link: function(scope, element, attrs){
-	// 	    $(element).hover(function(){
-	// 		// on mouseenter
-	// 		$(element).tooltip('show');
-	// 	    }, function(){
-	// 		// on mouseleave
-	// 		$(element).tooltip('hide');
-	// 	    });
-	// 	}
-	//     };
-	// });
-    
 })(window);
 

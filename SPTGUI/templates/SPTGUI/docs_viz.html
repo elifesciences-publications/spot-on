@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'SPTGUI/img/favicon.ico' %}">
+
+    <title>Visualization test page</title>
+
+    <!-- Spinner CSS -->
+    <link href="{% static 'SPTGUI/dist/css/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
+    
+    <!-- Bootstrap core CSS and JS -->
+    <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>   
+    <script src="{% static 'SPTGUI/dist/js/bootstrap.min.js' %}"></script>
+    
+    <!-- Angular JS -->
+    <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/angular-toggle-switch.min.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/ui-bootstrap-tpls-2.5.0.min.js' %}"></script>
+    <link href="{% static 'SPTGUI/dist/css/angular-toggle-switch.css' %}" rel="stylesheet">
+
+    <!-- Rzslider JS -->
+    <link href="{% static 'SPTGUI/dist/css/rzslider.min.css' %}" rel="stylesheet">
+    <script src="{% static 'SPTGUI/dist/js/rzslider.min.js' %}"></script>
+    
+    <!-- Custom app code & CSS -->
+    <script src="{% static 'SPTGUI/docs_visualizations.js' %}"></script>
+
+    <!-- D3.js -->
+    <script src="{% static 'SPTGUI/dist/js/d3.v4.min.js' %}"></script>
+      
+  </head>
+  
+  <body ng-app="app">
+    <div class="container">
+      <h1> Applet for the jump length distribution</h1>
+      <div ng-init="jld={D1: 1.0, D2: 5.0, P: 0.5, S: 10, dt: 10}">
+	<jump-length-distribution data="jld"></jump-length-distribution>
+	<br/>
+	<table>
+	  <tr>
+	    <td class="col-sm-2">D<sub>1</sub> (&mu;m²/s)</td>
+	    <td class="col-sm-10"><rzslider
+		   rz-slider-model="jld.D1"
+		   rz-slider-options="{floor: 0, ceil:10, step: 0.1, precision: 1}">
+	    </rzslider></td>
+	  </tr>
+	  <tr>
+	    <td class="col-sm-2">D<sub>2</sub> (&mu;m²/s)</td>
+	    <td class="col-sm-10"><rzslider
+		   rz-slider-model="jld.D2"
+		   rz-slider-options="{floor: 0, ceil:10, step: 0.1, precision: 1}">
+	    </rzslider></td>
+	  </tr>
+	  <tr>
+	    <td class="col-sm-2">P</td>
+	    <td class="col-sm-10"><rzslider
+		   rz-slider-model="jld.P"
+		   rz-slider-options="{floor: 0, ceil:1, step: 0.01, precision: 2}">
+	    </rzslider></td>
+	  </tr>
+	  <tr>
+	    <td class="col-sm-2">&sigma; (nm)</td>
+	    <td class="col-sm-10"><rzslider
+		   rz-slider-model="jld.S"
+		   rz-slider-options="{floor: 0, ceil:100, step: 1}">
+	    </rzslider></td>
+	  </tr>
+	  <tr>
+	    <td class="col-sm-2">&Delta;t (ms)</td>
+	    <td class="col-sm-10"><rzslider
+		   rz-slider-model="jld.dt"
+		   rz-slider-options="{floor: 1, ceil:100, step: 1}">
+	    </rzslider></td>
+	  </tr>
+	</table>
+      </div>
+      <h1> Applet for the fraction lost in z</h1>
+      <div class="alert alert-danger">WIP.</div>
+      <fraction-lost></fraction-lost>
+    </div>
+  </body>
+</html>
