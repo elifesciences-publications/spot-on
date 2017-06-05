@@ -34,9 +34,9 @@ angular.module('app')
 		x_range = [0, 3] // µm
 		X = d3.range(x_range[0], x_range[1], x_range[1]/300)
 		Y1 = distrib(X, D1, sigma, dt)
-		XY1 = X.map(function(xx, i) {return {x: xx, y:Y1[i]}})
+		XY1 = X.map(function(xx, i) {return {x: xx, y:P*Y1[i]}})
 		Y2 = distrib(X, D2, sigma, dt)
-		XY2 = X.map(function(xx, i) {return {x: xx, y:Y2[i]}})
+		XY2 = X.map(function(xx, i) {return {x: xx, y:(1-P)*Y2[i]}})
 		XY12 = X.map(function(xx, i) {return {x: xx, y:P*Y1[i]+(1-P)*Y2[i]}})
 
 		// Clean plot
@@ -57,6 +57,12 @@ angular.module('app')
 		
 		// DRAW!!!
 		lines.append("path")
+	    	    .datum(XY12)
+ 	    	    .attr("fill", "none")
+ 	    	    .attr("stroke", "orange")
+ 	    	    .attr("stroke-width", 4)
+ 	    	    .attr("d", line)
+		lines.append("path")
 		    .datum(XY1)
  		    .attr("fill", "none")
  		    .attr("stroke", "red")
@@ -67,12 +73,6 @@ angular.module('app')
  	    	    .attr("fill", "none")
  	    	    .attr("stroke", "blue")
  	    	    .attr("stroke-width", 2.5)
- 	    	    .attr("d", line)
-		lines.append("path")
-	    	    .datum(XY12)
- 	    	    .attr("fill", "none")
- 	    	    .attr("stroke", "orange")
- 	    	    .attr("stroke-width", 4)
  	    	    .attr("d", line)
 
 		// Some legends
