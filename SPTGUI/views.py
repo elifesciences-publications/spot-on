@@ -100,13 +100,14 @@ def new_analysis(request):
 
 def new_demo(request):
     """Function that initiates a new demo analysis (with default datasets)"""
-    if request.method == "POST":
+    if request.method == "POST" or not custom_settings.RECAPTCHA_USE:
         ## Validate CAPTCHA
-        ip = recaptcha.get_client_ip(request)
-        captcha_ok = recaptcha.grecaptcha_verify(request, custom_settings.RECAPTCHA_SECRET)
+        if custom_settings.RECAPTCHA_USE:
+            ip = recaptcha.get_client_ip(request)
+            captcha_ok = recaptcha.grecaptcha_verify(request, custom_settings.RECAPTCHA_SECRET)
 
-        if not captcha_ok['message']:
-            return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
+            if not captcha_ok['message']:
+                return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
         
         ## Generate a name
         url_basename = get_unused_namepage()
