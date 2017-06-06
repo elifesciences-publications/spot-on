@@ -166,7 +166,7 @@
   
 <p> We can then set the parameters to compute the jump length distribution. We will mostly leave the parameters as default. Section <a href="jld-parameters">Jump length distribution computation parameters</a> describe the role of each parameter in more details. However, the table below summarizes some key principles to properly set those parameters</p>
 
-<table class="table table-striped">
+<table class="table table-striped table-condensed">
   <tr>
     <th>Parameter</th>
     <th>Value</th>
@@ -206,7 +206,7 @@
   <tr>
     <td>dT (ms)</td>
     <td>13</td>
-    <td>Y</td>
+    <td>N</td>
     <td>It is crucial to match this value with the acquisition rate of the dataset. Here 13 ms/frame.</td>
   </tr>
 </table>
@@ -236,25 +236,277 @@
 
 <div class="alert alert-info"> The result of all the computations operated by Spot-On are cached. So when next time you enter the same set of parameters as previously, the computation should be almost instantaneous.</div>
 
-<p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
+<p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
 
 <img src="/static/SPTGUI/img/tutorial/tuto8.png"
      class="img-responsive center-block"
      style="max-width: 95%;"
      alt="Comparison of the Sox2 and H2B jump length distributions.">
 
-<p> Save</p>
+<p> Before moving to the fitting of the data, let's save this last plot. We will download it later (from the "Download" tab). To do so, click the <span class="btn btn-default btn-sm">Mark for download</span> button at the bottom of the page. This will prompt a small form where you can enter a name and a description that will be used as a reminder when you download the file. Also, display again the fit for Sox2 (by selecting the appropriate files and clicking the and <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box) and save Mark it for download too. We'd get back to these saved analyses later.</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto9.png"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Screenshot of the mark for download box.">
 
 <h4>Model fitting</h4>
 <p> Now that we are familiar with the computation and display of the jump length distribution, let's now move to model fitting!</p>
 
-<p>Spot-On fits the jump length distribution, as defined by the parameters of the "Jump length distribution" box. The fitting parameters are defined in the "Model fitting" box. Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quicly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>.</p>
+<p>Spot-On fits the jump length distribution, as defined by the parameters of the "Jump length distribution" box. The fitting parameters are defined in the "Model fitting" box. Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>.</p>
 
-- picture of the box
-- table with the meaning of parameters
-- Fit
-- Compare the fits with the two states.
-- Then move to the three states model.
+<img src="/static/SPTGUI/img/tutorial/tuto10.png"
+     class="img-responsive center-block"
+     style="max-width: 60%;"
+     alt="screenshot of the fitting parameters box.">
 
-<h3>Export</h3>
-<h3>Extra features</h3>
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>
+    <th>Default?</th>
+    <th>Description/Comments</th>    
+  </tr>
+  <tr>
+    <td>Kinetic model</td>
+    <td>2-states model</td>
+    <td>N</td>
+    <td></td>    
+  </tr>
+  <tr>
+    <td>D<sub>bound</sub> (µm²/s)</td>
+    <td>[0.005, 0.8]</td>
+    <td>Y</td>
+    <td>The range of diffusion coefficients for the bound fraction.</td>    
+  </tr>
+  <tr>
+    <td>D<sub>free</sub> (µm²/s)</td>
+    <td>[0.15, 25]</td>
+    <td>Y</td>
+    <td>The range of diffusion coefficients for the free fraction.</td>    
+  </tr>
+  <tr>
+    <td>F<sub>bound</sub></td>
+    <td>[0,1]</td>
+    <td>Y</td>
+    <td>The range for the fraction bound.</td>    
+  </tr>
+  <tr>
+    <td>Localization error (µm)</td>
+    <td>0.035</td>
+    <td>Y</td>
+    <td></td>    
+  </tr>
+  <tr>
+    <td>dZ (µm)</td>
+    <td>0.7</td>
+    <td>Y</td>
+    <td>The estimated detection range in z.</td>    
+  </tr>
+  <tr>
+    <td>Model Fit</td>
+    <td>CDF</td>
+    <td>N</td>
+    <td>Select whether the model will fit the jump length distribution (that is the probability density function, PDF), or the cumulative jump length distribution (CDF).</td>    
+  </tr>
+  <tr>
+    <td>Perform single cell fit</td>
+    <td>No</td>
+    <td>Y</td>
+    <td>If "Yes", each individual dataset will be fit. Since our uploaded files are replicates of the same experiment, we want to pool them together.</td>    
+  </tr>
+  <tr>
+    <td>Iterations</td>
+    <td>3</td>
+    <td>Y</td>
+    <td>The number of times the solver will independently be initialized.</td>    
+  </tr>
+</table>
+
+<div class="alert alert-info">
+  <p>When adjusting the dZ and dT parameters (in the jump length distribution and the fitting parameters box, respectively, you will notice that the mention next to the dZ changes. The displayed values correspond to the closest pair of parameter for which a corrected \(Z\) depth has been derived -- corresponding to an \(Z\) depth adjusted for the possibility of particles exiting and entering the detection volume again (see the <a href="#methods">Methods</a> section). The \(a\) and \(b\) parameters describe this corrected valued as a function of the estimated diffusion coefficient.</p>
+
+  <img src="/static/SPTGUI/img/tutorial/tuto11.png"
+       class="img-responsive center-block"
+       style="max-width: 60%;"
+       alt="screenshot of the z correction box.">
+
+  <p> It is important to make sure that the set of displayed parameters is not too far from the real acquisition settings, else, the computed z correction might be wrong.</p>
+</div>
+
+<p> Having now reviewed the parameters, we can click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button. A "spinning wheel" will appear next to the button while the fit is being performed and will get displayed when the fit completes.</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto12.png"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="2-states fitting result of the H2B datasets.">
+
+<p>Let's take some time to quickly look at the parameters returned by the fitting routine for the H2B datasets. Note that due to different initialization values, the returned parameter can differ from execution to execution:</p>
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>      
+  </tr>
+  <tr>
+    <td>D<sub>bound</td>
+    <td>0.024 µm²/s</td>      
+  </tr>
+  <tr>
+    <td>D<sub>free</sub></td>
+    <td>3.940 µm²/s</td>      
+  </tr>
+  <tr>
+    <td>F<sub>bound</sub></td>
+    <td>0.696</td>      
+  </tr>
+  <tr>
+    <td>l<sub>2</sub> error</td>
+    <td>0.00009184</td>      
+  </tr>
+  <tr>
+    <td>AIC</td>
+    <td>-195265</td>      
+  </tr>
+  <tr>
+    <td>BIC</td>
+    <td>-195241</td>      
+  </tr>
+</table>
+
+<p> A few comments arise. First, the estimated fraction bound is about 70 %, which is expected from a strongly DNA-associated protein such as H2B. The associated coefficient with the bound population is close to zero (0.024 µm²/s) whereas the diffusion coefficient for the free population (3.94 µm²/s) matches previous knowledge of the dynamics of the protein.</p>
+
+<p>Furthermore, the \(\ell_2\) error (the mean square error) is   \(\lt 10^{-4}\), which can be considered as acceptable, even though significant misfit appear at low and high \(\Delta t\).</p>
+									   
+<p> Finally, the <a href="https://en.wikipedia.org/wiki/Akaike_information_criterion">AIC</a> and <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a> criterion are provided to allow model comparison. They cannot be used to assess the quality of fit per se. We will come back to those criteria later.</p>
+
+<p>Then, we can save the displayed fit by clicking the <span class="btn btn-default btn-sm">Mark for download</span> button.</p>
+
+<p> We can now proceed similarly to derive the fit for the Sox2 datasets.</p>
+
+<p> Finally, we can now see how the quality of the fit increases by running the fit again, but with a 3-states model. Select the 3-state model icon (Slow-Bound-Fast) on the "Model fitting" box. New parameters appear, very similarly as with the two-states model. We will leave the parameters to their default values, except for the CDF fit. Then click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button and wait a until the fitting completes. Observe how the quality of fit evolves, and the parameters and estimated fractions.</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto13.png"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Comparison of 2-states and 3-states fitting for Sox2 datasets.">
+
+<div class="col-md-6">
+  <b> 2-states model</b>
+  <table class="table table-striped table-condensed">
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>      
+    </tr>
+    <tr>
+      <td>D<sub>bound</td>
+      <td>0.037 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>D<sub>free</sub></td>
+      <td>2.747 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>F<sub>bound</sub></td>
+      <td>0.337</td>      
+    </tr>
+    <tr>
+      <td>l<sub>2</sub> error</td>
+      <td>0.00043094</td>      
+    </tr>
+    <tr>
+      <td>AIC</td>
+      <td>-162789</td>      
+    </tr>
+    <tr>
+      <td>BIC</td>
+      <td>-162765</td>      
+    </tr>
+  </table>
+</div>
+
+<div class="col-md-6">
+  <b> 3-states model</b>
+  <table class="table table-striped table-condensed">
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>      
+    </tr>
+    <tr>
+      <td>D<sub>bound</td>
+      <td>0.014 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>D<sub>slow</sub></td>
+      <td>0.643 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>D<sub>fast</sub></td>
+      <td>4.938 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>F<sub>bound</sub></td>
+      <td>0.244</td>      
+    </tr>
+    <tr>
+      <td>F<sub>slow</sub></td>
+      <td>0.273</td>      
+    </tr>
+    <tr>
+      <td>l<sub>2</sub> error</td>
+      <td>0.00008137</td>      
+    </tr>
+    <tr>
+      <td>AIC</td>
+      <td>-197812</td>      
+    </tr>
+    <tr>
+      <td>BIC</td>
+      <td>-197772</td>      
+    </tr>
+  </table>
+</div>
+
+<p> Based on the information criteria, it is clear that the 3-states model provides a better fit to the data, even when penalizing for the number of parameters. </p>
+
+<div class="alert alert-info"> Be careful when interpreting a 3-states model. Indeed, although a two-states model usually appears robust to model mismatch, a 3-states model can fit a wide range of distributions, and the estimated coefficients might be model specific. For instance, the model can invoke a third component to explain what actually is anomalous diffusion.</div>
+
+<h3>Download</h3>
+<p>Finally move to the "Download" tab, where all the analyses we marked for download are stored. The view should look as below:</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto14.png"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Overview of the download page.">
+
+<p>For each analysis marked for download, the following fields are displayed, in addition to the time of the analysis and the name and description we provided in the previous tab: </p>
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Column</th>
+    <th>Description</th>      
+  </tr>
+  <tr>
+    <td>Name & description</td>
+    <td>The name & description we provided in the previous tab.</td>      
+  </tr>
+  <tr>
+    <td>Datasets</td>
+    <td>The list of datasets included for this plot. Hovering over the numbers displays the full name and description of the dataset.</td>      
+  </tr>
+  <tr>
+    <td>Display</td>
+    <td>Codes corresponding to the type of plot displayed. Hover over the codes to see a short description:
+      <br/><code>P</code>: display of the probability density function,
+      <br/><code>JP</code>: display the pooled jump length distribution,
+      <br/><code>F</code>: pooled fit displayed</td>      
+  </tr>
+  <tr>
+    <td>Download</td>
+    <td>Download the corresponding analysis in various formats. The ZIP archive contains all the formats, the raw data, the display parameters and the fitted coefficients (if any).</td>      
+  </tr>
+  <tr>
+    <td>Delete</td>
+    <td>To delete this analysis.</td>      
+  </tr>
+</table>
