@@ -121,14 +121,14 @@
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states!==null">
-			  <td> D<sub>bound</sub>: </td>
+			  <td> D<sub>bound</sub> (µm²/s): </td>
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0">
 			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0">
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='true'">
-			  <td> D<sub>free</sub>: </td>
+			  <td> D<sub>free</sub> (µm²/s): </td>
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0">
 			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0">
@@ -142,14 +142,14 @@
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='false'">
-			  <td> D<sub>slow</sub>: </td>
+			  <td> D<sub>slow</sub> (µm²/s): </td>
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_med[0]"  type="number" step="any" min="0">
 			    max: <input ng-model= "modelingParameters.D_med[1]"  type="number" step="any" min="0">
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='false'">
-			  <td> D<sub>fast</sub>: </td>
+			  <td> D<sub>fast</sub> (µm²/s): </td>
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0">
 			    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0">
@@ -170,11 +170,11 @@
 			  </td>			  
 			</tr>		
 			<tr>
-			  <td> Localization error: </td>
+			  <td> Localization error (µm): </td>
 			  <td><input ng-model="modelingParameters.LocError" type="number" step="any" min="0"></td>
 			</tr>
 			<tr>
-			  <td> dZ: </td>
+			  <td> dZ (µm): </td>
 			  <td>
 			    <input ng-model="modelingParameters.dZ"
 				   type="number" step="any" min="0">
