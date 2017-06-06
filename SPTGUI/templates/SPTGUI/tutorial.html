@@ -1,7 +1,260 @@
 {% load static %}
 <h2 class="blog-post-title">Quickstart/tutorial</h2>
+<p>This section of the Spot-On documentation will guide you through a sample analysis with a couple of demonstration files and will provide you with an overview of Spot-On features and options.</p>
+
+<p> To access the demonstration files, go to the <a href="{% url 'SPTGUI:index' %}">Spot-On homepage</a> and scroll to the "Get Started section" (or alternatively click the <a href="{% url 'SPTGUI:index' %}#start" class="btn btn-default btn-sm">Start spotting!</a> button on the top menu. First fill in the "I'm not a robot" CAPTCHA. Then you have the option to either upload your own tracking files and start your analysis or start with demo files. We choose this later option for the purpose of this tutorial.</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto1.png"
+     class="img-responsive center-block"
+     style="max-width: 50%;"
+     alt="Screenshot of the CAPTCHA region.">
+
+<p> This option will load the analysis page and will automatically import some demonstration file. Also, a custom and permanent URL is created. Your analyses will accessible from this URL until you choose to delete them. Do not share this URL if you want your datasets and analyses to remain private. You might want to bookmark it in order to reaccess the data later. Note that if you lose this address, there is no way for you to recover your files, since your upload is totally anonymous (we do not collect your identity or email address).</p>
+
+<h3> Overview of the application </h3>
+<p> First of all, Spot-On is organized into <em>four successive tabs</em>. These tabs are populated one after the other (that is, for instance, the "Kinetic modeling" tab remains blank as long as no dataset has been uploaded in the "Data" tab, etc). The four tabs are (<span class="red">&#x2460;</span> in the screenshot below):</p>
+
+<table class="table table-striped">
+  <tr>
+    <th class="col-md-2">Tab</th>
+    <th class="col-md-10">Description</th>
+  </tr>
+  <tr>
+    <td class="col-md-2">Data</td>
+    <td class="col-md-10">This tab allows you to upload your datasets in various formats in a batch mode, to annotate them, and to see statistics both for individual datasets and for the ensemble of uploaded files.</td>
+  </tr>
+  <tr>
+    <td class="col-md-2">Kinetic modeling</td>
+    <td class="col-md-10">Performs the fit of the kinetic model according to specified parameters, display the jump length distribution and the corresponding fit. Allows to include or exclude files for analysis. Display and fits can be marked for download.</td>
+  </tr>
+  <tr>
+    <td class="col-md-2">Download</td>
+    <td class="col-md-10">Allows to download the files marked for download in various formats (PDF, SVG, EPS, PNG, and ZIP archive). The ZIP archive contains the raw data, the fitting parameters and the fitted coefficients.</td>
+  </tr>
+  <tr>
+    <td class="col-md-2">Settings</td>
+    <td class="col-md-10">Allows to erase the analysis (together with all the uploaded datasets).</td>
+  </tr>
+</table>
+
+<p>The "Upload dataset" region (<span class="red">&#x2461;</span> in the screenshot below), where you can upload from various file formats. Clicking on any of the format will display a box where you can enter additional upload parameters, and will ultimately display a drag-and-drop upload box. Accepted formats are described in more details in the <a href="#input-formats">Input formats</a> section below.</p>
+
+<div class="alert alert-info"> For the purpose of this tutorial, the data have already been loaded, so we won't play with this part of the page</div>
+
+<p> The "Uploaded datasets" region (<span class="red">&#x2462;</span> in the screenshot below), that displays the uploaded datasets, together with their status (<code>uploading</code>, <code>queued</code>, <code>error</code>). The meaning of the upload codes is detailed in the <a href="#import-codes">Import codes</a> section below. When clicking on the "eye" symbol (<span class="glyphicon glyphicon-eye-open"></span>) next to an uploaded dataset will display some statistics in the area  <span class="red">&#x2463;</span>. The meaning and details of the computation of each statistic is detailed in section <a href="#dataset-statistics">Dataset statistics</a> below. Finally, area <span class="red">&#x2464;</span> displays similar statistics as area <span class="red">&#x2463;</span>, but for all the datasets pooled together.</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto2.png"
+     class="img-responsive center-block"
+     style="max-width: 70%;"
+     alt="Screenshot of 'Data' tab.">
+
 <h3>Import</h3>
+<p>To proceed with the tutorial, several files have been loaded, they are named:</p>
+<ol>
+  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell01_Tracked.mat</li>
+  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_2-405_13msCam_cell02_Tracked.mat</li>
+  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell02_Tracked.mat </li>
+  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_2-405_13msCam_cell03_Tracked.mat </li>
+  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_3-405_13msCam_cell04_Tracked.mat </li>
+  <li>20170223_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-5-405_13msCam_cell01_Tracked.mat</li>
+  <li>20170223_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-7-405_13msCam_cell03_Tracked.mat</li>
+  <li>20170223_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-7-405_13msCam_cell02_Tracked.mat</li>
+  <li>20170307_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-5-405_13msCam_cell03_Tracked.mat</li>
+  <li>20170307_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-7-405_13msCam_cell05_Tracked.mat </li>  
+</ol>
+
+<p> These files correspond to a subset of an experimental series spanning ~1500 cells in several conditions for various transcription factors and DNA-binding proteins, acquired at various framerates and durations of stroboscopic illumination. This dataset is described in more details in the <a href="#datasets">Datasets</a> section.
+
+<p>Five of these correspond to the transcription factor <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a> is endogeneously tagged with a HaloTag and observed with the PA-JF646<b>add reference</b> organic dye. Five other correspond to the observation of histone H2B.</p>
+
+<p> Since the naming convention of these files is a little bit cumbersome, let's first edit the description of each file to make it clearer. To do so, click on the "pencil" icon (<span class="glyphicon glyphicon-pencil"></span>, see <span class="red">&#x2465;</span>) next to each uploaded dataset. An "edit" box will appear at the bottom of the "Uploaded datasets" area, and we can now either rename or add a more explicit description of the datasets. We choose to leave the name as is, but add a short description for each dataset, such as "H2B cell1", "H2B cell2", etc. (<span class="red">&#x2466;</span>)</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto3.png"
+     class="img-responsive center-block"
+     style="max-width: 50%;"
+     alt="Screenshot: Editing the description of datasets.">
+
+<div class="alert alert-danger"> The uploaded dataset comprises two distinct proteins, and five replicates for each protein. In the next steps, we want to make sure that we pool the replicates of each protein together, but do not mix up the two proteins.</div>
+
 <h3>Quality check</h3>
-<h3>Analysis</h3>
+<p>Now that we see a little bit clearer through the datasets, let's inspect a little bit the datasets, and try to assess the quality of the dataset. Spot-On provides a few quality metrics (statistics), accessible for each dataset by clicking the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>). The table below summarizes the statistics computed for the first dataset (names <em>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell01_Tracked.mat</em>.</p>
+
+<table class="table table-striped">
+  <tr>
+    <th>Statistic</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Number of traces</td>
+    <td>3764</td>
+  </tr>
+  <tr>
+    <td>Number of frames</td>
+    <td>30000</td>
+  </tr>
+  <tr>
+    <td>Number of detections</td>
+    <td>7625</td>
+  </tr>
+  <tr>
+    <td>Number of traces with >=3 detections </td>
+    <td>783</td>
+  </tr>
+  <tr>
+    <td>Number of jumps</td>
+    <td>3861</td>
+  </tr>
+  <tr>
+    <td>Length of trajectories (in number of frames)</td>
+    <td>median: 1, mean: 2.026</td>
+  </tr>
+  <tr>
+    <td>Particles per frame</td>
+    <td>median: 0, mean: 0.254</td>
+  </tr>
+  <tr>
+    <td>Jump length (µm) </td>
+    <td>median: 0.191, Mean: 0.306</td>
+  </tr>
+</table>
+
+<p> <b>Comment on the main features of the dataset</b>. Although the number of jumps is not extremely high, we need to keep in mind that we plan to pool this dataset with four other datasets, which should overcome the limited size of this dataset. In case we encounter a dataset of unsuitable quality, we can exclude it by clicking the "cross" button (<span class="glyphicon glyphicon-remove"></span>) next to the dataset.</p>
+
+<p>Once that we are confident about the quality of the uploaded data, we can proceed to the second tab, the "Kinetic modeling".</p>
+
+<h3>Kinetic modeling</h3>
+<h4>Overview of the kinetic modeling tab</h4>
+<p>The "kinetic modeling" tab is divided in several sections:</p>
+
+<table class="table table-striped">
+  <tr>
+    <th>#</th>
+    <th>Section</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><span class="red">&#x2467;</span></td>
+    <td>Dataset selection</td>
+    <td>This section lists all the uploaded datasets. For each fit of the model, you can choose whether to include one specific dataset for fitting or not.</td>
+  </tr>
+  <tr>
+    <td><span class="red">&#x2468;</span> and <span class="red">&#x2469;</span></td>
+    <td>Parameters</td>
+    <td>Parameters used to compute the empirical jump length distribution (<span class="red">&#x2468;</span>) and to fit it (<span class="red">&#x2468;</span>). This includes the choice of a 2-states vs. a 3-states model, the range of the tested parameters, etc.</td>
+  </tr>
+  <tr>
+    <td><span class="red">&#x246A;</span> and <span class="red">&#x246B;</span></td>
+    <td>Jump length histogram</td>
+    <td>This area contains the plot of the jump length distribution, overlayed with the fitted model (if evaluated). It also contains option to either visualize single datasets or the pool of the selected datasets. Finally, it contains an option to save an analysis for download.</td>
+  </tr>
+</table>
+
+<img src="/static/SPTGUI/img/tutorial/tuto4.png"
+     class="img-responsive center-block"
+     style="max-width: 60%;"
+     alt="Screenshot: Overview of the kinetic modeling tab.">
+
+<h4>Computation of the jump length distribution</h4>
+<p> For the purpose of this tutorial, we'll simply fit the H2B and Sox2 datasets separately, and compare the two-states and three-states models based on their goodness of fit (assessed by the Bayesian Information Criterion, <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a>).</p>
+
+<p> First, in the "Dataset selection" select the five Sox2 replicates. This is done by switching the "Include" toggle button to "On" next to the Sox2 datasets. Make sure that none of the H2B datasets are included.</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto5.png"
+     class="img-responsive center-block"
+     style="max-width: 60%;"
+     alt="Selection of Sox2 datasets.">
+  
+<p> We can then set the parameters to compute the jump length distribution. We will mostly leave the parameters as default. Section <a href="jld-parameters">Jump length distribution computation parameters</a> describe the role of each parameter in more details. However, the table below summarizes some key principles to properly set those parameters</p>
+
+<table class="table table-striped">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>
+    <th>Default?</th>
+    <th>Comment</th>
+  </tr>
+  <tr>
+    <td>Bin Width (µm)</td>
+    <td>0.01</td>
+    <td>Y</td>    
+    <td>The size of the bin used to build the empirical histogram of jump lengths.</td>
+  </tr>
+  <tr>
+    <td>Number of gaps allowed</td>
+    <td>1</td>
+    <td>Y</td>    
+    <td>The number of gaps allowed by the tracking algorithm. This <em>has to</em> match the maximum number of gaps allowed by the tracking algorithm.</td>
+  </tr>
+  <tr>
+    <td>Number of timepoints</td>
+    <td>8</td>
+    <td>Y</td>    
+    <td>The number of \(\Delta t\) to consider when fitting the model. Usually, higher values provide better results, provided that the histogram are sufficiently populated.</td>
+  </tr>
+  <tr>
+    <td>Jumps to consider</td>
+    <td>4</td>
+    <td>Y</td>
+    <td>The number of jumps per trajectory to consider. This is done to avoid overcounting bound molecules. </td>
+  </tr>
+  <tr>
+    <td>Max jump (µm)</td>
+    <td>3</td>
+    <td>Y</td>
+    <td>The range of distances to build the histogram of jump lengths. This parameter has to be set so that the tail of the distribution is properly captured. Conversely, a value too high will disturb the fitting, that will be very sensitive to this potentially noisy tail.</td>
+  </tr>
+  <tr>
+    <td>dT (ms)</td>
+    <td>13</td>
+    <td>Y</td>
+    <td>It is crucial to match this value with the acquisition rate of the dataset. Here 13 ms/frame.</td>
+  </tr>
+</table>
+
+<img src="/static/SPTGUI/img/tutorial/tuto6.png"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Jump length distribution parameters.">
+
+<br/>
+<p> Then click the <span class="btn btn-default">Compute!</span> button. After a few seconds, the jump length distribution is computed for all the datasets and appears under the "Jump length distribution" section.</p>
+
+<div class="alert alert-info"> This is the main view of Spot-On, so it is useful to spend a little bit of time to get familiarized with the various options.</div>
+
+<img src="/static/SPTGUI/img/tutorial/tuto7.png"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Jump length distribution plot.">
+
+<p> The graph displayed should be read as follows:</p>
+<ul>
+  <li>Each row corresponds to a jump length distribution evaluated at a given \(\Delta t\). Since short trajectories are more frequent than long trajectories, higher \(Delta t\) histograms tend to be less populated and appear less smooth (or more "noisy"). The number of rows is determined by the "Number of timepoints" parameter.</li>
+  <li> The jump length distribution is computed for values ranging between 0 µm and 3 µm (this corresponds to the "Max Jump" parameter). However, by default, only the first 1.2 µm are initially plotted. To plot the full histogram (or alternatively, to zoom to the origin), the "Max Jump displayed" cursor, located under the plot can be adjusted. </li>
+  <li> Then, by default, the jump length distribution is displayed for individual datasets. The displayed dataset is specified in the "Display dataset" box under the plot. It is often useful to take the time to review the jump length distribution of each single acquisition, in order to know which datasets might have to be excluded from further analysis.</li>
+  <li> Once individual datasets have been reviewed, it is possible to display the pooled jump length distribution by clicking the "Show pooled jump length distribution" toggle button under the plot. This will compute the distribution for the selected datasets only (in our case, for all the Sox2 datasets). Pooled histograms appear with a hard, black boundary, and the included datasets are displayed under the graph. The updated graph might take a few seconds to render.</li>
+</ul>
+
+<div class="alert alert-info"> The result of all the computations operated by Spot-On are cached. So when next time you enter the same set of parameters as previously, the computation should be almost instantaneous.</div>
+
+<p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
+
+<img src="/static/SPTGUI/img/tutorial/tuto8.png"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Comparison of the Sox2 and H2B jump length distributions.">
+
+<p> Save</p>
+
+<h4>Model fitting</h4>
+<p> Now that we are familiar with the computation and display of the jump length distribution, let's now move to model fitting!</p>
+
+<p>Spot-On fits the jump length distribution, as defined by the parameters of the "Jump length distribution" box. The fitting parameters are defined in the "Model fitting" box. Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quicly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>.</p>
+
+- picture of the box
+- table with the meaning of parameters
+- Fit
+- Compare the fits with the two states.
+- Then move to the three states model.
+
 <h3>Export</h3>
 <h3>Extra features</h3>
