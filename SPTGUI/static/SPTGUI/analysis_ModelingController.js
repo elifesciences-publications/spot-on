@@ -472,9 +472,11 @@ angular.module('app')
 	// The logic behind the "fit localization error" switch
 	$scope.fitLocalizationError = function() {
 	    if ($scope.modelingParameters.fitSigma) {
-		$scope.modelingParameters.LocError = modelingParametersDefault.LocError;
+		$scope.modelingParameters.LocError = null;
+		$scope.modelingParameters.sigma = modelingParametersDefault.sigma;
 	    } else {
-		$scope.modelingParameters.sigma = angular.copy(modelingParametersDefault.sigma);
+		$scope.modelingParameters.sigma = null
+		$scope.modelingParameters.LocError = angular.copy(modelingParametersDefault.LocError);
 	    }
 	}
 	
