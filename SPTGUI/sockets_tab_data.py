@@ -169,6 +169,34 @@ def global_statistics(message, data, url_basename):
                             
     return res
 
+
+def edit_api(message, data, url_basename): #request, url_basename):
+    """Function to edit a dataset
+    So far the following fields of the database are handled:
+    - name
+    - description
+    """
+
+    ana = get_object_or_404(Analysis, url_basename=url_basename)
+    d = get_object_or_404(Dataset, id=data['dataset_id'])
+
+    ## Make the update
+    d.name = data['dataset']['name']
+    d.description = data['dataset']['description']
+    d.save()
+
+    ## Return something
+    ret = {'id': d.id, ## the id of the Dataset in the database
+            'unique_id': d.unique_id,
+            'filename' : d.data.name,
+            'name' :    d.name,
+            'description' : d.description,
+            'upload_status' : d.upload_status,
+            'preanalysis_status' : d.preanalysis_status}
+    
+    return ret
+
+
 ## ==== Helper functions
 def check_jld(d):
     """Small helper function to check if we have a JLD stored"""
