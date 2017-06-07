@@ -8,6 +8,13 @@ angular.module('app')
 	    return promise;
 	}
 
+	this.updateDataset = function(idd, dataset) {
+	    var request = { type: "edit_dataset" ,
+			    dataset_id: idd,
+			    dataset: dataset}
+	    return MainSocket.sendRequest(request); 
+	}
+
 	this.getGlobalStatistics = function() {
 	    var request = { type: "global_statistics" }
 	    var promise = MainSocket.sendRequest(request); 
@@ -34,6 +41,11 @@ angular.module('app')
 	    $rootScope.$broadcast('datasets:updated', datasets)	    
 	    console.log("Added dataset. Number of datasets: "+datasets.length);
 	}
+
+	this.broadcastEditedDataset =  function(dataset_id, dataset) {
+	    $rootScope.$broadcast('dataset:updated', dataset_id, dataset)	    
+	}
+	
 	
 	this.broadcastDeletedDataset =  function(database_id,dataset_id, datasets) {
 	    $rootScope.$broadcast('datasets:deleted',{database_id: database_id,

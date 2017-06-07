@@ -102,43 +102,6 @@ def datasets_api(request, url_basename):
     
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
-def edit_api(request, url_basename):
-    """Function to edit a dataset
-
-    So far the following fields of the database are handled:
-    - name
-    - description
-    """
-
-    ## Filter the request
-    if not request.method == 'POST':
-        return HttpResponse(json.dumps(['error']), content_type='application/json')
-    
-    ana = get_object_or_404(Analysis, url_basename=url_basename)
-
-    try:
-        body = json.loads(request.body)
-        d = get_object_or_404(Dataset, id=int(body['id']))
-    except:
-        logging.error("In function `edit_api`, the `id` field was not found in the POST body, body content: {}".format(body))
-        return HttpResponse(json.dumps([]), content_type='application/json')
-
-    ## Make the update
-    d.name = body['dataset']['name']
-    d.description = body['dataset']['description']
-    d.save()
-
-    ## Return something
-    ret = {'id': d.id, ## the id of the Dataset in the database
-            'unique_id': d.unique_id,
-            'filename' : d.data.name,
-            'name' :    d.name,
-            'description' : d.description,
-            'upload_status' : d.upload_status,
-            'preanalysis_status' : d.preanalysis_status}
-    
-    return HttpResponse(json.dumps(ret), content_type='application/json')
-
 def preprocessing_api(request, url_basename):
     """Function to poll the state of the preprocessing for all the datasets.
     Preprocessing mostly consists of the asynchronous task `check_input_file`."""

@@ -116,6 +116,13 @@ angular.module('app')
 	    $scope.datasets = datasets;
 	    initView();
 	});
+	// Name/description of the datasets have been updated
+	$scope.$on('dataset:updated', function(event, dataset_id, dataset) {
+	    $scope.datasets = $scope.datasets.map(function(el) {
+		return el.id==dataset_id ? dataset : el
+	    })
+	    console.log("updated dataset "+dataset_id);
+	});
 
 	// When some datasets have been added to the list, we find the indices
 	// of the old one and create blank slots for the new one

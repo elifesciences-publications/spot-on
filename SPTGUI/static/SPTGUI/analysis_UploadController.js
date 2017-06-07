@@ -133,7 +133,7 @@ angular.module('app')
 	    });
 	    // Finish by sending the updated entry to the server
 	    getterService.updateDataset(dataset.id, dataset)
-		.then(getterService.broadcastEditedDataset(dataset.id));
+		.then(getterService.broadcastEditedDataset(dataset.id, dataset));
 	    $scope.cancelEdit(dataset); // End edition
 	}
 
