@@ -268,11 +268,13 @@ angular.module('app')
 				     D_bound: [0.0005, 0.08],
 				     F_bound: [0, 1],
 				     F_fast:  [0, 1],
+				     sigma: [0.01, 0.1],
 				     LocError: 0.035,
 				     iterations: 3,
 				     dT: 4.477/1000,
 				     dZ: 0.700,
 				     ModelFit: false, //false: PDF, true: CDF fit
+				     fitSigma: false,
 				     SingleCellFit: false,
 				     include : [], // Populated later
 				     fit2states : null,
@@ -467,6 +469,17 @@ angular.module('app')
 	    else {return $scope.showJLPf;}
 	}
 
+	// The logic behind the "fit localization error" switch
+	$scope.fitLocalizationError = function() {
+	    if ($scope.modelingParameters.fitSigma) {
+		$scope.modelingParameters.LocError = null;
+		$scope.modelingParameters.sigma = modelingParametersDefault.sigma;
+	    } else {
+		$scope.modelingParameters.sigma = null
+		$scope.modelingParameters.LocError = angular.copy(modelingParametersDefault.LocError);
+	    }
+	}
+	
 	// The logic behind the switch between the two and three states model
 	$scope.init2states = function(nstates) {
 	    if (nstates==2) {

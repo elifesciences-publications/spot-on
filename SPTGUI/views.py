@@ -348,6 +348,8 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
                 fitparams[k] = save_pars['fitparams'][k].value
                 fitparams[k+"_std"] = save_pars['fitparams'][k].stderr
             fitparams["fit2states"] = save_pars['params']["fit2states"]
+            fitparams["fitSigma"] = save_pars['params']["fitSigma"]
+            
             if not fitparams["fit2states"]:
                 if fitparams["D_med"]>fitparams["D_fast"]:
                     tmp = fitparams["D_med"].copy()
