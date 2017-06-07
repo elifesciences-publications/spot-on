@@ -170,7 +170,23 @@
 			</tr>		
 			<tr>
 			  <td> Localization error (µm): </td>
-			  <td><input ng-model="modelingParameters.LocError" type="number" step="any" min="0"></td>
+			  <td>Fit it from data 
+			    <toggle-switch
+			       ng-model="modelingParameters.fitSigma"
+			       on-change="fitLocalizationError()"
+			       off-label="No"
+			       on-label="Yes"></toggle-switch>
+			  </td>
+			</tr>
+			<tr>
+			  <td>&nbsp;</td>
+			  <td ng-show="!modelingParameters.fitSigma">
+			    <input  ng-model="modelingParameters.LocError" type="number" step="any" min="0">
+			  </td>
+			  <td ng-show="modelingParameters.fitSigma">
+			    min: <input ng-model="modelingParameters.sigma[0]" type="number" step="any" min="0">
+			    max: <input ng-model="modelingParameters.sigma[1]" type="number" step="any" min="0">
+			  </td>
 			</tr>
 			<tr>
 			  <td> dZ (µm): </td>
