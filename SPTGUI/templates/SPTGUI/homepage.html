@@ -159,10 +159,11 @@
       <div class="row featurette">
         <div class="col-md-7 col-md-push-5">
           <h2 class="featurette-heading">How does it work? <span class="text-muted">See for yourself.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          <p class="lead">Spot-On fits a two-states or a three-states model to the empirical distribution of jump lengths obtained from a single particle tracking dataset. To do so, Spot-On takes into account a finite detection volume and biases against fast-moving particles. From that, Spot-On extracts kinetic parameters: diffusion coefficients, fraction bound.</p>
+	  <a class="btn btn-lg btn-default" href="{% url 'SPTGUI:staticpage' 'docs' %}#methods" role="button">Learn more!</a>
         </div>
         <div class="col-md-5 col-md-pull-7">
-          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+          <img class="featurette-image img-responsive center-block" src="{% static 'SPTGUI/img/principle.png' %}" alt="Principle of Spot-On: fit ">
         </div>
       </div>
 

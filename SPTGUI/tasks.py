@@ -242,6 +242,7 @@ def fit_jld(arg, hash_prefix):
         fit.params,  
         JumpProb = JumpProb,
         r = HistVecJumpsCDF,
+        #LocError = fit.params['sigma'].value,
         LocError = params['LocError'],
         dT = params['dT'],
         dZ = params['dZ'],

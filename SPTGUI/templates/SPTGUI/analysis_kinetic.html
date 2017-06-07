@@ -41,11 +41,11 @@
 		      </tr>
 		      <tr>
 			<td>Number of gaps allowed</td>
-			<td><input min="0" ng-model= "jldParameters.GapsAllowed"  type="number">What should be a max number of gaps?</td>
+			<td><input min="0" ng-model= "jldParameters.GapsAllowed"  type="number"></td>
 		      </tr>
 		      <tr>
 			<td>Number of timepoints</td>
-			<td><input ng-model= "jldParameters.TimePoints"  type="number">What should be a min/max number of timepoints?</td>
+			<td><input ng-model= "jldParameters.TimePoints"  type="number"></td>
 		      </tr>
 		      <tr>
 			<td>Jumps to consider</td>
@@ -59,12 +59,11 @@
 			     off-label="No"
 			     on-label="Yes">
 			  </toggle-switch>
-			  What should be a min/max number of jumps to consider?
 			</td>
 		      </tr>
 		      <tr>
 			<td>Max jump (µm)</td>
-			<td><input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0">What should be a max value?</td>
+			<td><input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0"></td>
 		      </tr>
 		      <tr>
 			<td> dT (ms): </td>
@@ -182,10 +181,9 @@
 			    dT={{modelingParameters.dTfit*1000.}} ms)
 			    for the z correction
 			    <a href="#"
-			       uib-tooltip="a={{zcorr.a|number}},
-					    b={{zcorr.b|number}} 
-					    (units please ?)">?</a>.
-			  </td> 
+			       uib-tooltip="a={{zcorr.a|number}} s^(-1/2),  b={{zcorr.b|number}} µm">?</a>.
+			  </td>
+			  <a href="#" uib-tooltip-html="'<div>static. la. <b>bold.</b></div>'">inline string</a>
 			</tr>
 			<tr>
 			  <td> Model Fit: </td>
