@@ -209,29 +209,35 @@ def fit_jld(arg, hash_prefix):
     if fit2states:
         params["LB"] = np.array([params["D_free"][0],
                                  params["D_bound"][0],
-                                 params["F_bound"][0]])
+                                 params["F_bound"][0],
+                                 params["sigma"][0]])
         params["UB"] = np.array([params["D_free"][1],
                                  params["D_bound"][1],
-                                 params["F_bound"][1]])
+                                 params["F_bound"][1],
+                                 params["sigma"][1]])
         params.pop("D_bound")
         params.pop("D_free")
         params.pop("F_bound")
+        params.pop("sigma")
     else:
         params["LB"] = np.array([params["D_fast"][0],
                                  params["D_med"][0],
                                  params["D_bound"][0],
                                  params["F_fast"][0],
-                                 params["F_bound"][0]])
+                                 params["F_bound"][0],
+                                 params["sigma"][0]])
         params["UB"] = np.array([params["D_fast"][1],
                                  params["D_med"][1],
                                  params["D_bound"][1],
                                  params["F_fast"][1],
-                                 params["F_bound"][1]])
+                                 params["F_bound"][1],
+                                 params["sigma"][1]])
         params.pop("D_fast")
         params.pop("D_med")
         params.pop("D_bound")
         params.pop("F_fast")
-        params.pop("F_bound")
+        params.pop("sigma")
+                                
     
     ## ==== Perform the fit and compute the distribution
     fit = fastspt.fit_jump_length_distribution(JumpProb, JumpProbCDF,
@@ -242,8 +248,8 @@ def fit_jld(arg, hash_prefix):
         fit.params,  
         JumpProb = JumpProb,
         r = HistVecJumpsCDF,
-        #LocError = fit.params['sigma'].value,
-        LocError = params['LocError'],
+        LocError = fit.params['sigma'].value,
+        #LocError = params['LocError'],
         dT = params['dT'],
         dZ = params['dZ'],
         a = params["a"],

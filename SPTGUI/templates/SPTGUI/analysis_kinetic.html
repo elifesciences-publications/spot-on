@@ -296,6 +296,11 @@
 		      {{jlfit[ce-1].fitparams.F_fast | number}}
 		      &plusmn; {{jlfit[ce-1].fitparams.F_fast_std | number:4}}
 		    </li>
+		    <li ng-if="jlfit[ce-1].fitparams.fitSigma===true">
+		      &sigma; (µm):
+		      {{jlfit[ce-1].fitparams.sigma| number}}
+		      &plusm; {{jlfit[ce-1].fitparams.sigma_std| number : 4}}
+		    </li>
 		    <li>
 		      l<sub>2</sub> error:
 		      {{jlfit[ce-1].fitparams.l2| number : 8}}
@@ -346,6 +351,11 @@
 		    <li>
 		      l<sub>2</sub> error:
 		      {{jlpfit.fitparams.l2| number : 8}}
+		    </li>		    
+		    <li ng-if="jlpfit.fitparams.fitSigma===true">
+		      &sigma; (µm)
+		      {{jlpfit.fitparams.sigma | number}}
+		      &plusmn; {{jlpfit.fitparams.sigma_std | number:4}}
 		    </li>
 		    <li>
 		      AIC: {{jlpfit.fitparams.aic | number : 2}}, BIC: {{jlpfit.fitparams.bic | number : 2}}
