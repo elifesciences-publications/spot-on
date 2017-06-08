@@ -238,7 +238,6 @@ def fit_jld(arg, hash_prefix):
         params.pop("F_fast")
         params.pop("F_bound")
         params.pop("sigma")
-                                
     
     ## ==== Perform the fit and compute the distribution
     fit = fastspt.fit_jump_length_distribution(JumpProb, JumpProbCDF,
