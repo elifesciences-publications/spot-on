@@ -22,7 +22,7 @@
 <p>In addition to motion blur, that leads to fast-moving particle to be missed by the detection algorithm, particles diffuse out of the detection volume (usually a slice of ~ 1 µm thickness). This effect is virtually zero for bound molecule, but becomes significant for fast-moving particles, leading to an undercounting of this population. The animated graph below shows the distribution of jump lengths for a molecule appearing in two states with respective diffusion coefficients \(D_1\) and \(D_2\).</p>
 <div class="panel panel-default">
   <div class="panel-heading">Theoretical jump length distribution</div>
-  <div class="panel-body" ng-init="jld={D1: 1.0, D2: 5.0, P: 0.5, S: 10, dt: 10}">
+  <div class="panel-body" ng-init="jld={D1: 1.0, D2: 5.0, P: 0.5, S: 10, dt: 10, theo: true}">
     <div class="text-center">
       <jump-length-distribution data="jld"></jump-length-distribution>
     </div>
@@ -62,6 +62,15 @@
 			       rz-slider-model="jld.dt"
 			       rz-slider-options="{floor: 1, ceil:100, step: 1}">
       </rzslider></td>
+      </tr>
+      <tr>
+	<td>Show model with no depth of field correction</td>
+	<td>
+	  <toggle-switch ng-model="jld.theo"
+			 off-label="No"
+			 on-label="Yes"></toggle-switch>
+	  {{jld.theo}}
+	</td>
       </tr>
     </table>
   </div>
