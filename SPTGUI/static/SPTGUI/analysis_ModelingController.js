@@ -228,12 +228,16 @@ angular.module('app')
 	validateJLDparameters = function(pars) {
 	    isOk = true
 	    if (!pars.BinWidth>0) {return false;}
-	    if (!pars.GapsAllowed>=1) {return false;}
+	    if (!pars.GapsAllowed>=0) {return false;}
 	    if (!pars.JumpsToConsider>=3) {return false;}
 	    if (!pars.MaxJump>0) {return false;}
 	    if (!pars.TimeGap>0) {return false;}
 	    if (pars.useAllTraj) {
 		pars.JumpsToConsider = $scope.jldParametersDefault.JumpsToConsider
+	    }
+	    if (pars.MaxJump/pars.BinWidth>2500) {
+		alert("There should not be more than 2500 bins, ie. Max Jump/Bin Width < 2500. Eaither increase the Bin Width or decrease the Max Jump".)
+		return false
 	    }
 	    return isOk
 	}

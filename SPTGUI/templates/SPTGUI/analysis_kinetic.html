@@ -41,11 +41,11 @@
 		      </tr>
 		      <tr>
 			<td>Number of gaps allowed</td>
-			<td><input min="0" ng-model= "jldParameters.GapsAllowed"  type="number"></td>
+			<td><input min="0" max="2" ng-model= "jldParameters.GapsAllowed"  type="number"></td>
 		      </tr>
 		      <tr>
 			<td>Number of timepoints</td>
-			<td><input ng-model= "jldParameters.TimePoints"  type="number"></td>
+			<td><input min="2" max="20" ng-model= "jldParameters.TimePoints"  type="number"></td>
 		      </tr>
 		      <tr>
 			<td>Jumps to consider</td>
@@ -122,15 +122,15 @@
 			<tr ng-if="modelingParameters.fit2states!==null">
 			  <td> D<sub>bound</sub> (µm²/s): </td>
 			  <td>
-			    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0">
-			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0">
+			    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0" max="2">
+			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0" max="2">
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='true'">
 			  <td> D<sub>free</sub> (µm²/s): </td>
 			  <td>
-			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0">
-			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0">
+			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0" max="25">
+			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0" max="25">
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='true'">
@@ -143,15 +143,15 @@
 			<tr ng-if="modelingParameters.fit2states==='false'">
 			  <td> D<sub>slow</sub> (µm²/s): </td>
 			  <td>
-			    min: <input ng-model= "modelingParameters.D_med[0]"  type="number" step="any" min="0">
-			    max: <input ng-model= "modelingParameters.D_med[1]"  type="number" step="any" min="0">
+			    min: <input ng-model= "modelingParameters.D_med[0]"  type="number" step="any" min="0" max="10">
+			    max: <input ng-model= "modelingParameters.D_med[1]"  type="number" step="any" min="0" max="10">
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='false'">
 			  <td> D<sub>fast</sub> (µm²/s): </td>
 			  <td>
-			    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0">
-			    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0">
+			    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0" max="25">
+			    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0" max="25">
 			  </td>
 			</tr>			
 			<tr ng-if="modelingParameters.fit2states==='false'">
@@ -184,8 +184,8 @@
 			    <input  ng-model="modelingParameters.LocError" type="number" step="any" min="0">
 			  </td>
 			  <td ng-show="modelingParameters.fitSigma">
-			    min: <input ng-model="modelingParameters.sigma[0]" type="number" step="any" min="0">
-			    max: <input ng-model="modelingParameters.sigma[1]" type="number" step="any" min="0">
+			    min: <input ng-model="modelingParameters.sigma[0]" type="number" step="any" min="0" max="0.1">
+			    max: <input ng-model="modelingParameters.sigma[1]" type="number" step="any" min="0" max="0.1">
 			  </td>
 			</tr>
 			<tr>
@@ -220,7 +220,7 @@
 			</tr>			
 			<tr>
 			  <td> Iterations: </td>
-			  <td><input type="number" ng-model="modelingParameters.iterations" min="0" max="10"></td>
+			  <td><input type="number" ng-model="modelingParameters.iterations" min="0" max="15"></td>
 			</tr>			  
 			<tr>
 			  <td>&nbsp;</td>
