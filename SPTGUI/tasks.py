@@ -236,6 +236,7 @@ def fit_jld(arg, hash_prefix):
         params.pop("D_med")
         params.pop("D_bound")
         params.pop("F_fast")
+        params.pop("F_bound")
         params.pop("sigma")
                                 
     
