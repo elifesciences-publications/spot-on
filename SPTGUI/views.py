@@ -345,17 +345,17 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
                          'aic': save_pars['fit_aic'],
                          'bic': save_pars['fit_bic']}
             for k in save_pars['fitparams'].keys():
-                fitparams[k] = save_pars['fitparams'][k].value
-                fitparams[k+"_std"] = save_pars['fitparams'][k].stderr
+                fitparams[k] = float(save_pars['fitparams'][k].value)
+                fitparams[k+"_std"] = float(save_pars['fitparams'][k].stderr)
             fitparams["fit2states"] = save_pars['params']["fit2states"]
             fitparams["fitSigma"] = save_pars['params']["fitSigma"]
             
             if not fitparams["fit2states"]:
                 if fitparams["D_med"]>fitparams["D_fast"]:
-                    tmp = fitparams["D_med"].copy()
-                    tmp_std = fitparams["D_med_std"].copy()
-                    fitparams["D_med"] = fitparams["D_fast"].copy()
-                    fitparams["D_med_std"] = fitparams["D_fast_std"].copy()
+                    tmp = fitparams["D_med"]#.copy()
+                    tmp_std = fitparams["D_med_std"]#.copy()
+                    fitparams["D_med"] = fitparams["D_fast"]#.copy()
+                    fitparams["D_med_std"] = fitparams["D_fast_std"]#.copy()
                     fitparams["D_fast"] =tmp
                     fitparams["D_fast_std"] = tmp_std
             print fitparams
