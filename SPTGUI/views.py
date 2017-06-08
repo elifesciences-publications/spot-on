@@ -9,7 +9,6 @@ import random, string, json, os, hashlib, pickle, urlparse, logging, re
 from haikunator import Haikunator
 import fastspt
 
-from django.core.checks import Error, register
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.db import transaction
@@ -32,30 +31,6 @@ haikunator = Haikunator()
 ##
 hash_size = 16 ## Size of the prefix to save the fitted datasets
 bf = "./static/analysis/" ## Location to save the fitted datasets
-
-##
-## ==== Startup checks
-## (should ultimately be moved to another module)
-@register()
-def example_check(app_configs, **kwargs):
-    """THIS IS NOT GETTING EXECUTED. SAAD"""
-    errors = []
-    print "checking for demo Analysis"
-    try:
-        Analysis.objects.get(id=1000)#custom_settings.demo_id)
-        check_failed = False
-    except:
-        check_failed = True
-    if check_failed:
-        errors.append(
-            Error(
-                'Could not find the demo dataset, id={}'.format(custom_settings.demo_id),
-                hint='A hint.',
-                obj="",
-                id='myapp.E001',
-            )
-        )
-    return errors
 
 
 ##
