@@ -42,12 +42,12 @@ def particles_per_frame(fi):
     for traj in fi:
         for p in traj:
             if not p[3] in ld:
-                ld[p[3]] = 1
+                ld[int(p[3])] = 1
             else:
-                ld[p[3]] += 1
+                ld[int(p[3])] += 1
     l = np.zeros((int(max(ld.keys()))))
     for i in ld.keys():
-        l[i-1] = ld[i]
+        l[int(i-1)] = ld[int(i)]
     return {"median": np.median(l), "mean": l.mean()}
 
 def jump_length(fi):
