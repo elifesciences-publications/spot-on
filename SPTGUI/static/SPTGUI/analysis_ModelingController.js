@@ -234,8 +234,6 @@ angular.module('app')
 
 	validateJLDparameters = function(pars) {
 	    isOk = true
-	    console.log(angular.copy(pars))
-	    console.log(pars.GapsAllowed >= 0)
 	    if (!(pars.BinWidth>0)) {return false;}
 	    if (!(pars.GapsAllowed>=0)) {return false;}
 	    if (!(pars.JumpsToConsider>=3)) {return false;}

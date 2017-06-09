@@ -54,7 +54,6 @@ angular.module('app')
 		// Retrieve available file formats
 		getterService.getFileFormats().then(function success(resp) {
 		    $scope.acceptedFormats = resp;
-		    console.log(resp)
 		}, function error(resp) {
 		    alert('could not retrieve the list of available file formats')
 		})
