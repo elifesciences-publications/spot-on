@@ -45,7 +45,7 @@ def particles_per_frame(fi):
                 ld[p[3]] = 1
             else:
                 ld[p[3]] += 1
-    l = np.zeros((max(ld.keys())))
+    l = np.zeros((int(max(ld.keys()))))
     for i in ld.keys():
         l[i-1] = ld[i]
     return {"median": np.median(l), "mean": l.mean()}
