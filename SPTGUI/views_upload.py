@@ -82,7 +82,7 @@ def upload(request, url_basename):
         ## 3. Parameters and init to compute the JLD (if the celery task
         ##    `check_input_file` returns successfully.
         compute_params = {'BinWidth' : 0.01,
-                          'GapsAllowed' : 1,
+                          'GapsAllowed' : None,
                           'TimePoints' : 8,
                           'JumpsToConsider' : 4,
                           'MaxJump' : 3,

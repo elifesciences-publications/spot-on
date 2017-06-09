@@ -47,6 +47,7 @@ angular.module('app')
 
 		    // Be done!
 		    getterService.broadcastLoadedDatasets($scope.datasets)
+		    $rootScope.$broadcast('datasets:statistics', $scope.statistics);
 		    $scope.datasetsReady = true;
 		})
 
@@ -107,6 +108,7 @@ angular.module('app')
 		    $scope.statistics = null;
 		    getterService.getGlobalStatistics().then(function(resp) {
 			$scope.statistics = resp;
+			$rootScope.$broadcast('datasets:statistics', $scope.statistics);
 		    });
 
 		    console.log("Deleted dataset "+idx)
@@ -159,6 +161,7 @@ angular.module('app')
 	$scope.$on('flow::complete', function (event, $flow, flowFile) {
 	    getterService.getGlobalStatistics().then(function(resp) {
 		$scope.statistics = resp;
+		$rootScope.$broadcast('datasets:statistics', $scope.statistics);
 	    });
 	});
 
@@ -181,8 +184,7 @@ angular.module('app')
 		    console.log("Getting global statistics")
 		    getterService.getGlobalStatistics().then(function(resp) {
 			$scope.statistics = resp;
-			//$rootScope.$broadcast('datasets:redraw');
-			
+			$rootScope.$broadcast('datasets:statistics', $scope.statistics);
 		    });
 		}
 		currentlyUploadingPrevious = $scope.currentlyUploading

@@ -99,8 +99,10 @@ def compute_jld(dataset_id, pooled=False, include=None,
                 pickle.dump(save_params, f)
                         
     cell_l = []
+    ga = 0
     for da_id in include:
         da = Dataset.objects.get(id=da_id)
+        ga = max(ga, da.pre_ngaps)
         with open(da.parsed.path, 'r') as f:  ## Open dataset
             cell_l.append(parsers.to_fastSPT(f)) ##Format the dataset for analysis
     cell = np.hstack(cell_l)
@@ -108,6 +110,8 @@ def compute_jld(dataset_id, pooled=False, include=None,
     ## ==== Compute the JLD
     compute_jld.update_state(state='PROGRESS', meta={'progress': 'computing JLD'})
 
+    if 'GapsAllowed' in compute_params and compute_params['GapsAllowed'] == None:
+        compute_params['GapsAllowed'] = ga
     an = fastspt.compute_jump_length_distribution(cell, CDF=True, **compute_params) ## Perform the analysis
     logger.info("DONE: Computed JLD for dataset(s) {}".format(include))
 

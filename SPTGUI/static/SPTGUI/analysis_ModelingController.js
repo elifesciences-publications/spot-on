@@ -124,6 +124,13 @@ angular.module('app')
 	    console.log("updated dataset "+dataset_id);
 	});
 
+	// Get the number of gaps when statistics are computed.
+	$scope.$on('datasets:statistics', function(event, statistics) {
+	    if (statistics.hasOwnProperty('pre_ngaps')) {
+		$scope.jldParameters.GapsAllowed = parseFloat(statistics.pre_ngaps)
+	    }
+	})
+
 	// When some datasets have been added to the list, we find the indices
 	// of the old one and create blank slots for the new one
 	$scope.$on('datasets:added', function(event, newDatasets) {
@@ -212,7 +219,7 @@ angular.module('app')
 	//
 	$scope.jldParameters = {BinWidth : 0.01,
 				useAllTraj: false,
-				GapsAllowed : 1,
+				GapsAllowed : 0,
 				TimePoints : 8,
 				JumpsToConsider : 4,
 				MaxJump : 3,
@@ -227,11 +234,13 @@ angular.module('app')
 
 	validateJLDparameters = function(pars) {
 	    isOk = true
-	    if (!pars.BinWidth>0) {return false;}
-	    if (!pars.GapsAllowed>=0) {return false;}
-	    if (!pars.JumpsToConsider>=3) {return false;}
-	    if (!pars.MaxJump>0) {return false;}
-	    if (!pars.TimeGap>0) {return false;}
+	    console.log(angular.copy(pars))
+	    console.log(pars.GapsAllowed >= 0)
+	    if (!(pars.BinWidth>0)) {return false;}
+	    if (!(pars.GapsAllowed>=0)) {return false;}
+	    if (!(pars.JumpsToConsider>=3)) {return false;}
+	    if (!(pars.MaxJump>0)) {return false;}
+	    if (!(pars.TimeGap>0)) {return false;}
 	    if (pars.useAllTraj) {
 		pars.JumpsToConsider = $scope.jldParametersDefault.JumpsToConsider
 	    }
