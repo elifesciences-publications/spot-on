@@ -236,7 +236,7 @@ angular.module('app')
 		pars.JumpsToConsider = $scope.jldParametersDefault.JumpsToConsider
 	    }
 	    if (pars.MaxJump/pars.BinWidth>2500) {
-		alert("There should not be more than 2500 bins, ie. Max Jump/Bin Width < 2500. Eaither increase the Bin Width or decrease the Max Jump".)
+		alert("There should not be more than 2500 bins, ie. Max Jump/Bin Width < 2500. Eaither increase the Bin Width or decrease the Max Jump.")
 		return false
 	    }
 	    return isOk
