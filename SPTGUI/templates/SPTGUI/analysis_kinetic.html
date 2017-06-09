@@ -40,10 +40,6 @@
 			<td><input ng-model="jldParameters.BinWidth" type="number" step="any" min="0"></td>
 		      </tr>
 		      <tr>
-			<td>Number of gaps allowed</td>
-			<td><input min="0" max="2" ng-model= "jldParameters.GapsAllowed"  type="number"></td>
-		      </tr>
-		      <tr>
 			<td>Number of timepoints</td>
 			<td><input min="2" max="20" ng-model= "jldParameters.TimePoints"  type="number"></td>
 		      </tr>
@@ -69,6 +65,21 @@
 			<td> dT (ms): </td>
 			<td><input ng-model="jldParameters.TimeGap" type="number" step="any" min="0"></td>
 		      </tr>
+		      <tr>
+			<td>&nbsp;</td>
+			<td>
+			  <br/>
+			  <div class="alert alert-info">
+			    It seems that your dataset contains at most {{jldParameters.GapsAllowed}} gap(s), so the algorithm has been set accordingly
+			    <a href="../../docs/#"><span class="glyphicon glyphicon-question-sign"></span></a>
+			  </div>
+			</td>
+			  
+			<!-- NOW INFERRED FROM DATA -->
+			<!-- 	<td>Number of gaps allowed</td> -->
+			<!-- 	<td><input min="0" max="2" ng-model= "jldParameters.GapsAllowed"  type="number"></td> -->
+		      </tr>
+		      
 		      <tr>
 			<td></td>		    
 			<td>
