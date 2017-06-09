@@ -1,5 +1,9 @@
 angular.module('app')
     .directive('jumpLengthHistogram', function() {
+	function adjustTextLabels(selection) {
+	    selection.selectAll('.tick text')
+		.attr('transform', 'translate(0,7)');
+}
 	function fmt_data(dat_raw, cdf, maxjump) {
 	    dat = angular.copy(dat_raw)
 	    data = [];
@@ -123,7 +127,7 @@ angular.module('app')
 	    	    .append("text")
 	    	    .attr("fill", "#000")
 	    	    .attr("transform", "rotate(-90)")
-	    	    .attr("y", 6)
+	    	    .attr("y", 10)
 	    	    .attr("dy", "0.71em")
 	    	    .attr("text-anchor", "end")
 	    	    .text("P(r)");
@@ -163,10 +167,10 @@ angular.module('app')
 		    } else {
 			horiaxis.append("g")
 			    .attr("transform", "translate(0," + rat2 + ")")
-			    .call(d3.axisBottom(x))
+			    .call(d3.axisBottom(x)).call(adjustTextLabels)
 			    .append("text")
 			    .attr("fill", "#000")
-			    .attr("transform", "translate("+width/2+","+ "30" +")")
+			    .attr("transform", "translate("+width/2+","+ "35" +")")
 			    .attr("text-anchor", "middle")
 			    .text("jump distance (µm)")	    
 		    }
