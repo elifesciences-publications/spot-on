@@ -109,6 +109,7 @@ def list_datasets(message, data, url_basename):
             'preanalysis_status' : d.preanalysis_status,
 
             ## Preanalysis statistics
+            'pre_ngaps': d.pre_ngaps,
             'pre_ntraces' : d.pre_ntraces,
             'pre_npoints' : d.pre_npoints,
             'pre_ntraces3' : d.pre_ntraces3,
@@ -120,7 +121,6 @@ def list_datasets(message, data, url_basename):
             'pre_mean_particles_per_frame' : d.pre_mean_particles_per_frame,
             'pre_median_jump_length' : d.pre_median_jump_length,
             'pre_mean_jump_length' : d.pre_mean_jump_length,
-            
             'jld_available': check_jld(d),
         } for d in Dataset.objects.filter(analysis=ana)]
     
@@ -154,6 +154,7 @@ def global_statistics(message, data, url_basename):
     
     res = {'status' : 'ok',
            'ok_traces' : len(da),
+           'pre_ngaps': max([i.pre_ngaps for i in da]),
            'pre_ntraces' : sum([i.pre_ntraces for i in da]),
            'pre_npoints' : sum([i.pre_npoints for i in da]),
            'pre_ntraces3': sum([i.pre_ntraces3 for i in da]),
