@@ -62,6 +62,13 @@ def jump_length(fi):
     l = np.asarray(l)
     return {"median": np.median(l), "mean": l.mean()}
 
+def number_of_gaps(fi):
+    """Returns the maximum number of gaps in the dataset"""
+    mg = []
+    for traj in [i for i in fi if len(i)>1]:
+        mg.append(np.diff([tr[3] for tr in traj]).max())
+    return max(mg)
+
 def global_mean_median(da, fu, reindex_frames=False):
     """A function to compute global stuff.
     It first loads all the datasets, then send it to the corresponding function"""

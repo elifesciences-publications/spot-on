@@ -47,6 +47,7 @@ class Dataset(models.Model):
     preanalysis_token = models.CharField(default='', max_length=100)
 
     ## Preanalysis statistics
+    pre_ngaps = models.IntegerField(null=True, blank=True)
     pre_ntraces = models.IntegerField(null=True, blank=True)
     pre_ntraces3 = models.IntegerField(null=True, blank=True)
     pre_npoints = models.IntegerField(null=True, blank=True)

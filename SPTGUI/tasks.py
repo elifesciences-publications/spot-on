@@ -331,6 +331,7 @@ def check_input_file(filepath, file_id, fmt, fmtParams):
     check_input_file.update_state(state='PROGRESS', meta={'progress': 'computing statistics'})
 
     ## ==== Extract the relevant information
+    da.pre_ngaps =  stats.number_of_gaps(fi) # Max number of gaps in the data
     da.pre_ntraces = stats.number_of_trajectories(fi) # number of traces
     da.pre_ntraces3= stats.number_of_trajectories3(fi)
     da.pre_npoints = stats.number_of_detections(fi)   # number of points
