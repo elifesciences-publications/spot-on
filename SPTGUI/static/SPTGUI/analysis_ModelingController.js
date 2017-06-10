@@ -549,8 +549,10 @@ angular.module('app')
 			       jldP: $scope.showJLP,
 			       MaxJump: $scope.maxJumpSlider.value,
 			       displayedDataset: $scope.showJLP? null : $scope.ce}
+	    console.log($scope.datasets)
+	    console.log($scope.ce)
 	    var dwnlPars = {svg : $('#mainHist').html(),
-			    cell : $scope.datasets[$scope.ce].id,
+			    cell : $scope.datasets[$scope.ce-1].id,
 			    jldParams : angular.copy($scope.jldParameters),
 			    fitParams : angular.copy($scope.modelingParameters),
 			    jld : angular.copy($scope.jlhist),
