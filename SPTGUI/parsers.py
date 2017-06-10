@@ -49,17 +49,21 @@ def read_file(fn, fmt, fmtParams):
 
 ## ==== evalSPT file format
 def init_evalspt():
-    return {'name': 'evalSPT', 'info': "not implemented", 'anchor': 'evalspt',
-            'active': False, 'params': []}
-def read_evalspt(fn):
-    pass
+    pars = [{'name': 'framerate (ms)', 'info': '', 'type': 'number',
+             'value': 'framerate', 'model': 'framerate'}]
+    return {'name': 'evalSPT', 'info': "", 'anchor': 'evalspt',
+            'active': True, 'params': pars}
+def read_evalspt(fn, framerate):
+    return read_arbitrary_csv(fn, col_traj=3, col_x=0, col_y=1, col_frame=2,
+                              framerate=framerate/1000., sep="\t", header=None)
+
 ## ==== MOSAIC suite file format
 def init_mosaic():
     pars = [{'name': 'framerate (ms)', 'info': '', 'type': 'number',
              'value': 'framerate', 'model': 'framerate'},
             {'name': 'pixel size (nm/px)', 'type': 'number',
              'value': 'pixelsize', 'model': 'pixelsize'}]
-    return {'name': 'MOSAIC suite', 'info': "not implemented", 'anchor': 'mosaic',
+    return {'name': 'MOSAIC suite', 'info': "", 'anchor': 'mosaic',
             'active': True, 'params': pars}
 def read_mosaic(fn, framerate, pixelsize):
     return read_arbitrary_csv(fn, col_traj="Trajectory", col_x="x", col_y="y", col_frame="Frame", framerate=framerate/1000., pixelsize=pixelsize/1000.)
@@ -216,12 +220,13 @@ def traces_to_csv(traces):
     return csv
 
 def read_arbitrary_csv(fn, col_x="", col_y="", col_frame="", col_t="t",
-                       col_traj="", framerate=None, pixelsize=None, cb=None):
+                       col_traj="", framerate=None, pixelsize=None, cb=None,
+                       sep=",", header='infer'):
     """This function takes the file name of a CSV file as input and parses it to
     the list of list format required by Spot-On. This function is called by various
     CSV importers and it is advised not to call it directly."""
     
-    da = pd.read_csv(fn) # Read file
+    da = pd.read_csv(fn, sep=sep, header=header) # Read file
     
     # Check that all the columns are present:
     cols = da.columns
@@ -242,7 +247,7 @@ def read_arbitrary_csv(fn, col_x="", col_y="", col_frame="", col_t="t",
     # Split by traj
     out = []
     for (idx,t) in da.sort_values(col_traj).groupby(col_traj):
-        tr = [(tt[1][col_x], tt[1][col_y], tt[1][col_t], tt[1][col_frame]) for tt in t.sort_values(col_frame).iterrows()] # Order by trace, then by frame
+        tr = [(tt[1][col_x], tt[1][col_y], tt[1][col_t], int(tt[1][col_frame])) for tt in t.sort_values(col_frame).iterrows()] # Order by trace, then by frame
         out.append(tr)
     
     return out
