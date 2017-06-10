@@ -98,9 +98,31 @@
 </p>
 
 <h4> evalSPT </h4>
-<div class="alert alert-danger">
-  This format is not implemented yet, unfortunately.
-</div>
+<p><code>evalSPT</code> (software mentioned in) produces a TSV format (tab-separated values), with no header (this is pretty bad), with the first columns ordered as follows. Additional columns might be present but will be ignored. An example file is provided below.
+</p>
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Column 1</th>
+    <th>Column 2</th>
+    <th>Column 3</th>
+    <th>Column 4</th>
+    <th>Column 5 and more</th>
+  </tr>
+  <tr>
+    <td><code>x</code> position of the particle (in µm)</td>
+    <td><code>x</code> position of the particle (in µm)</td>
+    <td>frame number</td>
+    <td>trajectory number</td>
+    <td>These columns are ignored</td>
+  </tr>
+</table>
+
+<a href="{% static 'SPTGUI/sample/evalSPT.txt' %}"
+   role="button"
+   class="btn btn-default">Download sample file
+  <span class="glyphicon glyphicon-download"></span>
+</a>
 
 <h4> Matlab file format </h4>
 <p>Spot-On also accepts a custom Matlab file format. An example is provided below. The <code>trackedPar</code> variable is a structured array. Each element of this array corresponds to one trajectory. Each trajectory contains several fields: <code>xy</code>, <code>t</code>, <code>frame</code>. Each of these fields is a 2D-matrix with 2, 1 and 1 columns, respectively and a number of rows corresponding to the number of detections for this trajectory.</p>
