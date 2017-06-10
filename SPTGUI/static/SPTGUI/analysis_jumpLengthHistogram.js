@@ -35,6 +35,29 @@ angular.module('app')
 	    }
 	    return data;	    
 	};
+	function fmt_residuals(data, fit) {
+	    dat = data.map(function(el) {return {x: el.date, y:el.close}})
+	    if (data.length>fit.length) {
+	    	d_long = dat
+	    	d_shor = fit
+	    	dataLong = -1
+		
+	    } else {
+	    	d_shor = dat
+	    	d_long = fit
+	    	dataLong = 1
+	    }
+	    var rat = d_long.length/d_shor.length
+	    var res = d_shor.map(function(el, i) {
+	     	return {x:el.x, y: (d_long[Math.floor(i*rat)].y-el.y)*dataLong}
+	    })
+	    // var res = [];
+	    // for (i=1;i<res1.length;i++) {
+	    // 	res.push({x:res1[i-1].x, y:res1[i-1].y})
+	    // 	res.push({x:res1[i].x, y:res1[i-1].y})
+	    // }
+	    return res
+	}
 	function precsum(d) {
 	    ds = 0.0
 	    for (i=1;i<d.length;i++) {
@@ -177,18 +200,28 @@ angular.module('app')
 		    // Handle fit plotting
 		    if (dat[1] && !pool) { // Add the line graph of the fit
 			fit = dat[1].fit;
+			data_fit = fmt_fit(fit.x, fit.y[i], cdf,
+					   maxjump, precsum(fit.y[i]))
 			fitline.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x,
-					   fit.y[i],
-					   cdf,
-					   maxjump,
-					   precsum(fit.y[i])))
+		    	    .datum(data_fit)
 			    .attr("fill", "none")
 			    .attr("stroke", "black")
 			    .attr("stroke-width", 1.5)
 			    .attr("d", line);
+
+			// Plot residuals
+			data_res = fmt_residuals(data, data_fit)
+			fitline.append("path")
+			    .attr("transform", "translate(0," + (i*rat) + ")")
+		    	    .datum(data_res)
+			    .attr("fill", "none")
+			    .attr("stroke", "black")
+			    .attr("stroke-width", 1.5)
+			    .style("stroke-dasharray", ("2, 2"))
+			    .attr("d", line);
 		    }
+		    
 
 		    // Handle pooled fit plotting
 		    if (dat[7]) { // Show the pooled fit
@@ -197,18 +230,29 @@ angular.module('app')
 			    return;
 			}
 			fit = dat[6].fit;
+			data_fitp = fmt_fit(fit.x, fit.y[i], cdf,
+					    maxjump, precsum(fit.y[i]))
 			fitlinepooled.append("path")
 			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(fmt_fit(fit.x,
-					   fit.y[i],
-					   cdf,
-					   maxjump,
-					   precsum(fit.y[i])))
+		    	    .datum(data_fitp)
 			    .attr("fill", "none")
 			    .attr("stroke", "grey")
 			    .attr("stroke-width", 3)
 			    .style("stroke-dasharray", ("6, 6"))
 			    .attr("d", line);
+
+			if (pool) {
+			    data_resp = fmt_residuals(data, data_fitp)
+			    fitlinepooled.append("path")
+				.attr("transform", "translate(0," + (i*rat) + ")")
+		    		.datum(data_resp)
+				.attr("fill", "none")
+				.attr("stroke", "grey")
+				.attr("stroke-width", 1.5)
+				.style("stroke-dasharray", ("2, 2"))
+				.attr("d", line);
+			}
+			
 		    }
 		})
 		if (pool) {
