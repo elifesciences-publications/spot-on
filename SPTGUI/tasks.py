@@ -639,5 +639,5 @@ Max number of gaps: {}
                             d.pre_median_particles_per_frame,
                             d.pre_mean_particles_per_frame,
                             d.pre_median_jump_length, d.pre_mean_jump_length,
-                            d.pren_ngaps))
+                            d.pre_ngaps))
     return out
