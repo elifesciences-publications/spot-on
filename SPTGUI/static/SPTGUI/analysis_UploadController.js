@@ -145,6 +145,71 @@ angular.module('app')
 	    $scope.shownStatistics = dataset;
 	    $scope.showingStatistics = true;
 	};
+
+	//
+	// ==== Logic of the validation of statistics
+	// Validation of the statistics
+	var nada = {classe:'', pict: false, msg: ""}
+	var errr = {classe:'alert alert-danger',
+		    pict: true,
+		    msg: ""}
+	$scope.validate = {
+	    ntraces: function(data) {
+		if (data<100) {
+		    errr.msg = "This dataset contains <100 traces"
+		    return errr
+		} else {return nada}
+	    },
+	    nframes: function(data) {
+		if (data<100) {
+		    errr.msg = "This dataset contains <100 frames"
+		    return errr
+		} else {return nada}
+	    },
+	    npoints: function(data) {
+		if (data<1000) {
+		    errr.msg = "This dataset contains <1000 detections"
+		    return errr
+		} else {return nada}
+	    },
+	    ngaps: function(data) {
+		if (data>2) {
+		    errr.msg = "This dataset contains gaps of more than 2 frames"
+		    return errr
+		} else {return nada}
+	    },
+	    ntraces3: function(data) {
+		if (data<100) {
+		    errr.msg = "This dataset contains <100 traces of >= 3 detections."
+		    return errr
+		} else {return nada}
+	    },
+	    njumps: function(data) {
+		if (data<1000) {
+		    errr.msg = "This dataset contains <1000 jumps"
+		    return errr
+		} else {return nada}
+	    },
+ 	    median_length_of_trajectories: function(data) {
+		if (data<=2) {
+		    errr.msg = ">50% of the trajectories last two frames or less."
+		    return errr
+		} else {return nada}
+	    },
+ 	    median_particles_per_frame: function(data) {
+		if (data>1) {
+		    errr.msg = ">50% of the frames contain more than one detection."
+		    return errr
+		} else {return nada}
+	    },
+ 	    median_jump_length: function(data) {
+		if (data>1) {
+		    errr.msg = ">50% of the jumps are more than 1 µm."
+		    return errr
+		} else {return nada}
+	    }
+	}
+	
 	
 	//
 	// ==== Upload (ng-flow) events
