@@ -48,6 +48,5 @@ def dataset_report(request, url_basename, dataset_id):
     da = get_object_or_404(Dataset, analysis=ana, id=dataset_id)    
     
     ## Return data
-    response = HttpResponse(json.dumps(['this is a useless report']),
-                            content_type='application/json')
+    response = HttpResponse(da.import_report.replace("\n", "\n<br/>")) ## /!\ TODO MW: format that better
     return response

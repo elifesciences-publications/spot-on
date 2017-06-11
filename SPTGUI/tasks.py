@@ -7,7 +7,7 @@
 
 ## General imports
 from __future__ import absolute_import, unicode_literals
-import os, sys, tempfile, json, pickle, fasteners, subprocess, shutil
+import os, sys, tempfile, json, pickle, fasteners, subprocess, shutil, traceback
 import numpy as np
 import pandas as pd
 
@@ -303,20 +303,30 @@ def check_input_file(filepath, file_id, fmt, fmtParams):
 
     Returns: None
     - Update the Dataset entry with the appropriately parsed information
+    - Also populates the 'import_report' text field
     """
 
     check_input_file.update_state(state='PROGRESS', meta={'progress': 'checking file format'})
     ## ==== Sanity checks
     da = Dataset.objects.get(id=file_id)
+    report = "Import report for file {}\n\n".format(da.name)
+    report += "Format: {}\n".format(fmt)
+    report += "Import parameters: {}\n\n".format(str(fmtParams))
     
     ## ==== Check file format
-    fi = parsers.read_file(da.data.path, fmt, fmtParams) ## DEBUG, should be in the try
+    report += "Importing file...\n"
     try: # try to parse the file
         fi = parsers.read_file(da.data.path, fmt, fmtParams)
+        report += "SUCCESS, the file was successfully imported\n"
     except: # exit
+        report += "FAILURE, the file could not be imported.\n"
+        report += "DELETED file: the imported file has been deleted\n"
+        report += "ERROR MESSAGE:\n================================\n"
+        report += traceback.format_exc()
         da.preanalysis_token = ''
         da.preanalysis_status = 'error'
         toremove = da.data.path
+        da.import_report = report
         da.data.delete()
         da.save()
         if os.path.isfile(toremove):
@@ -350,10 +360,14 @@ def check_input_file(filepath, file_id, fmt, fmtParams):
     le = stats.jump_length(fi)
     da.pre_median_jump_length            = le["median"]
     da.pre_mean_jump_length              = le["mean"]
+    report += "\nStatistics\n============\n"
+    report += "".join(get_export_statistics([da]))
     
     ## ==== Update the state
+    da.import_report = report
     da.preanalysis_token = ''
     da.preanalysis_status = 'ok'
+    
     da.save()
     check_input_file.update_state(state='PROGRESS', meta={'progress': 'file checked'})
 
