@@ -117,6 +117,7 @@ angular.module('app')
 		}
 		cdf = dat[9]
 		maxjump = dat[10]
+		showResiduals = dat[11]
 		
 		// define functions
 		var area = d3.area()
@@ -211,15 +212,17 @@ angular.module('app')
 			    .attr("d", line);
 
 			// Plot residuals
-			data_res = fmt_residuals(data, data_fit)
-			fitline.append("path")
-			    .attr("transform", "translate(0," + (i*rat) + ")")
-		    	    .datum(data_res)
-			    .attr("fill", "none")
-			    .attr("stroke", "black")
-			    .attr("stroke-width", 1.5)
-			    .style("stroke-dasharray", ("2, 2"))
-			    .attr("d", line);
+			if (showResiduals) {
+			    data_res = fmt_residuals(data, data_fit)
+			    fitline.append("path")
+				.attr("transform", "translate(0," + (i*rat) + ")")
+		    		.datum(data_res)
+				.attr("fill", "none")
+				.attr("stroke", "black")
+				.attr("stroke-width", 1.5)
+				.style("stroke-dasharray", ("2, 2"))
+				.attr("d", line);
+			}
 		    }
 		    
 
@@ -241,7 +244,7 @@ angular.module('app')
 			    .style("stroke-dasharray", ("6, 6"))
 			    .attr("d", line);
 
-			if (pool) {
+			if (showResiduals) {
 			    data_resp = fmt_residuals(data, data_fitp)
 			    fitlinepooled.append("path")
 				.attr("transform", "translate(0," + (i*rat) + ")")
@@ -252,7 +255,6 @@ angular.module('app')
 				.style("stroke-dasharray", ("2, 2"))
 				.attr("d", line);
 			}
-			
 		    }
 		})
 		if (pool) {

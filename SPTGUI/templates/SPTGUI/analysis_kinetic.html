@@ -372,7 +372,7 @@
 		    </li>
 		  </ul>
 		</div>	
-		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF, maxJumpSlider.value]"></jump-length-histogram>
+		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF, maxJumpSlider.value, displayResiduals.status]"></jump-length-histogram>
 		
 		<div class="controls">
 		  <table>
@@ -398,7 +398,7 @@
 		      </td>
 		    </tr>
 		    
-		    <tr ng-hide="!showJLP">
+		    <tr ng-shiw="showJLP">
 		      <td >Displayed group</td>
 		      <td> {{getSelectedIds()}}</td>
 		    </tr>
@@ -422,6 +422,13 @@
 		      <td>
 			<toggle-switch ng-model-options="{ getterSetter: true }"
 				       ng-model="displayJLPf"></toggle-switch>
+		      </td>
+		    </tr>
+
+		    <tr ng-if="showResiduals()">
+		      <td>Display residuals: </td>
+		      <td>
+			<toggle-switch ng-model="displayResiduals.status"></toggle-switch>
 		      </td>
 		    </tr>
 

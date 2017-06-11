@@ -18,6 +18,7 @@ angular.module('app')
 	$scope.jldParsInit = false; // To avoid initializing twice
 	$scope.fitComplete = true;
 	$scope.displayCDF = false; // Commanded by toggle switch
+	$scope.displayResiduals = {status: false}; // Commanded by toggle switch
 	$scope.zcorr = {a: null, b: null}
 	
 	initView = function() {
@@ -485,6 +486,11 @@ angular.module('app')
 		else {$scope.showJLPf = false;}
 	    }
 	    else {return $scope.showJLPf;}
+	}
+
+	// Logic to display residuals
+	$scope.showResiduals = function() {
+	    return ($scope.jlpfit!==null)|(($scope.jlfit[$scope.ce-1]!==null) & ($scope.displayJLPf===false))
 	}
 
 	// The logic behind the "fit localization error" switch
