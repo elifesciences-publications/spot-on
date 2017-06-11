@@ -45,6 +45,7 @@ class Dataset(models.Model):
     upload_status = models.BooleanField(default=False)
     preanalysis_status = models.CharField(default='na', choices=CHOICES_PREA, max_length=100)
     preanalysis_token = models.CharField(default='', max_length=100)
+    import_report = models.TextField(null=True, blank=True)
 
     ## Preanalysis statistics
     pre_ngaps = models.IntegerField(null=True, blank=True)
