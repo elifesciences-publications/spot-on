@@ -1,0 +1,17 @@
+asgi-redis
+celery
+channels
+Django
+django-angular
+fasteners
+Flask
+haikunator
+joblib
+lmfit
+matplotlib
+numpy
+pandas
+pyOpenSSL
+redis
+requests
+scipy
