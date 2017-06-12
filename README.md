@@ -4,8 +4,9 @@ fastSPT (provisional title)
 # Installation
 This software has been written for Python 2, but minimum work should be required to port it to Python 3. We recommend to install the dependencies of the software in a *virtual environment* (using the `virtualenv` and `virtualenvwrapper` tools).
 
-This section assumes that the user has access to the [`pip`](https://pip.pypa.io/en/stable/installing/) utility.
-
+This section assumes that the user has access to the [`pip`](https://pip.pypa.io/en/stable/installing/) utility. Note that the pip version packaged with your distribution might be notably obsolete. In that case, pip has to be installed according to the instructions detailed in the link above.
+ Spot-On can be installed using `pip v.9.0` or any further version.
+ 
 ## Setup the virtual environment
 We first install a tool to manage Python's [virtual environements](https://virtualenvwrapper.readthedocs.io/en/latest/): [`virtualenvwrapper`](https://virtualenvwrapper.readthedocs.io/en/latest/) and create a virtualenv called **fastSPT**.
 
@@ -18,34 +19,46 @@ mkvirtualenv fastSPT
 ```
 
 ## Install dependencies
-Some of the dependencies might already be installed on your system, or might be directly available through your operating system's package manager. It is possible to use those provided that they are recent enough. In particular, `numpy` and `scipy` are fairly standard librairies and come often preinstalled with your system.
+Some of the dependencies might already be installed on your system, or might be directly available through your operating system's package manager. It is possible to use those provided that they are recent enough. In particular, `numpy` and `scipy` are fairly standard librairies and come often preinstalled with your system. Also, installing `Numpy` and `Scipy` require compilation tools (`build-essential`, `python-dev`).
 
-You will also need the [`git` tool](https://git-scm.com/) to download the files.
+You will also need the [`git` tool](https://git-scm.com/) to download the files. Under Ubuntu/Debian GNU/Linux flavours, it can be installed by typing:
+
+```{shell}
+sudo apt-get install python-dev ## Required to compile dependencies
+sudo apt-get install gfortran libopenblas-dev liblapack-dev ## Required by Scipy
+sudo apt-get install git
+```
+
 
 ```{shell}
 sudo apt-get install redis-server
-pip install Django
-pip install numpy # Useless if already installed on your system, compilation might be long
-pip install scipy # Useless if already installed on your system, compilation might be long
-pip install pandas lmfit celery fasteners haikunator requests channels xmltodict
-pip install redis_asgi django-angular celery[redis]
+#pip install Django
+#pip install numpy # Useless if already installed on your system, compilation might be long
+#pip install scipy # Useless if already installed on your system, compilation might be long
+#pip install pandas lmfit celery fasteners haikunator requests channels xmltodict
+#pip install redis_asgi django-angular celery[redis]
 ```
 
 See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#conf-redis-result-backend 
 
 ## Install the `fastspt` backend
 ```{shell}
-wget http://www.eleves.ens.fr/home/woringer/fastspt-8.3.tar.gz
-pip install fastspt-8.3.tar.gz
+git clone https://github.com/DarzacqLab/fastspt.git # Clone the repository
+cd fastspt
+pip install -r requirements.txt
+python setup.py sdist
+pip install dist/fastspt-10.1.tar.gz --user ## Adjust the version number
 ```
 
-## Download and install the fastSPT repository
+## Download and install Spot-On
 
 So far, it has to be initialized manually (you have to create several repositories by hand).
 
 ```{shell}
 git clone https://padouppadoup@gitlab.com/padouppadoup/fastSPT.git
 cd fastSPT
+pip install -r requirements.txt
+
 mkdir -p static/upload/
 mkdir    static/tmpdir/
 mkdir    static/analysis
