@@ -11,28 +11,40 @@ from scipy.spatial import cKDTree as KDTree
 import pandas as pd
 
 ## ==== Main functions
-def init(path, scale_t=1000.0):
+def init(paths, scale_t=1000.0):
     """Function that instanciates the KD-tree.
     Inspired from: http://stackoverflow.com/questions/28177114/merge-join-2-dataframes-by-complex-criteria/28186940#28186940
-    returns an object: kd_init
-    """
-    # Parse the input directory
-    li = os.listdir(path)
-    xy_raw = [(i, float(i.split('_')[2][2:])*scale_t, float(i.split('_')[3][2:-4])) for i in li]
-    xy = pd.DataFrame([{"dT": i[1], "dZ": i[2], "fn": i[0]} for i in xy_raw])
-    print "Found {} files of fits in folder {}".format(len(xy_raw), path)
-    
-    join_cols = ['dT', "dZ"]
-    tree = KDTree(xy[join_cols])
-    return {"tree": tree, "df": xy, "path": path, "scale_t": scale_t}
 
-def query_nearest(dT, dZ, tree_init):
+    Inputs:
+    - paths (dict): keys are (int) corresponding to the number of gaps
+                    values are (str) with the corresponding path
+    - scale_t (float): the space-time ratio
+
+    Returns:
+    - a dict: kd_init, 
+    """
+    ret = {}
+    # Parse the input directory
+    for ngaps in paths:
+        path = paths[ngaps]
+        li = os.listdir(path)
+        xy_raw = [(i, float(i.split('_')[2][2:])*scale_t, float(i.split('_')[3][2:-4])) for i in li]
+        xy = pd.DataFrame([{"dT": i[1], "dZ": i[2], "fn": i[0]} for i in xy_raw])
+        print "Found {} files of fits in folder {}".format(len(xy_raw), path)
+    
+        join_cols = ['dT', "dZ"]
+        tree = KDTree(xy[join_cols])
+        ret[ngaps] = {"tree": tree, "df": xy, "path": path, "scale_t": scale_t}
+    return ret
+
+def query_nearest(dT, dZ, ngaps, tree_init):
     """This function returns the nearest (dT,dZ) pair from the input dT, dZ. These
     parameters are to be used for the fitting of the jump length distribution. This
     allow to then load the (a,b) coefficients required for the z-depth correction.
     This method allows to always find the nearest value in a context where (a,b)
     coefficients have not be estimated on a regular grid."""
     # Deparse
+    tree_init = tree_init[ngaps]
     tree = tree_init["tree"]
     df1 = tree_init["df"]
     path = tree_init["path"]

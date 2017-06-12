@@ -23,8 +23,11 @@ import tasks, config, recaptcha
 import fitted_zcor
 
 # ==== Initialization
-path = "./SPTGUI/fit_zcorr/"
-tree_init = fitted_zcor.init(path=path)
+# careful a similar code exists in sockets_kinetics.py
+paths = {0: "./SPTGUI/fit_zcorr/0gaps",
+         1: "./SPTGUI/fit_zcorr/1gaps",
+         2: "./SPTGUI/fit_zcorr/2gaps"}
+tree_init = fitted_zcor.init(paths=paths)
 haikunator = Haikunator()
 ##
 ## ==== Global variables

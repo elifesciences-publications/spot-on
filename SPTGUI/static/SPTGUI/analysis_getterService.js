@@ -21,8 +21,9 @@ angular.module('app')
 	    return promise;
 	}
 	// Get the nearest fitted z correction
-	this.getNearestZcorr = function(dZ, dT) {
-	    return MainSocket.sendRequest({type: "get_fitted_zcor", dT: dT, dZ: dZ})
+	this.getNearestZcorr = function(dZ, dT, GapsAllowed) {
+	    return MainSocket.sendRequest({type: "get_fitted_zcor",
+					   dT: dT, dZ: dZ, GapsAllowed:GapsAllowed})
 	}
 
 	// Get the list of accepted file formats

@@ -9,12 +9,16 @@
 import fitted_zcor
 
 # ==== Initialization
-path = "./SPTGUI/fit_zcorr/"
-tree_init = fitted_zcor.init(path=path)
+# careful a similar code exists in views.py
+paths = {0: "./SPTGUI/fit_zcorr/0gaps",
+         1: "./SPTGUI/fit_zcorr/1gaps",
+         2: "./SPTGUI/fit_zcorr/2gaps"}
+tree_init = fitted_zcor.init(paths=paths)
 
 # ==== Functions (called from socket)
 def get_fitted_zcor(message, data, url_basename):
     """Wrapper function to collect the object containing the filename of
     the nearest pair of (a,b) coefficients required to estimate the z correction
     to fit the jump length distribution"""
-    return fitted_zcor.query_nearest(data['dT'], data['dZ'], tree_init)
+    return fitted_zcor.query_nearest(data['dT'], data['dZ'],
+                                     int(data['GapsAllowed']), tree_init)

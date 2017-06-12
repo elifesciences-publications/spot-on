@@ -584,15 +584,16 @@ angular.module('app')
 	// Test function to get the nearest fit for the z correction
 	$scope.$watch('modelingParameters', function(params, oldparams) {
 	    if (angular.equals(params, oldparams)) {return}
-	    getterService.getNearestZcorr(params.dZ, params.dT).then(
-		function(ret) {
-		    //console.log(ret)
-		    $scope.modelingParameters.dTfit = ret.dT
-		    $scope.modelingParameters.dZfit = ret.dZ
-		    $scope.zcorr.a = ret.params[0]
-		    $scope.zcorr.b = ret.params[1]
-		}
-	    )
+	    getterService.getNearestZcorr(
+		params.dZ, params.dT, $scope.jldParameters.GapsAllowed).then(
+		    function(ret) {
+			//console.log(ret)
+			$scope.modelingParameters.dTfit = ret.dT
+			$scope.modelingParameters.dZfit = ret.dZ
+			$scope.zcorr.a = ret.params[0]
+			$scope.zcorr.b = ret.params[1]
+		    }
+		)
 	}, true);
 
 	refreshMaxJumpSlider = function () {
