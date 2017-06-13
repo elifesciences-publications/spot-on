@@ -181,7 +181,7 @@ angular.module('app')
 			    .attr("y", scl*p1[i])
 			    .attr("dy", ".75em")
 			    .style("text-anchor", "end")
-			    .text(na[i]);
+			    .text(na[i] + " ground truth");
 		    }
 		    Aaxis.append("line")
 		        .attr("x1", width - 24)
@@ -195,7 +195,7 @@ angular.module('app')
 			.attr("y", scl*p1[i] + dp/1.5)
 			.attr("dy", ".75em")
 			.style("text-anchor", "end")
-			.text(na[i]+" (finite depth of field)");
+			.text(na[i]+" observed");
 		}
 	    }
 	    
