@@ -19,6 +19,7 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>   
+    <script src="{% static 'SPTGUI/dist/js/bootstrap.min.js' %}"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{% static 'SPTGUI/assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
@@ -34,6 +35,7 @@
     <!-- Angular JS -->
     <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
     <script src="{% static 'SPTGUI/dist/js/angular-cookies.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/ui-bootstrap-tpls-2.5.0.min.js' %}"></script>
     
     <!-- Custom styles for this template -->
     <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
@@ -74,22 +76,22 @@
 	  <img src="/static/SPTGUI/img/slide1_big.png" alt="Second slide">
           <div class="container">
             <div class="carousel-caption">
-              <h1>So many bugs!</h1>
-              <p>Discover a new bug every time you use it!</p>
+              <h1>Interactive kinetic modeling</h1>
+              <p>Spot-On comes with a user-friendly interactive interface to perform kinetic modeling of single particle tracking datasets.</p>
               <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
             </div>
           </div>
         </div>
-        <div class="item">
-          <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
-          <div class="container">
-            <div class="carousel-caption">
-              <h1>I have nothing to add (apart from a quote to look smart).</h1>
-              <p>Men make their own history, but they do not make it as they please; they do not make it under self-selected circumstances, but under circumstances existing already, given and transmitted from the past. The tradition of all dead generations weighs like a nightmare on the brains of the living. <em>KM</em></p>
-              <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p>
-            </div>
-          </div>
-        </div>
+        <!-- <div class="item"> -->
+        <!--   <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide"> -->
+        <!--   <div class="container"> -->
+        <!--     <div class="carousel-caption"> -->
+        <!--       <h1>I have nothing to add (apart from a quote to look smart).</h1> -->
+        <!--       <p>Men make their own history, but they do not make it as they please; they do not make it under self-selected circumstances, but under circumstances existing already, given and transmitted from the past. The tradition of all dead generations weighs like a nightmare on the brains of the living. <em>KM</em></p> -->
+        <!--       <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p> -->
+        <!--     </div> -->
+        <!--   </div> -->
+        <!-- </div> -->
       </div>
       <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -115,8 +117,7 @@
 	       src="{% static 'SPTGUI/img/icons/001-upload.png' %}"
 	       alt="Import pictogram" width="140" height="140">
           <h2>Import...</h2>
-          <p> from a wide range of tracking softwares.
-	    The man who moves a mountain begins by carrying away small stones. <em>Confucius</em></p>
+          <p> from a wide range of tracking softwares.</p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
@@ -124,8 +125,7 @@
 	       src="{% static 'SPTGUI/img/icons/002-abacus.png' %}"
 	       alt="Analyze pictogram" width="140" height="140">
           <h2>Analyze</h2>
-          <p>People know what they do; frequently they know why they do what they do; but what they don't know is what what they do does.”
-― <em>Michel Foucault, Madness and Civilization: A History of Insanity in the Age of Reason</em> </p>
+          <p>Fit a kinetic model to the distribution of jump length. Take into account the finite depth of field.</p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
@@ -133,7 +133,7 @@
 	       src="{% static 'SPTGUI/img/icons/003-rocket.png' %}"
 	       alt="Export pictogram" width="140" height="140">
           <h2>...Export!</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <p>Save your analyses to a variety of formats (plots, tables, editable files).</p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
       </div><!-- /.row -->
@@ -175,12 +175,16 @@
           <h2 class="featurette-heading">Get started<span class="text-muted"> (in a nutshell)</span></h2>
           <p class="lead">
 	    Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-	  <form onsubmit="return validateCAPTCHA();"
+	  <form {% if captcha %}
+		onsubmit="return validateCAPTCHA();"
+		{% endif %}
 		method="POST"
 	 	action="{% url 'SPTGUI:new_analysis' %}">
 	    {% csrf_token %}
+	    {% if captcha %}
 	    <div class="g-recaptcha" id="main-recaptcha" data-sitekey="{{recaptchakey}}"></div>
 	    <div id="recaptcha-response"></div>
+	    {% endif %}
 	    <p>
 	      <input formaction="{% url 'SPTGUI:new_analysis' %}"
 		     type="submit" class="btn btn-primary"

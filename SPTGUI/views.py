@@ -142,6 +142,7 @@ def index(request):
     template = loader.get_template('SPTGUI/homepage.html')
     context = {'url_basename': 'new',
                'active': 'home',
+               'captcha': custom_settings.RECAPTCHA_USE,
                'recaptchakey': custom_settings.RECAPTCHA_PUBLIC}
     return HttpResponse(template.render(context, request))
 
