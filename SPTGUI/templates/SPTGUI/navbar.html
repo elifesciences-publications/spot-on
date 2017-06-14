@@ -1,7 +1,4 @@
-    <div class="navbar-wrapper">
-      <div class="container">
 
-        <nav class="navbar navbar-inverse navbar-static-top">
           <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -12,7 +9,11 @@
               </button>
               <a class="navbar-brand" href="#">
 		<img style="max-width:128px; margin-top: -10px;"
+		     {% if lightlogo %}
+		     src="/static/SPTGUI/img/spoton_logo_small.png"
+		     {% else %}
 		     src="/static/SPTGUI/img/spoton_logo_small_inv.png"
+		     {% endif %}
 		     alt="Spot-On logo">
 	      </a>
             </div>
@@ -25,7 +26,7 @@
 		    <span class="glyphicon glyphicon-transfer"></span>&nbsp;Start spotting!</a>
 		</li>
                 <li {% if active == 'about' %} class="active" {% endif %}>
-		  <a href="#about">About</a></li>
+		  <a href="{% url 'SPTGUI:staticpage' 'about' %}">About</a></li>
                 <li {% if active == 'docs' %} class="active" {% endif %}>
 		  <a href="{% url 'SPTGUI:staticpage' 'docs' %}">Documentation</a>
 		</li>
@@ -37,7 +38,3 @@
               </ul>
             </div>
           </div>
-        </nav>
-
-      </div>
-    </div>

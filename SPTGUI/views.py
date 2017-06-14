@@ -156,6 +156,7 @@ def analysis(request, url_basename, run_tests=False):
     context = {'url_basename': url_basename,
                'active': 'analysis',
                'run_tests': run_tests,
+               'lightlogo': True,
                'version': settings.APP_VERSION,
                'versionbackend': fastspt.__version__}
     ana.save()
@@ -171,7 +172,8 @@ def static(request, page):
     templates = {"docs": "documentation.html",
                  "about": "about.html",
                  "contact": "contact.html",
-                 "license": "license.html"}
+                 "license": "license.html",
+                 "about": "about.html"}
     if config.debug_views:
         templates["docs_viz"] ="docs_viz.html"
     if page in templates:
