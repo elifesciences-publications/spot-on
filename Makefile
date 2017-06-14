@@ -19,7 +19,7 @@ EXAMPLDTA_FNM="170614_demoFiles.bz2"
 init:
 	echo "-- 1. Download (a,b) coefficients for the corrected z depth"
 	wget ${ABPARAMS_URL}${ABPARAMS_FNM}
-	cd SPTGUI/;tar xvjf ${ABPARAMS_FNM}
+	cd SPTGUI/;tar xvjf ../${ABPARAMS_FNM}
 
 	echo "-- 2. Creating an empty database"
 	python manage.py migrate
