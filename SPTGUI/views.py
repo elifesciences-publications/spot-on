@@ -63,10 +63,7 @@ if config.debug_views:
         logging.warning("you called the `popover` function, which is a 'debug' function, avoid that in production")
         template = loader.get_template('SPTGUI/popover.html')
         context = {}
-        return HttpResponse(template.render(context, request))        
-if not custom_settings.RECAPTCHA_USE:
-    logging.warning("RECAPTCHA_USE is False in custome_settings.py, the reCAPTCHA will be ignored. Anyone can create an analysis and upload files to your server")        
-    
+        return HttpResponse(template.render(context, request))            
     
 ##
 ## ==== Main views
