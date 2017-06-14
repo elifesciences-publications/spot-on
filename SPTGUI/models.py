@@ -17,6 +17,7 @@ class Analysis(models.Model):
     mod_date = models.DateTimeField('date modified', null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2000)
+    editable = models.BooleanField(default=True)
     
     def __str__(self):
         return self.url_basename
