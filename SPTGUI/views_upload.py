@@ -14,6 +14,7 @@ from django.core.files import File
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+import fastSPT.custom_settings as custom_settings
 
 from celery import celery
 import tasks
@@ -81,12 +82,7 @@ def upload(request, url_basename):
 
         ## 3. Parameters and init to compute the JLD (if the celery task
         ##    `check_input_file` returns successfully.
-        compute_params = {'BinWidth' : 0.01,
-                          'GapsAllowed' : None,
-                          'TimePoints' : 8,
-                          'JumpsToConsider' : 4,
-                          'MaxJump' : 3,
-                          'TimeGap' : 4.477}
+        compute_params = custom_settings.compute_params
         pick = {'params' : compute_params,
                 'jld' : None,
                 'status' : 'queued'}

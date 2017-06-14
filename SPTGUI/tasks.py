@@ -39,7 +39,7 @@ logger = get_task_logger(__name__)
 @shared_task
 def compute_jld(dataset_id, pooled=False, include=None,
                 path=None, hash_prefix=None, url_basename=None,
-                compute_params=None, default=False):
+                compute_params=None, default=False, queue=True):
     """
     This function computes the histogram of jump length of an uploaded 
     dataset and save it in the corresponding dataset slot. It does not 
@@ -71,7 +71,8 @@ def compute_jld(dataset_id, pooled=False, include=None,
     - compute_params (dict): a dictionary of parameters to be passed to the
     compute_jump_length_distribution of the fastspt backend.
     """
-    compute_jld.update_state(state='PROGRESS', meta={'progress': 'loading file'})
+    if queue:
+        compute_jld.update_state(state='PROGRESS', meta={'progress': 'loading file'})
     ## ==== Load datasets
     savefile = False
     if compute_params != None:
@@ -108,15 +109,16 @@ def compute_jld(dataset_id, pooled=False, include=None,
     cell = np.hstack(cell_l)
             
     ## ==== Compute the JLD
-    compute_jld.update_state(state='PROGRESS', meta={'progress': 'computing JLD'})
+    if queue:
+        compute_jld.update_state(state='PROGRESS', meta={'progress': 'computing JLD'})
 
     if 'GapsAllowed' in compute_params and compute_params['GapsAllowed'] == None:
         compute_params['GapsAllowed'] = ga
     an = fastspt.compute_jump_length_distribution(cell, CDF=True, **compute_params) ## Perform the analysis
     logger.info("DONE: Computed JLD for dataset(s) {}".format(include))
 
-    
-    compute_jld.update_state(state='PROGRESS', meta={'progress': 'saving result'})
+    if queue:
+        compute_jld.update_state(state='PROGRESS', meta={'progress': 'saving result'})
     ## ==== Save results
     if not savefile or default:
         with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
@@ -291,7 +293,7 @@ def fit_jld(arg, hash_prefix):
     
 #@shared_task(ignore_result=True)
 @shared_task(ignore_result=False)
-def check_input_file(filepath, file_id, fmt, fmtParams):
+def check_input_file(filepath, file_id, fmt, fmtParams, queue=True):
     """This function checks that the uploaded file has the right format and
     can be analyzed. It is further saved in the database
     
@@ -306,7 +308,8 @@ def check_input_file(filepath, file_id, fmt, fmtParams):
     - Also populates the 'import_report' text field
     """
 
-    check_input_file.update_state(state='PROGRESS', meta={'progress': 'checking file format'})
+    if queue:
+        check_input_file.update_state(state='PROGRESS', meta={'progress': 'checking file format'})
     ## ==== Sanity checks
     da = Dataset.objects.get(id=file_id)
     report = "Import report for file {}\n\n".format(da.name)
@@ -342,7 +345,8 @@ def check_input_file(filepath, file_id, fmt, fmtParams):
         da.parsed.name = da.data.name + '.parsed'
         da.save()
 
-    check_input_file.update_state(state='PROGRESS', meta={'progress': 'computing statistics'})
+    if queue:
+        check_input_file.update_state(state='PROGRESS', meta={'progress': 'computing statistics'})
 
     ## ==== Extract the relevant information
     da.pre_ngaps   = stats.number_of_gaps(fi) # Max number of gaps in the data
@@ -369,7 +373,8 @@ def check_input_file(filepath, file_id, fmt, fmtParams):
     da.preanalysis_status = 'ok'
     
     da.save()
-    check_input_file.update_state(state='PROGRESS', meta={'progress': 'file checked'})
+    if queue:
+        check_input_file.update_state(state='PROGRESS', meta={'progress': 'file checked'})
 
     return file_id
 

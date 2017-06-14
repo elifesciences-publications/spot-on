@@ -2,6 +2,8 @@
 *~
 ## Contains our little secrets ;)
 /fastSPT/custom_settings.py
+
 ## initialized by make init
 db.sqlite3
 SPTGUI/fit_zcorr
+demofiles/
