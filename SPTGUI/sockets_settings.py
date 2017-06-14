@@ -9,5 +9,7 @@ from django.core.urlresolvers import reverse
 
 def erase(message, data, url_basename):
     """Erase an analysis. There is no way back"""
-    Analysis.objects.get(url_basename=url_basename).delete()
+    ana = Analysis.objects.get(url_basename=url_basename)
+    if ana.editable:
+        ana.delete()
     return reverse('SPTGUI:index')
