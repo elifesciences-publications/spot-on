@@ -7,3 +7,5 @@
 db.sqlite3
 SPTGUI/fit_zcorr
 demofiles/
+SPTGUI/static/SPTGUI/downloads/
+uploads/
