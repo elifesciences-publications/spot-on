@@ -30,18 +30,25 @@
 	      </table>
 
 	      <h2> Parameters </h2>
-	      <div class="col-md-6">
+	      <div class="col-md-5">
 		<div class="panel panel-default">
 		  <div class="panel-heading"><h3 class="panel-title">Jump length distribution</h3></div>
 		  <div class="panel-body">
 		    <table>
 		      <tr>
 			<td>Bin width (µm)</td>
-			<td><input ng-model="jldParameters.BinWidth" type="number" step="any" min="0"></td>
+			<td>
+			  <input ng-model="jldParameters.BinWidth" type="number" step="any" min="0">
+			  <span uib-tooltip="The size of one bin of the histogram" class="glyphicon glyphicon-question-sign"></span>
+			</td>
 		      </tr>
 		      <tr>
 			<td>Number of timepoints</td>
-			<td><input min="2" max="20" ng-model= "jldParameters.TimePoints"  type="number"></td>
+			<td>
+			  <input min="2" max="20" ng-model= "jldParameters.TimePoints"  type="number">
+			  <span uib-tooltip="The number of &Delta;t to be considered to compute the histograms, one histogram is computed for each value of &Delta;t" class="glyphicon glyphicon-question-sign"></span>
+
+			</td>
 		      </tr>
 		      <tr>
 			<td>Jumps to consider</td>
@@ -49,21 +56,33 @@
 			  <input ng-model="jldParameters.JumpsToConsider"
 				 ng-disabled="jldParameters.useAllTraj"
 				 type="number">
-			  Use all trajectories?
+			</td>
+		      </tr>
+		      <tr>
+			<td>Use all trajectories?</td>
+			<td>
 			  <toggle-switch
 			     ng-model="jldParameters.useAllTraj"
 			     off-label="No"
 			     on-label="Yes">
 			  </toggle-switch>
+			  <span uib-tooltip="Tell whether we should truncate the trajectories to the n first jumps. This is useful to avoid overrepresentation of bound molecules. When 'Use all trajectories' is set to 'Yes', trajectories are not truncated." class="glyphicon glyphicon-question-sign"></span>
 			</td>
 		      </tr>
 		      <tr>
 			<td>Max jump (µm)</td>
-			<td><input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0"></td>
+			<td>
+			  <input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0">
+			  <span uib-tooltip="The distance of the longest jump to be computed. This will be the upper bound of the histogram. A value too low will yield a truncated histogram, whereas a value too high lead to overfitting of the tail of the distribution." class="glyphicon glyphicon-question-sign"></span>
+			</td>
 		      </tr>
 		      <tr>
 			<td> dT (ms): </td>
-			<td><input ng-model="jldParameters.TimeGap" type="number" step="any" min="0"></td>
+			<td>
+			  <input ng-model="jldParameters.TimeGap" type="number" step="any" min="0">
+			  <span uib-tooltip="The framerate." class="glyphicon glyphicon-question-sign"></span>
+
+			</td>
 		      </tr>
 		      <tr>
 			<td>&nbsp;</td>
@@ -95,7 +114,7 @@
 	      </div>
 	      
 	      <!-- Fitting parameters -->
-	      <div class="col-md-6">
+	      <div class="col-md-7">
 		<div class="panel panel-default">
 		  <div class="panel-heading"><h3 class="panel-title"> Model fitting </h3></div>
 		  <div class="panel-body">
@@ -135,6 +154,7 @@
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0" max="2">
 			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0" max="2">
+			    <span uib-tooltip="Range of possible diffusion coefficients for the bound fraction." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='true'">
@@ -142,6 +162,7 @@
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0" max="25">
 			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0" max="25">
+			    <span uib-tooltip="Range of possible diffusion coefficients for the free fraction." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='true'">
@@ -149,6 +170,7 @@
 			  <td>
 			    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
 			    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
+			    <span uib-tooltip="Range of possible proportion for the bound fraction." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='false'">
@@ -156,6 +178,7 @@
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_med[0]"  type="number" step="any" min="0" max="10">
 			    max: <input ng-model= "modelingParameters.D_med[1]"  type="number" step="any" min="0" max="10">
+			    <span uib-tooltip="Range of possible diffusion coefficients for the slow fraction." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='false'">
@@ -163,6 +186,7 @@
 			  <td>
 			    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0" max="25">
 			    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0" max="25">
+			    <span uib-tooltip="Range of possible diffusion coefficients for the fast fraction." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			</tr>			
 			<tr ng-if="modelingParameters.fit2states==='false'">
@@ -170,6 +194,7 @@
 			  <td>
 			    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
 			    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
+			    <span uib-tooltip="Range of possible proportion for the bound fraction." class="glyphicon glyphicon-question-sign"></span>			    
 			  </td>
 			</tr>
 			<tr ng-if="modelingParameters.fit2states==='false'">
@@ -177,11 +202,13 @@
 			  <td>
 			    min: <input ng-model= "modelingParameters.F_fast[0]" type="number" step="any" min="0" max="1">
 			    max: <input ng-model= "modelingParameters.F_fast[1]"  type="number" step="any" min="0" max="1">
+			    <span uib-tooltip="Range of possible proportion for the fast fraction." class="glyphicon glyphicon-question-sign"></span>
 			  </td>			  
 			</tr>		
 			<tr>
 			  <td> Localization error (µm): </td>
-			  <td>Fit it from data 
+			  <td>Fit it from data <span uib-tooltip="If set to 'Yes', the localization error will be estimated from the data, if set to 'No', you should provide an estimate." class="glyphicon glyphicon-question-sign"></span>
+ 
 			    <toggle-switch
 			       ng-model="modelingParameters.fitSigma"
 			       on-change="fitLocalizationError()"
@@ -193,10 +220,12 @@
 			  <td>&nbsp;</td>
 			  <td ng-show="!modelingParameters.fitSigma">
 			    <input  ng-model="modelingParameters.LocError" type="number" step="any" min="0">
+			    <span uib-tooltip="Refer to the documentation for hints about how to estimate the localizaton error." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			  <td ng-show="modelingParameters.fitSigma">
 			    min: <input ng-model="modelingParameters.sigma[0]" type="number" step="any" min="0" max="0.1">
 			    max: <input ng-model="modelingParameters.sigma[1]" type="number" step="any" min="0" max="0.1">
+			    <span uib-tooltip="Range of possible localization errors." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			</tr>
 			<tr>
@@ -204,11 +233,12 @@
 			  <td>
 			    <input ng-model="modelingParameters.dZ"
 				   type="number" step="any" min="0">
+			    <span uib-tooltip="The axial dimension of the detection volume. This is used to compute the fraction of particles that move out of focus and correct for that." class="glyphicon glyphicon-question-sign"></span>
 			    (using (dZ={{modelingParameters.dZfit}} &micro;m,
 			    dT={{modelingParameters.dTfit*1000.}} ms)
 			    for the z correction
 			    <a href="#"
-			       uib-tooltip="a={{zcorr.a|number}} s^(-1/2),  b={{zcorr.b|number}} µm">?</a>.
+			       uib-tooltip="a={{zcorr.a|number}} 1/&#8730;s,  b={{zcorr.b|number}} µm">?</a>.
 			  </td>
 			</tr>
 			<tr>
@@ -218,6 +248,7 @@
 			       ng-model="modelingParameters.ModelFit"
 			       off-label="PDF"
 			       on-label="CDF"></toggle-switch>
+			    <span uib-tooltip="Either fit the probability density function (PDF) or the cumulative distribution function (CDF). CDF fitting usually yields more accurate results." class="glyphicon glyphicon-question-sign"></span>
 			  </td>
 			</tr>
 			<tr>
@@ -227,11 +258,15 @@
 			       ng-model="modelingParameters.SingleCellFit"
 			       off-label="No"
 			       on-label="Yes"></toggle-switch> (long)
-			  </td>
+			    <span uib-tooltip="If set to 'Yes', all single dataset will be fitted individually. This is not recommended." class="glyphicon glyphicon-question-sign"></span>
+			  </td>			    
 			</tr>			
 			<tr>
 			  <td> Iterations: </td>
-			  <td><input type="number" ng-model="modelingParameters.iterations" min="0" max="15"></td>
+			  <td>
+			    <input type="number" ng-model="modelingParameters.iterations" min="0" max="15">
+			  <span uib-tooltip="The number of times to run the optimization routine (to avoid getting stuck in local maxima)." class="glyphicon glyphicon-question-sign"></span>
+			  </td>
 			</tr>			  
 			<tr>
 			  <td>&nbsp;</td>
