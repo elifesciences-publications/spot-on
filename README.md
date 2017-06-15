@@ -58,11 +58,12 @@ So far, it has to be initialized manually (you have to create several repositori
 git clone https://padouppadoup@gitlab.com/padouppadoup/fastSPT.git
 cd fastSPT
 pip install -r requirements.txt
+make init ## This will download demo datasets and fitted (a,b) fitted values
 
-mkdir -p static/upload/
-mkdir    static/tmpdir/
-mkdir    static/analysis
-mkdir -p uploads/uploads/
+#mkdir -p static/upload/
+#mkdir    static/tmpdir/
+#mkdir    static/analysis
+#mkdir -p uploads/uploads/
 ```
 
 # Usage
