@@ -132,7 +132,7 @@ def new_demo(request):
             d.save()
 
         print "New id: ", dem.id, " new name ", url_basename
-        return redirect('../{}'.format(url_basename))
+        return redirect('SPTGUI:analysis', url_basename)
     else:
         return redirect('../..')
     
@@ -355,7 +355,6 @@ def get_analysisp(request, url_basename):
     found."""
     return get_analysis(request, url_basename, None, pooled=True)
 
-    
 def get_jldp(request, url_basename):
     """Same as `get_jld` but returns the jld for the pooled values. In practice,
     the code is significantly different from the `get_jld` function since the 
@@ -406,7 +405,8 @@ def get_jldp(request, url_basename):
                         'hash_prefix' : cha})
             
         return HttpResponse(json.dumps('computing'), content_type='application/json')
-    
+
+
 def get_jld_default(request, url_basename, dataset_id):
     """Returns the empirical jump length distribution (precomputed at the
     upload stage. That is, the default jump length distribution."""

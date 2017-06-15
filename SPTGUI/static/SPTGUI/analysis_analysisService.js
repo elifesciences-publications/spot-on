@@ -1,5 +1,5 @@
 angular.module('app')
-    .service('analysisService', ['$http', '$rootScope', function($http, $rootScope) {
+    .service('analysisService', ['MainSocket', '$http', '$rootScope', function(MainSocket, $http, $rootScope) {
 	// This service handles $http requests to perform the analysis of a dataset
 	function encodeQueryData(data) { // From http://stackoverflow.com/questions/111529/how-to-create-query-parameters-in-javascript
 	    let ret = [];
@@ -43,7 +43,6 @@ angular.module('app')
 	    paramsFit = angular.copy(paramsFit)
 	    paramsFit.hashvalue = 'null';
 	    paramsFit.hashvalue = encodeQueryData(paramsFit);
-	    //console.log('./api/analyze/pooled?'+encodeQueryData( Object.assign({}, paramsJLD, paramsFit)))
 	    return $http.get('./api/analyze/pooled?'+encodeQueryData( Object.assign({}, paramsJLD, paramsFit)));
 	}
 	
@@ -54,6 +53,10 @@ angular.module('app')
 	    params.hashvalueJLD ='null'
 	    params.include = include
 	    params.hashvalueJLD = encodeQueryData(params)
+	    //console.log("getting pooled jld")
+	    //var request = { type: "get_pooled_jld",
+	    //                params: params }
+	    //return MainSocket.sendRequest(request)
 	    return $http.get('./api/jld/pooled?'+encodeQueryData(params));
 	}
 

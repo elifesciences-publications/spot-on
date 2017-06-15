@@ -39,7 +39,6 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     ## ==== CRUD datasets
     ##
     url(r'^analysis/(?P<url_basename>.+)/api/delete/$', views_tab_data.delete_api, name='delete_api'),
-    #url(r'^analysis/(?P<url_basename>.+)/api/edit/$', views_tab_data.edit_api, name='edit_api'), ## deprecated
     url(r'^analysis/(?P<url_basename>.+)/api/preprocessing/$', views_tab_data.preprocessing_api, name='preprocessing_api'),
 
     ##
