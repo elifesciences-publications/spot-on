@@ -91,7 +91,7 @@ if __name__=='__main__':
                    description='Demo analysis')
     ana.save()
     if not os.path.isdir(bf+url_basename):
-        os.makedirs(bf+url_basename)
+        os.makedirs(os.path.join(bf,url_basename))
     print "Analysis created"
 
     ## Import the datasets

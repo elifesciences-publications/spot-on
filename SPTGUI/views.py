@@ -87,7 +87,6 @@ def new_analysis(request):
         ## Generate a name
         url_basename = get_unused_namepage()
         
-        
         ## Create the analysis if needed
         ana = Analysis(url_basename=url_basename,
                        pub_date=timezone.now(),
@@ -131,7 +130,10 @@ def new_demo(request):
             d.analysis = dem
             d.save()
 
-        print "New id: ", dem.id, " new name ", url_basename
+        ## Create the storage folder
+        os.makedirs(os.path.join(bf,url_basename))
+
+        print "New id: ", dem.id, " new name: ", url_basename
         return redirect('SPTGUI:analysis', url_basename)
     else:
         return redirect('../..')
