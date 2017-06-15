@@ -1,7 +1,7 @@
 *.pyc
 *~
 ## Contains our little secrets ;)
-/fastSPT/custom_settings.py
+fastSPT/custom_settings.py
 
 ## initialized by make init
 db.sqlite3
