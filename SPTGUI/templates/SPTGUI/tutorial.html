@@ -2,12 +2,15 @@
 <h2 class="blog-post-title">Quickstart/tutorial</h2>
 <p>This section of the Spot-On documentation will guide you through a sample analysis with a couple of demonstration files and will provide you with an overview of Spot-On features and options.</p>
 
-<p> To access the demonstration files, go to the <a href="{% url 'SPTGUI:index' %}">Spot-On homepage</a> and scroll to the "Get Started section" (or alternatively click the <a href="{% url 'SPTGUI:index' %}#start" class="btn btn-default btn-sm">Start spotting!</a> button on the top menu. First fill in the "I'm not a robot" CAPTCHA. Then you have the option to either upload your own tracking files and start your analysis or start with demo files. We choose this later option for the purpose of this tutorial.</p>
-
-<img src="{% static 'SPTGUI/img/tutorial/tuto1.png' %}"
+<div class="bs-callout bs-callout-warning">
+  <h4>Step 1: start an analysis with demonstration files</h4>
+  <p> To access the demonstration files, go to the <a href="{% url 'SPTGUI:index' %}">Spot-On homepage</a> and scroll to the "Get Started section" (or alternatively click the <a href="{% url 'SPTGUI:index' %}#start" class="btn btn-default btn-sm">Start spotting!</a> button on the top menu. First fill in the "I'm not a robot" CAPTCHA. Then you have the option to either upload your own tracking files and start your analysis or start with demo files. We choose this later option for the purpose of this tutorial.</p>
+  <img src="{% static 'SPTGUI/img/tutorial/tuto1.png' %}"
      class="img-responsive center-block"
      style="max-width: 50%;"
      alt="Screenshot of the CAPTCHA region.">
+
+</div>
 
 <p> This option will load the analysis page and will automatically import some demonstration file. Also, a custom and permanent URL is created. Your analyses will accessible from this URL until you choose to delete them. Do not share this URL if you want your datasets and analyses to remain private. You might want to bookmark it in order to reaccess the data later. Note that if you lose this address, there is no way for you to recover your files, since your upload is totally anonymous (we do not collect your identity or email address).</p>
 
@@ -67,17 +70,27 @@
 
 <p>Five of these correspond to the transcription factor <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a> is endogeneously tagged with a HaloTag and observed with the PA-JF646<b>add reference</b> organic dye. Five other correspond to the observation of histone H2B.</p>
 
-<p> Since the naming convention of these files is a little bit cumbersome, let's first edit the description of each file to make it clearer. To do so, click on the "pencil" icon (<span class="glyphicon glyphicon-pencil"></span>, see <span class="red">&#x2465;</span>) next to each uploaded dataset. An "edit" box will appear at the bottom of the "Uploaded datasets" area, and we can now either rename or add a more explicit description of the datasets. We choose to leave the name as is, but add a short description for each dataset, such as "H2B cell1", "H2B cell2", etc. (<span class="red">&#x2466;</span>)</p>
+<div class="bs-callout bs-callout-warning">
+  <h4>Step 2: rename and tag the uploaded files</h4>
+  <p> Since the naming convention of these files is a little bit cumbersome, let's first edit the description of each file to make it clearer. To do so, click on the "pencil" icon (<span class="glyphicon glyphicon-pencil"></span>, see <span class="red">&#x2465;</span>) next to each uploaded dataset. An "edit" box will appear at the bottom of the "Uploaded datasets" area, and we can now either rename or add a more explicit description of the datasets. We choose to leave the name as is, but add a short description for each dataset, such as "H2B cell1", "H2B cell2", etc. (<span class="red">&#x2466;</span>)</p>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto3.png' %}"
-     class="img-responsive center-block"
-     style="max-width: 50%;"
-     alt="Screenshot: Editing the description of datasets.">
+  <img src="{% static 'SPTGUI/img/tutorial/tuto3.png' %}"
+       class="img-responsive center-block"
+       style="max-width: 50%;"
+       alt="Screenshot: Editing the description of datasets.">
+</div>
 
 <div class="alert alert-danger"> The uploaded dataset comprises two distinct proteins, and five replicates for each protein. In the next steps, we want to make sure that we pool the replicates of each protein together, but do not mix up the two proteins.</div>
 
 <h3>Quality check</h3>
-<p>Now that we see a little bit clearer through the datasets, let's inspect a little bit the datasets, and try to assess the quality of the dataset. Spot-On provides a few quality metrics (statistics), accessible for each dataset by clicking the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>). The table below summarizes the statistics computed for the first dataset (names <em>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell01_Tracked.mat</em>.</p>
+<p>Now that we see a little bit clearer through the datasets, let's inspect a little bit the datasets, and try to assess the quality of the dataset. Spot-On provides a few quality metrics (statistics), accessible for each dataset by clicking the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>).</p>
+
+<div class="bs-callout bs-callout-warning">
+  <h4>Step 3: Inspect a few quality metrics</h4>
+  <p>Click on the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>) next to the datasets and have a look at the metrics displayed. Make sure you familiarize yourself with those.</p>
+</div>
+
+<p> The table below summarizes the statistics computed for the first dataset (names <em>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell01_Tracked.mat</em>.</p>
 
 <table class="table table-striped">
   <tr>
@@ -157,14 +170,21 @@
 <h4>Computation of the jump length distribution</h4>
 <p> For the purpose of this tutorial, we'll simply fit the H2B and Sox2 datasets separately, and compare the two-states and three-states models based on their goodness of fit (assessed by the Bayesian Information Criterion, <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a>).</p>
 
-<p> First, in the "Dataset selection" select the five Sox2 replicates. This is done by switching the "Include" toggle button to "On" next to the Sox2 datasets. Make sure that none of the H2B datasets are included.</p>
+<div class="bs-callout bs-callout-warning"> <h4>Step 4: compute the empirical jump length distribution for the Sox2 datasets</h4>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto5.png' %}"
+  <p> First, in the "Dataset selection" select the five Sox2 replicates. This is done by switching the "Include" toggle button to "On" next to the Sox2 datasets. Make sure that none of the H2B datasets are included.</p>
+
+  <img src="{% static 'SPTGUI/img/tutorial/tuto5.png' %}"
      class="img-responsive center-block"
-     style="max-width: 60%;"
-     alt="Selection of Sox2 datasets.">
+       style="max-width: 60%;"
+       alt="Selection of Sox2 datasets.">
   
-<p> We can then set the parameters to compute the jump length distribution. We will mostly leave the parameters as default. Section <a href="jld-parameters">Jump length distribution computation parameters</a> describe the role of each parameter in more details. However, the table below summarizes some key principles to properly set those parameters</p>
+  <p> We can then set the parameters to compute the jump length distribution. We will mostly leave the parameters as default. Section <a href="jld-parameters">Jump length distribution computation parameters</a> describe the role of each parameter in more details.</p>
+
+  <p> Then click the <span class="btn btn-default">Compute!</span> button. After a few seconds, the jump length distribution is computed for all the datasets and appears under the "Jump length distribution" section.</p>
+</div>
+
+<p>The table below summarizes some key principles to properly set those parameters</p>
 
 <table class="table table-striped table-condensed">
   <tr>
@@ -217,7 +237,6 @@
      alt="Jump length distribution parameters.">
 
 <br/>
-<p> Then click the <span class="btn btn-default">Compute!</span> button. After a few seconds, the jump length distribution is computed for all the datasets and appears under the "Jump length distribution" section.</p>
 
 <div class="alert alert-info"> This is the main view of Spot-On, so it is useful to spend a little bit of time to get familiarized with the various options.</div>
 
@@ -226,39 +245,53 @@
      style="max-width: 80%;"
      alt="Jump length distribution plot.">
 
-<p> The graph displayed should be read as follows:</p>
-<ul>
-  <li>Each row corresponds to a jump length distribution evaluated at a given \(\Delta t\). Since short trajectories are more frequent than long trajectories, higher \(Delta t\) histograms tend to be less populated and appear less smooth (or more "noisy"). The number of rows is determined by the "Number of timepoints" parameter.</li>
-  <li> The jump length distribution is computed for values ranging between 0 µm and 3 µm (this corresponds to the "Max Jump" parameter). However, by default, only the first 1.2 µm are initially plotted. To plot the full histogram (or alternatively, to zoom to the origin), the "Max Jump displayed" cursor, located under the plot can be adjusted. </li>
-  <li> Then, by default, the jump length distribution is displayed for individual datasets. The displayed dataset is specified in the "Display dataset" box under the plot. It is often useful to take the time to review the jump length distribution of each single acquisition, in order to know which datasets might have to be excluded from further analysis.</li>
-  <li> Once individual datasets have been reviewed, it is possible to display the pooled jump length distribution by clicking the "Show pooled jump length distribution" toggle button under the plot. This will compute the distribution for the selected datasets only (in our case, for all the Sox2 datasets). Pooled histograms appear with a hard, black boundary, and the included datasets are displayed under the graph. The updated graph might take a few seconds to render.</li>
-</ul>
+<div class="bs-callout bs-callout-warning"> <h4>Step 5: play with the display options</h4>
+
+  <p> The graph displayed should be read as follows:</p>
+  <ul>
+    <li>Each row corresponds to a jump length distribution evaluated at a given \(\Delta t\). Since short trajectories are more frequent than long trajectories, higher \(\Delta t\) histograms tend to be less populated and appear less smooth (or more "noisy"). The number of rows is determined by the "Number of timepoints" parameter.</li>
+    <li> The jump length distribution is computed for values ranging between 0 µm and 3 µm (this corresponds to the "Max Jump" parameter). However, by default, only the first 1.2 µm are initially plotted. To plot the full histogram (or alternatively, to zoom to the origin), the "Max Jump displayed" cursor, located under the plot can be adjusted. </li>
+    <li> Then, by default, the jump length distribution is displayed for individual datasets. The displayed dataset is specified in the "Display dataset" box under the plot. It is often useful to take the time to review the jump length distribution of each single acquisition, in order to know which datasets might have to be excluded from further analysis.</li>
+    <li> Once individual datasets have been reviewed, it is possible to display the pooled jump length distribution by clicking the "Show pooled jump length distribution" toggle button under the plot. This will compute the distribution for the selected datasets only (in our case, for all the Sox2 datasets). Pooled histograms appear with a hard, black boundary, and the included datasets are displayed under the graph. The updated graph might take a few seconds to render.</li>
+  </ul>
+</div>
 
 <div class="alert alert-info"> The result of all the computations operated by Spot-On are cached. So when next time you enter the same set of parameters as previously, the computation should be almost instantaneous.</div>
 
-<p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
+<div class="bs-callout bs-callout-warning"> <h4>Step 6: compare the H2B and Sox2 jump length distributions</h4>
+  <p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto8.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/tuto8.png' %}"
+       class="img-responsive center-block"
+       style="max-width: 95%;"
+       alt="Comparison of the Sox2 and H2B jump length distributions.">
+</div>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 7: mark one jump length distribution for download</h4>
+  <p> Before moving to the fitting of the data, let's save this last plot. We will download it later (from the "Download" tab). To do so, click the <span class="btn btn-default btn-sm">Mark for download</span> button at the bottom of the page. This will prompt a small form where you can enter a name and a description that will be used as a reminder when you download the file. Also, display again the fit for Sox2 (by selecting the appropriate files and clicking the and <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box) and save Mark it for download too. We'd get back to these saved analyses later.</p>
+
+  <img src="{% static 'SPTGUI/img/tutorial/tuto9.png' %}"
      class="img-responsive center-block"
-     style="max-width: 95%;"
-     alt="Comparison of the Sox2 and H2B jump length distributions.">
-
-<p> Before moving to the fitting of the data, let's save this last plot. We will download it later (from the "Download" tab). To do so, click the <span class="btn btn-default btn-sm">Mark for download</span> button at the bottom of the page. This will prompt a small form where you can enter a name and a description that will be used as a reminder when you download the file. Also, display again the fit for Sox2 (by selecting the appropriate files and clicking the and <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box) and save Mark it for download too. We'd get back to these saved analyses later.</p>
-
-<img src="{% static 'SPTGUI/img/tutorial/tuto9.png' %}"
-     class="img-responsive center-block"
-     style="max-width: 95%;"
-     alt="Screenshot of the mark for download box.">
+       style="max-width: 95%;"
+       alt="Screenshot of the mark for download box.">
+</div>
 
 <h4>Model fitting</h4>
 <p> Now that we are familiar with the computation and display of the jump length distribution, let's now move to model fitting!</p>
 
-<p>Spot-On fits the jump length distribution, as defined by the parameters of the "Jump length distribution" box. The fitting parameters are defined in the "Model fitting" box. Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>.</p>
+<p>Spot-On fits the jump length distribution, as defined by the parameters of the "Jump length distribution" box. The fitting parameters are defined in the "Model fitting" box.</p>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto10.png' %}"
-     class="img-responsive center-block"
-     style="max-width: 60%;"
-     alt="screenshot of the fitting parameters box.">
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 8: fit a two-states model</h4>
+  <p>Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>, a short description is shown below).</p>
+
+  <img src="{% static 'SPTGUI/img/tutorial/tuto10.png' %}"
+       class="img-responsive center-block"
+       style="max-width: 60%;"
+       alt="screenshot of the fitting parameters box.">
+
+  <p> Having now reviewed the parameters, we can click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button. A "spinning wheel" will appear next to the button while the fit is being performed and will get displayed when the fit completes.</p>
+</div>
 
 <table class="table table-striped table-condensed">
   <tr>
@@ -334,8 +367,6 @@
   <p> It is important to make sure that the set of displayed parameters is not too far from the real acquisition settings, else, the computed z correction might be wrong.</p>
 </div>
 
-<p> Having now reviewed the parameters, we can click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button. A "spinning wheel" will appear next to the button while the fit is being performed and will get displayed when the fit completes.</p>
-
 <img src="{% static 'SPTGUI/img/tutorial/tuto12.png' %}"
      class="img-responsive center-block"
      style="max-width: 95%;"
@@ -380,11 +411,17 @@
 									   
 <p> Finally, the <a href="https://en.wikipedia.org/wiki/Akaike_information_criterion">AIC</a> and <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a> criterion are provided to allow model comparison. They cannot be used to assess the quality of fit per se. We will come back to those criteria later.</p>
 
-<p>Then, we can save the displayed fit by clicking the <span class="btn btn-default btn-sm">Mark for download</span> button.</p>
+<div class="bs-callout bs-callout-warning"> <h4>Step 9: mark the plot for download</h4>
+  <p>Then, we can save the displayed fit by clicking the <span class="btn btn-default btn-sm">Mark for download</span> button.</p>
+</div>
 
-<p> We can now proceed similarly to derive the fit for the Sox2 datasets.</p>
+<div class="bs-callout bs-callout-warning"> <h4>Step 10: fit the Sox2 dataset with a two-states model</h4>
+  <p> We can now proceed similarly to derive the fit for the Sox2 datasets.</p>
+</div>
 
-<p> Finally, we can now see how the quality of the fit increases by running the fit again, but with a 3-states model. Select the 3-state model icon (Slow-Bound-Fast) on the "Model fitting" box. New parameters appear, very similarly as with the two-states model. We will leave the parameters to their default values, except for the CDF fit. Then click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button and wait a until the fitting completes. Observe how the quality of fit evolves, and the parameters and estimated fractions.</p>
+<div class="bs-callout bs-callout-warning"> <h4>Step 11: fit a three-states model</h4>
+  <p> Finally, we can now see how the quality of the fit increases by running the fit again, but with a 3-states model. Select the 3-state model icon (Slow-Bound-Fast) on the "Model fitting" box. New parameters appear, very similarly as with the two-states model. We will leave the parameters to their default values, except for the CDF fit. Then click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button and wait a until the fitting completes. Observe how the quality of fit evolves, and the parameters and estimated fractions.</p>
+</div>
 
 <img src="{% static 'SPTGUI/img/tutorial/tuto13.png' %}"
      class="img-responsive center-block"
@@ -472,7 +509,9 @@
 <div class="alert alert-info"> Be careful when interpreting a 3-states model. Indeed, although a two-states model usually appears robust to model mismatch, a 3-states model can fit a wide range of distributions, and the estimated coefficients might be model specific. For instance, the model can invoke a third component to explain what actually is anomalous diffusion.</div>
 
 <h3>Download</h3>
-<p>Finally move to the "Download" tab, where all the analyses we marked for download are stored. The view should look as below:</p>
+<div class="bs-callout bs-callout-warning"> <h4>Step 12: download the marked analyses</h4>
+  <p>Finally move to the "Download" tab, where all the analyses we marked for download are stored. The view should look as below:</p>
+</div>
 
 <img src="{% static 'SPTGUI/img/tutorial/tuto14.png' %}"
      class="img-responsive center-block"
