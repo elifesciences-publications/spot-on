@@ -150,11 +150,7 @@ $$F_{bound} = \frac{k^*_{on}}{k^*_{on}+k_{off}}$$
 <p> The empirical jump length distribution is computed as follows: first, the <code>MaxJump</code> and <code>BinWidth</code> parameters determine the range to build the histogram, and ulitmately the number of bins it will contain. Also, the input file is filtered for trajectories that contain more than three localizations.
 </p>
 
-<p> Then, the histogram in itself is built. For each trajectory, the <code>JumpsToConsider</code> parameter determines how many of the first jumps will be taken into account for the building of the histogram. If the <code>UseAllJumps</code> is set to "Yes", then all jumps (and not the first few ones) will be used to build the histogram. Note that this later option is likely to bias the histogram towards bound molecules. The <code>GapNumper</code> parameter allows to take into account gaps in the tracking.</p>
-
-<div class="alert alert-danger">
-  The <code>GapNumper</code> parameter cannot be lower than the number of gaps allowed by the tracking algorithm. For instance, if you set Spot-On to allow up one gap, but your tracking algorithm connected localization with more than one gap, then Spot-On might <em>fail miserably</em>.
-</div>
+<p> Then, the histogram in itself is built. For each trajectory, the <code>JumpsToConsider</code> parameter determines how many of the first jumps will be taken into account for the building of the histogram. If the <code>UseAllJumps</code> is set to "Yes", then all jumps (and not the first few ones) will be used to build the histogram. Note that this later option is likely to bias the histogram towards bound molecules. For this procedure, the number of gaps in the data is extracted.</p>
 
 <p> To increase the robustness of the fit, several histograms are built with increasing time lags \(\Delta t\). The number of histograms to be built is determined by the <code>Number of time points</code> parameter.</p>
 

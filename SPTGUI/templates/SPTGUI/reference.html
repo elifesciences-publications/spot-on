@@ -330,7 +330,9 @@ of the parameters, which differs between each iteration. Thus, increasing the "I
 </table>
 
 <h3> Display parameters </h3>
-These parameters affect how the graphs are displayed, and which features are to be plotted. It does not affect how the fits or the jump length distribution are computed. These settings are located under the graph region.
+<p>These parameters affect how the graphs are displayed, and which features are to be plotted. It does not affect how the fits or the jump length distribution are computed. These settings are located under the graph region.</p>
+
+<p>These parameters are only displayed when a graph has been processed. This is either done automatically after datasets have been successfully uploaded or by clicking the "Compute!" button in the "Jump length distribution parameters" box. Some of the settings only appear for specific settings.</p>
 
 <table class="table table-condensed">
   <tr>
@@ -338,16 +340,46 @@ These parameters affect how the graphs are displayed, and which features are to 
   <tr>
     <th>Parameter</th>
     <th>Meaning</th>
-    <th>Why it matters?</th>
+    <th>Only displayed if...</th>
   </tr>
   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>Max jump displayed (µm)</td>
+    <td>The range of distances to be plotted. This parameter varies between 0 µm and "Max Jump". It allows to zoom on the origin of the plot.</td>
+    <td>For any plot</td>
   </tr>
   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>Display PDF/CDF	</td>
+    <td>Either display the PDF or the CDF</td>
+    <td>For any plot.</td>
+  </tr>
+  <tr>
+    <td>Show pooled jump length distribution</td>
+    <td>Tell whether single datasets should be displayed or if the selected datasets should be pooled together.</td>
+    <td>For any plot.</td>
+  </tr>
+  <tr>
+    <td>Displayed group</td>
+    <td>The list of datasets displayed in the pooled graph</td>
+    <td>Show pooled jump length distribution is set to "Yes"</td>
+  </tr>  
+  <tr>
+    <td>Display dataset</td>
+    <td>Sets the dataset to be displayed</td>
+    <td>Show pooled jump length distribution is set to "No"</td>
+  </tr>
+  <tr>
+    <td>Show pooled fit</td>
+    <td>Tell whether fit for individual datasets or the fit for all the selected datasets has been computed</td>
+    <td>a fit has been computed</td>
+  </tr>
+  <tr>
+    <td>Display residuals</td>
+    <td>If set to "Yes", the residual between the fit and the empirical jump length distribution is overlaid on the graph.</td>
+    <td>a fit has been computed</td>
+  </tr>
+  <tr>
+    <td>Mark for download</td>
+    <td>This button allows to mark the current plot for download. When doing so, all the current settings are saved and will be available in the download section. You have the possibility to add a few annotations to the download for easier sorting.</td>
+    <td>For any plot</td>
   </tr>
 </table>
