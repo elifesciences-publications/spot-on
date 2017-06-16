@@ -136,9 +136,218 @@
 </a>
 
 <h3 id="import-codes">Import codes</h3>
+When a dataset is uploaded, a column "status" is displayed, showing the state of the import. Below is the meaning of the status codes displayed:
+
+<table class="table table-condensed">
+  <tr>
+    <th>Status code</th>
+    <th>Meaning</th>
+  </tr>
+  <tr>
+    <td>Uploading</td>
+    <td>The dataset is being transferred to the server.</td>
+  </tr>
+  <tr>
+    <td>Queued</td>
+    <td>The dataset has been uploaded, and will be checked for import.</td>
+  </tr>
+  <tr>
+    <td>Ok</td>
+    <td>The dataset was successfully imported.</td>
+  </tr>
+  <tr>
+    <td>Error</td>
+    <td>Something went wrong with the import process, and the file could not be imported. The file has been deleted from our servers and you might want to check the file format and upload it again.</td>
+  </tr>
+</table>
+
+<img src="/static/SPTGUI/img/tutorial/reference1.png"
+     class="img-responsive center-block"
+     style="max-width: 60%;"
+     alt="Location of the 'status' column">
+
+<div class="alert alert-info">
+  <p>Note that once the dataset is marked as "ok", the jump length distribution might still be computing in the background. The content of the second tab only appears when this computation is done, which might take a few seconds.</p>
+</div>
+
 <h3 id="dataset-statistics">Dataset statistics</h3>
+
+<p>Once a dataset has been successfully imported, several statistics are displayed and allow you to get a quick overview of the data, and spot dubious datasets or datasets that might likely need to unreliable analyses. We detail below how theses statistics are computed and what are suggested reference values.</p>
+
+<table class="table table-condensed">
+  <tr>
+    <th>Statistic</th>
+    <th>Meaning</th>
+    <th>Why it matters?</th>
+  </tr>
+  <tr>
+    <td>Number of traces</td>
+    <td>The number of trajectories in the dataset. Trajectories can be singletons (one detection) and arbitrary long.</td>
+    <td>A low number of traces is the sign of a dataset of poor quality?</td>
+  </tr>
+  <tr>
+    <td>Number of frames</td>
+    <td>The duration of the acquisition (in frames). This is inferred as the maximum index of the "frame" field. If you do not have detections at the end of the movie, this number can be lower than the true number of frames.</td>
+    <td>This number should more or less match the number of frames for the acquisition of this dataset.</td>
+  </tr>
+  <tr>
+    <td>Number of detections</td>
+    <td>The number of particles detected.</td>
+    <td>A low number of detections characterizes a dataset of low quality. Also, </td>
+  </tr>
+  <tr>
+    <td>Longest gap (frames)</td>
+    <td>The maximum number of frames during which a particle disappeared before being tracked again by the tracking software.</td>
+    <td>A number of gaps >2 frames is very likely to yield significant tracking errors.</td>
+  </tr>
+  <tr>
+    <td>Number of traces with &ge; 3 detections</td>
+    <td>Number of trajectories that contain three detections or more</td>
+    <td>This indicates whether histograms can be populated for \(\Delta t > 1\).</td>
+  </tr>
+  <tr>
+    <td>Number of jumps</td>
+    <td>The number of tracked translocations</td>
+    <td>Jumps are used to build the histogram of jump lengths, this is probably one of the most relevant metric to evaluate the quality of the dataset.</td>
+  </tr>
+  <tr>
+    <td>Length of trajectories (in number of frames)</td>
+    <td>Provides the mean and median length of trajectories.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Particles per frame</td>
+    <td>The mean and median number particles per frame.</td>
+    <td>A median number higher than one indicates the risk of tracking errors.</td>
+  </tr>
+  <tr>
+    <td>Jump length (µm)</td>
+    <td>The mean and median translocation distance</td>
+    <td>This number has to be compared to the pixel size and has to remain relatively low to minimize the risk of tracking error. To keep it low, a way is to increase the framerate.</td>
+  </tr>
+</table>
+
 <h3 id="jld-parameters">Jump length distribution computation parameters</h3>
+
+The empirical jump length distribution is computed according to several parameters that are detailed below.
+
+<table class="table table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Meaning</th>
+    <th>Why it matters?</th>
+  </tr>
+  <tr>
+    <td>Bin width (µm)</td>
+    <td>how finely to do binning for PDF fitting and plotting in
+units of micrometers. Generally 0.010 μm or 10 nm is reasonable, but
+if you have very small amounts of data you may want to increase it.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Number of timepoints</td>
+    <td>How many time points to consider. If you allow \(N\) time points, this corresponds to considering displacements with a maximal time-delay of \((N-1)\Delta t\). Generally, we do not recommend going much above 50-60 ms unless you have an a very large number of trajectories and/or very long trajectories, since otherwise, the displacement histograms at longer \(\Delta t\) tend to be undersampled.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Jumps to consider</td>
+    <td>The first <code>Jumps To Consider+Number of time points - 4</code> displacements will be considered. e.g. if JumpsToConsider=4 and TimePoints=8 and the present trajectory was 10 frames, only the first 8 displacements or 9 frames
+will be considered. The trajectory will then contribute 8
+displacements to the \(1\Delta t\) histogram, 7 displacements to the \(2\Delta t\)
+histogram, ..., and 2 displacements to the \(7\Delta t\) histogram. This parameter is ignored if "Use all trajectories" is set to Yes.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Use all trajectories?</td>
+    <td>If "Use all trajectories" is set to "Yes", the previous parameter ("Jumps to consider" is being ignored. If set to "Yes", all displacements will be used from
+each trajectory. If set to "No", then the number of displacements is determined by the "Jumps to consider" variable. A trajectory of \(N\) frames, will contribute \(N-1\) displacements to the \(1\Delta t\) histogram, \(N-2\) displacements to the \(2\Delta t\), histogram,  ..., \(N-k\) displacements to the \(k\Delta t\) histogram.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Max jump (µm)</td>
+    <td>this parameter affects data-processing. For binning displacements, a maximum displacement has to be set, so this parameter should be set to a large value that should be at least as big as the largest displacement. Generally, 5.05 μm is reasonable for single-molecule tracking data in mammalian cells.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>dT (ms)</td>
+    <td>Time delay between frames in units of milliseconds.</td>
+    <td></td>
+  </tr>
+</table>
+
 <h3 id="fit-parameters">Fitting parameters</h3>
-<h4>Parameters common to both 2-states and 3-states model</h4>
-<h4>Parameters specific to the two-states model</h4>
-<h4>Parameters specific to the three-states model</h4>
+
+<table class="table table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Meaning</th>
+    <th>Why it matters?</th>
+  </tr>
+  <tr>
+    <td>Kinetic model</td>
+    <td>The number of diffusive states in the model. Spot-On supports 2- or 3-states. In most single-molecule tracking experiments of molecules that can engage
+scaffolds (e.g. transcription factors, which may bind chromatin), one of these states will correspond to a bound state. In the case of Halo-CTCF in human U2OS cells, this will manifest itself as the chromatin-bound state of CTCF exhibiting a very small \(D\) for the bound state which likely corresponds to slow diffusion of
+chromatin. The other states will correspond to freely diffusive states.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>D<sub>free</sub>, D<sub>bound</sub>, D<sub>slow</sub>, D<sub>fast</sub></td>
+    <td>Allowed lower and upper bound for the faster diffusion constant for the model-fitting in units of μm²/s for the free (2-states model), bound (all models), slow (3-states model) or fast (3-states model), respectively.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>F<sub>bound</sub>, F<sub>fast</sub></td>
+    <td>The range of possible values for the bound fraction (all models) and the fast-diffusing fraction (3-states model), respectively.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Localization error (µm)</td>
+    <td>If "Fit from data" is set to "No", you can provide the localization error  with which single-molecules were localized. If "Fit from data" is set to "Yes", Spot-On will try to infer this from the model-fitting. In that latter case, you need to provide an exploration range for these values. In the datasets provided with Spot-On, the localization error was around 35 nm. If the localization error parameter is set inaccurately, this will generally show up through poor fitting of the bound state and will cause the estimation of the bound diffusion constant to be inaccurate.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>dZ (µm)</td>
+    <td>Axial observation slice in units of micrometers. This parameter will depend somewhat on signal-to-noise conditions and imaging modality. But for a typical setup (HiLo or epi illumination, HaloTag or SNAP-Tag dyes), this is likely to be around 0.7 μm. The parameters tell Spot-On how far out-of-focus a molecule can be before it fails to be detected and it is important for accurately correcting for diffusing molecules gradually moving out-of-focus and thus being undersampled at longer time-intervals. In most cases 0.7 μm is reasonable, but for details on how to measure this please see (<a href="#hansen" aria-describedby="footnote-label" id="hansen-ref"><em>Hansen et al. (2017)</em></a>.
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Perform single cell fit</td>
+    <td>When set to "Yes", each single uploaded file will be analyzed and fitted separately. This is useful for assessing how much cell-to-cell variability there is and for determining whether a single outlier is biasing the results, but also very slow, since fitting merged data takes about the same amount of time as fitting a single cell.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Model Fit</td>
+    <td>Determines whether fitting will be performed to the displacement histograms (PDF) or to the cumulative distribution function of displacements (CDF). We have performed Monte Carlo simulations and CDF-fitting is always more precise, whereas PDF-fitting tends to slightly underestimate the fraction bound and the diffusion constant, likely because PDF-fitting is more prone to binning artifacts and undersampling. Thus, for all quantitative analysis, CDF-fitting should be performed. However, displacement histograms often seem more intuitive, and for this reason Spot-On also allows PDF-fitting for making figures etc.</td>
+    <td></td>
+  </tr>  
+  <tr>
+    <td>Iterations</td>
+    <td>Spot-On fits a mathematical model to the data using least-squares fitting. Since this algorithm may occasionally get trapped in local minima in parameter space, for each iteration of the fitting Spot-On generates a random initial guess
+of the parameters, which differs between each iteration. Thus, increasing the "Iterations" parameter, increases the probability that the globally optimal fit will be generated, but comes at the cost of slowing down the fitting. In practice, for all single-molecule tracking data we have tested so far, the globally best fit is always obtained in the first or second iteration of fitting, so we generally recommend keeping this parameter to 2-3.</td>
+    <td></td>
+  </tr>
+</table>
+
+<h3> Display parameters </h3>
+These parameters affect how the graphs are displayed, and which features are to be plotted. It does not affect how the fits or the jump length distribution are computed. These settings are located under the graph region.
+
+<table class="table table-condensed">
+  <tr>
+    <<table class="table table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Meaning</th>
+    <th>Why it matters?</th>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
