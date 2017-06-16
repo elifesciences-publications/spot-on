@@ -228,6 +228,7 @@ def analyze_api(request, url_basename):
         ## Get the corrected z_cor parameters
         zcor = fitted_zcor.query_nearest(fitparams['dTfit'],
                                          fitparams['dZfit'],
+                                         jldparams['GapsAllowed'],
                                          tree_init)
         fitparams["a"] = zcor["params"][0]
         fitparams["b"] = zcor["params"][1]
