@@ -84,21 +84,9 @@
 
 			</td>
 		      </tr>
-		      <tr>
-			<td>&nbsp;</td>
-			<td>
-			  <br/>
-			  <div class="alert alert-info">
-			    It seems that your dataset contains at most {{jldParameters.GapsAllowed}} gap(s), so the algorithm has been set accordingly
-			    <a href="../../docs/#"><span class="glyphicon glyphicon-question-sign"></span></a>
-			  </div>
-			</td>
-			  
 			<!-- NOW INFERRED FROM DATA -->
 			<!-- 	<td>Number of gaps allowed</td> -->
 			<!-- 	<td><input min="0" max="2" ng-model= "jldParameters.GapsAllowed"  type="number"></td> -->
-		      </tr>
-		      
 		      <tr>
 			<td></td>		    
 			<td>
@@ -109,6 +97,11 @@
 			</td> 
 		      </tr>
 		    </table>
+		    <br/>
+		    <div class="alert alert-info">
+		      It seems that your dataset contains at most {{jldParameters.GapsAllowed}} gap(s), so the algorithm has been set accordingly
+		      <a href="../../docs/#"><span class="glyphicon glyphicon-question-sign"></span></a>
+		    </div>
 		  </div>
 		</div>
 	      </div>
@@ -288,217 +281,218 @@
 		  </div>
 		</div>
 	      </div>
-	      
-	      <h2> Jump length histograms </h2>
-	      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
-		No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
-	      </div>
-	      <div ng-if="analysisState=='running'" class="alert alert-warning" role="alert">
-		Running, please wait...
-	      </div>
-	      <div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
-		Recomputing jump length histogram... ({{numberComputedJLD}}/{{datasets.length}})
-	      </div>
-	      <div ng-if="analysisState=='jld_notrun'" class="alert alert-warning" role="alert">
-		Click the 'Compute' button to start the computation.
-	      </div>
-	      
-	      <div ng-if="analysisState=='done'">
-		<div class="col-md-6" ng-if="jlfit[ce-1]!==null">
-		  <em>Fit parameters for cell {{ce}}.</em>
-		  <ul>
-		    <li>
-		      D<sub>bound</sub> :
-		      {{jlfit[ce-1].fitparams.D_bound | number}}
-		      &plusmn; {{jlfit[ce-1].fitparams.D_bound_std | number:4}}
-		    </li>
-		    <li ng-if="jlfit[ce-1].fitparams.fit2states===true">
-		      D<sub>free</sub> :
-		      {{jlfit[ce-1].fitparams.D_free | number}}
-		      &plusmn; {{jlfit[ce-1].fitparams.D_free_std | number:4}}
-		    </li>
-		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-		      D<sub>slow</sub> :
-		      {{jlfit[ce-1].fitparams.D_med | number}}
-		      &plusmn; {{jlfit[ce-1].fitparams.D_med_std | number:4}}
-		    </li>
-		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-		      D<sub>fast</sub> :
-		      {{jlfit[ce-1].fitparams.D_fast | number}}
-		      &plusmn; {{jlfit[ce-1].fitparams.D_fast_std | number:4}}
-		    </li>
-		    <li>
-		      F<sub>bound</sub> :
-		      {{jlfit[ce-1].fitparams.F_bound | number}}
-		      &plusmn; {{jlfit[ce-1].fitparams.F_bound_std | number:4}}
-		    </li>
-		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-		      F<sub>slow</sub> :
-{{1-jlfit[ce-1].fitparams.F_fast-jlfit[ce-1].fitparams.F_bound | number}}
-		    </li>
-		    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-		      F<sub>fast</sub> :
-		      {{jlfit[ce-1].fitparams.F_fast | number}}
-		      &plusmn; {{jlfit[ce-1].fitparams.F_fast_std | number:4}}
-		    </li>
-		    <li ng-if="jlfit[ce-1].fitparams.fitSigma===true">
-		      &sigma; (µm):
-		      {{jlfit[ce-1].fitparams.sigma| number}}
-		      &plusm; {{jlfit[ce-1].fitparams.sigma_std| number : 4}}
-		    </li>
-		    <li>
-		      l<sub>2</sub> error:
-		      {{jlfit[ce-1].fitparams.l2| number : 8}}
-		    </li>
-		    <li>
-		      AIC: {{jlfit[ce-1].fitparams.aic | number : 2}}, BIC: {{jlfit[ce-1].fitparams.bic | number : 2}}
-		    </li>
-		    
-		  </ul>
+	      <div class="row">
+		<h2> Jump length histograms </h2>
+		<div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
+		  No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
 		</div>
-		<div class="col-md-6" ng-if="jlpfit">
-		  <em>Global fit parameters for cells {{getSelectedIds()}}.</em>
-		  <ul>
-		    <li>
-		      D<sub>bound</sub> :
-		      {{jlpfit.fitparams.D_bound | number}}
-		      &plusmn; {{jlpfit.fitparams.D_bound_std | number:4}}
-		    </li>
-		    <li ng-if="jlpfit.fitparams.fit2states===true">
-		      D<sub>free</sub> :
-		      {{jlpfit.fitparams.D_free | number}}
-		      &plusmn; {{jlpfit.fitparams.D_free_std | number:4}}
-		    </li>
-		    <li ng-if="jlpfit.fitparams.fit2states===false">
-		      D<sub>slow</sub> :
-		      {{jlpfit.fitparams.D_med | number}}
-		      &plusmn; {{jlpfit.fitparams.D_med_std | number:4}}
-		    </li>
-		    <li ng-if="jlpfit.fitparams.fit2states===false">
-		      D<sub>fast</sub> :
-		      {{jlpfit.fitparams.D_fast | number}}
-		      &plusmn; {{jlpfit.fitparams.D_fast_std | number:4}}
-		    </li>
-		    <li>
-		      F<sub>bound</sub> :
-		      {{jlpfit.fitparams.F_bound | number}}
-		      &plusmn; {{jlpfit.fitparams.F_bound_std | number:4}}
-		    </li>
-		    <li ng-if="jlpfit.fitparams.fit2states===false">
-		      F<sub>slow</sub> :
-		      {{1-jlpfit.fitparams.F_fast-jlpfit.fitparams.F_bound | number}}
-		    </li>
-		    <li ng-if="jlpfit.fitparams.fit2states===false">
-		      F<sub>fast</sub> :
-		      {{jlpfit.fitparams.F_fast | number}}
-		      &plusmn; {{jlpfit.fitparams.F_fast_std | number:4}}
-		    </li>
-		    <li>
-		      l<sub>2</sub> error:
-		      {{jlpfit.fitparams.l2| number : 8}}
-		    </li>		    
-		    <li ng-if="jlpfit.fitparams.fitSigma===true">
-		      &sigma; (µm)
-		      {{jlpfit.fitparams.sigma | number}}
-		      &plusmn; {{jlpfit.fitparams.sigma_std | number:4}}
-		    </li>
-		    <li>
-		      AIC: {{jlpfit.fitparams.aic | number : 2}}, BIC: {{jlpfit.fitparams.bic | number : 2}}
-		    </li>
-		  </ul>
-		</div>	
-		<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF, maxJumpSlider.value, displayResiduals.status]"></jump-length-histogram>
+		<div ng-if="analysisState=='running'" class="alert alert-warning" role="alert">
+		  Running, please wait...
+		</div>
+		<div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
+		  Recomputing jump length histogram... ({{numberComputedJLD}}/{{datasets.length}})
+		</div>
+		<div ng-if="analysisState=='jld_notrun'" class="alert alert-warning" role="alert">
+		  Click the 'Compute' button to start the computation.
+		</div>
 		
-		<div class="controls">
-		  <table>
-		    <tr>
-		      <td>Max jump displayed (&micro;m)</td>
-		      <td><rzslider
-			     rz-slider-model="maxJumpSlider.value"
-			     rz-slider-options="maxJumpSlider.options">
-			</rzslider>
-		      </td>
-		    </tr>
-		    <tr>
-		      <td>Display PDF/CDF</td>
-		      <td><toggle-switch ng-model="displayCDF"
-					 off-label="PDF"
-					 on-label="CDF"></toggle-switch>
-		      </td>
-		    </tr>
-		    <tr ng-hide="showJLP">
-		      <td>Display dataset</td>
-		      <td>
-			<input ng-hide="showJLP" ng-model="ce" type="number" min="1" max="{{jlhist.length}}">
-		      </td>
-		    </tr>
-		    
-		    <tr ng-show="showJLP">
-		      <td >Displayed group</td>
-		      <td> {{getSelectedIds()}}</td>
-		    </tr>
-		    
-		    <tr>
-		      <td>Show pooled jump length distribution: </td>
-		      <td>
-			<toggle-switch ng-model-options="{ getterSetter: true }"
-				       ng-model="displayJLP"></toggle-switch>
-			<span ng-hide="!gettingPooledJLD"> 
-			  <i class="fa fa-spinner fa-spin"
-			     style="font-size:24px"></i>
-			  Please wait...
-			</span>
-
-		      </td>
-		    </tr>
-
-		    <tr ng-if="jlpfit!==null">
-		      <td>Show pooled fit: </td>
-		      <td>
-			<toggle-switch ng-model-options="{ getterSetter: true }"
-				       ng-model="displayJLPf"></toggle-switch>
-		      </td>
-		    </tr>
-
-		    <tr ng-if="showResiduals()">
-		      <td>Display residuals: </td>
-		      <td>
-			<toggle-switch ng-model="displayResiduals.status"></toggle-switch>
-		      </td>
-		    </tr>
-
-		    <tr>
-		      <td>
-			<button uib-popover-template="downloadPopover.templateUrl"
-				popover-title="Enter a short description"
-				popover-is-open="downloadPopover.isOpen"
-				ng-click="downloadPopover.open()"
-				type="button" class="btn btn-default">
-			  Mark for download
-			</button>
-		      </td>
-		    </tr>
-		  </table>
-
-
-		  <script type="text/ng-template" id="myPopoverTemplate.html">
-		    <div>
-		      all the parameters will be saved anyway
-		    </div>
-		    <div class="form-group">
-		      <label>Name:</label>
-		      <input type="text"
-			     ng-model="downloadPopover.name"
-			     class="form-control">		      
-		      <label>Description:</label>
-		      <input type="text"
-			     ng-model="downloadPopover.description"
-			     class="form-control">
-		    </div>
-		    <button ng-click="toDownloads();"
-			    class="btn btn-default">Ok</button>
-		  </script>
+		<div ng-if="analysisState=='done'">
+		  <div class="col-md-6" ng-if="jlfit[ce-1]!==null">
+		    <em>Fit parameters for cell {{ce}}.</em>
+		    <ul>
+		      <li>
+			D<sub>bound</sub> :
+			{{jlfit[ce-1].fitparams.D_bound | number}}
+			&plusmn; {{jlfit[ce-1].fitparams.D_bound_std | number:4}}
+		      </li>
+		      <li ng-if="jlfit[ce-1].fitparams.fit2states===true">
+			D<sub>free</sub> :
+			{{jlfit[ce-1].fitparams.D_free | number}}
+			&plusmn; {{jlfit[ce-1].fitparams.D_free_std | number:4}}
+		      </li>
+		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+			D<sub>slow</sub> :
+			{{jlfit[ce-1].fitparams.D_med | number}}
+			&plusmn; {{jlfit[ce-1].fitparams.D_med_std | number:4}}
+		      </li>
+		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+			D<sub>fast</sub> :
+			{{jlfit[ce-1].fitparams.D_fast | number}}
+			&plusmn; {{jlfit[ce-1].fitparams.D_fast_std | number:4}}
+		      </li>
+		      <li>
+			F<sub>bound</sub> :
+			{{jlfit[ce-1].fitparams.F_bound | number}}
+			&plusmn; {{jlfit[ce-1].fitparams.F_bound_std | number:4}}
+		      </li>
+		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+			F<sub>slow</sub> :
+			{{1-jlfit[ce-1].fitparams.F_fast-jlfit[ce-1].fitparams.F_bound | number}}
+		      </li>
+		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+			F<sub>fast</sub> :
+			{{jlfit[ce-1].fitparams.F_fast | number}}
+			&plusmn; {{jlfit[ce-1].fitparams.F_fast_std | number:4}}
+		      </li>
+		      <li ng-if="jlfit[ce-1].fitparams.fitSigma===true">
+			&sigma; (µm):
+			{{jlfit[ce-1].fitparams.sigma| number}}
+			&plusm; {{jlfit[ce-1].fitparams.sigma_std| number : 4}}
+		      </li>
+		      <li>
+			l<sub>2</sub> error:
+			{{jlfit[ce-1].fitparams.l2| number : 8}}
+		      </li>
+		      <li>
+			AIC: {{jlfit[ce-1].fitparams.aic | number : 2}}, BIC: {{jlfit[ce-1].fitparams.bic | number : 2}}
+		      </li>
+		      
+		    </ul>
+		  </div>
+		  <div class="col-md-6" ng-if="jlpfit">
+		    <em>Global fit parameters for cells {{getSelectedIds()}}.</em>
+		    <ul>
+		      <li>
+			D<sub>bound</sub> :
+			{{jlpfit.fitparams.D_bound | number}}
+			&plusmn; {{jlpfit.fitparams.D_bound_std | number:4}}
+		      </li>
+		      <li ng-if="jlpfit.fitparams.fit2states===true">
+			D<sub>free</sub> :
+			{{jlpfit.fitparams.D_free | number}}
+			&plusmn; {{jlpfit.fitparams.D_free_std | number:4}}
+		      </li>
+		      <li ng-if="jlpfit.fitparams.fit2states===false">
+			D<sub>slow</sub> :
+			{{jlpfit.fitparams.D_med | number}}
+			&plusmn; {{jlpfit.fitparams.D_med_std | number:4}}
+		      </li>
+		      <li ng-if="jlpfit.fitparams.fit2states===false">
+			D<sub>fast</sub> :
+			{{jlpfit.fitparams.D_fast | number}}
+			&plusmn; {{jlpfit.fitparams.D_fast_std | number:4}}
+		      </li>
+		      <li>
+			F<sub>bound</sub> :
+			{{jlpfit.fitparams.F_bound | number}}
+			&plusmn; {{jlpfit.fitparams.F_bound_std | number:4}}
+		      </li>
+		      <li ng-if="jlpfit.fitparams.fit2states===false">
+			F<sub>slow</sub> :
+			{{1-jlpfit.fitparams.F_fast-jlpfit.fitparams.F_bound | number}}
+		      </li>
+		      <li ng-if="jlpfit.fitparams.fit2states===false">
+			F<sub>fast</sub> :
+			{{jlpfit.fitparams.F_fast | number}}
+			&plusmn; {{jlpfit.fitparams.F_fast_std | number:4}}
+		      </li>
+		      <li>
+			l<sub>2</sub> error:
+			{{jlpfit.fitparams.l2| number : 8}}
+		      </li>		    
+		      <li ng-if="jlpfit.fitparams.fitSigma===true">
+			&sigma; (µm)
+			{{jlpfit.fitparams.sigma | number}}
+			&plusmn; {{jlpfit.fitparams.sigma_std | number:4}}
+		      </li>
+		      <li>
+			AIC: {{jlpfit.fitparams.aic | number : 2}}, BIC: {{jlpfit.fitparams.bic | number : 2}}
+		      </li>
+		    </ul>
+		  </div>	
+		  <jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF, maxJumpSlider.value, displayResiduals.status]"></jump-length-histogram>
 		  
+		  <div class="controls">
+		    <table>
+		      <tr>
+			<td>Max jump displayed (&micro;m)</td>
+			<td><rzslider
+			       rz-slider-model="maxJumpSlider.value"
+			       rz-slider-options="maxJumpSlider.options">
+			  </rzslider>
+			</td>
+		      </tr>
+		      <tr>
+			<td>Display PDF/CDF</td>
+			<td><toggle-switch ng-model="displayCDF"
+					   off-label="PDF"
+					   on-label="CDF"></toggle-switch>
+			</td>
+		      </tr>
+		      <tr ng-hide="showJLP">
+			<td>Display dataset</td>
+			<td>
+			  <input ng-hide="showJLP" ng-model="ce" type="number" min="1" max="{{jlhist.length}}">
+			</td>
+		      </tr>
+		      
+		      <tr ng-show="showJLP">
+			<td >Displayed group</td>
+			<td> {{getSelectedIds()}}</td>
+		      </tr>
+		      
+		      <tr>
+			<td>Show pooled jump length distribution: </td>
+			<td>
+			  <toggle-switch ng-model-options="{ getterSetter: true }"
+					 ng-model="displayJLP"></toggle-switch>
+			  <span ng-hide="!gettingPooledJLD"> 
+			    <i class="fa fa-spinner fa-spin"
+			       style="font-size:24px"></i>
+			    Please wait...
+			  </span>
+
+			</td>
+		      </tr>
+
+		      <tr ng-if="jlpfit!==null">
+			<td>Show pooled fit: </td>
+			<td>
+			  <toggle-switch ng-model-options="{ getterSetter: true }"
+					 ng-model="displayJLPf"></toggle-switch>
+			</td>
+		      </tr>
+
+		      <tr ng-if="showResiduals()">
+			<td>Display residuals: </td>
+			<td>
+			  <toggle-switch ng-model="displayResiduals.status"></toggle-switch>
+			</td>
+		      </tr>
+
+		      <tr>
+			<td>
+			  <button uib-popover-template="downloadPopover.templateUrl"
+				  popover-title="Enter a short description"
+				  popover-is-open="downloadPopover.isOpen"
+				  ng-click="downloadPopover.open()"
+				  type="button" class="btn btn-default">
+			    Mark for download
+			  </button>
+			</td>
+		      </tr>
+		    </table>
+
+
+		    <script type="text/ng-template" id="myPopoverTemplate.html">
+		      <div>
+			all the parameters will be saved anyway
+		      </div>
+		      <div class="form-group">
+			<label>Name:</label>
+			<input type="text"
+			       ng-model="downloadPopover.name"
+			       class="form-control">		      
+			<label>Description:</label>
+			<input type="text"
+			       ng-model="downloadPopover.description"
+			       class="form-control">
+		      </div>
+		      <button ng-click="toDownloads();"
+			      class="btn btn-default">Ok</button>
+		    </script>
+		    
+		  </div>
 		</div>
 	      </div>
 	    </div>
