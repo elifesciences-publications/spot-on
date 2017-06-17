@@ -139,7 +139,7 @@ STATIC_ROOT = os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(__fi
 STATIC_URL = '/static/'
 
 ## Version
-APP_VERSION = "v0.6.0a"
+APP_VERSION = "v0.7.0a"
 
 ## Import custom settings
 EMAIL_USE_TLS = custom_settings.EMAIL_USE_TLS
