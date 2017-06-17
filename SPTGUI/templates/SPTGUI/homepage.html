@@ -118,7 +118,7 @@
 	       alt="Import pictogram" width="140" height="140">
           <h2>Import...</h2>
           <p> from a wide range of tracking softwares.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <p><a class="btn btn-default" href="{% url 'SPTGUI:staticpage' 'docs' %}#input-formats" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
           <img class="img-circle"
@@ -126,15 +126,15 @@
 	       alt="Analyze pictogram" width="140" height="140">
           <h2>Analyze</h2>
           <p>Fit a kinetic model to the distribution of jump length. Take into account the finite depth of field.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <p><a class="btn btn-default" href="#how-it-works" role="button">Learn more &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
           <img class="img-circle"
 	       src="{% static 'SPTGUI/img/icons/003-rocket.png' %}"
 	       alt="Export pictogram" width="140" height="140">
           <h2>...Export!</h2>
-          <p>Save your analyses to a variety of formats (plots, tables, editable files).</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <p>Save your analyses to a variety of formats (plots, tables, editable files). <em>Ready?</em> </p>
+          <p><a class="btn btn-default" href="{% url 'SPTGUI:staticpage' 'docs' %}" role="button">Take the tutorial &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
       </div><!-- /.row -->
 
@@ -156,7 +156,7 @@
 
       <hr class="featurette-divider">
 
-      <div class="row featurette">
+      <div class="row featurette" id="how-it-works">
         <div class="col-md-7 col-md-push-5">
           <h2 class="featurette-heading">How does it work? <span class="text-muted">See for yourself.</span></h2>
           <p class="lead">Spot-On fits a two-states or a three-states model to the empirical distribution of jump lengths obtained from a single particle tracking dataset. To do so, Spot-On takes into account a finite detection volume and biases against fast-moving particles. From that, Spot-On extracts kinetic parameters: diffusion coefficients, fraction bound.</p>
