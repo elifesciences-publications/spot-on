@@ -5,7 +5,7 @@
 <div class="bs-callout bs-callout-warning">
   <h4>Step 1: start an analysis with demonstration files</h4>
   <p> To access the demonstration files, go to the <a href="{% url 'SPTGUI:index' %}">Spot-On homepage</a> and scroll to the "Get Started section" (or alternatively click the <a href="{% url 'SPTGUI:index' %}#start" class="btn btn-default btn-sm">Start spotting!</a> button on the top menu. First fill in the "I'm not a robot" CAPTCHA. Then you have the option to either upload your own tracking files and start your analysis or start with demo files. We choose this later option for the purpose of this tutorial.</p>
-  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto1.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto1.png' %}"
      class="img-responsive center-block"
      style="max-width: 50%;"
      alt="Screenshot of the CAPTCHA region.">
@@ -46,24 +46,25 @@
 
 <p> The "Uploaded datasets" region (<span class="red">&#x2462;</span> in the screenshot below), that displays the uploaded datasets, together with their status (<code>uploading</code>, <code>queued</code>, <code>error</code>). The meaning of the upload codes is detailed in the <a href="#import-codes">Import codes</a> section below. When clicking on the "eye" symbol (<span class="glyphicon glyphicon-eye-open"></span>) next to an uploaded dataset will display some statistics in the area  <span class="red">&#x2463;</span>. The meaning and details of the computation of each statistic is detailed in section <a href="#dataset-statistics">Dataset statistics</a> below. Finally, area <span class="red">&#x2464;</span> displays similar statistics as area <span class="red">&#x2463;</span>, but for all the datasets pooled together.</p>
 
-<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto2.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto2.png' %}"
      class="img-responsive center-block"
      style="max-width: 70%;"
      alt="Screenshot of 'Data' tab.">
 
 <h3>Import</h3>
-<p>To proceed with the tutorial, several files have been loaded, they are named:</p>
+<p>To proceed with the tutorial, several files have been loaded, they are named. They might get imported in a different order:</p>
+
 <ol>
-  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell01_Tracked.mat</li>
-  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_2-405_13msCam_cell02_Tracked.mat</li>
-  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell02_Tracked.mat </li>
-  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_2-405_13msCam_cell03_Tracked.mat </li>
-  <li>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_3-405_13msCam_cell04_Tracked.mat </li>
-  <li>20170223_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-5-405_13msCam_cell01_Tracked.mat</li>
-  <li>20170223_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-7-405_13msCam_cell03_Tracked.mat</li>
-  <li>20170223_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-7-405_13msCam_cell02_Tracked.mat</li>
-  <li>20170307_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-5-405_13msCam_cell03_Tracked.mat</li>
-  <li>20170307_U2OS_H2b-Halo-SNAP_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-7-405_13msCam_cell05_Tracked.mat </li>  
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell02.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell03.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell04.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell05.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell02.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell03.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell04.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell05.mat</li>  
 </ol>
 
 <p> These files correspond to a subset of an experimental series spanning ~1500 cells in several conditions for various transcription factors and DNA-binding proteins, acquired at various framerates and durations of stroboscopic illumination. This dataset is described in more details in the <a href="#datasets">Datasets</a> section.
@@ -74,7 +75,7 @@
   <h4>Step 2: rename and tag the uploaded files</h4>
   <p> Since the naming convention of these files is a little bit cumbersome, let's first edit the description of each file to make it clearer. To do so, click on the "pencil" icon (<span class="glyphicon glyphicon-pencil"></span>, see <span class="red">&#x2465;</span>) next to each uploaded dataset. An "edit" box will appear at the bottom of the "Uploaded datasets" area, and we can now either rename or add a more explicit description of the datasets. We choose to leave the name as is, but add a short description for each dataset, such as "H2B cell1", "H2B cell2", etc. (<span class="red">&#x2466;</span>)</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto3.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto3.png' %}"
        class="img-responsive center-block"
        style="max-width: 50%;"
        alt="Screenshot: Editing the description of datasets.">
@@ -90,7 +91,7 @@
   <p>Click on the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>) next to the datasets and have a look at the metrics displayed. Make sure you familiarize yourself with those.</p>
 </div>
 
-<p> The table below summarizes the statistics computed for the first dataset (names <em>20170223_mESC_C3_Halo-Sox2_25nM_PA-JF646_1ms-AOTF100-1100mW-633nm_1-405_13msCam_cell01_Tracked.mat</em>.</p>
+<p> The table below summarizes the statistics computed for the first dataset (names <em>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</em>.</p>
 
 <table class="table table-striped">
   <tr>
@@ -99,35 +100,38 @@
   </tr>
   <tr>
     <td>Number of traces</td>
-    <td>3764</td>
+    <td>6103</td>
   </tr>
   <tr>
     <td>Number of frames</td>
-    <td>30000</td>
+    <td>29997</td>
   </tr>
   <tr>
     <td>Number of detections</td>
-    <td>7625</td>
+    <td>15692</td>
   </tr>
   <tr>
-    <td>Number of traces with >=3 detections </td>
-    <td>783</td>
+    <td>Longest gap (frames)</td>
+    <td>1</td>
+  </tr>  <tr>
+    <td>Number of traces with &gt;3 detections </td>
+    <td>1813</td>
   </tr>
   <tr>
     <td>Number of jumps</td>
-    <td>3861</td>
+    <td>9589</td>
   </tr>
   <tr>
     <td>Length of trajectories (in number of frames)</td>
-    <td>median: 1, mean: 2.026</td>
+    <td>median: 1, mean: 2.571</td>
   </tr>
   <tr>
     <td>Particles per frame</td>
-    <td>median: 0, mean: 0.254</td>
+    <td>median: 0, mean: 0.523</td>
   </tr>
   <tr>
     <td>Jump length (µm) </td>
-    <td>median: 0.191, Mean: 0.306</td>
+    <td>median: 0.126, Mean: 0.236</td>
   </tr>
 </table>
 
@@ -162,7 +166,7 @@
   </tr>
 </table>
 
-<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto4.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto4.png' %}"
      class="img-responsive center-block"
      style="max-width: 60%;"
      alt="Screenshot: Overview of the kinetic modeling tab.">
@@ -174,7 +178,7 @@
 
   <p> First, in the "Dataset selection" select the five Sox2 replicates. This is done by switching the "Include" toggle button to "On" next to the Sox2 datasets. Make sure that none of the H2B datasets are included.</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto5.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto5.png' %}"
      class="img-responsive center-block"
        style="max-width: 60%;"
        alt="Selection of Sox2 datasets.">
@@ -231,7 +235,7 @@
   </tr>
 </table>
 
-<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto6.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto6.png' %}"
      class="img-responsive center-block"
      style="max-width: 80%;"
      alt="Jump length distribution parameters.">
@@ -240,7 +244,7 @@
 
 <div class="alert alert-info"> This is the main view of Spot-On, so it is useful to spend a little bit of time to get familiarized with the various options.</div>
 
-<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto7.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto7.png' %}"
      class="img-responsive center-block"
      style="max-width: 80%;"
      alt="Jump length distribution plot.">
@@ -261,7 +265,7 @@
 <div class="bs-callout bs-callout-warning"> <h4>Step 6: compare the H2B and Sox2 jump length distributions</h4>
   <p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto8.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto8.png' %}"
        class="img-responsive center-block"
        style="max-width: 95%;"
        alt="Comparison of the Sox2 and H2B jump length distributions.">
@@ -270,7 +274,7 @@
 <div class="bs-callout bs-callout-warning"> <h4>Step 7: mark one jump length distribution for download</h4>
   <p> Before moving to the fitting of the data, let's save this last plot. We will download it later (from the "Download" tab). To do so, click the <span class="btn btn-default btn-sm">Mark for download</span> button at the bottom of the page. This will prompt a small form where you can enter a name and a description that will be used as a reminder when you download the file. Also, display again the fit for Sox2 (by selecting the appropriate files and clicking the and <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box) and save Mark it for download too. We'd get back to these saved analyses later.</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto9.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto9.png' %}"
      class="img-responsive center-block"
        style="max-width: 95%;"
        alt="Screenshot of the mark for download box.">
@@ -285,7 +289,7 @@
 <div class="bs-callout bs-callout-warning"> <h4>Step 8: fit a two-states model</h4>
   <p>Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>, a short description is shown below).</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto10.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto10.png' %}"
        class="img-responsive center-block"
        style="max-width: 60%;"
        alt="screenshot of the fitting parameters box.">
@@ -359,7 +363,7 @@
 <div class="alert alert-info">
   <p>When adjusting the dZ and dT parameters (in the jump length distribution and the fitting parameters box, respectively, you will notice that the mention next to the dZ changes. The displayed values correspond to the closest pair of parameter for which a corrected \(Z\) depth has been derived -- corresponding to an \(Z\) depth adjusted for the possibility of particles exiting and entering the detection volume again (see the <a href="#methods">Methods</a> section). The \(a\) and \(b\) parameters describe this corrected valued as a function of the estimated diffusion coefficient.</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto11.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto11.png' %}"
        class="img-responsive center-block"
        style="max-width: 60%;"
        alt="screenshot of the z correction box.">
@@ -367,7 +371,7 @@
   <p> It is important to make sure that the set of displayed parameters is not too far from the real acquisition settings, else, the computed z correction might be wrong.</p>
 </div>
 
-<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto12.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto12.png' %}"
      class="img-responsive center-block"
      style="max-width: 95%;"
      alt="2-states fitting result of the H2B datasets.">
@@ -381,31 +385,31 @@
   </tr>
   <tr>
     <td>D<sub>bound</sub></td>
-    <td>0.024 µm²/s</td>      
+    <td>0.021 µm²/s</td>      
   </tr>
   <tr>
     <td>D<sub>free</sub></td>
-    <td>3.940 µm²/s</td>      
+    <td>3.929 µm²/s</td>      
   </tr>
   <tr>
     <td>F<sub>bound</sub></td>
-    <td>0.696</td>      
+    <td>0.733</td>      
   </tr>
   <tr>
     <td>l<sub>2</sub> error</td>
-    <td>0.00009184</td>      
+    <td>0.00009489</td>      
   </tr>
   <tr>
     <td>AIC</td>
-    <td>-195265</td>      
+    <td>-194578</td>      
   </tr>
   <tr>
     <td>BIC</td>
-    <td>-195241</td>      
+    <td>-194554</td>      
   </tr>
 </table>
 
-<p> A few comments arise. First, the estimated fraction bound is about 70 %, which is expected from a strongly DNA-associated protein such as H2B. The associated coefficient with the bound population is close to zero (0.024 µm²/s) whereas the diffusion coefficient for the free population (3.94 µm²/s) matches previous knowledge of the dynamics of the protein.</p>
+<p> A few comments arise. First, the estimated fraction bound is about 70 %, which is expected from a strongly DNA-associated protein such as H2B. The associated coefficient with the bound population is close to zero (0.021 µm²/s) whereas the diffusion coefficient for the free population (3.93 µm²/s) matches previous knowledge of the dynamics of the protein.</p>
 
 <p>Furthermore, the \(\ell_2\) error (the mean square error) is   \(\lt 10^{-4}\), which can be considered as acceptable, even though significant misfit appear at low and high \(\Delta t\).</p>
 									   
@@ -423,7 +427,7 @@
   <p> Finally, we can now see how the quality of the fit increases by running the fit again, but with a 3-states model. Select the 3-state model icon (Slow-Bound-Fast) on the "Model fitting" box. New parameters appear, very similarly as with the two-states model. We will leave the parameters to their default values, except for the CDF fit. Then click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button and wait a until the fitting completes. Observe how the quality of fit evolves, and the parameters and estimated fractions.</p>
 </div>
 
-<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto13.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto13.png' %}"
      class="img-responsive center-block"
      style="max-width: 95%;"
      alt="Comparison of 2-states and 3-states fitting for Sox2 datasets.">
@@ -437,27 +441,27 @@
     </tr>
     <tr>
       <td>D<sub>bound</td>
-      <td>0.037 µm²/s</td>      
+      <td>0.030 µm²/s</td>      
     </tr>
     <tr>
       <td>D<sub>free</sub></td>
-      <td>2.747 µm²/s</td>      
+      <td>2.410 µm²/s</td>      
     </tr>
     <tr>
       <td>F<sub>bound</sub></td>
-      <td>0.337</td>      
+      <td>0.340</td>      
     </tr>
     <tr>
       <td>l<sub>2</sub> error</td>
-      <td>0.00043094</td>      
+      <td>0.00039589</td>      
     </tr>
     <tr>
       <td>AIC</td>
-      <td>-162789</td>      
+      <td>-164571</td>      
     </tr>
     <tr>
       <td>BIC</td>
-      <td>-162765</td>      
+      <td>-164547</td>      
     </tr>
   </table>
 </div>
@@ -471,35 +475,35 @@
     </tr>
     <tr>
       <td>D<sub>bound</td>
-      <td>0.014 µm²/s</td>      
+      <td>0.012 µm²/s</td>      
     </tr>
     <tr>
       <td>D<sub>slow</sub></td>
-      <td>0.643 µm²/s</td>      
+      <td>0.595 µm²/s</td>      
     </tr>
     <tr>
       <td>D<sub>fast</sub></td>
-      <td>4.938 µm²/s</td>      
+      <td>4.016 µm²/s</td>      
     </tr>
     <tr>
       <td>F<sub>bound</sub></td>
-      <td>0.244</td>      
+      <td>0.256</td>      
     </tr>
     <tr>
       <td>F<sub>slow</sub></td>
-      <td>0.273</td>      
+      <td>0.258</td>      
     </tr>
     <tr>
       <td>l<sub>2</sub> error</td>
-      <td>0.00008137</td>      
+      <td>0.00014930 </td>      
     </tr>
     <tr>
       <td>AIC</td>
-      <td>-197812</td>      
+      <td>-185061</td>      
     </tr>
     <tr>
       <td>BIC</td>
-      <td>-197772</td>      
+      <td>-185021</td>      
     </tr>
   </table>
 </div>
@@ -513,7 +517,7 @@
   <p>Finally move to the "Download" tab, where all the analyses we marked for download are stored. The view should look as below:</p>
 </div>
 
-<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto14.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto14.png' %}"
      class="img-responsive center-block"
      style="max-width: 95%;"
      alt="Overview of the download page.">
