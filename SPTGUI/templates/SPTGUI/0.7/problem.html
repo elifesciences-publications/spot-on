@@ -1,0 +1,91 @@
+{% load static %}
+<h2 class="blog-post-title">The problem</h2>
+<p> Within a cell, a DNA-binding factor diffuses and occasionnally binds to DNA or forms complexes. Each of this state can be macroscopically characterized by an apparent diffusion coefficient and a fraction of the total population residing in this state. Thus, we are interested into extracting those parameters for each state.
+</p>
+
+<img src="/static/SPTGUI/img/cell.png"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Schematic of a cell with diffusing particles.">
+
+<p>To infer those parameters, single particle tracking can be used, but is subject to several methodological difficulties detailed below.</p>
+
+<h3>Motion blur</h3>
+<p>First of all, observation and tracking are biased towards bound and undercounting of the fast-moving particles, and second in a possible bias in the estimate of the free fraction.</p>
+
+<img src="/static/SPTGUI/img/motionblur.png"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Particles observed with motion blur">
+
+<h3>Particles move out of focus</h3>
+<p>In addition to motion blur, that leads to fast-moving particle to be missed by the detection algorithm, particles diffuse out of the detection volume (usually a slice of ~ 1 µm thickness). This effect is virtually zero for bound molecule, but becomes significant for fast-moving particles, leading to an undercounting of this population. The animated graph below shows the distribution of jump lengths for a molecule appearing in two states with respective diffusion coefficients \(D_1\) and \(D_2\).</p>
+<div class="panel panel-default">
+  <div class="panel-heading">Theoretical jump length distribution</div>
+  <div class="panel-body" ng-init="jld={D1: 1.0, D2: 5.0, P: 0.5, S: 10, dt: 10, theo: true}">
+    <div class="text-center">
+      <jump-length-distribution data="jld"></jump-length-distribution>
+    </div>
+    <br/>
+    <table>
+      <tr>
+	<td class="col-sm-2">D<sub>1</sub> (&mu;m²/s)</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.D1"
+				 rz-slider-options="{floor: 0, ceil:10, step: 0.1, precision: 1}">
+	</rzslider></td>
+      </tr>
+      <tr>
+	<td class="col-sm-2">D<sub>2</sub> (&mu;m²/s)</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.D2"
+				 rz-slider-options="{floor: 0, ceil:10, step: 0.1, precision: 1}">
+	</rzslider></td>
+      </tr>
+      <tr>
+	<td class="col-sm-2">P</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.P"
+				 rz-slider-options="{floor: 0, ceil:1, step: 0.01, precision: 2}">
+	</rzslider></td>
+      </tr>
+      <tr>
+	<td class="col-sm-2">&sigma; (nm)</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.S"
+				 rz-slider-options="{floor: 0, ceil:100, step: 1}">
+	</rzslider></td>
+      </tr>
+      <tr>
+      <td class="col-sm-2">&Delta;t (ms)</td>
+      <td class="col-sm-10"><rzslider
+			       rz-slider-model="jld.dt"
+			       rz-slider-options="{floor: 1, ceil:100, step: 1}">
+      </rzslider></td>
+      </tr>
+      <tr>
+	<td>Show model with no depth of field correction</td>
+	<td>
+	  <toggle-switch ng-model="jld.theo"
+			 off-label="No"
+			 on-label="Yes"></toggle-switch>
+	  {{jld.theo}}
+	</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<p>From this representation, the fraction of particles lost can be determined as a function of the diffusion coefficient and the exposure time. This emphasizes the difficulty to capture fast-moving particles (\(D> 5 \mu m/s\)), even at low exposure times.</p>
+
+<img src="{% static 'SPTGUI/img/fractionmissed.svg' %}"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Fraction of particles missed as a function of \Delta t">
+
+<h3>Ambiguous tracking</h3>
+<p>As single particle tracking is intrinsically a low-throughput method, one may want to increase the density of tracked particles per frame in order to accelerate the data collection rate. However, as the density of particles increases, the tracking can become ambiguous. Furthermore, fast-moving particles are again more likely to be misconnected with other unrelated detections. This might result in a truncated jump length distribution, and thus a wrong estimation of the diffusion coefficient.</p>
+
+<div class="alert alert-info">
+  Refer to a section "imaging advices". That gives some tips about how to perform SPT.
+</div>

@@ -5,7 +5,7 @@
 <div class="bs-callout bs-callout-warning">
   <h4>Step 1: start an analysis with demonstration files</h4>
   <p> To access the demonstration files, go to the <a href="{% url 'SPTGUI:index' %}">Spot-On homepage</a> and scroll to the "Get Started section" (or alternatively click the <a href="{% url 'SPTGUI:index' %}#start" class="btn btn-default btn-sm">Start spotting!</a> button on the top menu. First fill in the "I'm not a robot" CAPTCHA. Then you have the option to either upload your own tracking files and start your analysis or start with demo files. We choose this later option for the purpose of this tutorial.</p>
-  <img src="{% static 'SPTGUI/img/tutorial/tuto1.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto1.png' %}"
      class="img-responsive center-block"
      style="max-width: 50%;"
      alt="Screenshot of the CAPTCHA region.">
@@ -46,7 +46,7 @@
 
 <p> The "Uploaded datasets" region (<span class="red">&#x2462;</span> in the screenshot below), that displays the uploaded datasets, together with their status (<code>uploading</code>, <code>queued</code>, <code>error</code>). The meaning of the upload codes is detailed in the <a href="#import-codes">Import codes</a> section below. When clicking on the "eye" symbol (<span class="glyphicon glyphicon-eye-open"></span>) next to an uploaded dataset will display some statistics in the area  <span class="red">&#x2463;</span>. The meaning and details of the computation of each statistic is detailed in section <a href="#dataset-statistics">Dataset statistics</a> below. Finally, area <span class="red">&#x2464;</span> displays similar statistics as area <span class="red">&#x2463;</span>, but for all the datasets pooled together.</p>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto2.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto2.png' %}"
      class="img-responsive center-block"
      style="max-width: 70%;"
      alt="Screenshot of 'Data' tab.">
@@ -74,7 +74,7 @@
   <h4>Step 2: rename and tag the uploaded files</h4>
   <p> Since the naming convention of these files is a little bit cumbersome, let's first edit the description of each file to make it clearer. To do so, click on the "pencil" icon (<span class="glyphicon glyphicon-pencil"></span>, see <span class="red">&#x2465;</span>) next to each uploaded dataset. An "edit" box will appear at the bottom of the "Uploaded datasets" area, and we can now either rename or add a more explicit description of the datasets. We choose to leave the name as is, but add a short description for each dataset, such as "H2B cell1", "H2B cell2", etc. (<span class="red">&#x2466;</span>)</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/tuto3.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto3.png' %}"
        class="img-responsive center-block"
        style="max-width: 50%;"
        alt="Screenshot: Editing the description of datasets.">
@@ -162,7 +162,7 @@
   </tr>
 </table>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto4.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto4.png' %}"
      class="img-responsive center-block"
      style="max-width: 60%;"
      alt="Screenshot: Overview of the kinetic modeling tab.">
@@ -174,7 +174,7 @@
 
   <p> First, in the "Dataset selection" select the five Sox2 replicates. This is done by switching the "Include" toggle button to "On" next to the Sox2 datasets. Make sure that none of the H2B datasets are included.</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/tuto5.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto5.png' %}"
      class="img-responsive center-block"
        style="max-width: 60%;"
        alt="Selection of Sox2 datasets.">
@@ -231,7 +231,7 @@
   </tr>
 </table>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto6.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto6.png' %}"
      class="img-responsive center-block"
      style="max-width: 80%;"
      alt="Jump length distribution parameters.">
@@ -240,7 +240,7 @@
 
 <div class="alert alert-info"> This is the main view of Spot-On, so it is useful to spend a little bit of time to get familiarized with the various options.</div>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto7.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto7.png' %}"
      class="img-responsive center-block"
      style="max-width: 80%;"
      alt="Jump length distribution plot.">
@@ -261,7 +261,7 @@
 <div class="bs-callout bs-callout-warning"> <h4>Step 6: compare the H2B and Sox2 jump length distributions</h4>
   <p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/tuto8.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto8.png' %}"
        class="img-responsive center-block"
        style="max-width: 95%;"
        alt="Comparison of the Sox2 and H2B jump length distributions.">
@@ -270,7 +270,7 @@
 <div class="bs-callout bs-callout-warning"> <h4>Step 7: mark one jump length distribution for download</h4>
   <p> Before moving to the fitting of the data, let's save this last plot. We will download it later (from the "Download" tab). To do so, click the <span class="btn btn-default btn-sm">Mark for download</span> button at the bottom of the page. This will prompt a small form where you can enter a name and a description that will be used as a reminder when you download the file. Also, display again the fit for Sox2 (by selecting the appropriate files and clicking the and <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box) and save Mark it for download too. We'd get back to these saved analyses later.</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/tuto9.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto9.png' %}"
      class="img-responsive center-block"
        style="max-width: 95%;"
        alt="Screenshot of the mark for download box.">
@@ -285,7 +285,7 @@
 <div class="bs-callout bs-callout-warning"> <h4>Step 8: fit a two-states model</h4>
   <p>Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>, a short description is shown below).</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/tuto10.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto10.png' %}"
        class="img-responsive center-block"
        style="max-width: 60%;"
        alt="screenshot of the fitting parameters box.">
@@ -359,7 +359,7 @@
 <div class="alert alert-info">
   <p>When adjusting the dZ and dT parameters (in the jump length distribution and the fitting parameters box, respectively, you will notice that the mention next to the dZ changes. The displayed values correspond to the closest pair of parameter for which a corrected \(Z\) depth has been derived -- corresponding to an \(Z\) depth adjusted for the possibility of particles exiting and entering the detection volume again (see the <a href="#methods">Methods</a> section). The \(a\) and \(b\) parameters describe this corrected valued as a function of the estimated diffusion coefficient.</p>
 
-  <img src="{% static 'SPTGUI/img/tutorial/tuto11.png' %}"
+  <img src="{% static 'SPTGUI/img/tutorial/0.6/tuto11.png' %}"
        class="img-responsive center-block"
        style="max-width: 60%;"
        alt="screenshot of the z correction box.">
@@ -367,7 +367,7 @@
   <p> It is important to make sure that the set of displayed parameters is not too far from the real acquisition settings, else, the computed z correction might be wrong.</p>
 </div>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto12.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto12.png' %}"
      class="img-responsive center-block"
      style="max-width: 95%;"
      alt="2-states fitting result of the H2B datasets.">
@@ -423,7 +423,7 @@
   <p> Finally, we can now see how the quality of the fit increases by running the fit again, but with a 3-states model. Select the 3-state model icon (Slow-Bound-Fast) on the "Model fitting" box. New parameters appear, very similarly as with the two-states model. We will leave the parameters to their default values, except for the CDF fit. Then click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button and wait a until the fitting completes. Observe how the quality of fit evolves, and the parameters and estimated fractions.</p>
 </div>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto13.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto13.png' %}"
      class="img-responsive center-block"
      style="max-width: 95%;"
      alt="Comparison of 2-states and 3-states fitting for Sox2 datasets.">
@@ -513,7 +513,7 @@
   <p>Finally move to the "Download" tab, where all the analyses we marked for download are stored. The view should look as below:</p>
 </div>
 
-<img src="{% static 'SPTGUI/img/tutorial/tuto14.png' %}"
+<img src="{% static 'SPTGUI/img/tutorial/0.6/tuto14.png' %}"
      class="img-responsive center-block"
      style="max-width: 95%;"
      alt="Overview of the download page.">

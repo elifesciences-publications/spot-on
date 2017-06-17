@@ -171,16 +171,39 @@ def analysis_dbg(request, url_basename):
 
 def static(request, page):
     """Returns a static page"""
+    doc_versions = [0.6, 0.7]
     templates = {"docs": "documentation.html",
                  "about": "about.html",
                  "contact": "contact.html",
                  "license": "license.html",
                  "about": "about.html"}
+    context = {}
+    templates_docs = {"docs/{}".format(k): "{}/{}".format(k, templates["docs"]) for k in doc_versions}
+    for k in templates_docs:
+        templates[k] = templates_docs[k]
     if config.debug_views:
-        templates["docs_viz"] ="docs_viz.html"
-    if page in templates:
+        templates["docs_viz"] = "docs_viz.html"
+    if page == 'docs':
+        return redirect('SPTGUI:staticpage', 'docs/latest')
+    elif page.startswith('docs/'):
+        version = page.split('/')[1]
+        context["versions"] = [{"version": i,
+                                "url": "docs/{}".format(i)} for i in doc_versions]
+        context["latest_version"] = False
+        context["latest_version_number"] = str(doc_versions[-1])
+        context["version_number"] = version
+        
+        if version not in [str(i) for i in doc_versions]: 
+            version = 'latest'
+        print "-- version", version, str(doc_versions[-1]), version == str(doc_versions[-1])
+        if version == 'latest' or version == str(doc_versions[-1]):
+            page = "docs/{}".format(doc_versions[-1])
+            context["latest_version"] = True
+            context["version_number"] = str(doc_versions[-1])
+            
+    if page in templates:                
         template = loader.get_template('SPTGUI/{}'.format(templates[page]))
-        context = {'active': page}
+        context["active"] = page
         return HttpResponse(template.render(context, request))
 
 ## ==== Where are the views gone?

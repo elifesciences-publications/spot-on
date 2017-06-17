@@ -73,12 +73,27 @@
 	    <div class="col-md-7">
 	      <p class="lead"> Spot-On allows you to analyze single particle tracking datasets. Spot-On fits a realistic kinetic model to the distribution of jump lengths and provides estimates of the fraction bound (\(F\)) and diffusion coefficients (\(D\)) for either a two state (bound-free) or a three state (bound-free1-free2) model.</p>
 	      <p class="lead"> Spot-On is a libre/open-source software and exists both as a web-application and a command-line version.</p>
+
+	      {% if not latest_version %}
+	      <div class="alert alert-danger">
+		This page relates to an older version of Spot-On (version {{version_number}}). <a href="{% url 'SPTGUI:staticpage' 'docs/latest' %}">Jump to the latest version</a> ({{latest_version_number}}).
+	      </div>
+	      {% endif %}
 	    </div>
 	    <div class="col-md-5">
 	      <img src="/static/SPTGUI/img/spoton_logo_square.png"
 		   class="img-responsive center-block"
 		   style="max-width: 80%;"
 		   alt="Spot-On logo">
+
+	      <br/>
+	      <p>Browse the documentation for various versions of Spot-On:</p>
+	      <ul>
+	      {% for item in versions %}
+	      <li><a href="{% url 'SPTGUI:staticpage' item.url %}">Version {{item.version}}</a></li>
+	      {% endfor %}
+	      </ul>
+	      
 	      {% if False %}
 	      <p> This documentation can be downloaded as a PDF or HTML version:</p>
 	      <div class="col-md-6">
@@ -103,15 +118,15 @@
 
 	<!-- Main docs =========================-->
         <div class="blog-post" id="problem">
-	  {% include 'SPTGUI/problem.html' %}
+	  {% include 'SPTGUI/0.6/problem.html' %}
 	</div>
 
 	<div class="blog-post" id="tutorial">
-	  {% include 'SPTGUI/tutorial.html' %}
+	  {% include 'SPTGUI/0.6/tutorial.html' %}
 	</div>
 	
         <div class="blog-post">
-	  {% include 'SPTGUI/reference.html' %}
+	  {% include 'SPTGUI/0.6/reference.html' %}
 	</div>
 
         <div class="blog-post">
@@ -122,11 +137,11 @@
 	</div>
 	
         <div id="methods" class="blog-post">
-	  {% include 'SPTGUI/methods.html' %}
+	  {% include 'SPTGUI/0.6/methods.html' %}
 	</div>
 	
 	<div id="code" class="blog-post">
-	  {% include 'SPTGUI/code.html' %}
+	  {% include 'SPTGUI/0.6/code.html' %}
 	</div>
 
 	<div id="datasets" class="blog-post">
@@ -134,7 +149,7 @@
 	</div>
 	
         <div class="blog-post">
-	  {% include 'SPTGUI/faq.html' %}
+	  {% include 'SPTGUI/0.6/faq.html' %}
 	</div>
 	
 
