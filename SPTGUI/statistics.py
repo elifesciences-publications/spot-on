@@ -67,7 +67,7 @@ def number_of_gaps(fi):
     mg = []
     for traj in [i for i in fi if len(i)>1]:
         mg.append(np.diff([tr[3] for tr in traj]).max())
-    return max(mg)
+    return max(mg)-1
 
 def global_mean_median(da, fu, reindex_frames=False):
     """A function to compute global stuff.
