@@ -63,7 +63,7 @@ def init_mosaic():
              'value': 'framerate', 'model': 'framerate'},
             {'name': 'pixel size (nm/px)', 'type': 'number',
              'value': 'pixelsize', 'model': 'pixelsize'}]
-    return {'name': 'MOSAIC suite', 'info': "", 'anchor': 'mosaic',
+    return {'name': 'MOSAIC suite', 'info': "A ImageJ/Fiji plugin", 'anchor': 'mosaic',
             'active': True, 'params': pars}
 def read_mosaic(fn, framerate, pixelsize):
     return read_arbitrary_csv(fn, col_traj="Trajectory", col_x="x", col_y="y", col_frame="Frame", framerate=framerate/1000., pixelsize=pixelsize/1000.)
@@ -71,7 +71,7 @@ def read_mosaic(fn, framerate, pixelsize):
     
 ## ==== UTrack file format
 def init_utrack():
-    return {'name': 'UTrack', 'info': "not implemented", 'anchor': 'utrack',
+    return {'name': 'UTrack', 'info': "UTrack file format", 'anchor': 'utrack',
             'active': False, 'params': []}
 def read_utrack(fn):
     pass
@@ -84,7 +84,7 @@ def init_trackmate():
              'value': 'csv', 'model': 'format'},
             {'name': 'framerate (ms)', 'type': 'number', 'info': 'placeholder',
              'value': 'framerate', 'model': 'framerate'}]
-    return {'name': 'TrackMate', 'info': "not implemented", 'anchor': 'trackmate',
+    return {'name': 'TrackMate', 'info': "TrackMate file format (an ImageJ/Fiji plugin)", 'anchor': 'trackmate',
             'active': True, 'params': pars}
 
 def read_trackmate_csv(fn, framerate):
@@ -118,7 +118,7 @@ def read_trackmate(fn, format, framerate):
     
 ## ==== CSV file format
 def init_csv():
-    return {'name': 'CSV', 'info': "not implemented", 'anchor': 'csv',
+    return {'name': 'CSV', 'info': "Comma-separated values text file", 'anchor': 'csv',
             'active': True, 'params': []}
 def read_csv(fn):
     return read_arbitrary_csv(fn, col_traj="trajectory", col_x="x", col_y="y", col_frame="frame", col_t="t")
