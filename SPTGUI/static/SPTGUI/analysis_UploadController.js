@@ -112,7 +112,7 @@ angular.module('app')
 
 		    console.log("Deleted dataset "+idx)
 		});
-	    if ($scope.showStatistics == dataset) {
+	    if ($scope.shownStatistics == dataset) {
 		$scope.shownStatistics = null;
 		$scope.showingStatistics = false;   
 	    }
