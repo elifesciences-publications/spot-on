@@ -224,7 +224,8 @@ angular.module('app')
 				TimePoints : 8,
 				JumpsToConsider : 4,
 				MaxJump : 3,
-				TimeGap : 4.477}
+				//TimeGap : 4.477
+			       }
 	$scope.jldParametersDefault = angular.copy($scope.jldParameters);
 	$scope.maxJumpSlider = { value: 1.2,
 				 options: { floor: 0,
@@ -239,7 +240,6 @@ angular.module('app')
 	    if (!(pars.GapsAllowed>=0)) {return false;}
 	    if (!(pars.JumpsToConsider>=3)) {return false;}
 	    if (!(pars.MaxJump>0)) {return false;}
-	    if (!(pars.TimeGap>0)) {return false;}
 	    if (pars.useAllTraj) {
 		pars.JumpsToConsider = $scope.jldParametersDefault.JumpsToConsider
 	    }
@@ -257,13 +257,13 @@ angular.module('app')
 	$scope.resetjldParameters = function() {
 	    $scope.jldParameters = angular.copy($scope.jldParametersDefault);
 	}
-	
+
 	$scope.$watch('jldParameters', function(pars, oldpars) {
 	    if (angular.equals(pars, oldpars)) {return}
 	    // Update MaxJump slider
 	    $scope.maxJumpSlider.options.ceil = pars.MaxJump;
 	    // Update dT of modelingParameters
-	    $scope.modelingParameters.dT = pars.TimeGap/1000.;
+	    //$scope.modelingParameters.dT = pars.TimeGap/1000.;
 	    // Reset the variables
 	    $scope.jlfit = $scope.datasets.map(function(el){return null;});
 	    $scope.showJLPf = false;
@@ -290,7 +290,7 @@ angular.module('app')
 				     sigma: [0.01, 0.1],
 				     LocError: 0.035,
 				     iterations: 3,
-				     dT: 4.477/1000,
+				     dT: null,
 				     dZ: 0.700,
 				     ModelFit: false, //false: PDF, true: CDF fit
 				     fitSigma: false,
@@ -346,6 +346,7 @@ angular.module('app')
 
 	// Function that runs the analysis
 	$scope.runAnalysis = function(parameters) {
+	    // Basic checks
 	    if (parameters.include.length == 0){
 		alert('no dataset included! Make a selection');
 		return;
@@ -354,6 +355,12 @@ angular.module('app')
 		alert('No kinetic model selected! Make a selection, either two states or three states.');
 		return;
 	    }
+	    if (parameters.dT===null) {
+		alert("Datasets with different framerates are selected. You can only fit a pool of datasets with the same framerate.");
+		return;
+	    }
+	    
+	    // Reinitialize the view
 	    $scope.fitComplete = false;
 	    $scope.showJLPf = false;
 	    $scope.jlpfit = null;
@@ -584,6 +591,29 @@ angular.module('app')
 	// Test function to get the nearest fit for the z correction
 	$scope.$watch('modelingParameters', function(params, oldparams) {
 	    if (angular.equals(params, oldparams)) {return}
+	    
+	    // Get dT
+	    selected = $scope.datasets.filter(function(el) {
+		return params.include.indexOf(el.id)>-1;
+	    })
+	    if (selected.length==0) {
+		params.dT = null
+	    } else {
+		d0 = selected[0]
+		params.dT = d0.dt // initialize dT
+		
+		if (!selected.every(function(el) {return el.dt==d0.dt;})) {
+		    params.dT = null;
+		}
+	    }
+
+	    // Get (a,b)
+	    if (params.dT===null) {
+		$scope.modelingParameters.dTfit = null
+		$scope.modelingParameters.dZfit = null
+		$scope.zcorr.a = null
+		$scope.zcorr.b = null
+	    } else {
 	    getterService.getNearestZcorr(
 		params.dZ, params.dT, $scope.jldParameters.GapsAllowed).then(
 		    function(ret) {
@@ -594,6 +624,7 @@ angular.module('app')
 			$scope.zcorr.b = ret.params[1]
 		    }
 		)
+	    }
 	}, true);
 
 	refreshMaxJumpSlider = function () {

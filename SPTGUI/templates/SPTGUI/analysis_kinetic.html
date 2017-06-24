@@ -76,17 +76,10 @@
 			  <span uib-tooltip="The distance of the longest jump to be computed. This will be the upper bound of the histogram. A value too low will yield a truncated histogram, whereas a value too high lead to overfitting of the tail of the distribution." class="glyphicon glyphicon-question-sign"></span>
 			</td>
 		      </tr>
-		      <tr>
-			<td> dT (ms): </td>
-			<td>
-			  <input ng-model="jldParameters.TimeGap" type="number" step="any" min="0">
-			  <span uib-tooltip="The framerate." class="glyphicon glyphicon-question-sign"></span>
-
-			</td>
-		      </tr>
-			<!-- NOW INFERRED FROM DATA -->
-			<!-- 	<td>Number of gaps allowed</td> -->
-			<!-- 	<td><input min="0" max="2" ng-model= "jldParameters.GapsAllowed"  type="number"></td> -->
+		      <!-- NOW INFERRED FROM DATA -->
+		      <!-- <td> dT (ms): </td> -->
+		      <!-- NOW INFERRED FROM DATA -->
+		      <!-- 	<td>Number of gaps allowed</td> -->
 		      <tr>
 			<td></td>		    
 			<td>
@@ -112,6 +105,13 @@
 		  <div class="panel-heading"><h3 class="panel-title"> Model fitting </h3></div>
 		  <div class="panel-body">
 		    <form ng-submit="runAnalysis(modelingParameters);">
+
+		      <div class="alert alert-danger"
+			   ng-show="modelingParameters.dT===null;">
+			<span class="glyphicon glyphicon-warning-sign"></span>
+			Datasets with different framerates are selected. You can only fit a pool of datasets with the same framerate.
+		    </div>
+		      
 		      <table>
 			<tr>
 			  <td>Kinetic model:</td>

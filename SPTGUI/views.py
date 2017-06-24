@@ -29,6 +29,7 @@ paths = {0: "./SPTGUI/fit_zcorr/0gaps",
          2: "./SPTGUI/fit_zcorr/2gaps"}
 tree_init = fitted_zcor.init(paths=paths)
 haikunator = Haikunator()
+
 ##
 ## ==== Global variables
 ##
@@ -394,7 +395,9 @@ def get_jldp(request, url_basename):
     
     if request.method == "GET":
         ## ==== Generate the path
-        fitparams = request.GET
+        fitparams = request.GET.dict()
+        fitparams["useAllTraj"]={"true":True,
+                                 "false":False}[fitparams["useAllTraj"]]
         cha = compute_hash(fitparams['hashvalueJLD'])
         pa = bf+"{}/{}_pooled.pkl".format(url_basename, cha)
 
@@ -418,8 +421,9 @@ def get_jldp(request, url_basename):
             ## /!\ TODO MW Should check that the datasets belong to the
             ## right owner. Else one can download everybody's dataset...
             logging.warning("Should check that the datasets belong to the right owner. Else one can download everybody's dataset...")
-            keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap", "useAllTraj"]
+            keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "useAllTraj"]
             keytip = [float, int, int, int, float, float]
+            print keys, keytip, fitparams
             compute_params = {k: t(float(fitparams[k])) for (k,t) in zip(keys,keytip)}
             tasks.compute_jld.apply_async(
                 kwargs={'dataset_id': None,
@@ -494,7 +498,7 @@ def get_jld(request, url_basename):
                     os.mkdir(bn)
                 with open(pa, 'w') as f: ## Save that we are computing
                     pickle.dump(pick, f)
-                keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "TimeGap", "useAllTraj"]
+                keys = ["BinWidth", "GapsAllowed", "TimePoints", "JumpsToConsider", "MaxJump", "useAllTraj"]
                 compute_params = {k: fitparams[k] for k in keys}
                 ta = tasks.compute_jld.apply_async(
                     kwargs={'dataset_id': dataset_id,

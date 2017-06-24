@@ -107,7 +107,8 @@ def list_datasets(message, data, url_basename):
             'description' : d.description,
             'upload_status' : d.upload_status,
             'preanalysis_status' : d.preanalysis_status,
-
+            'dt': d.dt,
+            
             ## Preanalysis statistics
             'pre_ngaps': d.pre_ngaps,
             'pre_ntraces' : d.pre_ntraces,

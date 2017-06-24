@@ -336,6 +336,9 @@ def check_input_file(filepath, file_id, fmt, fmtParams, queue=True):
             os.remove(toremove)
         return
 
+    ## ==== Infer dt
+    da.dt = stats.compute_dt(fi)
+
     ## ==== Save the parsed result!
     with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
         fil = File(f)
@@ -637,6 +640,7 @@ def get_export_statistics(da):
     for d in da:
         t = """---- {}
 Description: {}
+Time step (s): {}
 Number of traces: {}
 Number of localizations: {}
 Number of traces with >=3 localizations: {},
@@ -651,7 +655,8 @@ Mean jump length: {}
 Max number of gaps: {}
 
 """
-        out.append(t.format(d.name, d.description, d.pre_ntraces, d.pre_npoints,
+        out.append(t.format(d.name, d.dt, d.description, 
+                            d.pre_ntraces, d.pre_npoints,
                             d.pre_ntraces3, d.pre_nframes, d.pre_njumps,
                             d.pre_median_length_of_trajectories,
                             d.pre_mean_length_of_trajectories,

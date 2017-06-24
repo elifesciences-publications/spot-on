@@ -166,6 +166,18 @@
 	    <h3>Selected dataset: {{shownStatistics.name}}</h3>
 
 	    <table class="table table-responsive">
+	      
+	      <!-- dt block -->
+	      <tr ng-class="validate.dt(shownStatistics.dt).classe">
+		<td>Framerate (s)</td>
+		<td>{{shownStatistics.dt}}
+		  <span
+		     ng-show="validate.dt(shownStatistics.dt).pict"
+		     uib-tooltip="{{validate.dt(shownStatistics.dt).msg}}"
+		     class="glyphicon glyphicon-warning-sign"></span>
+		  
+		</td>
+	      </tr>	      
 
 	      <!-- ntraces block -->
 	      <tr ng-class="validate.ntraces(shownStatistics.pre_ntraces).classe">
@@ -277,9 +289,16 @@
 
 	<div class="col-md-6">
 	  <h2> Global statistics </h2>
+
+	  <!-- dt warning displayed when incompatible dt are displayed -->
+	  <div ng-show="validate.dt2()" class="alert alert-danger">
+	    <span class="glyphicon glyphicon-warning-sign"></span>
+	    Datasets with incompatible framerates have been uploaded. Click on the <span class="glyphicon glyphicon-eye-open"></span> symbol next to each dataset to display the inferred framerate.
+	  </div>
+
 	  <div ng-if="statistics.status=='ok';">
 	    <table class="table table-responsive">
-	      
+
 	      <!-- ntraces block -->
 	      <tr ng-class="validate.ntraces(statistics.pre_ntraces).classe">
 		<td>Number of traces</td>

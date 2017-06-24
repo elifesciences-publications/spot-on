@@ -69,6 +69,18 @@ def number_of_gaps(fi):
         mg.append(np.diff([tr[3] for tr in traj]).max())
     return max(mg)-1
 
+def compute_dt(fi):
+    """Compute the framerate based on the detections"""
+    i = 0
+    while len(fi[i])<2:     # Find the first trajectory with >= 2 detections
+        i+=1
+    
+    # Infer the framerate
+    dt= (fi[i][1][2]-fi[i][0][2])/(fi[i][1][3]-fi[i][0][3]) #delta(t)/delta(frames)
+
+    # /!\ TODO MW: Validate the framerate in the rest of the dataset
+    return dt
+
 def global_mean_median(da, fu, reindex_frames=False):
     """A function to compute global stuff.
     It first loads all the datasets, then send it to the corresponding function"""

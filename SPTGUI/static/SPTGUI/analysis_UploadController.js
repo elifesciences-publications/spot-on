@@ -154,6 +154,17 @@ angular.module('app')
 		    pict: true,
 		    msg: ""}
 	$scope.validate = {
+	    dt2: function() {
+		if (!$scope.datasets) {return false};
+		d0 = $scope.datasets[0];
+		return !$scope.datasets.every(function(el) {return el.dt==d0.dt;})
+	    },
+	    dt: function(data) {
+		if (data>0.01) {
+		    errr.msg = "The framerate is less than 10 Hz"
+		    return errr
+		} else {return nada}
+	    },
 	    ntraces: function(data) {
 		if (data<100) {
 		    errr.msg = "This dataset contains <100 traces"

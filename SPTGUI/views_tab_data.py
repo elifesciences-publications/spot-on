@@ -35,6 +35,7 @@ def datasets_api(request, url_basename):
             'description' : d.description,
             'upload_status' : d.upload_status,
             'preanalysis_status' : d.preanalysis_status,
+            'dt' : d.dt,
 
             ## Preanalysis statistics
             'pre_ntraces' : d.pre_ntraces,
