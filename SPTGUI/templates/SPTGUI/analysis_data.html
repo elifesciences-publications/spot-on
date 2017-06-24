@@ -81,327 +81,326 @@
 	<input type="file" flow-btn/>
       </div>
     </div>
-    <div>
-      <h2>Uploaded datasets</h2>
+  </div>
+  <div class="row">
+    <h2>Uploaded datasets</h2>
 
-      <div class="alert alert-warning" ng-hide="datasetsReady">
-	Loading datasets...
-      </div>
-      <div ng-hide="!datasetsReady">
-	<div class="alert alert-warning" ng-if="successfullyUploaded==0">
-	  No dataset has been uploaded yet.
-	</div>
-	
-	<div ng-if="successfullyUploaded>0">
-	  <ul>
-	    <li>Number of uploaded files: {{successfullyUploaded}}/{{successfullyUploaded+$flow.files.length}}</li>
-	  </ul>
-	  
-	  <table class="table">
-	    <tr>
-	      <th class="col-md-2">id</th>
-	      <th class="col-md-5">File name</th>
-	      <th class="col-md-5">Description</th>
-	      <th class="col-md-2">Status</th>
-	      <th class="col-md-5">Options</th>
-	    </tr>
-	    
-	    <tr ng-repeat="file in $flow.files">
-	      <td class="col-md-2">{{$index+1}}</td>
-	      <td class="col-md-5">{{file.name}}</td>
-	      <td class="col-md-5"> </td>	
-	      <td class="col-md-2">Uploading</td>
-	      <td class="col-md-1"> </td>		  
-	    </tr>
-	    
-	    <tr ng-repeat="data in datasets"
-		ng-class="{active: data.id == shownStatistics.id}">
-	      <td class="col-md-2">{{$flow.files.length+$index+1}}</td>
-	      <td class="col-md-5">{{data.name}}
-		(<a href="datasets/{{data.id}}/original/"
-		    uib-tooltip="View the uploaded file">uploaded</a>,
-		<a href="datasets/{{data.id}}/parsed/"
-		   uib-tooltip="View the file as interpreted by our system, in a standardized format">parsed</a>,
-		<a href="datasets/{{data.id}}/report/"
-		   uib-tooltip="View the import report">import report</a>).
-	      </td>
-	      <td class="col-md-5">{{data.description}}</td>
-	      <td class="col-md-2">{{data.preanalysis_status}}</td>
-	      <td class="col-md-1">
-		<span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open clickable"></span>
-		<span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil clickable"></span>
-		<span ng-click="deleteDataset(data, $index);" class="glyphicon glyphicon-remove clickable"></span>
-	      </td>		  
-	    </tr>
-	  </table>	      
-	</div>
-      </div>
-      <div ng-if="editingDataset">
-	<h3>Editing dataset: {{editedDataset.name}}</h3>
-	<form ng-submit="saveEdit(editedDataset)">
-	  <table>
-	    <tr>
-	      <td> Name: </td>
-	      <td><input type="text" ng-model="editedDataset.name"></td>
-	    </tr>
-	    <tr>
-	      <td> Description: </td>
-	      <td><textarea ng-model="editedDataset.description"></textarea></td>
-	    </tr>
-	    <tr>
-	      <td>&nbsp;</td>
-	      <td>
-		<button class="btn btn-default" ng-click="cancelEdit(editedDataset)">Cancel</button>
-		<button type="submit" class="btn btn-default">Submit</button>
-	      </td>
-	    </tr>
-	  </table>
-	</form>
+    <div class="alert alert-warning" ng-hide="datasetsReady">
+      Loading datasets...
+    </div>
+    <div ng-hide="!datasetsReady">
+      <div class="alert alert-warning" ng-if="successfullyUploaded==0">
+	No dataset has been uploaded yet.
       </div>
       
-      <div>
-	<div class="col-md-6">
-	  <h2> Information about a dataset </h2>
-	  <div ng-if="showingStatistics">
-	    <h3>Selected dataset: {{shownStatistics.name}}</h3>
-
-	    <table class="table table-responsive">
-	      
-	      <!-- dt block -->
-	      <tr ng-class="validate.dt(shownStatistics.dt).classe">
-		<td>Framerate (s)</td>
-		<td>{{shownStatistics.dt}}
-		  <span
-		     ng-show="validate.dt(shownStatistics.dt).pict"
-		     uib-tooltip="{{validate.dt(shownStatistics.dt).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		  
-		</td>
-	      </tr>	      
-
-	      <!-- ntraces block -->
-	      <tr ng-class="validate.ntraces(shownStatistics.pre_ntraces).classe">
-		<td>Number of traces</td>
-		<td>{{shownStatistics.pre_ntraces}}
-		  <span
-		     ng-show="validate.ntraces(shownStatistics.pre_ntraces).pict"
-		     uib-tooltip="{{validate.ntraces(shownStatistics.pre_ntraces).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		  
-		</td>
-	      </tr>
-
-	      <!-- ntraces block -->
-	      <tr ng-class="validate.ntraces(shownStatistics.pre_ntraces).classe">
-		<td>Number of frames</td>
-		<td>{{shownStatistics.pre_nframes}}
-		  <span
-		     ng-show="validate.ntraces(shownStatistics.pre_ntraces).pict"
-		     uib-tooltip="{{validate.ntraces(shownStatistics.pre_ntraces).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- npoints block -->
-	      <tr ng-class="validate.npoints(shownStatistics.pre_npoints).classe">
-		<td>Number of detections</td>
-		<td>{{shownStatistics.pre_npoints}}
-		  <span
-		     ng-show="validate.npoints(shownStatistics.pre_npoints).pict"
-		     uib-tooltip="{{validate.npoints(shownStatistics.pre_npoints).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- ngaps block -->
-	      <tr ng-class="validate.ngaps(shownStatistics.pre_ngaps).classe">
-		<td>Longest gap (frames)</td>
-		<td>{{shownStatistics.pre_ngaps}}
-		  <span
-		     ng-show="validate.ngaps(shownStatistics.pre_ngaps).pict"
-		     uib-tooltip="{{validate.ngaps(shownStatistics.pre_ngaps).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- ntraces3 block -->
-	      <tr ng-class="validate.ntraces3(shownStatistics.pre_ntraces3).classe">
-		<td>Number of traces with &ge;3 detections</td>
-		<td>{{shownStatistics.pre_ntraces3}}
-		  <span
-		     ng-show="validate.ntraces3(shownStatistics.pre_ntraces3).pict"
-		     uib-tooltip="{{validate.ntraces3(shownStatistics.pre_ntraces3).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- njumps block -->
-	      <tr ng-class="validate.njumps(shownStatistics.pre_njumps).classe">
-		<td>Number of jumps</td>
-		<td>{{shownStatistics.pre_njumps}}
-		  <span
-		     ng-show="validate.njumps(shownStatistics.pre_njumps).pict"
-		     uib-tooltip="{{validate.njumps(shownStatistics.pre_njumps).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- median_length_of_trajectories block -->
-	      <tr ng-class="validate.median_length_of_trajectories(shownStatistics.pre_median_length_of_trajectories).classe">
-		<td>Length of trajectories (in number of frames)</td>
-		<td>median: {{shownStatistics.pre_median_length_of_trajectories}}, mean: {{shownStatistics.pre_mean_length_of_trajectories | number}}
-		  <span
-		     ng-show="validate.median_length_of_trajectories(shownStatistics.pre_median_length_of_trajectories).pict"
-		     uib-tooltip="{{validate.median_length_of_trajectories(shownStatistics.pre_median_length_of_trajectories).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- median_particles_per_frame block -->
-	      <tr ng-class="validate.median_particles_per_frame(shownStatistics.pre_median_particles_per_frame).classe">
-		<td>Particles per frame</td>
-		<td>median: {{shownStatistics.pre_median_particles_per_frame}}, mean: {{shownStatistics.pre_mean_particles_per_frame | number}}
-		  <span
-		     ng-show="validate.median_particles_per_frame(shownStatistics.pre_median_particles_per_frame).pict"
-		     uib-tooltip="{{validate.median_particles_per_frame(shownStatistics.pre_median_particles_per_frame).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- median_jump_length block -->
-	      <tr ng-class="validate.median_jump_length(shownStatistics.pre_median_jump_length).classe">
-		<td>Jump length (&micro;m)</td>
-		<td>median: {{shownStatistics.pre_median_jump_length | number}}, Mean: {{shownStatistics.pre_mean_jump_length | number}}
-		  <span
-		     ng-show="validate.median_jump_length(shownStatistics.pre_median_jump_length).pict"
-		     uib-tooltip="{{validate.median_jump_length(shownStatistics.pre_median_jump_length).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	    </table>
-	  </div>
+      <div ng-if="successfullyUploaded>0">
+	<ul>
+	  <li>Number of uploaded files: {{successfullyUploaded}}/{{successfullyUploaded+$flow.files.length}}</li>
+	</ul>
+	
+	<table class="table">
+	  <tr>
+	    <th class="col-md-2">id</th>
+	    <th class="col-md-5">File name</th>
+	    <th class="col-md-5">Description</th>
+	    <th class="col-md-2">Status</th>
+	    <th class="col-md-5">Options</th>
+	  </tr>
 	  
-	  <div ng-if="!showingStatistics"
-	       class="alert alert-warning" role="alert">
-	    Click on the <span class="glyphicon glyphicon-eye-open"></span> label to display information and statistics about the dataset.
-	  </div>
-	</div>
-
-	<div class="col-md-6">
-	  <h2> Global statistics </h2>
-
-	  <!-- dt warning displayed when incompatible dt are displayed -->
-	  <div ng-show="validate.dt2()" class="alert alert-danger">
-	    <span class="glyphicon glyphicon-warning-sign"></span>
-	    Datasets with incompatible framerates have been uploaded. Click on the <span class="glyphicon glyphicon-eye-open"></span> symbol next to each dataset to display the inferred framerate.
-	  </div>
-
-	  <div ng-if="statistics.status=='ok';">
-	    <table class="table table-responsive">
-
-	      <!-- ntraces block -->
-	      <tr ng-class="validate.ntraces(statistics.pre_ntraces).classe">
-		<td>Number of traces</td>
-		<td>{{statistics.pre_ntraces}}
-		  <span
-		     ng-show="validate.ntraces(statistics.pre_ntraces).pict"
-		     uib-tooltip="{{validate.ntraces(statistics.pre_ntraces).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- nframes block -->
-	      <tr ng-class="validate.nframes(statistics.pre_nframes).classe">
-		<td>Number of frames</td>
-		<td>{{statistics.pre_nframes}}
-		  <span
-		     ng-show="validate.nframes(statistics.pre_nframes).pict"
-		     uib-tooltip="{{validate.nframes(statistics.pre_nframes).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- npoints block -->
-	      <tr ng-class="validate.npoints(statistics.pre_npoints).classe">
-		<td>Number of detections</td>
-		<td>{{statistics.pre_npoints}}
-		  <span
-		     ng-show="validate.npoints(statistics.pre_npoints).pict"
-		     uib-tooltip="{{validate.npoints(statistics.pre_npoints).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- ngaps block -->
-	      <tr ng-class="validate.ngaps(statistics.pre_ngaps).classe">
-		<td>Longest gap (frames)</td>
-		<td>{{statistics.pre_ngaps}}
-		  <span
-		     ng-show="validate.ngaps(statistics.pre_ngaps).pict"
-		     uib-tooltip="{{validate.ngaps(statistics.pre_ngaps).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- ntraces3 block -->
-	      <tr ng-class="validate.ntraces3(statistics.pre_ntraces3).classe">
-		<td>Number of traces with &ge;3 detections</td>
-		<td>{{statistics.pre_ntraces3}}
-		  <span
-		     ng-show="validate.ntraces3(statistics.pre_ntraces3).pict"
-		     uib-tooltip="{{validate.ntraces3(statistics.pre_ntraces3).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- njumps block -->
-	      <tr ng-class="validate.njumps(statistics.pre_njumps).classe">
-		<td>Number of jumps</td>
-		<td>{{statistics.pre_njumps}}
-		  <span
-		     ng-show="validate.njumps(statistics.pre_njumps).pict"
-		     uib-tooltip="{{validate.njumps(statistics.pre_njumps).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- median_length_of_trajectories block -->
-	      <tr ng-class="validate.median_length_of_trajectories(statistics.pre_median_length_of_trajectories).classe">
-		<td>Length of trajectories (in number of frames)</td>
-		<td>median: {{statistics.pre_median_length_of_trajectories | number}}, mean: {{statistics.pre_mean_length_of_trajectories | number}}
-		  <span
-		     ng-show="validate.median_length_of_trajectories(statistics.pre_median_length_of_trajectories).pict"
-		     uib-tooltip="{{validate.median_length_of_trajectories(statistics.pre_median_length_of_trajectories).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- median_particles_per_frame block -->
-	      <tr ng-class="validate.median_particles_per_frame(statistics.pre_median_particles_per_frame).classe">
-		<td>Particles per frame</td>
-		<td>median: {{statistics.pre_median_particles_per_frame}}, mean: {{statistics.pre_mean_particles_per_frame | number}}
-		  <span
-		     ng-show="validate.median_particles_per_frame(statistics.pre_median_particles_per_frame).pict"
-		     uib-tooltip="{{validate.median_particles_per_frame(statistics.pre_median_particles_per_frame).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	      
-	      <!-- median_jump_length block -->
-	      <tr ng-class="validate.median_jump_length(statistics.pre_median_jump_length).classe">
-		<td>Jump length (&micro;m)</td>
-		<td>median: {{statistics.pre_median_jump_length | number}}, Mean: {{statistics.pre_mean_jump_length | number}}
-		  <span
-		     ng-show="validate.median_jump_length(statistics.pre_median_jump_length).pict"
-		     uib-tooltip="{{validate.median_jump_length(statistics.pre_median_jump_length).msg}}"
-		     class="glyphicon glyphicon-warning-sign"></span>
-		</td>
-	      </tr>
-	    </table>		  
-	  </div>
-	</div>		  
+	  <tr ng-repeat="file in $flow.files">
+	    <td class="col-md-2">{{$index+1}}</td>
+	    <td class="col-md-5">{{file.name}}</td>
+	    <td class="col-md-5"> </td>	
+	    <td class="col-md-2">Uploading</td>
+	    <td class="col-md-1"> </td>		  
+	  </tr>
+	  
+	  <tr ng-repeat="data in datasets"
+	      ng-class="{active: data.id == shownStatistics.id}">
+	    <td class="col-md-2">{{$flow.files.length+$index+1}}</td>
+	    <td class="col-md-5">{{data.name}}
+	      (<a href="datasets/{{data.id}}/original/"
+		  uib-tooltip="View the uploaded file">uploaded</a>,
+	      <a href="datasets/{{data.id}}/parsed/"
+		 uib-tooltip="View the file as interpreted by our system, in a standardized format">parsed</a>,
+	      <a href="datasets/{{data.id}}/report/"
+		 uib-tooltip="View the import report">import report</a>).
+	    </td>
+	    <td class="col-md-5">{{data.description}}</td>
+	    <td class="col-md-2">{{data.preanalysis_status}}</td>
+	    <td class="col-md-1">
+	      <span ng-click="showDataset(data);" class="glyphicon glyphicon-eye-open clickable"></span>
+	      <span ng-click="editDataset(data);" class="glyphicon glyphicon-pencil clickable"></span>
+	      <span ng-click="deleteDataset(data, $index);" class="glyphicon glyphicon-remove clickable"></span>
+	    </td>		  
+	  </tr>
+	</table>	      
       </div>
     </div>
-  </div><!-- End of the UploadController controller -->
-</div>
+    <div ng-if="editingDataset">
+      <h3>Editing dataset: {{editedDataset.name}}</h3>
+      <form ng-submit="saveEdit(editedDataset)">
+	<table>
+	  <tr>
+	    <td> Name: </td>
+	    <td><input type="text" ng-model="editedDataset.name"></td>
+	  </tr>
+	  <tr>
+	    <td> Description: </td>
+	    <td><textarea ng-model="editedDataset.description"></textarea></td>
+	  </tr>
+	  <tr>
+	    <td>&nbsp;</td>
+	    <td>
+	      <button class="btn btn-default" ng-click="cancelEdit(editedDataset)">Cancel</button>
+	      <button type="submit" class="btn btn-default">Submit</button>
+	    </td>
+	  </tr>
+	</table>
+      </form>
+    </div>
+  </div> 
+  <div class="row">
+    <div class="col-md-6">
+      <h2> Information about a dataset </h2>
+      <div ng-if="showingStatistics">
+	<h3>Selected dataset: {{shownStatistics.name}}</h3>
+	
+	<table class="table table-responsive">
+	  
+	  <!-- dt block -->
+	  <tr ng-class="validate.dt(shownStatistics.dt).classe">
+	    <td>Framerate (s)</td>
+	    <td>{{shownStatistics.dt}}
+	      <span
+		 ng-show="validate.dt(shownStatistics.dt).pict"
+		 uib-tooltip="{{validate.dt(shownStatistics.dt).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	      
+	    </td>
+	  </tr>	      
+
+	  <!-- ntraces block -->
+	  <tr ng-class="validate.ntraces(shownStatistics.pre_ntraces).classe">
+	    <td>Number of traces</td>
+	    <td>{{shownStatistics.pre_ntraces}}
+	      <span
+		 ng-show="validate.ntraces(shownStatistics.pre_ntraces).pict"
+		 uib-tooltip="{{validate.ntraces(shownStatistics.pre_ntraces).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	      
+	    </td>
+	  </tr>
+
+	  <!-- ntraces block -->
+	  <tr ng-class="validate.ntraces(shownStatistics.pre_ntraces).classe">
+	    <td>Number of frames</td>
+	    <td>{{shownStatistics.pre_nframes}}
+	      <span
+		 ng-show="validate.ntraces(shownStatistics.pre_ntraces).pict"
+		 uib-tooltip="{{validate.ntraces(shownStatistics.pre_ntraces).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- npoints block -->
+	  <tr ng-class="validate.npoints(shownStatistics.pre_npoints).classe">
+	    <td>Number of detections</td>
+	    <td>{{shownStatistics.pre_npoints}}
+	      <span
+		 ng-show="validate.npoints(shownStatistics.pre_npoints).pict"
+		 uib-tooltip="{{validate.npoints(shownStatistics.pre_npoints).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- ngaps block -->
+	  <tr ng-class="validate.ngaps(shownStatistics.pre_ngaps).classe">
+	    <td>Longest gap (frames)</td>
+	    <td>{{shownStatistics.pre_ngaps}}
+	      <span
+		 ng-show="validate.ngaps(shownStatistics.pre_ngaps).pict"
+		 uib-tooltip="{{validate.ngaps(shownStatistics.pre_ngaps).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- ntraces3 block -->
+	  <tr ng-class="validate.ntraces3(shownStatistics.pre_ntraces3).classe">
+	    <td>Number of traces with &ge;3 detections</td>
+	    <td>{{shownStatistics.pre_ntraces3}}
+	      <span
+		 ng-show="validate.ntraces3(shownStatistics.pre_ntraces3).pict"
+		 uib-tooltip="{{validate.ntraces3(shownStatistics.pre_ntraces3).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- njumps block -->
+	  <tr ng-class="validate.njumps(shownStatistics.pre_njumps).classe">
+	    <td>Number of jumps</td>
+	    <td>{{shownStatistics.pre_njumps}}
+	      <span
+		 ng-show="validate.njumps(shownStatistics.pre_njumps).pict"
+		 uib-tooltip="{{validate.njumps(shownStatistics.pre_njumps).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- median_length_of_trajectories block -->
+	  <tr ng-class="validate.median_length_of_trajectories(shownStatistics.pre_median_length_of_trajectories).classe">
+	    <td>Length of trajectories (in number of frames)</td>
+	    <td>median: {{shownStatistics.pre_median_length_of_trajectories}}, mean: {{shownStatistics.pre_mean_length_of_trajectories | number}}
+	      <span
+		 ng-show="validate.median_length_of_trajectories(shownStatistics.pre_median_length_of_trajectories).pict"
+		 uib-tooltip="{{validate.median_length_of_trajectories(shownStatistics.pre_median_length_of_trajectories).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- median_particles_per_frame block -->
+	  <tr ng-class="validate.median_particles_per_frame(shownStatistics.pre_median_particles_per_frame).classe">
+	    <td>Particles per frame</td>
+	    <td>median: {{shownStatistics.pre_median_particles_per_frame}}, mean: {{shownStatistics.pre_mean_particles_per_frame | number}}
+	      <span
+		 ng-show="validate.median_particles_per_frame(shownStatistics.pre_median_particles_per_frame).pict"
+		 uib-tooltip="{{validate.median_particles_per_frame(shownStatistics.pre_median_particles_per_frame).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- median_jump_length block -->
+	  <tr ng-class="validate.median_jump_length(shownStatistics.pre_median_jump_length).classe">
+	    <td>Jump length (&micro;m)</td>
+	    <td>median: {{shownStatistics.pre_median_jump_length | number}}, Mean: {{shownStatistics.pre_mean_jump_length | number}}
+	      <span
+		 ng-show="validate.median_jump_length(shownStatistics.pre_median_jump_length).pict"
+		 uib-tooltip="{{validate.median_jump_length(shownStatistics.pre_median_jump_length).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	</table>
+      </div>
+      
+      <div ng-if="!showingStatistics"
+	   class="alert alert-warning" role="alert">
+	Click on the <span class="glyphicon glyphicon-eye-open"></span> label to display information and statistics about the dataset.
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <h2> Global statistics </h2>
+
+      <!-- dt warning displayed when incompatible dt are displayed -->
+      <div ng-show="validate.dt2()" class="alert alert-danger">
+	<span class="glyphicon glyphicon-warning-sign"></span>
+	Datasets with incompatible framerates have been uploaded. Click on the <span class="glyphicon glyphicon-eye-open"></span> symbol next to each dataset to display the inferred framerate.
+      </div>
+
+      <div ng-if="statistics.status=='ok';">
+	<table class="table table-responsive">
+
+	  <!-- ntraces block -->
+	  <tr ng-class="validate.ntraces(statistics.pre_ntraces).classe">
+	    <td>Number of traces</td>
+	    <td>{{statistics.pre_ntraces}}
+	      <span
+		 ng-show="validate.ntraces(statistics.pre_ntraces).pict"
+		 uib-tooltip="{{validate.ntraces(statistics.pre_ntraces).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- nframes block -->
+	  <tr ng-class="validate.nframes(statistics.pre_nframes).classe">
+	    <td>Number of frames</td>
+	    <td>{{statistics.pre_nframes}}
+	      <span
+		 ng-show="validate.nframes(statistics.pre_nframes).pict"
+		 uib-tooltip="{{validate.nframes(statistics.pre_nframes).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- npoints block -->
+	  <tr ng-class="validate.npoints(statistics.pre_npoints).classe">
+	    <td>Number of detections</td>
+	    <td>{{statistics.pre_npoints}}
+	      <span
+		 ng-show="validate.npoints(statistics.pre_npoints).pict"
+		 uib-tooltip="{{validate.npoints(statistics.pre_npoints).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- ngaps block -->
+	  <tr ng-class="validate.ngaps(statistics.pre_ngaps).classe">
+	    <td>Longest gap (frames)</td>
+	    <td>{{statistics.pre_ngaps}}
+	      <span
+		 ng-show="validate.ngaps(statistics.pre_ngaps).pict"
+		 uib-tooltip="{{validate.ngaps(statistics.pre_ngaps).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- ntraces3 block -->
+	  <tr ng-class="validate.ntraces3(statistics.pre_ntraces3).classe">
+	    <td>Number of traces with &ge;3 detections</td>
+	    <td>{{statistics.pre_ntraces3}}
+	      <span
+		 ng-show="validate.ntraces3(statistics.pre_ntraces3).pict"
+		 uib-tooltip="{{validate.ntraces3(statistics.pre_ntraces3).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- njumps block -->
+	  <tr ng-class="validate.njumps(statistics.pre_njumps).classe">
+	    <td>Number of jumps</td>
+	    <td>{{statistics.pre_njumps}}
+	      <span
+		 ng-show="validate.njumps(statistics.pre_njumps).pict"
+		 uib-tooltip="{{validate.njumps(statistics.pre_njumps).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- median_length_of_trajectories block -->
+	  <tr ng-class="validate.median_length_of_trajectories(statistics.pre_median_length_of_trajectories).classe">
+	    <td>Length of trajectories (in number of frames)</td>
+	    <td>median: {{statistics.pre_median_length_of_trajectories | number}}, mean: {{statistics.pre_mean_length_of_trajectories | number}}
+	      <span
+		 ng-show="validate.median_length_of_trajectories(statistics.pre_median_length_of_trajectories).pict"
+		 uib-tooltip="{{validate.median_length_of_trajectories(statistics.pre_median_length_of_trajectories).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- median_particles_per_frame block -->
+	  <tr ng-class="validate.median_particles_per_frame(statistics.pre_median_particles_per_frame).classe">
+	    <td>Particles per frame</td>
+	    <td>median: {{statistics.pre_median_particles_per_frame}}, mean: {{statistics.pre_mean_particles_per_frame | number}}
+	      <span
+		 ng-show="validate.median_particles_per_frame(statistics.pre_median_particles_per_frame).pict"
+		 uib-tooltip="{{validate.median_particles_per_frame(statistics.pre_median_particles_per_frame).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	  
+	  <!-- median_jump_length block -->
+	  <tr ng-class="validate.median_jump_length(statistics.pre_median_jump_length).classe">
+	    <td>Jump length (&micro;m)</td>
+	    <td>median: {{statistics.pre_median_jump_length | number}}, Mean: {{statistics.pre_mean_jump_length | number}}
+	      <span
+		 ng-show="validate.median_jump_length(statistics.pre_median_jump_length).pict"
+		 uib-tooltip="{{validate.median_jump_length(statistics.pre_median_jump_length).msg}}"
+		 class="glyphicon glyphicon-warning-sign"></span>
+	    </td>
+	  </tr>
+	</table>		  
+      </div>
+    </div>		  
+  </div>
+</div><!-- End of the UploadController controller -->
 {% endverbatim %}

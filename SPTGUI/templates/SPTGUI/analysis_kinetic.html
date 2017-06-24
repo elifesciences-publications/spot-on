@@ -1,571 +1,580 @@
-	  {% verbatim %}
-	  <div ng-controller="ModelingController"><!-- Another controller -->
-	    In this tab, you can perform a kinetic modeling of your data
-	    
-	    <div ng-if="showModelingTab&&datasets.length>0;">
-	      <h2> Dataset selection </h2>
+{% verbatim %}
+<div ng-controller="ModelingController"><!-- Another controller -->
+  <div ng-hide="showModelingTab&&datasets.length>0;">
+    <p>In this tab, you can perform a kinetic modeling of your data</p>
+    <div class="alert alert-info">
+      Make sure that you have uploaded datasets.
+    </div>
+    <div class="alert alert-info">
+      Please wait until all the datasets have been preprocessed.
+    </div>
+  </div>
+  
+  <div ng-if="showModelingTab&&datasets.length>0;">
+    <div class="row">
+      <h2> Dataset selection </h2>
 
-	      Make sure that only valid datasets are visible.
-	      <table class="table-striped">
+      <table class="table-striped">
+	<tr>
+	  <td class="col-md-1"> Id </td>
+	  <td class="col-md-5"> File name </td>
+	  <td class="col-md-5"> Description </td>
+	  <td class="col-md-1"> Status </td>
+	  <td class="col-md-2"> Include
+	    (<a ng-click="datasetsToggleAll(true)" href="#">all</a>/<a ng-click="datasetsToggleAll(false)" href="#">none</a>)
+	  </td>
+	</tr>
+	<tr ng-repeat="data in datasets">
+	  <td class="col-md-1">{{$index+1}}</td>
+	  <td class="col-md-5">{{data.name}}</td>
+	  <td class="col-md-5">{{data.description}}</td>
+	  <td class="col-md-1">
+	    <span ng-if="jlfit[$index];" class="glyphicon glyphicon-stats"></span>
+	  </td>
+	  <td class="col-md-2">
+	    <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="datasetsToggle[$index]"></toggle-switch>
+	  </td>
+	</tr>
+      </table>
+    </div>
+    <div class="row">
+      <h2> Parameters </h2>
+      <div class="col-md-5">
+	<div class="panel panel-default">
+	  <div class="panel-heading"><h3 class="panel-title">Jump length distribution</h3></div>
+	  <div class="panel-body">
+	    <table>
+	      <tr>
+		<td>Bin width (µm)</td>
+		<td>
+		  <input ng-model="jldParameters.BinWidth" type="number" step="any" min="0">
+		  <span uib-tooltip="The size of one bin of the histogram" class="glyphicon glyphicon-question-sign"></span>
+		</td>
+	      </tr>
+	      <tr>
+		<td>Number of timepoints</td>
+		<td>
+		  <input min="2" max="20" ng-model= "jldParameters.TimePoints"  type="number">
+		  <span uib-tooltip="The number of &Delta;t to be considered to compute the histograms, one histogram is computed for each value of &Delta;t" class="glyphicon glyphicon-question-sign"></span>
+
+		</td>
+	      </tr>
+	      <tr>
+		<td>Jumps to consider</td>
+		<td>
+		  <input ng-model="jldParameters.JumpsToConsider"
+			 ng-disabled="jldParameters.useAllTraj"
+			 type="number">
+		</td>
+	      </tr>
+	      <tr>
+		<td>Use all trajectories?</td>
+		<td>
+		  <toggle-switch
+		     ng-model="jldParameters.useAllTraj"
+		     off-label="No"
+		     on-label="Yes">
+		  </toggle-switch>
+		  <span uib-tooltip="Tell whether we should truncate the trajectories to the n first jumps. This is useful to avoid overrepresentation of bound molecules. When 'Use all trajectories' is set to 'Yes', trajectories are not truncated." class="glyphicon glyphicon-question-sign"></span>
+		</td>
+	      </tr>
+	      <tr>
+		<td>Max jump (µm)</td>
+		<td>
+		  <input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0">
+		  <span uib-tooltip="The distance of the longest jump to be computed. This will be the upper bound of the histogram. A value too low will yield a truncated histogram, whereas a value too high lead to overfitting of the tail of the distribution." class="glyphicon glyphicon-question-sign"></span>
+		</td>
+	      </tr>
+	      <!-- NOW INFERRED FROM DATA -->
+	      <!-- <td> dT (ms): </td> -->
+	      <!-- NOW INFERRED FROM DATA -->
+	      <!-- 	<td>Number of gaps allowed</td> -->
+	      <tr>
+		<td></td>		    
+		<td>
+		  <button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button>
+		  <button ng-hide="!showComputeJLDbutton()"
+			  ng-click="runJLD(jldParameters);"
+			  class="btn btn-default">Compute!</button>
+		</td> 
+	      </tr>
+	    </table>
+	    <br/>
+	    <div class="alert alert-info">
+	      It seems that your dataset contains at most {{jldParameters.GapsAllowed}} gap(s), so the algorithm has been set accordingly
+	      <a href="../../docs/#"><span class="glyphicon glyphicon-question-sign"></span></a>
+	    </div>
+	  </div>
+	</div>
+      </div>
+      
+      <!-- Fitting parameters -->
+      <div class="col-md-7">
+	<div class="panel panel-default">
+	  <div class="panel-heading"><h3 class="panel-title"> Model fitting </h3></div>
+	  <div class="panel-body">
+	    <form ng-submit="runAnalysis(modelingParameters);">
+
+	      <div class="alert alert-danger"
+		   ng-show="modelingParameters.dT===null;">
+		<span class="glyphicon glyphicon-warning-sign"></span>
+		Datasets with different framerates are selected. You can only fit a pool of datasets with the same framerate.
+	      </div>
+	      
+	      <table>
 		<tr>
-		  <td class="col-md-1"> Id </td>
-		  <td class="col-md-5"> File name </td>
-		  <td class="col-md-5"> Description </td>
-		  <td class="col-md-1"> Status </td>
-		  <td class="col-md-2"> Include
-		    (<a ng-click="datasetsToggleAll(true)" href="#">all</a>/<a ng-click="datasetsToggleAll(false)" href="#">none</a>)
+		  <td>Kinetic model:</td>
+		  <td>
+        	    <div class="col-xs-6">
+		      <label>
+			<input type="radio"
+			       ng-model="modelingParameters.fit2states"
+			       ng-click="init2states(2)"
+			       value="true">
+        		<img src="/static/SPTGUI/img/twostates.png"
+			     class="img-thumbnail float-left"
+			     width="128"
+			     alt="Two states model">
+		      </label>
+        	    </div>
+        	    <div class="col-xs-6">
+		      <label>
+			<input type="radio"
+			       ng-model="modelingParameters.fit2states"
+			       ng-click="init2states(3)"
+			       value="false">
+        		<img src="/static/SPTGUI/img/threestates.png"
+			     class="img-thumbnail float-right"
+			     width="128"
+			     alt="Three states model">
+		      </label>
+        	    </div>			    
 		  </td>
 		</tr>
-		<tr ng-repeat="data in datasets">
-		  <td class="col-md-1">{{$index+1}}</td>
-		  <td class="col-md-5">{{data.name}}</td>
-		  <td class="col-md-5">{{data.description}}</td>
-		  <td class="col-md-1">
-		    <span ng-if="jlfit[$index];" class="glyphicon glyphicon-stats"></span>
+		<tr ng-if="modelingParameters.fit2states!==null">
+		  <td> D<sub>bound</sub> (µm²/s): </td>
+		  <td>
+		    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0" max="2">
+		    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0" max="2">
+		    <span uib-tooltip="Range of possible diffusion coefficients for the bound fraction." class="glyphicon glyphicon-question-sign"></span>
 		  </td>
-		  <td class="col-md-2">
-		    <toggle-switch ng-model-options="{ getterSetter: true }" ng-model="datasetsToggle[$index]"></toggle-switch>
+		</tr>
+		<tr ng-if="modelingParameters.fit2states==='true'">
+		  <td> D<sub>free</sub> (µm²/s): </td>
+		  <td>
+		    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0" max="25">
+		    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0" max="25">
+		    <span uib-tooltip="Range of possible diffusion coefficients for the free fraction." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		</tr>
+		<tr ng-if="modelingParameters.fit2states==='true'">
+		  <td> F<sub>bound</sub>: </td>
+		  <td>
+		    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
+		    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
+		    <span uib-tooltip="Range of possible proportion for the bound fraction." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		</tr>
+		<tr ng-if="modelingParameters.fit2states==='false'">
+		  <td> D<sub>slow</sub> (µm²/s): </td>
+		  <td>
+		    min: <input ng-model= "modelingParameters.D_med[0]"  type="number" step="any" min="0" max="10">
+		    max: <input ng-model= "modelingParameters.D_med[1]"  type="number" step="any" min="0" max="10">
+		    <span uib-tooltip="Range of possible diffusion coefficients for the slow fraction." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		</tr>
+		<tr ng-if="modelingParameters.fit2states==='false'">
+		  <td> D<sub>fast</sub> (µm²/s): </td>
+		  <td>
+		    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0" max="25">
+		    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0" max="25">
+		    <span uib-tooltip="Range of possible diffusion coefficients for the fast fraction." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		</tr>			
+		<tr ng-if="modelingParameters.fit2states==='false'">
+		  <td> F<sub>bound</sub>: </td>
+		  <td>
+		    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
+		    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
+		    <span uib-tooltip="Range of possible proportion for the bound fraction." class="glyphicon glyphicon-question-sign"></span>			    
+		  </td>
+		</tr>
+		<tr ng-if="modelingParameters.fit2states==='false'">
+		  <td> F<sub>fast</sub>: </td>
+		  <td>
+		    min: <input ng-model= "modelingParameters.F_fast[0]" type="number" step="any" min="0" max="1">
+		    max: <input ng-model= "modelingParameters.F_fast[1]"  type="number" step="any" min="0" max="1">
+		    <span uib-tooltip="Range of possible proportion for the fast fraction." class="glyphicon glyphicon-question-sign"></span>
+		  </td>			  
+		</tr>		
+		<tr>
+		  <td> Localization error (µm): </td>
+		  <td>Fit it from data <span uib-tooltip="If set to 'Yes', the localization error will be estimated from the data, if set to 'No', you should provide an estimate." class="glyphicon glyphicon-question-sign"></span>
+		    
+		    <toggle-switch
+		       ng-model="modelingParameters.fitSigma"
+		       on-change="fitLocalizationError()"
+		       off-label="No"
+		       on-label="Yes"></toggle-switch>
+		  </td>
+		</tr>
+		<tr>
+		  <td>&nbsp;</td>
+		  <td ng-show="!modelingParameters.fitSigma">
+		    <input  ng-model="modelingParameters.LocError" type="number" step="any" min="0">
+		    <span uib-tooltip="Refer to the documentation for hints about how to estimate the localizaton error." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		  <td ng-show="modelingParameters.fitSigma">
+		    min: <input ng-model="modelingParameters.sigma[0]" type="number" step="any" min="0" max="0.1">
+		    max: <input ng-model="modelingParameters.sigma[1]" type="number" step="any" min="0" max="0.1">
+		    <span uib-tooltip="Range of possible localization errors." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		</tr>
+		<tr>
+		  <td> dZ (µm): </td>
+		  <td>
+		    <input ng-model="modelingParameters.dZ"
+			   type="number" step="any" min="0">
+		    <span uib-tooltip="The axial dimension of the detection volume. This is used to compute the fraction of particles that move out of focus and correct for that." class="glyphicon glyphicon-question-sign"></span>
+		    (using (dZ={{modelingParameters.dZfit}} &micro;m,
+		    dT={{modelingParameters.dTfit*1000.}} ms)
+		    for the z correction
+		    <a href="#"
+		       uib-tooltip="a={{zcorr.a|number}} 1/&#8730;s,  b={{zcorr.b|number}} µm">?</a>.
+		  </td>
+		</tr>
+		<tr>
+		  <td> Model Fit: </td>
+		  <td>
+		    <toggle-switch
+		       ng-model="modelingParameters.ModelFit"
+		       off-label="PDF"
+		       on-label="CDF"></toggle-switch>
+		    <span uib-tooltip="Either fit the probability density function (PDF) or the cumulative distribution function (CDF). CDF fitting usually yields more accurate results." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		</tr>
+		<tr>
+		  <td> Perform single cell fit: </td>
+		  <td>
+		    <toggle-switch
+		       ng-model="modelingParameters.SingleCellFit"
+		       off-label="No"
+		       on-label="Yes"></toggle-switch> (long)
+		    <span uib-tooltip="If set to 'Yes', all single dataset will be fitted individually. This is not recommended." class="glyphicon glyphicon-question-sign"></span>
+		  </td>			    
+		</tr>			
+		<tr>
+		  <td> Iterations: </td>
+		  <td>
+		    <input type="number" ng-model="modelingParameters.iterations" min="0" max="15">
+		    <span uib-tooltip="The number of times to run the optimization routine (to avoid getting stuck in local maxima)." class="glyphicon glyphicon-question-sign"></span>
+		  </td>
+		</tr>			  
+		<tr>
+		  <td>&nbsp;</td>
+		  <td>
+		    <button type="submit"
+			    class="btn btn-default">
+		      Fit kinetic model
+		    </button>
+
+		    <span ng-hide="!isFitting()"> 
+		      <i class="fa fa-spinner fa-spin"
+			 style="font-size:24px"></i>
+		      {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
+		    </span>
 		  </td>
 		</tr>
 	      </table>
-
-	      <h2> Parameters </h2>
-	      <div class="col-md-5">
-		<div class="panel panel-default">
-		  <div class="panel-heading"><h3 class="panel-title">Jump length distribution</h3></div>
-		  <div class="panel-body">
-		    <table>
-		      <tr>
-			<td>Bin width (µm)</td>
-			<td>
-			  <input ng-model="jldParameters.BinWidth" type="number" step="any" min="0">
-			  <span uib-tooltip="The size of one bin of the histogram" class="glyphicon glyphicon-question-sign"></span>
-			</td>
-		      </tr>
-		      <tr>
-			<td>Number of timepoints</td>
-			<td>
-			  <input min="2" max="20" ng-model= "jldParameters.TimePoints"  type="number">
-			  <span uib-tooltip="The number of &Delta;t to be considered to compute the histograms, one histogram is computed for each value of &Delta;t" class="glyphicon glyphicon-question-sign"></span>
-
-			</td>
-		      </tr>
-		      <tr>
-			<td>Jumps to consider</td>
-			<td>
-			  <input ng-model="jldParameters.JumpsToConsider"
-				 ng-disabled="jldParameters.useAllTraj"
-				 type="number">
-			</td>
-		      </tr>
-		      <tr>
-			<td>Use all trajectories?</td>
-			<td>
-			  <toggle-switch
-			     ng-model="jldParameters.useAllTraj"
-			     off-label="No"
-			     on-label="Yes">
-			  </toggle-switch>
-			  <span uib-tooltip="Tell whether we should truncate the trajectories to the n first jumps. This is useful to avoid overrepresentation of bound molecules. When 'Use all trajectories' is set to 'Yes', trajectories are not truncated." class="glyphicon glyphicon-question-sign"></span>
-			</td>
-		      </tr>
-		      <tr>
-			<td>Max jump (µm)</td>
-			<td>
-			  <input ng-model= "jldParameters.MaxJump" type="number" step="any" min="0">
-			  <span uib-tooltip="The distance of the longest jump to be computed. This will be the upper bound of the histogram. A value too low will yield a truncated histogram, whereas a value too high lead to overfitting of the tail of the distribution." class="glyphicon glyphicon-question-sign"></span>
-			</td>
-		      </tr>
-		      <!-- NOW INFERRED FROM DATA -->
-		      <!-- <td> dT (ms): </td> -->
-		      <!-- NOW INFERRED FROM DATA -->
-		      <!-- 	<td>Number of gaps allowed</td> -->
-		      <tr>
-			<td></td>		    
-			<td>
-			  <button ng-click="resetjldParameters();" class="btn btn-default">Reset to default</button>
-			  <button ng-hide="!showComputeJLDbutton()"
-				  ng-click="runJLD(jldParameters);"
-				  class="btn btn-default">Compute!</button>
-			</td> 
-		      </tr>
-		    </table>
-		    <br/>
-		    <div class="alert alert-info">
-		      It seems that your dataset contains at most {{jldParameters.GapsAllowed}} gap(s), so the algorithm has been set accordingly
-		      <a href="../../docs/#"><span class="glyphicon glyphicon-question-sign"></span></a>
-		    </div>
-		  </div>
-		</div>
-	      </div>
-	      
-	      <!-- Fitting parameters -->
-	      <div class="col-md-7">
-		<div class="panel panel-default">
-		  <div class="panel-heading"><h3 class="panel-title"> Model fitting </h3></div>
-		  <div class="panel-body">
-		    <form ng-submit="runAnalysis(modelingParameters);">
-
-		      <div class="alert alert-danger"
-			   ng-show="modelingParameters.dT===null;">
-			<span class="glyphicon glyphicon-warning-sign"></span>
-			Datasets with different framerates are selected. You can only fit a pool of datasets with the same framerate.
-		    </div>
-		      
-		      <table>
-			<tr>
-			  <td>Kinetic model:</td>
-			  <td>
-        		    <div class="col-xs-6">
-			      <label>
-				<input type="radio"
-				       ng-model="modelingParameters.fit2states"
-				       ng-click="init2states(2)"
-				       value="true">
-        			<img src="/static/SPTGUI/img/twostates.png"
-				     class="img-thumbnail float-left"
-				     width="128"
-				     alt="Two states model">
-			      </label>
-        		    </div>
-        		    <div class="col-xs-6">
-			      <label>
-				<input type="radio"
-				       ng-model="modelingParameters.fit2states"
-				       ng-click="init2states(3)"
-				       value="false">
-        			<img src="/static/SPTGUI/img/threestates.png"
-				     class="img-thumbnail float-right"
-				     width="128"
-				     alt="Three states model">
-			      </label>
-        		    </div>			    
-			  </td>
-			</tr>
-			<tr ng-if="modelingParameters.fit2states!==null">
-			  <td> D<sub>bound</sub> (µm²/s): </td>
-			  <td>
-			    min: <input ng-model= "modelingParameters.D_bound[0]"  type="number" step="any" min="0" max="2">
-			    max: <input ng-model= "modelingParameters.D_bound[1]"  type="number" step="any" min="0" max="2">
-			    <span uib-tooltip="Range of possible diffusion coefficients for the bound fraction." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>
-			<tr ng-if="modelingParameters.fit2states==='true'">
-			  <td> D<sub>free</sub> (µm²/s): </td>
-			  <td>
-			    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0" max="25">
-			    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0" max="25">
-			    <span uib-tooltip="Range of possible diffusion coefficients for the free fraction." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>
-			<tr ng-if="modelingParameters.fit2states==='true'">
-			  <td> F<sub>bound</sub>: </td>
-			  <td>
-			    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
-			    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
-			    <span uib-tooltip="Range of possible proportion for the bound fraction." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>
-			<tr ng-if="modelingParameters.fit2states==='false'">
-			  <td> D<sub>slow</sub> (µm²/s): </td>
-			  <td>
-			    min: <input ng-model= "modelingParameters.D_med[0]"  type="number" step="any" min="0" max="10">
-			    max: <input ng-model= "modelingParameters.D_med[1]"  type="number" step="any" min="0" max="10">
-			    <span uib-tooltip="Range of possible diffusion coefficients for the slow fraction." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>
-			<tr ng-if="modelingParameters.fit2states==='false'">
-			  <td> D<sub>fast</sub> (µm²/s): </td>
-			  <td>
-			    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0" max="25">
-			    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0" max="25">
-			    <span uib-tooltip="Range of possible diffusion coefficients for the fast fraction." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>			
-			<tr ng-if="modelingParameters.fit2states==='false'">
-			  <td> F<sub>bound</sub>: </td>
-			  <td>
-			    min: <input ng-model= "modelingParameters.F_bound[0]" type="number" step="any" min="0" max="1">
-			    max: <input ng-model= "modelingParameters.F_bound[1]"  type="number" step="any" min="0" max="1">
-			    <span uib-tooltip="Range of possible proportion for the bound fraction." class="glyphicon glyphicon-question-sign"></span>			    
-			  </td>
-			</tr>
-			<tr ng-if="modelingParameters.fit2states==='false'">
-			  <td> F<sub>fast</sub>: </td>
-			  <td>
-			    min: <input ng-model= "modelingParameters.F_fast[0]" type="number" step="any" min="0" max="1">
-			    max: <input ng-model= "modelingParameters.F_fast[1]"  type="number" step="any" min="0" max="1">
-			    <span uib-tooltip="Range of possible proportion for the fast fraction." class="glyphicon glyphicon-question-sign"></span>
-			  </td>			  
-			</tr>		
-			<tr>
-			  <td> Localization error (µm): </td>
-			  <td>Fit it from data <span uib-tooltip="If set to 'Yes', the localization error will be estimated from the data, if set to 'No', you should provide an estimate." class="glyphicon glyphicon-question-sign"></span>
- 
-			    <toggle-switch
-			       ng-model="modelingParameters.fitSigma"
-			       on-change="fitLocalizationError()"
-			       off-label="No"
-			       on-label="Yes"></toggle-switch>
-			  </td>
-			</tr>
-			<tr>
-			  <td>&nbsp;</td>
-			  <td ng-show="!modelingParameters.fitSigma">
-			    <input  ng-model="modelingParameters.LocError" type="number" step="any" min="0">
-			    <span uib-tooltip="Refer to the documentation for hints about how to estimate the localizaton error." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			  <td ng-show="modelingParameters.fitSigma">
-			    min: <input ng-model="modelingParameters.sigma[0]" type="number" step="any" min="0" max="0.1">
-			    max: <input ng-model="modelingParameters.sigma[1]" type="number" step="any" min="0" max="0.1">
-			    <span uib-tooltip="Range of possible localization errors." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>
-			<tr>
-			  <td> dZ (µm): </td>
-			  <td>
-			    <input ng-model="modelingParameters.dZ"
-				   type="number" step="any" min="0">
-			    <span uib-tooltip="The axial dimension of the detection volume. This is used to compute the fraction of particles that move out of focus and correct for that." class="glyphicon glyphicon-question-sign"></span>
-			    (using (dZ={{modelingParameters.dZfit}} &micro;m,
-			    dT={{modelingParameters.dTfit*1000.}} ms)
-			    for the z correction
-			    <a href="#"
-			       uib-tooltip="a={{zcorr.a|number}} 1/&#8730;s,  b={{zcorr.b|number}} µm">?</a>.
-			  </td>
-			</tr>
-			<tr>
-			  <td> Model Fit: </td>
-			  <td>
-			    <toggle-switch
-			       ng-model="modelingParameters.ModelFit"
-			       off-label="PDF"
-			       on-label="CDF"></toggle-switch>
-			    <span uib-tooltip="Either fit the probability density function (PDF) or the cumulative distribution function (CDF). CDF fitting usually yields more accurate results." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>
-			<tr>
-			  <td> Perform single cell fit: </td>
-			  <td>
-			    <toggle-switch
-			       ng-model="modelingParameters.SingleCellFit"
-			       off-label="No"
-			       on-label="Yes"></toggle-switch> (long)
-			    <span uib-tooltip="If set to 'Yes', all single dataset will be fitted individually. This is not recommended." class="glyphicon glyphicon-question-sign"></span>
-			  </td>			    
-			</tr>			
-			<tr>
-			  <td> Iterations: </td>
-			  <td>
-			    <input type="number" ng-model="modelingParameters.iterations" min="0" max="15">
-			  <span uib-tooltip="The number of times to run the optimization routine (to avoid getting stuck in local maxima)." class="glyphicon glyphicon-question-sign"></span>
-			  </td>
-			</tr>			  
-			<tr>
-			  <td>&nbsp;</td>
-			  <td>
-			    <button type="submit"
-				    class="btn btn-default">
-			      Fit kinetic model
-			    </button>
-
-			    <span ng-hide="!isFitting()"> 
-			      <i class="fa fa-spinner fa-spin"
-				 style="font-size:24px"></i>
- {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
-			    </span>
-			  </td>
-			</tr>
-		      </table>
-		    </form>
-		  </div>
-		</div>
-	      </div>
-	      <div class="row">
-		<h2> Jump length histograms </h2>
-		<div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
-		  No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
-		</div>
-		<div ng-if="analysisState=='running'" class="alert alert-warning" role="alert">
-		  Running, please wait...
-		</div>
-		<div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
-		  Recomputing jump length histogram... ({{numberComputedJLD}}/{{datasets.length}})
-		</div>
-		<div ng-if="analysisState=='jld_notrun'" class="alert alert-warning" role="alert">
-		  Click the 'Compute' button to start the computation.
-		</div>
-		
-		<div ng-if="analysisState=='done'">
-		  <div class="col-md-6" ng-if="jlfit[ce-1]!==null">
-		    <em>Fit parameters for cell {{ce}}.</em>
-		    <ul>
-		      <li>
-			D<sub>bound</sub> :
-			{{jlfit[ce-1].fitparams.D_bound | number}}
-			&plusmn; {{jlfit[ce-1].fitparams.D_bound_std | number:4}}
-		      </li>
-		      <li ng-if="jlfit[ce-1].fitparams.fit2states===true">
-			D<sub>free</sub> :
-			{{jlfit[ce-1].fitparams.D_free | number}}
-			&plusmn; {{jlfit[ce-1].fitparams.D_free_std | number:4}}
-		      </li>
-		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-			D<sub>slow</sub> :
-			{{jlfit[ce-1].fitparams.D_med | number}}
-			&plusmn; {{jlfit[ce-1].fitparams.D_med_std | number:4}}
-		      </li>
-		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-			D<sub>fast</sub> :
-			{{jlfit[ce-1].fitparams.D_fast | number}}
-			&plusmn; {{jlfit[ce-1].fitparams.D_fast_std | number:4}}
-		      </li>
-		      <li>
-			F<sub>bound</sub> :
-			{{jlfit[ce-1].fitparams.F_bound | number}}
-			&plusmn; {{jlfit[ce-1].fitparams.F_bound_std | number:4}}
-		      </li>
-		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-			F<sub>slow</sub> :
-			{{1-jlfit[ce-1].fitparams.F_fast-jlfit[ce-1].fitparams.F_bound | number}}
-		      </li>
-		      <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
-			F<sub>fast</sub> :
-			{{jlfit[ce-1].fitparams.F_fast | number}}
-			&plusmn; {{jlfit[ce-1].fitparams.F_fast_std | number:4}}
-		      </li>
-		      <li ng-if="jlfit[ce-1].fitparams.fitSigma===true">
-			&sigma; (µm):
-			{{jlfit[ce-1].fitparams.sigma| number}}
-			&plusmn; {{jlfit[ce-1].fitparams.sigma_std| number : 4}}
-		      </li>
-		      <li>
-			l<sub>2</sub> error:
-			{{jlfit[ce-1].fitparams.l2| number : 8}}
-		      </li>
-		      <li>
-			AIC: {{jlfit[ce-1].fitparams.aic | number : 2}}, BIC: {{jlfit[ce-1].fitparams.bic | number : 2}}
-		      </li>
-		      
-		    </ul>
-		  </div>
-		  <div class="col-md-6" ng-if="jlpfit">
-		    <em>Global fit parameters for cells {{getSelectedIds()}}.</em>
-		    <ul>
-		      <li>
-			D<sub>bound</sub> :
-			{{jlpfit.fitparams.D_bound | number}}
-			&plusmn; {{jlpfit.fitparams.D_bound_std | number:4}}
-		      </li>
-		      <li ng-if="jlpfit.fitparams.fit2states===true">
-			D<sub>free</sub> :
-			{{jlpfit.fitparams.D_free | number}}
-			&plusmn; {{jlpfit.fitparams.D_free_std | number:4}}
-		      </li>
-		      <li ng-if="jlpfit.fitparams.fit2states===false">
-			D<sub>slow</sub> :
-			{{jlpfit.fitparams.D_med | number}}
-			&plusmn; {{jlpfit.fitparams.D_med_std | number:4}}
-		      </li>
-		      <li ng-if="jlpfit.fitparams.fit2states===false">
-			D<sub>fast</sub> :
-			{{jlpfit.fitparams.D_fast | number}}
-			&plusmn; {{jlpfit.fitparams.D_fast_std | number:4}}
-		      </li>
-		      <li>
-			F<sub>bound</sub> :
-			{{jlpfit.fitparams.F_bound | number}}
-			&plusmn; {{jlpfit.fitparams.F_bound_std | number:4}}
-		      </li>
-		      <li ng-if="jlpfit.fitparams.fit2states===false">
-			F<sub>slow</sub> :
-			{{1-jlpfit.fitparams.F_fast-jlpfit.fitparams.F_bound | number}}
-		      </li>
-		      <li ng-if="jlpfit.fitparams.fit2states===false">
-			F<sub>fast</sub> :
-			{{jlpfit.fitparams.F_fast | number}}
-			&plusmn; {{jlpfit.fitparams.F_fast_std | number:4}}
-		      </li>
-		      <li>
-			l<sub>2</sub> error:
-			{{jlpfit.fitparams.l2| number : 8}}
-		      </li>		    
-		      <li ng-if="jlpfit.fitparams.fitSigma===true">
-			&sigma; (µm)
-			{{jlpfit.fitparams.sigma | number}}
-			&plusmn; {{jlpfit.fitparams.sigma_std | number:4}}
-		      </li>
-		      <li>
-			AIC: {{jlpfit.fitparams.aic | number : 2}}, BIC: {{jlpfit.fitparams.bic | number : 2}}
-		      </li>
-		    </ul>
-		  </div>	
-		  <jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF, maxJumpSlider.value, displayResiduals.status]"></jump-length-histogram>
-		  
-		  <div class="controls">
-		    <table>
-		      <tr>
-			<td>Max jump displayed (&micro;m)</td>
-			<td><rzslider
-			       rz-slider-model="maxJumpSlider.value"
-			       rz-slider-options="maxJumpSlider.options">
-			  </rzslider>
-			</td>
-		      </tr>
-		      <tr>
-			<td>Display PDF/CDF</td>
-			<td><toggle-switch ng-model="displayCDF"
-					   off-label="PDF"
-					   on-label="CDF"></toggle-switch>
-			</td>
-		      </tr>
-		      <tr ng-hide="showJLP">
-			<td>Display dataset</td>
-			<td>
-			  <input ng-hide="showJLP" ng-model="ce" type="number" min="1" max="{{jlhist.length}}">
-			</td>
-		      </tr>
-		      
-		      <tr ng-show="showJLP">
-			<td >Displayed group</td>
-			<td> {{getSelectedIds()}}</td>
-		      </tr>
-		      
-		      <tr>
-			<td>Show pooled jump length distribution: </td>
-			<td>
-			  <toggle-switch ng-model-options="{ getterSetter: true }"
-					 ng-model="displayJLP"></toggle-switch>
-			  <span ng-hide="!gettingPooledJLD"> 
-			    <i class="fa fa-spinner fa-spin"
-			       style="font-size:24px"></i>
-			    Please wait...
-			  </span>
-
-			</td>
-		      </tr>
-
-		      <tr ng-if="jlpfit!==null">
-			<td>Show pooled fit: </td>
-			<td>
-			  <toggle-switch ng-model-options="{ getterSetter: true }"
-					 ng-model="displayJLPf"></toggle-switch>
-			</td>
-		      </tr>
-
-		      <tr ng-if="showResiduals()">
-			<td>Display residuals: </td>
-			<td>
-			  <toggle-switch ng-model="displayResiduals.status"></toggle-switch>
-			</td>
-		      </tr>
-
-		      <tr>
-			<td>
-			  <button uib-popover-template="downloadPopover.templateUrl"
-				  popover-title="Enter a short description"
-				  popover-is-open="downloadPopover.isOpen"
-				  ng-click="downloadPopover.open()"
-				  type="button" class="btn btn-default">
-			    Mark for download
-			  </button>
-			</td>
-		      </tr>
-		    </table>
-
-
-		    <script type="text/ng-template" id="myPopoverTemplate.html">
-		      <div>
-			all the parameters will be saved anyway
-		      </div>
-		      <div class="form-group">
-			<label>Name:</label>
-			<input type="text"
-			       ng-model="downloadPopover.name"
-			       class="form-control">		      
-			<label>Description:</label>
-			<input type="text"
-			       ng-model="downloadPopover.description"
-			       class="form-control">
-		      </div>
-		      <button ng-click="toDownloads();"
-			      class="btn btn-default">Ok</button>
-		    </script>
-		    
-		  </div>
-		</div>
-	      </div>
-	    </div>
+	    </form>
 	  </div>
-	</tab><!-- End of the ModelingController controller -->
-	
-	<tab heading="Download">
-	  In this tab, you can download the results of your analysis. To do so, you need to click the "Mark for download" button in the "Kinetic modeling" tab.
-	  <div ng-controller="DownloadController"><!-- Another controller -->
-	    <div class="alert alert-warning" role="alert" ng-hide="downloads.length>0">
-	      No data has been marked for download yet.
-	    </div>
-	    <div ng-if="downloads.length>0">
-	      <div>
-		<table class="table-striped">
-		  <tr>
-		    <th class="col-md-1">id</th>
-		    <th class="col-md-2">Created</th>
-		    <th class="col-md-2">Name</th>
-		    <th class="col-md-5">Description</th>
-		    <th class="col-md-1">Dataset(s)</th>
-		    <th class="col-md-1">Display</th>
-		    <th class="col-md-2">Download</th>
-		    <th class="col-md-1">Delete</th>
-		  </tr>
-		  <tr ng-repeat="dwl in downloads">
-		    <td class="col-md-1">{{$index+1}}</td>
-		    <td class="col-md-2">{{dwl.date}}</td>
-		    <td class="col-md-2"><em>{{dwl.name}}</em></td>
-		    <td class="col-md-5">{{dwl.description}}</td>
-		    <td class="col-md-1">
-		      <span ng-repeat="incl in dwl.fitParams.include">
-			<abbr title="({{getDatasetInfo(incl, 'name')}}, {{getDatasetInfo(incl, 'description')}})">{{getDatasetInfo(incl, 'i')+1}}</abbr>&nbsp;
-		      </span>
-		    </td>
-		    <td class="col-md-1">
-		      <abbr ng-show="dwl.display.pdfcdf===false"
-			 title="Showing PDF">P</abbr>
-		      <abbr ng-show="dwl.display.pdfcdf===true"
-			 title="Showing CDF">C</abbr>
-		      <abbr ng-show="dwl.display.fit===true"
-			 title="Fit displayed">f</abbr>
-		      <abbr ng-show="dwl.display.jldP===true"
-			 title="Showing pooled jump length distribution">JP</abbr>
-		      <abbr ng-show="dwl.display.fitP===true"
-			 title="Pooled fit displayed">F</abbr>
-		      
-		      <abbr ng-show="dwl.display.displayedDataset!==null"
-			 title="Displayed dataset">
-			d{{dwl.display.displayedDataset}}
-		      </abbr>
-		    </td>
-		    <td class="col-md-2">
-		      <a href="#" ng-click="downloadFigure($index, 'svg')">SVG</a>,
-		      <a href="#" ng-click="downloadFigure($index, 'pdf')">PDF</a>,
-		      <a href="#" ng-click="downloadFigure($index, 'png')">PNG</a>,
-		      <a href="#" ng-click="downloadFigure($index, 'eps')">EPS</a>,
-		      <a href="#" ng-click="downloadFigure($index, 'zip')">ZIP</a>
-		    </td>
-		    <td class="col-md-1"><span ng-click="deleteDownload(dwl.do_id);" class="glyphicon glyphicon-remove clickable"></span></td>
-		  </tr>
-		</table>
-	      </div>
-	      <div>
-		<button ng-show="!downloadAllProcessing"
-			class="btn btn-default"
-			ng-click="downloadAll()">Download all (zip)</button>
-		<div ng-show="downloadAllProcessing">
-		  <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
-		  Please wait...
-		</div>
-	      </div>
-	    </div>
+	</div>
+      </div>
+    </div>
+    <div class="row">
+      <h2> Jump length histograms </h2>
+      <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
+	No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
+      </div>
+      <div ng-if="analysisState=='running'" class="alert alert-warning" role="alert">
+	Running, please wait...
+      </div>
+      <div ng-if="analysisState=='jld'" class="alert alert-warning" role="alert">
+	Recomputing jump length histogram... ({{numberComputedJLD}}/{{datasets.length}})
+      </div>
+      <div ng-if="analysisState=='jld_notrun'" class="alert alert-warning" role="alert">
+	Click the 'Compute' button to start the computation.
+      </div>
+      
+      <div ng-if="analysisState=='done'">
+	<div class="col-md-6" ng-if="jlfit[ce-1]!==null">
+	  <em>Fit parameters for cell {{ce}}.</em>
+	  <ul>
+	    <li>
+	      D<sub>bound</sub> :
+	      {{jlfit[ce-1].fitparams.D_bound | number}}
+	      &plusmn; {{jlfit[ce-1].fitparams.D_bound_std | number:4}}
+	    </li>
+	    <li ng-if="jlfit[ce-1].fitparams.fit2states===true">
+	      D<sub>free</sub> :
+	      {{jlfit[ce-1].fitparams.D_free | number}}
+	      &plusmn; {{jlfit[ce-1].fitparams.D_free_std | number:4}}
+	    </li>
+	    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+	      D<sub>slow</sub> :
+	      {{jlfit[ce-1].fitparams.D_med | number}}
+	      &plusmn; {{jlfit[ce-1].fitparams.D_med_std | number:4}}
+	    </li>
+	    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+	      D<sub>fast</sub> :
+	      {{jlfit[ce-1].fitparams.D_fast | number}}
+	      &plusmn; {{jlfit[ce-1].fitparams.D_fast_std | number:4}}
+	    </li>
+	    <li>
+	      F<sub>bound</sub> :
+	      {{jlfit[ce-1].fitparams.F_bound | number}}
+	      &plusmn; {{jlfit[ce-1].fitparams.F_bound_std | number:4}}
+	    </li>
+	    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+	      F<sub>slow</sub> :
+	      {{1-jlfit[ce-1].fitparams.F_fast-jlfit[ce-1].fitparams.F_bound | number}}
+	    </li>
+	    <li ng-if="jlfit[ce-1].fitparams.fit2states===false">
+	      F<sub>fast</sub> :
+	      {{jlfit[ce-1].fitparams.F_fast | number}}
+	      &plusmn; {{jlfit[ce-1].fitparams.F_fast_std | number:4}}
+	    </li>
+	    <li ng-if="jlfit[ce-1].fitparams.fitSigma===true">
+	      &sigma; (µm):
+	      {{jlfit[ce-1].fitparams.sigma| number}}
+	      &plusmn; {{jlfit[ce-1].fitparams.sigma_std| number : 4}}
+	    </li>
+	    <li>
+	      l<sub>2</sub> error:
+	      {{jlfit[ce-1].fitparams.l2| number : 8}}
+	    </li>
+	    <li>
+	      AIC: {{jlfit[ce-1].fitparams.aic | number : 2}}, BIC: {{jlfit[ce-1].fitparams.bic | number : 2}}
+	    </li>
 	    
-	  </div>
-	  {% endverbatim %}
+	  </ul>
+	</div>
+	<div class="col-md-6" ng-if="jlpfit">
+	  <em>Global fit parameters for cells {{getSelectedIds()}}.</em>
+	  <ul>
+	    <li>
+	      D<sub>bound</sub> :
+	      {{jlpfit.fitparams.D_bound | number}}
+	      &plusmn; {{jlpfit.fitparams.D_bound_std | number:4}}
+	    </li>
+	    <li ng-if="jlpfit.fitparams.fit2states===true">
+	      D<sub>free</sub> :
+	      {{jlpfit.fitparams.D_free | number}}
+	      &plusmn; {{jlpfit.fitparams.D_free_std | number:4}}
+	    </li>
+	    <li ng-if="jlpfit.fitparams.fit2states===false">
+	      D<sub>slow</sub> :
+	      {{jlpfit.fitparams.D_med | number}}
+	      &plusmn; {{jlpfit.fitparams.D_med_std | number:4}}
+	    </li>
+	    <li ng-if="jlpfit.fitparams.fit2states===false">
+	      D<sub>fast</sub> :
+	      {{jlpfit.fitparams.D_fast | number}}
+	      &plusmn; {{jlpfit.fitparams.D_fast_std | number:4}}
+	    </li>
+	    <li>
+	      F<sub>bound</sub> :
+	      {{jlpfit.fitparams.F_bound | number}}
+	      &plusmn; {{jlpfit.fitparams.F_bound_std | number:4}}
+	    </li>
+	    <li ng-if="jlpfit.fitparams.fit2states===false">
+	      F<sub>slow</sub> :
+	      {{1-jlpfit.fitparams.F_fast-jlpfit.fitparams.F_bound | number}}
+	    </li>
+	    <li ng-if="jlpfit.fitparams.fit2states===false">
+	      F<sub>fast</sub> :
+	      {{jlpfit.fitparams.F_fast | number}}
+	      &plusmn; {{jlpfit.fitparams.F_fast_std | number:4}}
+	    </li>
+	    <li>
+	      l<sub>2</sub> error:
+	      {{jlpfit.fitparams.l2| number : 8}}
+	    </li>		    
+	    <li ng-if="jlpfit.fitparams.fitSigma===true">
+	      &sigma; (µm)
+	      {{jlpfit.fitparams.sigma | number}}
+	      &plusmn; {{jlpfit.fitparams.sigma_std | number:4}}
+	    </li>
+	    <li>
+	      AIC: {{jlpfit.fitparams.aic | number : 2}}, BIC: {{jlpfit.fitparams.bic | number : 2}}
+	    </li>
+	  </ul>
+	</div>	
+	<jump-length-histogram id="mainHist" data="[jlhist[ce-1], jlfit[ce-1], null, jlphist, showJLP, gettingPooledJLD, jlpfit, showJLPf, ce-1, displayCDF, maxJumpSlider.value, displayResiduals.status]"></jump-length-histogram>
+	
+	<div class="controls">
+	  <table>
+	    <tr>
+	      <td>Max jump displayed (&micro;m)</td>
+	      <td><rzslider
+		     rz-slider-model="maxJumpSlider.value"
+		     rz-slider-options="maxJumpSlider.options">
+		</rzslider>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>Display PDF/CDF</td>
+	      <td><toggle-switch ng-model="displayCDF"
+				 off-label="PDF"
+				 on-label="CDF"></toggle-switch>
+	      </td>
+	    </tr>
+	    <tr ng-hide="showJLP">
+	      <td>Display dataset</td>
+	      <td>
+		<input ng-hide="showJLP" ng-model="ce" type="number" min="1" max="{{jlhist.length}}">
+	      </td>
+	    </tr>
+	    
+	    <tr ng-show="showJLP">
+	      <td >Displayed group</td>
+	      <td> {{getSelectedIds()}}</td>
+	    </tr>
+	    
+	    <tr>
+	      <td>Show pooled jump length distribution: </td>
+	      <td>
+		<toggle-switch ng-model-options="{ getterSetter: true }"
+			       ng-model="displayJLP"></toggle-switch>
+		<span ng-hide="!gettingPooledJLD"> 
+		  <i class="fa fa-spinner fa-spin"
+		     style="font-size:24px"></i>
+		  Please wait...
+		</span>
+
+	      </td>
+	    </tr>
+
+	    <tr ng-if="jlpfit!==null">
+	      <td>Show pooled fit: </td>
+	      <td>
+		<toggle-switch ng-model-options="{ getterSetter: true }"
+			       ng-model="displayJLPf"></toggle-switch>
+	      </td>
+	    </tr>
+
+	    <tr ng-if="showResiduals()">
+	      <td>Display residuals: </td>
+	      <td>
+		<toggle-switch ng-model="displayResiduals.status"></toggle-switch>
+	      </td>
+	    </tr>
+
+	    <tr>
+	      <td>
+		<button uib-popover-template="downloadPopover.templateUrl"
+			popover-title="Enter a short description"
+			popover-is-open="downloadPopover.isOpen"
+			ng-click="downloadPopover.open()"
+			type="button" class="btn btn-default">
+		  Mark for download
+		</button>
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <script type="text/ng-template" id="myPopoverTemplate.html">
+	    <div>
+	      all the parameters will be saved anyway
+	    </div>
+	    <div class="form-group">
+	      <label>Name:</label>
+	      <input type="text"
+		     ng-model="downloadPopover.name"
+		     class="form-control">		      
+	      <label>Description:</label>
+	      <input type="text"
+		     ng-model="downloadPopover.description"
+		     class="form-control">
+	    </div>
+	    <button ng-click="toDownloads();"
+		    class="btn btn-default">Ok</button>
+	  </script>
+	  
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+</tab><!-- End of the ModelingController controller -->
+
+<tab heading="Download">
+  In this tab, you can download the results of your analysis. To do so, you need to click the "Mark for download" button in the "Kinetic modeling" tab.
+  <div ng-controller="DownloadController"><!-- Another controller -->
+    <div class="alert alert-warning" role="alert" ng-hide="downloads.length>0">
+      No data has been marked for download yet.
+    </div>
+    <div ng-if="downloads.length>0">
+      <div>
+	<table class="table-striped">
+	  <tr>
+	    <th class="col-md-1">id</th>
+	    <th class="col-md-2">Created</th>
+	    <th class="col-md-2">Name</th>
+	    <th class="col-md-5">Description</th>
+	    <th class="col-md-1">Dataset(s)</th>
+	    <th class="col-md-1">Display</th>
+	    <th class="col-md-2">Download</th>
+	    <th class="col-md-1">Delete</th>
+	  </tr>
+	  <tr ng-repeat="dwl in downloads">
+	    <td class="col-md-1">{{$index+1}}</td>
+	    <td class="col-md-2">{{dwl.date}}</td>
+	    <td class="col-md-2"><em>{{dwl.name}}</em></td>
+	    <td class="col-md-5">{{dwl.description}}</td>
+	    <td class="col-md-1">
+	      <span ng-repeat="incl in dwl.fitParams.include">
+		<abbr title="({{getDatasetInfo(incl, 'name')}}, {{getDatasetInfo(incl, 'description')}})">{{getDatasetInfo(incl, 'i')+1}}</abbr>&nbsp;
+	      </span>
+	    </td>
+	    <td class="col-md-1">
+	      <abbr ng-show="dwl.display.pdfcdf===false"
+		    title="Showing PDF">P</abbr>
+	      <abbr ng-show="dwl.display.pdfcdf===true"
+		    title="Showing CDF">C</abbr>
+	      <abbr ng-show="dwl.display.fit===true"
+		    title="Fit displayed">f</abbr>
+	      <abbr ng-show="dwl.display.jldP===true"
+		    title="Showing pooled jump length distribution">JP</abbr>
+	      <abbr ng-show="dwl.display.fitP===true"
+		    title="Pooled fit displayed">F</abbr>
+	      
+	      <abbr ng-show="dwl.display.displayedDataset!==null"
+		    title="Displayed dataset">
+		d{{dwl.display.displayedDataset}}
+	      </abbr>
+	    </td>
+	    <td class="col-md-2">
+	      <a href="#" ng-click="downloadFigure($index, 'svg')">SVG</a>,
+	      <a href="#" ng-click="downloadFigure($index, 'pdf')">PDF</a>,
+	      <a href="#" ng-click="downloadFigure($index, 'png')">PNG</a>,
+	      <a href="#" ng-click="downloadFigure($index, 'eps')">EPS</a>,
+	      <a href="#" ng-click="downloadFigure($index, 'zip')">ZIP</a>
+	    </td>
+	    <td class="col-md-1"><span ng-click="deleteDownload(dwl.do_id);" class="glyphicon glyphicon-remove clickable"></span></td>
+	  </tr>
+	</table>
+      </div>
+      <div>
+	<button ng-show="!downloadAllProcessing"
+		class="btn btn-default"
+		ng-click="downloadAll()">Download all (zip)</button>
+	<div ng-show="downloadAllProcessing">
+	  <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+	  Please wait...
+	</div>
+      </div>
+    </div>
+  </div>
+  {% endverbatim %}
