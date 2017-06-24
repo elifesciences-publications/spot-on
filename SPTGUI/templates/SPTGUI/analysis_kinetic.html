@@ -524,27 +524,26 @@
 		    <td class="col-md-2"><em>{{dwl.name}}</em></td>
 		    <td class="col-md-5">{{dwl.description}}</td>
 		    <td class="col-md-1">
-		      <a ng-repeat="incl in dwl.fitParams.include" href="#"
-			 uib-tooltip="({{getDatasetInfo(incl, 'name')}}, {{getDatasetInfo(incl, 'description')}})">
-			  {{getDatasetInfo(incl, 'i')+1}}
-		      </a>
+		      <span ng-repeat="incl in dwl.fitParams.include">
+			<abbr title="({{getDatasetInfo(incl, 'name')}}, {{getDatasetInfo(incl, 'description')}})">{{getDatasetInfo(incl, 'i')+1}}</abbr>&nbsp;
+		      </span>
 		    </td>
 		    <td class="col-md-1">
-		      <a href="#" ng-show="dwl.display.pdfcdf===false"
-			 uib-tooltip="Showing PDF">P</a>
-		      <a ng-show="dwl.display.pdfcdf===true"
-			 uib-tooltip="Showing CDF">C</a>
-		      <a ng-show="dwl.display.fit===true"
-			 uib-tooltip="Fit displayed">f</a>
-		      <a ng-show="dwl.display.jldP===true"
-			 uib-tooltip="Showing pooled jump length distribution">JP</a>
-		      <a ng-show="dwl.display.fitP===true"
-			 uib-tooltip="Pooled fit displayed">F</a>
+		      <abbr ng-show="dwl.display.pdfcdf===false"
+			 title="Showing PDF">P</abbr>
+		      <abbr ng-show="dwl.display.pdfcdf===true"
+			 title="Showing CDF">C</abbr>
+		      <abbr ng-show="dwl.display.fit===true"
+			 title="Fit displayed">f</abbr>
+		      <abbr ng-show="dwl.display.jldP===true"
+			 title="Showing pooled jump length distribution">JP</abbr>
+		      <abbr ng-show="dwl.display.fitP===true"
+			 title="Pooled fit displayed">F</abbr>
 		      
-		      <a ng-show="dwl.display.displayedDataset!==null"
-			 uib-tooltip="Displayed dataset">
+		      <abbr ng-show="dwl.display.displayedDataset!==null"
+			 title="Displayed dataset">
 			d{{dwl.display.displayedDataset}}
-		      </a>
+		      </abbr>
 		    </td>
 		    <td class="col-md-2">
 		      <a href="#" ng-click="downloadFigure($index, 'svg')">SVG</a>,
