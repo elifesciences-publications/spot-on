@@ -62,7 +62,7 @@ $$P_{remaining}(\Delta t) = \frac{1}{\Delta z}\int_{-\Delta z/2}^{\Delta z/2}
 + \text{erfc}\left(\frac{\frac{(2n+1)\Delta z}{2}+z}{\sqrt{4D_{free}\Delta t}} \right)
 \right]\right\}dz$$
 
-<p> However, this expression significantly overestimates how many freely diffusing molecules are lost since it assumes absorbing boundaries: any molecules that comes into contact with the boundary at \(\pm \Delta z/2\) are permanently lost. In reality, there is a significant probability that a molecule, which has briefly contacted or exceeded the boundary, re-enters the axial detection window, \(\Delta z\), during a lag time \(\Delta t\). Moreover, since trajectory gaps can be allowed in the tracking algorithm (i.e. a molecule present in frame \(n\) and \(n+2\) can still be tracked even if it was not localized in frame \(n+1)\), we must consider the probability that a lost molecule re-enters the axial detection window during twice the lag time, \(2 \Delta t\). This results in the somewhat counter-intuitive effect, which was also noted by Kues and Kubitscheck, that the decay rate depends on the microscope frame rate. In other words, the fraction lost depends on how often one 'looks'. One approach (Mazza et al., 2012) of accounting for this is to use a corrected axial detection window larger than the true axial detection window: \(\Delta z_{corr} > \Delta_z\).</p>
+<p> However, this expression significantly overestimates how many freely diffusing molecules are lost since it assumes absorbing boundaries: any molecules that comes into contact with the boundary at \(\pm \Delta z/2\) are permanently lost. In reality, there is a significant probability that a molecule, which has briefly contacted or exceeded the boundary, re-enters the axial detection window, \(\Delta z\), during a lag time \(\Delta t\). Moreover, since trajectory gaps can be allowed in the tracking algorithm (i.e. a molecule present in frame \(n\) and \(n+2\) can still be tracked even if it was not localized in frame \(n+1)\), we must consider the probability that a lost molecule re-enters the axial detection window during twice the lag time, \(2 \Delta t\). This results in the somewhat counter-intuitive effect, which was also noted by Kues and Kubitscheck, that the decay rate depends on the microscope frame rate. In other words, the fraction lost depends on how often one 'looks'. One approach (<a href="#mazza" aria-describedby="footnote-label" id="mazza-ref"><em>Mazza et al, 2012</em></a>) of accounting for this is to use a corrected axial detection window larger than the true axial detection window: \(\Delta z_{corr} > \Delta_z\).</p>
 
 <p> \(\Delta z_{corr}\) was computed from the true \(\Delta z\) as:</p>
 
@@ -186,6 +186,14 @@ $$L(X,X^*) = \sum_{i=0}^N \left(X_i-X^*_i\right)^2 + 10^4\left(F_{bound}+F_{fast
 
 <h3 id="footnote-label">References</h3>
 <ol>
+  <li id="shinkai"><blockquote>
+      Shinkai, Soya, Tadasu Nozaki, Kazuhiro Maeshima, and Yuichi Togashi. “Dynamic Nucleosome Movement Provides Structural Information of Topological Chromatin Domains in Living Human Cells.” Edited by Alexandre V Morozov. PLOS Computational Biology 12, no. 10 (October 20, 2016): e1005136.
+      <footer>
+	DOI: <a href="https://doi.org/10.1371/journal.pcbi.1005136">10.1371/journal.pcbi.1005136.</a>
+	<a href="#shinkai-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
   <li id="mazza"><blockquote>
       Mazza, D., A. Abernathy, N. Golob, T. Morisaki, and J. G. McNally. “A Benchmark for Chromatin Binding Measurements in Live Cells.” Nucleic Acids Research 40, no. 15 (August 1, 2012): e119–e119.
       <footer>

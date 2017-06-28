@@ -12,7 +12,18 @@
 
 </div>
 
+
 <p> This option will load the analysis page and will automatically import some demonstration file. Also, a custom and permanent URL is created. Your analyses will accessible from this URL until you choose to delete them. Do not share this URL if you want your datasets and analyses to remain private. You might want to bookmark it in order to reaccess the data later. Note that if you lose this address, there is no way for you to recover your files, since your upload is totally anonymous (we do not collect your identity or email address).</p>
+
+<h3> About the demonstration files </h3>
+
+<p> When you click on the "Start with a demo file" button, ten sample datasets are loaded. They are part of a bigger dataset described in details in the <a href="#datasets">Datasets</a> section that include single particle tracking of four nuclear proteins: <a href="https://en.wikipedia.org/wiki/Histone_H2B">histone 2B</a> (H2B), <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>, <a href="https://en.wikipedia.org/wiki/HaloTag">HaloTag</a>-<a href="https://en.wikipedia.org/wiki/Nuclear_localization_sequence">NLS</a> and <a href="https://en.wikipedia.org/wiki/CTCF">CTCF</a>. These four proteins were imaged through a range of conditions, leading to approx. 1600 cells imaged in total.</p>
+
+<p> By default, the ten imported files are five replicates of histone H2B (fused to a <a href="https://en.wikipedia.org/wiki/SNAP-tag">SNAP-tag</a> in U2OS cells, labeled with the JF646 dye and imaged at 74 Hz (that is 1000/74 = 13.5 ms per frame).</p>
+
+<p>The five other files are five replicates of the transcription factor Sox2 (fused to a HaloTag in mouse embryonic stem cells and imaged in comparable conditions: labeling with JF646 and imaging at 74Hz.</p>
+
+<p>In this demo dataset, one of the goal is to get an idea of the dynamics of the Sox2 transcription factor. Indeed, an estimate of the fraction bound and diffusion coefficient of Sox2 provides a valuable insight into how this transcription factor regulates transciption. For instance, a low fraction bound and a high diffusion coefficient could suggest a highly dynamic regulation, but also a target search mechanism biased towards free diffusion. The H2B samples are provided as a reference for a protein that is known to be mostly bound to chromatin, in order to facilitate comparisons with more characterized systems.</p>
 
 <h3> Overview of the application </h3>
 <p> First of all, Spot-On is organized into <em>four successive tabs</em>. These tabs are populated one after the other (that is, for instance, the "Kinetic modeling" tab remains blank as long as no dataset has been uploaded in the "Data" tab, etc). The four tabs are (<span class="red">&#x2460;</span> in the screenshot below):</p>
@@ -219,7 +230,7 @@
     <td>Jumps to consider</td>
     <td>4</td>
     <td>Y</td>
-    <td>The number of jumps per trajectory to consider. This is done to avoid overcounting bound molecules. </td>
+    <td>The number of jumps per trajectory actually used to build the histogram. This is emppirically useful to correct for overcounting of slow-molecules not accounted for by the corrections implemented in the algorithme (for instance for undercounting due to motion-blur). Here, for each trajectory, 4 jumps (if possible) will be used to build the jump length histogram. This is a semi-empirical way of correcting for additional biases towards bound molecules.</td>
   </tr>
   <tr>
     <td>Max jump (µm)</td>
@@ -229,9 +240,9 @@
   </tr>
   <tr>
     <td>dT (ms)</td>
-    <td>13</td>
+    <td>13.5</td>
     <td>N</td>
-    <td>It is crucial to match this value with the acquisition rate of the dataset. Here 13 ms/frame.</td>
+    <td>It is crucial to match this value with the acquisition rate of the dataset. Here 13.5 ms/frame.</td>
   </tr>
 </table>
 
@@ -265,6 +276,13 @@
 <div class="bs-callout bs-callout-warning"> <h4>Step 6: compare the H2B and Sox2 jump length distributions</h4>
   <p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
 
+ <button data-toggle="collapse" data-target="#answer1" class="btn btn-primary">Show/hide the "answer"</button>
+    
+  <div id="answer1" class="collapse alert alert-info">
+    <p>When looking at the two histograms side-by-side, the two look very similar at short time scales (up to 200 nm), suggesting that the two proteins show a bound fraction. The dispersion around ~70 nm is likely to be characteristic of a combination of localization error (similar at all time scales, from \(1\Delta t\) to  \(7\Delta t\) and of slow diffusion of chromatin (that slowly spreads when looking at higher \(\Delta t\).</p>
+    <p> Then, when considering higher distances, the histograms differ significantly, with Sox2 exhibiting a "heavy tail" whereas H2B lacks it. This reflects the fact that H2B is mostly bound whereas Sox2 has a significant freely-diffusing fraction. The modeling approach presented in the next steps of the tutorial will allow us to better characterize this diffusing state.</p>
+  </div> 
+
   <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto8.png' %}"
        class="img-responsive center-block"
        style="max-width: 95%;"
@@ -286,7 +304,7 @@
 <p>Spot-On fits the jump length distribution, as defined by the parameters of the "Jump length distribution" box. The fitting parameters are defined in the "Model fitting" box.</p>
 
 
-<div class="bs-callout bs-callout-warning"> <h4>Step 8: fit a two-states model</h4>
+<div class="bs-callout bs-callout-warning"> <h4>Step 8: fit a two-states model to the H2B data</h4>
   <p>Let's first try to fit a <em>two-states model</em>. Click on the picture of the two-states kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>, a short description is shown below).</p>
 
   <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto10.png' %}"
@@ -314,13 +332,13 @@
     <td>D<sub>bound</sub> (µm²/s)</td>
     <td>[0.005, 0.8]</td>
     <td>Y</td>
-    <td>The range of diffusion coefficients for the bound fraction.</td>    
+    <td>The range of diffusion coefficients for the bound fraction. It is based on a wide plausible range of chromatin diffusion coefficients.</td>    
   </tr>
   <tr>
     <td>D<sub>free</sub> (µm²/s)</td>
     <td>[0.15, 25]</td>
     <td>Y</td>
-    <td>The range of diffusion coefficients for the free fraction.</td>    
+    <td>The range of diffusion coefficients for the free fraction. These numbers encompass a wide range of free-diffusion coefficients. Note that for diffusion coefficients > 10 µm²/s, motion blurring can become a very important issue.</td>    
   </tr>
   <tr>
     <td>F<sub>bound</sub></td>
@@ -332,7 +350,7 @@
     <td>Localization error (µm)</td>
     <td>0.035</td>
     <td>Y</td>
-    <td></td>    
+    <td>See <a href="#measure-locerror">How to measure the localization error?</a> below.</td>    
   </tr>
   <tr>
     <td>dZ (µm)</td>
@@ -361,8 +379,10 @@
 </table>
 
 <div class="alert alert-info">
-  <p>When adjusting the dZ and dT parameters (in the jump length distribution and the fitting parameters box, respectively, you will notice that the mention next to the dZ changes. The displayed values correspond to the closest pair of parameter for which a corrected \(Z\) depth has been derived -- corresponding to an \(Z\) depth adjusted for the possibility of particles exiting and entering the detection volume again (see the <a href="#methods">Methods</a> section). The \(a\) and \(b\) parameters describe this corrected valued as a function of the estimated diffusion coefficient.</p>
-
+  <p>When adjusting the dZ parameter (in the fitting parameters box), you will notice that the mention next to the dZ box changes. The displayed values relate to precomputed coefficients required to perform the correction for particles moving out of focus (see the <a href="#methods">Methods</a> section). These parameters are termed \((a,b)\) and were precomputed over a grid of depths of field (dZ) and exposure times (dT).</p>
+  <p> However, even though we tried to be as comprehensive as possible in our simulations to derive \((a,b)\), the condition that matches exactly the acquisition settings might be missing. The displayed parameters represent the closest match of the acquisition parameters (dT, dZ) in our simulated database. For most acquisitions setup, the closest precomputed value lies within 0.5 ms and 100 nm of the empirical value.
+  </p>
+  
   <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto11.png' %}"
        class="img-responsive center-block"
        style="max-width: 60%;"
@@ -411,16 +431,20 @@
 
 <p> A few comments arise. First, the estimated fraction bound is about 70 %, which is expected from a strongly DNA-associated protein such as H2B. The associated coefficient with the bound population is close to zero (0.021 µm²/s) whereas the diffusion coefficient for the free population (3.93 µm²/s) matches previous knowledge of the dynamics of the protein.</p>
 
-<p>Furthermore, the \(\ell_2\) error (the mean square error) is   \(\lt 10^{-4}\), which can be considered as acceptable, even though significant misfit appear at low and high \(\Delta t\).</p>
+<p>Furthermore, the \(\ell_2\) error (the mean square error) is   \(\lt 10^{-4}\), which can be considered as acceptable (note that this value is not a hard limit and depends on several parameters, including the bin width and the max jump parameters), even though significant misfit appear at low and high \(\Delta t\):  at \(1\Delta t\), the fitted distribution is fading faster than the empirical one, whereas at \(7\Delta t\), the opposite effect happens. This might be a sign that the protein of interest exhibits anomalous diffusion, or more generally that the model does not fully explain the dynamics of the molecule.</p>
 									   
-<p> Finally, the <a href="https://en.wikipedia.org/wiki/Akaike_information_criterion">AIC</a> and <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a> criterion are provided to allow model comparison. They cannot be used to assess the quality of fit per se. We will come back to those criteria later.</p>
+<p> Finally, the <a href="https://en.wikipedia.org/wiki/Akaike_information_criterion">AIC</a> (Akaike Information Criterion) and <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a> (Bayesian Information Criterion) criteria are provided to allow model comparison. These are two criteria that can be used to compare models and to get hints about which model fits the data best while penalizing for the number of parameters, in order to avoid overfitting.</p>
+
+<p>More specifically, the 3-states model provided by Spot-On has more free parameters than the two-states model (two extra parameters: the "slow" diffusion coefficient and the fraction of the slow-moving fraction). This additional degrees of freedom almost always a better fit than the 2-states model. The AIC and BIC criteria take this difference in the number of parameters and establish a trade-off between the quality of fit (that increases with the number of model parameters) and the number of parameters, in our case penalizing the possible overfitting of the 3-states model.</p>
+
+<p>Although these criteria are useful when comparing the fit of one dataset compared to various models, they cannot be used to assess the quality of fit per se.</p>
 
 <div class="bs-callout bs-callout-warning"> <h4>Step 9: mark the plot for download</h4>
   <p>Then, we can save the displayed fit by clicking the <span class="btn btn-default btn-sm">Mark for download</span> button.</p>
 </div>
 
 <div class="bs-callout bs-callout-warning"> <h4>Step 10: fit the Sox2 dataset with a two-states model</h4>
-  <p> We can now proceed similarly to derive the fit for the Sox2 datasets.</p>
+  <p> We can now proceed similarly to derive the fit for the Sox2 datasets. The resulting fit is shown below, next to a fit using a three-states model. Notice in this plot that significant misfit occurs: at high \[\Delta t\) the model estimates predicts that the bound fraction should have bigger displacements than what actually is. This characterizes a model mismatch and suggest the use of a three-states model.</p>
 </div>
 
 <div class="bs-callout bs-callout-warning"> <h4>Step 11: fit a three-states model</h4>
@@ -510,10 +534,59 @@
 
 <p> Based on the information criteria, it is clear that the 3-states model provides a better fit to the data, even when penalizing for the number of parameters. </p>
 
-<div class="alert alert-info"> Be careful when interpreting a 3-states model. Indeed, although a two-states model usually appears robust to model mismatch, a 3-states model can fit a wide range of distributions, and the estimated coefficients might be model specific. For instance, the model can invoke a third component to explain what actually is anomalous diffusion.</div>
+<div class="alert alert-info"> <b>About model selection.</b> Be careful when interpreting a 3-states model. Indeed, although a two-states model usually appears robust to model mismatch, a 3-states model can fit a wide range of distributions, and the estimated coefficients might be model specific. For instance, the model can invoke a third component to explain what actually is anomalous diffusion.</div>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 12: compare the to-states fits of H2B and Sox2 datasets</h4>
+  <p> Let's then fit the H2B data with a two-states model, as described in Step 10 for Sox2 (make sure that you select the right datasets before clicking the Fit button). Once the fit has completed, compare the fitted coefficients between the two proteins:</p>
+
+  <div class="col-md-6">
+    <b>Sox2</b>
+    <table class="table table-striped table-condensed">
+      <tr>
+	<th>Parameter</th>
+	<th>Value</th>      
+      </tr>
+      <tr>
+	<td>D<sub>bound</td>
+	<td>0.030 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>D<sub>free</sub></td>
+	<td>2.410 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>F<sub>bound</sub></td>
+	<td>0.340</td>      
+      </tr>
+    </table>
+  </div>
+  <div class="col-md-6">
+    <b>H2B</b>
+    <table class="table table-striped table-condensed">
+      <tr>
+	<th>Parameter</th>
+	<th>Value</th>      
+      </tr>
+      <tr>
+	<td>D<sub>bound</td>
+	<td>0.023 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>D<sub>free</sub></td>
+	<td>3.84 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>F<sub>bound</sub></td>
+	<td>0.70</td>      
+      </tr>
+    </table>
+  </div>
+</div>
+
+<p>Notice that the bound diffusion coefficient are very similar, likely reflecting the diffusion coefficient of DNA/chromatin itself, while the free diffusion coefficients are different, and are likely to reflect different exploration modes of the two proteins. Also notice that the fraction bound are widely different: whereas H2B is mostly bound (70%), Sox2 appears mostly free.</p>
 
 <h3>Download</h3>
-<div class="bs-callout bs-callout-warning"> <h4>Step 12: download the marked analyses</h4>
+<div class="bs-callout bs-callout-warning"> <h4>Step 13: download the marked analyses</h4>
   <p>Finally move to the "Download" tab, where all the analyses we marked for download are stored. The view should look as below:</p>
 </div>
 

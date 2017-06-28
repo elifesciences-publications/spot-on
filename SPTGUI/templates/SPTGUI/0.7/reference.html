@@ -251,10 +251,8 @@ if you have very small amounts of data you may want to increase it.</td>
   </tr>
   <tr>
     <td>Jumps to consider</td>
-    <td>The first <code>Jumps To Consider+Number of time points - 4</code> displacements will be considered. e.g. if JumpsToConsider=4 and TimePoints=8 and the present trajectory was 10 frames, only the first 8 displacements or 9 frames
-will be considered. The trajectory will then contribute 8
-displacements to the \(1\Delta t\) histogram, 7 displacements to the \(2\Delta t\)
-histogram, ..., and 2 displacements to the \(7\Delta t\) histogram. This parameter is ignored if "Use all trajectories" is set to Yes.</td>
+    <td>The number of jumps per trajectory actually used to build the histogram. This is emppirically useful to correct for overcounting of slow-molecules not accounted for by the corrections implemented in the algorithme (for instance for undercounting due to motion-blur). Here, for each trajectory, 4 jumps (if possible) will be used to build the jump length histogram. This is a semi-empirical way of correcting for additional biases towards bound molecules.
+      This parameter is ignored if "Use all trajectories" is set to Yes.</td>
     <td></td>
   </tr>
   <tr>
@@ -332,11 +330,11 @@ of the parameters, which differs between each iteration. Thus, increasing the "I
 <h3> Display parameters </h3>
 <p>These parameters affect how the graphs are displayed, and which features are to be plotted. It does not affect how the fits or the jump length distribution are computed. These settings are located under the graph region.</p>
 
-<p>These parameters are only displayed when a graph has been processed. This is either done automatically after datasets have been successfully uploaded or by clicking the "Compute!" button in the "Jump length distribution parameters" box. Some of the settings only appear for specific settings.</p>
+<p>These parameters are only displayed when a graph has been processed. This is either done automatically after datasets have been successfully uploaded or by clicking the "Compute!" button in the "Jump length distribution parameters" box. Some of the settings only appear for specific combination of parameters.</p>
 
 <table class="table table-condensed">
   <tr>
-    <<table class="table table-condensed">
+    <table class="table table-condensed">
   <tr>
     <th>Parameter</th>
     <th>Meaning</th>
