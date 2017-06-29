@@ -171,7 +171,7 @@
 	  <!-- dt block -->
 	  <tr ng-class="validate.dt(shownStatistics.dt).classe">
 	    <td>Framerate (s)</td>
-	    <td>{{shownStatistics.dt | number}}
+	    <td>{{shownStatistics.dt | number : 5}}
 	      <span
 		 ng-show="validate.dt(shownStatistics.dt).pict"
 		 uib-tooltip="{{validate.dt(shownStatistics.dt).msg}}"
