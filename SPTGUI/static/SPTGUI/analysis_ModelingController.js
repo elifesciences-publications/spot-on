@@ -224,7 +224,6 @@ angular.module('app')
 				TimePoints : 8,
 				JumpsToConsider : 4,
 				MaxJump : 3,
-				//TimeGap : 4.477
 			       }
 	$scope.jldParametersDefault = angular.copy($scope.jldParameters);
 	$scope.maxJumpSlider = { value: 1.2,
@@ -602,7 +601,9 @@ angular.module('app')
 		d0 = selected[0]
 		params.dT = d0.dt // initialize dT
 		
-		if (!selected.every(function(el) {return el.dt==d0.dt;})) {
+		if (!selected.every(function(el) {
+		    return Math.abs(el.dt-d0.dt)<0.0001;}))
+		{
 		    params.dT = null;
 		}
 	    }

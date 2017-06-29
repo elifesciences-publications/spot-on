@@ -157,7 +157,8 @@ angular.module('app')
 	    dt2: function() {
 		if (!$scope.datasets) {return false};
 		d0 = $scope.datasets[0];
-		return !$scope.datasets.every(function(el) {return el.dt==d0.dt;})
+		return !$scope.datasets.every(function(el) {
+		    return Math.abs(el.dt-d0.dt)<0.0001;})
 	    },
 	    dt: function(data) {
 		if (data>0.01) {
