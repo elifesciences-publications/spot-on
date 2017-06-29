@@ -47,7 +47,7 @@ git clone https://github.com/DarzacqLab/fastspt.git # Clone the repository
 cd fastspt
 pip install -r requirements.txt
 python setup.py sdist
-pip install dist/fastspt-10.1.tar.gz --user ## Adjust the version number
+pip install dist/fastspt-11.1.tar.gz --user ## Adjust the version number
 ```
 
 ## Download and install Spot-On
