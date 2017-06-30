@@ -1,3 +1,4 @@
+fastspt>=11.0
 asgi-redis
 celery
 channels
