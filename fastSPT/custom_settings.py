@@ -21,5 +21,4 @@ compute_params = {'BinWidth' : 0.01,
                   'GapsAllowed' : None,
                   'TimePoints' : 8,
                   'JumpsToConsider' : 4,
-                  'MaxJump' : 3,
-                  'TimeGap' : 4.477}
+                  'MaxJump' : 3}
