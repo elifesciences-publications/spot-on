@@ -4,12 +4,12 @@
 <p>This section describes in detail the function of all the features and options implemented into Spot-On.</p>
 
 <h3 id="input-formats">Input formats </h3>
-<p>Spot-On accepts tracking files from the following software and raw CSV (column naming below): <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a>, <a href="http://mosaic.mpi-cbg.de/?q=downloads/imageJ">MOSAIC suite</a>. Sometimes, the importer can be a little bit picky. We provide sample files for these formats so that you can potentially study them. In case you have a problematic file, do not hesitate to <a href="{% url 'SPTGUI:staticpage' 'contact' %}">contact us</a> and email us the problematic file.</p>
+<p>Spot-On accepts tracking files from the following software and raw CSV (column naming below): <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a>, <a href="http://mosaic.mpi-cbg.de/?q=downloads/imageJ">MOSAIC suite</a>, evalSPT (a variant of MTT) and an additional custom Matlab format. Sometimes, the importer can be a little bit picky. We provide sample files for these formats so that you can potentially study them. In case you have a problematic file, do not hesitate to <a href="{% url 'SPTGUI:staticpage' 'contact' %}">contact us</a> and email us the problematic file.</p>
 
 
 <h4 id="csv"> CSV (Comma-separated values)</h4>
 
-<p> Files can be uploaded as raw CSV files. Make sure that the separator indeed is a comma (<em>,</em>). Importing from a tab-separated or semicolon-separated file will not work. The CSV file should have a header line and contain the following columns. Any other column will be ignored. The order of the columns does not matter. Note that the header naming convention is <em>case sensitive</em>. This importer assumes that the tracking has been performes and that sets of detections were assigned a numerical index (or trajectory id). </p>
+<p> Files can be uploaded as raw CSV files. Make sure that the separator indeed is a comma (<em>,</em>). Importing from a tab-separated or semicolon-separated file will not work. The CSV file should have a header line and contain the following columns. Any other column will be ignored. The order of the columns does not matter. Note that the header naming convention is <em>case sensitive</em>. This importer assumes that tracking has been performed already and that sets of detections were assigned a numerical index (or trajectory id). </p>
 
 <table class="table table-striped">
   <tr>
@@ -49,7 +49,7 @@
 <h4 id="trackmate"> TrackMate </h4>
 
 <p>
-  <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform various types of tracking and export the traces to various file formats. Spot-On can import from its XML and CSV export. Note that the file have to be exported from the last panel of the wizard (clicking the "Save" button at the bottom of the window will produce a XML file that cannot be read by Spot-On). A screenshot of TrackMate's export interface is displayed below.
+  <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform various types of tracking and export the traces to various file formats. Spot-On can import from its XML and CSV export. Note that the file has to be exported from the last panel of the wizard (clicking the "Save" button at the bottom of the window will produce a XML file that cannot be read by Spot-On). A screenshot of TrackMate's export interface is displayed below.
 </p>
 
 <img src="/static/SPTGUI/sample/trackmate.png"
@@ -80,7 +80,7 @@
 <h4 id="mosaic"> MOSAIC suite </h4>
 
 <p>
-  <a href="http://mosaic.mpi-cbg.de/?q=downloads/imageJ">MOSAIC suite</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform tracking and export the traces an ImageJ table. This table can be further exported to CSV. The table is displayed by clicking the "All Trajectoried to table" and "Selected Trajectories to table" at the end of the wizard.
+  <a href="http://mosaic.mpi-cbg.de/?q=downloads/imageJ">MOSAIC suite</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform tracking and export the traces as an ImageJ table. This table can be further exported to CSV. The table is displayed by clicking the "All Trajectories to table" and "Selected Trajectories to table" at the end of the wizard.
 </p>
 
 <p>
@@ -98,7 +98,7 @@
 </p>
 
 <h4 id="evalspt"> evalSPT </h4>
-<p><code>evalSPT</code> (software mentioned in) produces a TSV format (tab-separated values), with no header (this is pretty bad), with the first columns ordered as follows. Additional columns might be present but will be ignored. An example file is provided below.
+<p><code>evalSPT</code> (software mentioned in <a href="#normanno" aria-describedby="footnote-label" id="normanno-ref">Normanno et al, 2015</a>) produces a TSV format (tab-separated values), with no header, with the first columns ordered as follows. Additional columns might be present but will be ignored. An example file is provided below.
 </p>
 
 <table class="table table-striped table-condensed">
@@ -127,7 +127,7 @@
 <h4 id="matlab"> Matlab file format </h4>
 <p>Spot-On also accepts a custom Matlab file format. An example is provided below. The <code>trackedPar</code> variable is a structured array. Each element of this array corresponds to one trajectory. Each trajectory contains several fields: <code>xy</code>, <code>t</code>, <code>frame</code>. Each of these fields is a 2D-matrix with 2, 1 and 1 columns, respectively and a number of rows corresponding to the number of detections for this trajectory.</p>
 
-<p>Note that this format (in particulat the shape of the objects) has to be followed rigorously for Spot-On to be able to import it. In particular, a \(N\times 1\) matrix is different from a \(1\times N\) matrix. </p>
+<p>Note that this format (in particularx the shape of the objects) has to be followed rigorously for Spot-On to be able to import it. In particular, a \(N\times 1\) matrix is different from a \(1\times N\) matrix. </p>
 
 <a href="{% static 'SPTGUI/sample/anders.mat' %}"
    role="button"
@@ -135,7 +135,7 @@
   <span class="glyphicon glyphicon-download"></span>
 </a>
 
-<h3 id="import-codes">Import codes</h3>
+<h3 id="import-codes">Descriptors of imported datasets</h3>
 When a dataset is uploaded, a column "status" is displayed, showing the state of the import. Below is the meaning of the status codes displayed:
 
 <table class="table table-condensed">
@@ -183,7 +183,7 @@ When a dataset is uploaded, a column "status" is displayed, showing the state of
   <tr>
     <td>Number of traces</td>
     <td>The number of trajectories in the dataset. Trajectories can be singletons (one detection) and arbitrary long.</td>
-    <td>A low number of traces is the sign of a dataset of poor quality?</td>
+    <td>A low number of traces will cause the jump length histograms to be noisy and limit the accuracy of model-fitting</td>
   </tr>
   <tr>
     <td>Number of frames</td>
@@ -193,7 +193,7 @@ When a dataset is uploaded, a column "status" is displayed, showing the state of
   <tr>
     <td>Number of detections</td>
     <td>The number of particles detected.</td>
-    <td>A low number of detections characterizes a dataset of low quality. Also, </td>
+    <td>Too low a number of detections is problematic since background noise will make a bigger contribution, whereas too high may suggest tracking errors.</td>
   </tr>
   <tr>
     <td>Longest gap (frames)</td>
@@ -207,13 +207,13 @@ When a dataset is uploaded, a column "status" is displayed, showing the state of
   </tr>
   <tr>
     <td>Number of jumps</td>
-    <td>The number of tracked translocations</td>
-    <td>Jumps are used to build the histogram of jump lengths, this is probably one of the most relevant metric to evaluate the quality of the dataset.</td>
+    <td>The number of tracked translocations (only \(1\Delta t\) translocations are reported)</td>
+    <td>Jumps are used to build the histogram of jump lengths, so this is probably one of the most relevant metrics to evaluate the quality of the dataset.</td>
   </tr>
   <tr>
     <td>Length of trajectories (in number of frames)</td>
     <td>Provides the mean and median length of trajectories.</td>
-    <td></td>
+    <td>Useful also for assessing dataset quality.</td>
   </tr>
   <tr>
     <td>Particles per frame</td>
@@ -223,7 +223,7 @@ When a dataset is uploaded, a column "status" is displayed, showing the state of
   <tr>
     <td>Jump length (µm)</td>
     <td>The mean and median translocation distance</td>
-    <td>This number has to be compared to the pixel size and has to remain relatively low to minimize the risk of tracking error. To keep it low, a way is to increase the framerate.</td>
+    <td>In general, the mean translocation should be significantly bigger than the localization error.</td>
   </tr>
 </table>
 
@@ -235,41 +235,34 @@ The empirical jump length distribution is computed according to several paramete
   <tr>
     <th>Parameter</th>
     <th>Meaning</th>
-    <th>Why it matters?</th>
   </tr>
   <tr>
     <td>Bin width (µm)</td>
     <td>how finely to do binning for PDF fitting and plotting in
-units of micrometers. Generally 0.010 μm or 10 nm is reasonable, but
+units of micrometers. Generally, 0.010 μm or 10 nm is reasonable, but
 if you have very small amounts of data you may want to increase it.</td>
-    <td></td>
   </tr>
   <tr>
     <td>Number of timepoints</td>
     <td>How many time points to consider. If you allow \(N\) time points, this corresponds to considering displacements with a maximal time-delay of \((N-1)\Delta t\). Generally, we do not recommend going much above 50-60 ms unless you have an a very large number of trajectories and/or very long trajectories, since otherwise, the displacement histograms at longer \(\Delta t\) tend to be undersampled.</td>
-    <td></td>
   </tr>
   <tr>
     <td>Jumps to consider</td>
-    <td>The number of jumps per trajectory actually used to build the histogram. This is emppirically useful to correct for overcounting of slow-molecules not accounted for by the corrections implemented in the algorithme (for instance for undercounting due to motion-blur). Here, for each trajectory, 4 jumps (if possible) will be used to build the jump length histogram. This is a semi-empirical way of correcting for additional biases towards bound molecules.
+    <td>The number of jumps per trajectory actually used to build the histogram. This is emppirically useful to correct for overcounting of slow-molecules not accounted for by the corrections implemented in the algorithme (for instance for undercounting due to motion-blur). Here, for each trajectory, 4 jumps (if possible) will be used to build the jump length histogram. For example, if Number of timepoints=8 and JumpsToConsider=4, a trajectory of 9 frames will contribute 4 jumps to 1dT, 4 jumps to 2 dT, …, and 2 jumps to 7 dT. This is a semi-empirical way of correcting for additional biases towards bound molecules.
       This parameter is ignored if "Use all trajectories" is set to Yes.</td>
-    <td></td>
   </tr>
   <tr>
     <td>Use all trajectories?</td>
     <td>If "Use all trajectories" is set to "Yes", the previous parameter ("Jumps to consider" is being ignored. If set to "Yes", all displacements will be used from
 each trajectory. If set to "No", then the number of displacements is determined by the "Jumps to consider" variable. A trajectory of \(N\) frames, will contribute \(N-1\) displacements to the \(1\Delta t\) histogram, \(N-2\) displacements to the \(2\Delta t\), histogram,  ..., \(N-k\) displacements to the \(k\Delta t\) histogram.</td>
-    <td></td>
   </tr>
   <tr>
     <td>Max jump (µm)</td>
     <td>this parameter affects data-processing. For binning displacements, a maximum displacement has to be set, so this parameter should be set to a large value that should be at least as big as the largest displacement. Generally, 5.05 μm is reasonable for single-molecule tracking data in mammalian cells.</td>
-    <td></td>
   </tr>
   <tr>
     <td>dT (ms)</td>
     <td>Time delay between frames in units of milliseconds.</td>
-    <td></td>
   </tr>
 </table>
 
@@ -283,19 +276,19 @@ each trajectory. If set to "No", then the number of displacements is determined 
   </tr>
   <tr>
     <td>Kinetic model</td>
-    <td>The number of diffusive states in the model. Spot-On supports 2- or 3-states. In most single-molecule tracking experiments of molecules that can engage
+    <td>The number of diffusive states in the model. Spot-On supports 2- or 3-state. In most single-molecule tracking experiments of molecules that can engage
 scaffolds (e.g. transcription factors, which may bind chromatin), one of these states will correspond to a bound state. In the case of Halo-CTCF in human U2OS cells, this will manifest itself as the chromatin-bound state of CTCF exhibiting a very small \(D\) for the bound state which likely corresponds to slow diffusion of
 chromatin. The other states will correspond to freely diffusive states.</td>
     <td></td>
   </tr>
   <tr>
     <td>D<sub>free</sub>, D<sub>bound</sub>, D<sub>slow</sub>, D<sub>fast</sub></td>
-    <td>Allowed lower and upper bound for the faster diffusion constant for the model-fitting in units of μm²/s for the free (2-states model), bound (all models), slow (3-states model) or fast (3-states model), respectively.</td>
+    <td>Allowed lower and upper bound for the faster diffusion constant for the model-fitting in units of μm²/s for the free (2-state model), bound (all models), slow (3-state model) or fast (3-state model), respectively.</td>
     <td></td>
   </tr>
   <tr>
     <td>F<sub>bound</sub>, F<sub>fast</sub></td>
-    <td>The range of possible values for the bound fraction (all models) and the fast-diffusing fraction (3-states model), respectively.</td>
+    <td>The range of possible values for the bound fraction (all models) and the fast-diffusing fraction (3-state model), respectively.</td>
     <td></td>
   </tr>
   <tr>
