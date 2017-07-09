@@ -24,7 +24,7 @@ Some of the dependencies might already be installed on your system, or might be 
 You will also need the [`git` tool](https://git-scm.com/) to download the files. Under Ubuntu/Debian GNU/Linux flavours, it can be installed by typing:
 
 ```{shell}
-sudo apt-get install python-dev ## Required to compile dependencies
+sudo apt-get install python-dev libffi-dev libssl-dev ## Required to compile dependencies
 sudo apt-get install gfortran libopenblas-dev liblapack-dev ## Required by Scipy
 sudo apt-get install git
 ```
