@@ -41,22 +41,12 @@ sudo apt-get install redis-server
 
 See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#conf-redis-result-backend 
 
-## Install the `fastspt` backend
-```{shell}
-git clone https://github.com/DarzacqLab/fastspt.git # Clone the repository
-cd fastspt
-pip install -r requirements.txt
-python setup.py sdist
-pip install dist/fastspt-11.1.tar.gz --user ## Adjust the version number
-```
-
 ## Download and install Spot-On
-
-So far, it has to be initialized manually (you have to create several repositories by hand).
 
 ```{shell}
 git clone https://padouppadoup@gitlab.com/padouppadoup/fastSPT.git
 cd fastSPT
+pip install pip -U # update to the last version of pip
 pip install -r requirements.txt
 make init ## This will download demo datasets and fitted (a,b) fitted values
 
