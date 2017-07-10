@@ -52,7 +52,8 @@ def import_dataset(path, name, ana, url_basename):
                  unique_id = 0,
                  upload_status=True, # Upload is complete
                  preanalysis_status='uploaded', # Preanalysis not launched
-                 data=fi)
+                 data=fi,
+                 editable = False) # Forbid access
     da.save()
 
     ## Precompute JLD
