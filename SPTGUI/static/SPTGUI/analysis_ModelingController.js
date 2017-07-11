@@ -390,7 +390,6 @@ angular.module('app')
 					$scope.analysisState = 'done';
 					refreshMaxJumpSlider();
 					if (!$scope.complainParamsChanged(true)) {
-					    console.log("a")
 					    $scope.showJLPf = true;
 					    $scope.fitAvailable = true;
 					    $scope.displayJLP(true)
@@ -405,7 +404,6 @@ angular.module('app')
 					refreshMaxJumpSlider();
 					if (!$scope.complainParamsChanged(true) &&
 					    $scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
-						console.log("b");
 					    $scope.jlpfit = l.data;
 					    $scope.showJLPf = true;
 					    $scope.fitAvailable = false
@@ -421,7 +419,6 @@ angular.module('app')
 				    $scope.analysisState = 'done';
 				    refreshMaxJumpSlider();
 				    if (!$scope.complainParamsChanged(true)) {
-					console.log("c")
 					$scope.showJLPf = true;
 					$scope.fitAvailable = false;
 				    }
@@ -438,7 +435,6 @@ angular.module('app')
 					    $scope.fitAvailable = false
 					    if (!$scope.complainParamsChanged(true) && $scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 						$scope.jlpfit = l.data;
-						console.log("d")
 						$scope.showJLPf = true;
 					    } else {
 						$scope.fitAvailable = true;
@@ -489,7 +485,7 @@ angular.module('app')
 		    (!angular.equals($scope.modelingParameters,
 				     fitsparamschanged_fitvalue))
 	    } else {
-		return ($scope.showJLPf === true) &&
+		return ($scope.analysisState=='done') &&
 		    (fitsparamschanged_fitvalue !== null) &&
 		    (!angular.equals($scope.modelingParameters,
 				     fitsparamschanged_fitvalue))

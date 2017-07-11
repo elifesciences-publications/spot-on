@@ -306,7 +306,7 @@
       <div ng-if="analysisState=='jld_notrun'" class="alert alert-warning" role="alert">
 	Click the 'Compute' button to start the computation.
       </div>
-      <div ng-show="complainParamsChanged(true)" class="alert alert-warning" role="alert">
+      <div ng-show="complainParamsChanged()" class="alert alert-warning" role="alert">
 	Fitting parameters have been changed compared to the displayed fit. This is why no fit is displayed.
 	<button ng-click="resetFitParams()" class="btn btn-default">
 	  Revert to previous parameters</button>,
