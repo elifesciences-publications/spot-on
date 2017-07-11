@@ -271,11 +271,11 @@
 		    <span uib-tooltip="The number of times to run the optimization routine (to avoid getting stuck in local maxima)." class="glyphicon glyphicon-question-sign"></span>
 		  </td>
 		</tr>			  
-		<tr>
+		<tr ng-hide="analysisState=='jld'">
 		  <td>&nbsp;</td>
 		  <td>
-		    <button ng-hide="analysisState=='jld'" type="submit"
-			    class="btn btn-default">
+		    <button type="submit" class="btn btn-default"
+			    ng-disabled="isFitting()&&!haveFitParamsChanged()">
 		      Fit kinetic model
 		    </button>
 
@@ -295,7 +295,7 @@
     <div class="row">
       <h2> Jump length histograms </h2>
       <div ng-if="analysisState=='notrun'" class="alert alert-warning" role="alert">
-	No analysis has been run yet. (in the future, should display the last analysis performed, and a history of the analysis).
+	No analysis has been run yet.
       </div>
       <div ng-if="analysisState=='running'" class="alert alert-warning" role="alert">
 	Running, please wait...
@@ -306,7 +306,12 @@
       <div ng-if="analysisState=='jld_notrun'" class="alert alert-warning" role="alert">
 	Click the 'Compute' button to start the computation.
       </div>
-      
+      <div ng-show="complainParamsChanged(true)" class="alert alert-warning" role="alert">
+	Fitting parameters have been changed compared to the displayed fit. This is why no fit is displayed.
+	<button ng-click="resetFitParams()" class="btn btn-default">
+	  Revert to previous parameters</button>,
+	then click "Fit kinetic model" again.
+      </div>      
       <div ng-if="analysisState=='done'">
 	<div class="col-md-6" ng-if="jlfit[ce-1]!==null">
 	  <em>Fit parameters for cell {{ce}}.</em>

@@ -12,6 +12,7 @@ angular.module('app')
 	// When the socket is ready, initialize the downloads
 
 	// Scope variables
+	fitsparamschanged_fitvalue = null;
 	$scope.datasets = [];
 	$scope.analysisState = 'notrun';
 	$scope.computedJLD = 0
@@ -41,7 +42,6 @@ angular.module('app')
 		    
 		    if (arguments.length) {
 			$scope.showJLP = false; // plot-related
-			//$scope.showJLPf
 			$scope.jlphist = null; // reset the hist when include changes
 			$scope.jlpfit = null; // and the fit
 			$scope.showJLPf = false;
@@ -374,9 +374,10 @@ angular.module('app')
 	    $scope.jlpfit = null;
 	    $scope.fitAvailable = false;
 	    $scope.jlfit = $scope.datasets.map(function(el){return null});
+	    fitsparamschanged_fitvalue = angular.copy(parameters);
 
 	    // Fit
-	    analysisService.runAnalysis($scope.jldParameters, parameters).then(function(resp) {
+	    analysisService.runAnalysis($scope.jldParameters, angular.copy(parameters)).then(function(resp) { // copy added by MW, 170711, not sure it doesn't break stuff
 		if (resp.data) {
 		    resp.data.forEach(function(el) {
 			if (el.celery_id != 'none') {
@@ -388,9 +389,12 @@ angular.module('app')
 					$scope.jlpfit = l.data;
 					$scope.analysisState = 'done';
 					refreshMaxJumpSlider();
-					$scope.showJLPf = true;
-					$scope.fitAvailable = true;
-					$scope.displayJLP(true)
+					if (!$scope.complainParamsChanged(true)) {
+					    console.log("a")
+					    $scope.showJLPf = true;
+					    $scope.fitAvailable = true;
+					    $scope.displayJLP(true)
+					}
 				    })
 				} else {
 				    analysisService.getFitted(el.database_id, JLDPars, FitPars).then(function(l) {
@@ -399,7 +403,9 @@ angular.module('app')
 					$scope.fitAvailable = true;
 					$scope.analysisState = 'done'; // Hide progress bar
 					refreshMaxJumpSlider();
-					if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
+					if (!$scope.complainParamsChanged(true) &&
+					    $scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
+						console.log("b");
 					    $scope.jlpfit = l.data;
 					    $scope.showJLPf = true;
 					    $scope.fitAvailable = false
@@ -414,8 +420,11 @@ angular.module('app')
 				    $scope.jlpfit = l.data;
 				    $scope.analysisState = 'done';
 				    refreshMaxJumpSlider();
-				    $scope.showJLPf = true;
-				    $scope.fitAvailable = false
+				    if (!$scope.complainParamsChanged(true)) {
+					console.log("c")
+					$scope.showJLPf = true;
+					$scope.fitAvailable = false;
+				    }
 				})
 			    } else if (el.database_id == 'pooled' & $scope.modelingParameters.include.length==1) {
 				console.log('The pooled fit will be uploaded later')
@@ -427,8 +436,9 @@ angular.module('app')
 			    		    $scope.analysisState = 'done';
 					    refreshMaxJumpSlider();
 					    $scope.fitAvailable = false
-					    if ($scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
+					    if (!$scope.complainParamsChanged(true) && $scope.modelingParameters.include.length == 1) { // Update if we have only one cell in the pooled fit
 						$scope.jlpfit = l.data;
+						console.log("d")
 						$scope.showJLPf = true;
 					    } else {
 						$scope.fitAvailable = true;
@@ -468,6 +478,28 @@ angular.module('app')
 		return true;}, 500);
 	}
 
+	// The logic to disable the fit button if the parameters have not changed
+	$scope.haveFitParamsChanged = function() {
+	    return !angular.equals($scope.modelingParameters,fitsparamschanged_fitvalue)
+	}
+
+	$scope.complainParamsChanged = function(bol) {
+	    if (bol) {
+		return (fitsparamschanged_fitvalue !== null) &&
+		    (!angular.equals($scope.modelingParameters,
+				     fitsparamschanged_fitvalue))
+	    } else {
+		return ($scope.showJLPf === true) &&
+		    (fitsparamschanged_fitvalue !== null) &&
+		    (!angular.equals($scope.modelingParameters,
+				     fitsparamschanged_fitvalue))
+	    }
+	}
+
+	$scope.resetFitParams = function() {
+	    $scope.modelingParameters = angular.copy(fitsparamschanged_fitvalue);
+	}
+
 	// The logic behind the toggle switch to show the JLP
 	$scope.displayJLP = function(newVal) {
 	    if (arguments.length) {
@@ -489,7 +521,6 @@ angular.module('app')
 		return $scope.showJLP;
 	    }
 	}
-	
 
 	// The logic behind the toggle switch to show the JLPf
 	// The logic behind the toggle switch to show the JLP
@@ -609,6 +640,11 @@ angular.module('app')
 	// Test function to get the nearest fit for the z correction
 	$scope.$watch('modelingParameters', function(params, oldparams) {
 	    if (angular.equals(params, oldparams)) {return}
+	    // Hide fit
+	    $scope.showJLPf = false;
+	    $scope.jlpfit = null;
+	    $scope.fitAvailable = false;
+	    $scope.jlfit = $scope.datasets.map(function(el){return null});
 	    
 	    // Get dT
 	    selected = $scope.datasets.filter(function(el) {
