@@ -552,8 +552,11 @@ angular.module('app')
 
 	// Returns if we should show the progress bar
 	$scope.isFitting = function() {
-	    if (($scope.fitAvailable === null)|($scope.fitComplete)){return false}
-	    else if ($scope.getNumberFittedDatasets()<$scope.getNumberDatasetsToFit()) {
+	    if (($scope.fitAvailable === null)|
+		($scope.fitComplete)|
+		($scope.analysisState == 'jld')){
+		return false
+	    } else if ($scope.getNumberFittedDatasets()<$scope.getNumberDatasetsToFit()) {
 		return true
 	    } else if ($scope.getNumberFittedDatasets()==$scope.getNumberDatasetsToFit()) {
 		$scope.fitComplete = true;

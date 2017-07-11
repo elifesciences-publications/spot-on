@@ -274,12 +274,12 @@
 		<tr>
 		  <td>&nbsp;</td>
 		  <td>
-		    <button type="submit"
+		    <button ng-hide="analysisState=='jld'" type="submit"
 			    class="btn btn-default">
 		      Fit kinetic model
 		    </button>
 
-		    <span ng-hide="!isFitting()"> 
+		    <span ng-show="isFitting()"> 
 		      <i class="fa fa-spinner fa-spin"
 			 style="font-size:24px"></i>
 		      {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
