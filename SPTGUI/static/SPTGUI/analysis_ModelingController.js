@@ -3,7 +3,7 @@ angular.module('app')
 	// This is the controller for the modeling tab
 
 	// Get the list of the analyses saved for download.
-	$scope.downloads = []
+	//$scope.downloads = []
 	$scope.$on('downloads:updated', function(downloads) {
 	    $scope.downloads = downloads;
 	})
@@ -12,9 +12,10 @@ angular.module('app')
 	// When the socket is ready, initialize the downloads
 
 	// Scope variables
+	$scope.datasets = [];
 	$scope.analysisState = 'notrun';
 	$scope.computedJLD = 0
-	$scope.showModelingTab = false;
+	$scope.showModelingTab = null;
 	$scope.jldParsInit = false; // To avoid initializing twice
 	$scope.fitComplete = true;
 	$scope.displayCDF = false; // Commanded by toggle switch
@@ -92,7 +93,7 @@ angular.module('app')
 		if (el.jld_available) {
 		    analysisService.getDefaultJLD(el.id).then(function(resp) {
 			if (resp.data.status == 'done') {
-			    $scope.showModelingTab = true;
+			    //$scope.showModelingTab = true;
 			    $scope.analysisState = 'done';
 			    refreshMaxJumpSlider();
 			    $scope.jlhist[i] = resp.data.jld
@@ -117,6 +118,12 @@ angular.module('app')
 	    $scope.datasets = datasets;
 	    initView();
 	});
+
+
+	$scope.$on('datasets:preprocessing', function(event, bol) {
+	    $scope.showModelingTab = !bol;
+	});
+	
 	// Name/description of the datasets have been updated
 	$scope.$on('dataset:updated', function(event, dataset_id, dataset) {
 	    $scope.datasets = $scope.datasets.map(function(el) {
@@ -126,7 +133,10 @@ angular.module('app')
 	});
 
 	// Get the number of gaps when statistics are computed.
+	// This event is fired at last, when all the preprocessing has been done
 	$scope.$on('datasets:statistics', function(event, statistics) {
+	    //console.log("We have statistics");
+	    $scope.showModelingTab = true;
 	    if (statistics.hasOwnProperty('pre_ngaps')) {
 		$scope.jldParameters.GapsAllowed = parseFloat(statistics.pre_ngaps)
 	    }
@@ -137,7 +147,7 @@ angular.module('app')
 	$scope.$on('datasets:added', function(event, newDatasets) {
 	    oldDatasets = angular.copy($scope.datasets)
 	    oldIds = oldDatasets.map(function(el){return el.id})
-
+	    //console.log(newDatasets)
 	    // Hide the plot
 	    $scope.displayJLP(false)
 	    
@@ -170,7 +180,7 @@ angular.module('app')
 			analysisService.getDefaultJLD(el.id).then(function(resp) {
 			    if (resp.data.status=='done') {
 				$interval.cancel(myint)
-				$scope.showModelingTab = true;
+				//$scope.showModelingTab = true;
 				$scope.analysisState = 'done';
 				refreshMaxJumpSlider();
 				$scope.jlhist[i] = resp.data.jld
@@ -214,7 +224,7 @@ angular.module('app')
 	    $scope.modelingParameters.include = newIncl
 	    
 	})
-
+	
 	//
 	// ==== CRUD modeling parameters
 	//
@@ -551,6 +561,12 @@ angular.module('app')
 	    }
 	}
 
+	// Returns if we should complain about datasets with different dt selected
+	$scope.complainAboutdT = function() {
+	    return ($scope.modelingParameters.dT===null &
+		     $scope.modelingParameters.include.length>0);
+	}
+
 	// The function to mark the current SVG view to download
 	$scope.toDownloads = function() {
 	    var d = new Date()
@@ -592,6 +608,8 @@ angular.module('app')
 	    if (angular.equals(params, oldparams)) {return}
 	    
 	    // Get dT
+	    //console.log("new selected");
+	    //console.log(params.include);
 	    selected = $scope.datasets.filter(function(el) {
 		return params.include.indexOf(el.id)>-1;
 	    })

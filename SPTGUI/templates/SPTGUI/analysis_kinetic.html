@@ -1,11 +1,12 @@
 {% verbatim %}
 <div ng-controller="ModelingController"><!-- Another controller -->
-  <div ng-hide="showModelingTab&&datasets.length>0;">
+  <div class="alert alert-info" ng-show="showModelingTab===null||datasets.length==0;">
+    Make sure that you have uploaded datasets.
+  </div>
+  <div ng-show="showModelingTab==false">
     <p>In this tab, you can perform a kinetic modeling of your data</p>
-    <div class="alert alert-info">
-      Make sure that you have uploaded datasets.
-    </div>
-    <div class="alert alert-info">
+    <div class="alert alert-success">
+      <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
       Please wait until all the datasets have been preprocessed.
     </div>
   </div>
@@ -116,7 +117,7 @@
 	    <form ng-submit="runAnalysis(modelingParameters);">
 
 	      <div class="alert alert-danger"
-		   ng-show="modelingParameters.dT===null;">
+		   ng-show="complainAboutdT();">
 		<span class="glyphicon glyphicon-warning-sign"></span>
 		Datasets with different framerates are selected. You can only fit a pool of datasets with the same framerate.
 	      </div>

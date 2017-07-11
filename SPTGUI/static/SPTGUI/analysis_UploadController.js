@@ -6,7 +6,7 @@ angular.module('app')
 	// ==== Let's first define some global variables (on the $scope).
 	//
 	socketReady = false;
-	$scope.datasetsReady = false;
+	$scope.datasetsReady = false; //Toggle the display	
 	$scope.establishedConnexion=false;
 	$scope.currentlyUploading=false;
 	$scope.successfullyUploaded=0;
@@ -16,7 +16,8 @@ angular.module('app')
 	$scope.shownStatistics=null;
 	$scope.statistics = null;
 	$scope.uploadFormat = {format: null, params: null, currentParams: null};
-
+	$scope.pleaseWait = null; // wait until the global statisitcs have been computed.
+	
 	//
 	// ==== Initializing the view
 	//
@@ -47,8 +48,11 @@ angular.module('app')
 
 		    // Be done!
 		    getterService.broadcastLoadedDatasets($scope.datasets)
-		    $rootScope.$broadcast('datasets:statistics', $scope.statistics);
-		    $scope.datasetsReady = true;
+		    if ($scope.datasets.length>0) {
+			$scope.pleaseWait = false;
+			$rootScope.$broadcast('datasets:statistics', $scope.statistics);
+		    }
+		    $scope.datasetsReady = true; //Toggle the display
 		})
 
 		// Retrieve available file formats
@@ -228,18 +232,22 @@ angular.module('app')
 	//
 	// (1) Fired when a file is added to the download list
 	$scope.$on('flow::fileAdded', function (event, $flow, flowFile) {
+	    $scope.pleaseWait = true;
+	    $scope.statistics = null; // Do not show statistics while uploading
 	    $flow.opts.query = { parserName: $scope.uploadFormat.params[0], 
 				 parserParams: JSON.stringify($scope.uploadFormat.currentParams) }; // Send file type info
 	    $scope.currentlyUploading=true;
+	    $rootScope.$broadcast("datasets:preprocessing", true);
 	});
 
 	// (2) Fired when all downloads are complete
-	$scope.$on('flow::complete', function (event, $flow, flowFile) {
-	    getterService.getGlobalStatistics().then(function(resp) {
-		$scope.statistics = resp;
-		$rootScope.$broadcast('datasets:statistics', $scope.statistics);
-	    });
-	});
+	// Commented by MW on 10 jul. 2017. Not sure this is fine though
+	// $scope.$on('flow::complete', function (event, $flow, flowFile) {
+	//     getterService.getGlobalStatistics().then(function(resp) {
+	// 	$scope.statistics = resp;
+	// 	//$rootScope.$broadcast('datasets:statistics', $scope.statistics);
+	//     });
+	// });
 
 	// (3) Fired when testing if the download is complete, until the
 	// last dataset has been processed
@@ -250,9 +258,9 @@ angular.module('app')
 		    le = $scope.datasets.length
 		    $scope.datasets = resp;
 		    $scope.successfullyUploaded=resp.length;
-		    if (le<resp.length) {
-			getterService.broadcastAddedDatasets($scope.datasets);
-		    }
+		    // if (le<resp.length) { // Commented by MW 10 jul. 2017
+		    // 	getterService.broadcastAddedDatasets($scope.datasets);
+		    // }
 		});
 	    }
 	    if ($scope.currentlyUploading != currentlyUploadingPrevious) {
@@ -260,6 +268,10 @@ angular.module('app')
 		    console.log("Getting global statistics")
 		    getterService.getGlobalStatistics().then(function(resp) {
 			$scope.statistics = resp;
+			$scope.pleaseWait = false;
+			$rootScope.$broadcast("datasets:preprocessing", false);
+
+			getterService.broadcastAddedDatasets($scope.datasets);
 			$rootScope.$broadcast('datasets:statistics', $scope.statistics);
 		    });
 		}

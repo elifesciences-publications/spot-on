@@ -292,12 +292,17 @@
       <h2> Global statistics </h2>
 
       <!-- dt warning displayed when incompatible dt are displayed -->
-      <div ng-show="validate.dt2()" class="alert alert-danger">
-	<span class="glyphicon glyphicon-warning-sign"></span>
-	Datasets with incompatible framerates have been uploaded. Click on the <span class="glyphicon glyphicon-eye-open"></span> symbol next to each dataset to display the inferred framerate.
+      <div ng-show="pleaseWait" class="alert alert-success">
+	<i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+	Please wait while the dataset is preprocessed...
       </div>
 
       <div ng-if="statistics.status=='ok';">
+	<div ng-show="validate.dt2()" class="alert alert-danger">
+	  <span class="glyphicon glyphicon-warning-sign"></span>
+	  Datasets with incompatible framerates have been uploaded. Click on the <span class="glyphicon glyphicon-eye-open"></span> symbol next to each dataset to display the inferred framerate.
+	</div>
+	
 	<table class="table table-responsive">
 
 	  <!-- ntraces block -->
