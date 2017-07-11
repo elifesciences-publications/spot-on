@@ -52,8 +52,7 @@ def import_dataset(path, name, ana, url_basename):
                  unique_id = 0,
                  upload_status=True, # Upload is complete
                  preanalysis_status='uploaded', # Preanalysis not launched
-                 data=fi,
-                 editable = False) # Forbid access
+                 data=fi)
     da.save()
 
     ## Precompute JLD
@@ -89,7 +88,8 @@ if __name__=='__main__':
     ana = Analysis(url_basename=url_basename,
                    pub_date=timezone.now(),
                    name='',
-                   description='Demo analysis')
+                   description='Demo analysis',
+                   editable = False)
     ana.save()
     if not os.path.isdir(bf+url_basename):
         os.makedirs(os.path.join(bf,url_basename))
