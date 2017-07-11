@@ -147,7 +147,6 @@ angular.module('app')
 	$scope.$on('datasets:added', function(event, newDatasets) {
 	    oldDatasets = angular.copy($scope.datasets)
 	    oldIds = oldDatasets.map(function(el){return el.id})
-	    //console.log(newDatasets)
 	    // Hide the plot
 	    $scope.displayJLP(false)
 	    
@@ -368,13 +367,15 @@ angular.module('app')
 		alert("Datasets with different framerates are selected. You can only fit a pool of datasets with the same framerate.");
 		return;
 	    }
-	    
+
 	    // Reinitialize the view
 	    $scope.fitComplete = false;
 	    $scope.showJLPf = false;
 	    $scope.jlpfit = null;
 	    $scope.fitAvailable = false;
 	    $scope.jlfit = $scope.datasets.map(function(el){return null});
+
+	    // Fit
 	    analysisService.runAnalysis($scope.jldParameters, parameters).then(function(resp) {
 		if (resp.data) {
 		    resp.data.forEach(function(el) {
@@ -515,7 +516,6 @@ angular.module('app')
 		$scope.modelingParameters.LocError = null;
 		$scope.modelingParameters.sigma = modelingParametersDefault.sigma;
 	    } else {
-		$scope.modelingParameters.sigma = null
 		$scope.modelingParameters.LocError = angular.copy(modelingParametersDefault.LocError);
 	    }
 	}
@@ -611,8 +611,6 @@ angular.module('app')
 	    if (angular.equals(params, oldparams)) {return}
 	    
 	    // Get dT
-	    //console.log("new selected");
-	    //console.log(params.include);
 	    selected = $scope.datasets.filter(function(el) {
 		return params.include.indexOf(el.id)>-1;
 	    })
@@ -639,7 +637,6 @@ angular.module('app')
 	    getterService.getNearestZcorr(
 		params.dZ, params.dT, $scope.jldParameters.GapsAllowed).then(
 		    function(ret) {
-			//console.log(ret)
 			$scope.modelingParameters.dTfit = ret.dT
 			$scope.modelingParameters.dZfit = ret.dZ
 			$scope.zcorr.a = ret.params[0]
