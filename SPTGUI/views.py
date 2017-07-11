@@ -197,7 +197,6 @@ def static(request, page):
         
         if version not in [str(i) for i in doc_versions]: 
             version = 'latest'
-        print "-- version", version, str(doc_versions[-1]), version == str(doc_versions[-1])
         if version == 'latest' or version == str(doc_versions[-1]):
             page = "docs/{}".format(doc_versions[-1])
             context["latest_version"] = True
