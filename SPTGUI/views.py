@@ -147,7 +147,8 @@ def index(request):
                'active': 'home',
                'captcha': custom_settings.RECAPTCHA_USE,
                'recaptchakey': custom_settings.RECAPTCHA_PUBLIC,
-               'mailavailable': custom_settings.EMAIL_USE}
+               'mailavailable': custom_settings.EMAIL_USE,
+               'demoavailable': custom_settings.use_demo}
     return HttpResponse(template.render(context, request))
 
 def analysis(request, url_basename, run_tests=False):

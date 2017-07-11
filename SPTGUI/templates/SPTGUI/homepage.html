@@ -63,7 +63,7 @@
       </ol>
       <div class="carousel-inner" role="listbox">
         <div class="item active">
-	  <img src="/static/SPTGUI/img/spoton_logo_big.png" alt="First slide">
+	  <img src="{% static 'SPTGUI/img/spoton_logo_big.png' %}" alt="First slide">
           <div class="container">
             <div class="carousel-caption">
               <h1>Spot-On analyzes single particle tracking datasets.</h1>
@@ -73,12 +73,12 @@
           </div>
         </div>
         <div class="item">
-	  <img src="/static/SPTGUI/img/slide1_big.png" alt="Second slide">
+	  <img src="{% static 'SPTGUI/img/slide1_big.png' %}" alt="Second slide">
           <div class="container">
             <div class="carousel-caption">
               <h1>Interactive kinetic modeling</h1>
               <p>Spot-On comes with a user-friendly interactive interface to perform kinetic modeling of single particle tracking datasets.</p>
-              <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+              <p><a class="btn btn-lg btn-primary" href="#why" role="button">Learn more</a></p>
             </div>
           </div>
         </div>
@@ -144,10 +144,11 @@
       <hr class="featurette-divider">
 
       <div class="row featurette">
-        <div class="col-md-7">
-          <h2 class="featurette-heading">Why Spot-On?<span class="text-muted">(and kinetic modeling)</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-	   <p><a class="btn btn-default" href="./docs/#tutorial" role="button">Take the tutorial</a></p>
+        <div class="col-md-7" id="why">
+          <h2 class="featurette-heading">Why Spot-On?<span class="text-muted">&nbsp;(and kinetic modeling)</span></h2>
+          <p class="lead"><em>Single particle tracking</em> (SPT) is often seen as less biased and model-dependent than indirect and bulk techniques such as Fluorescence Recovery After Photobleaching (<a href="https://en.wikipedia.org/wiki/Fluorescence_recovery_after_photobleaching">FRAP</a>) or Fluorescence Correlation Spectroscopy (<a href="https://en.wikipedia.org/wiki/Fluorescence_correlation_spectroscopy">FCS</a>).</p>
+	  <p class="lead">Nevertheless, SPT data is subject to a number of biases and uncertainties, which must be corrected for in order to obtain accurate estimates of subpopulations. Spot-On offers a set of <a href="{% url 'SPTGUI:staticpage' 'docs' %}#how-to-acquire-a-good-dataset-">guidelines</a> to perform meaningful SPT experiments and provides a comprehensive, <a href="{% url 'SPTGUI:staticpage' 'docs' %}#methods">bias-aware</a>, framework to analyze the resulting data.</p>
+	   <p><a class="btn btn-default" href="{% url 'SPTGUI:staticpage' 'docs' %}#tutorial" role="button">Take the tutorial</a></p>
         </div>
         <div class="col-md-5">
           <img class="featurette-image img-responsive center-block" src="/static/SPTGUI/img/spoton_logo_square.png" alt="Generic placeholder image">
@@ -173,8 +174,13 @@
       <div class="row featurette">
         <div class="col-md-7" id="start">
           <h2 class="featurette-heading">Get started<span class="text-muted"> (in a nutshell)</span></h2>
-          <p class="lead">
-	    Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          <p class="lead">To use Spot-On is straightforward, and Spot-On is <a href="{% url 'SPTGUI:staticpage' 'docs' %}">fully documented</a>. We have a <a href="{% url 'SPTGUI:staticpage' 'docs' %}">step-by-step tutorial</a> that details how to use Spot-On from scratch. In particular, the tutorial will guide you through:</p>
+	  <ol>
+	    <li>Uploading trajectories from a wide range of <a href="{% url 'SPTGUI:staticpage' 'docs' %}#input-formats">formats</a></li>
+	    <li>Perform a thorough quality-check of uploaded datasets</li>
+	    <li>Fit a kinetic model on the distribution of displacements</li>
+	    <li>The export of the fitted coefficients, raw data and high quality graphics</li>
+	  </ol>
 	  <form {% if captcha %}
 		onsubmit="return validateCAPTCHA();"
 		{% endif %}
@@ -188,15 +194,17 @@
 	    <p>
 	      <input formaction="{% url 'SPTGUI:new_analysis' %}"
 		     type="submit" class="btn btn-primary"
-		     value="Start with my dataset"> or 
-	      <input formaction="{% url 'SPTGUI:new_demo' %}"
-		     type="submit" class="btn btn-link"
-		     value="start with a demo file">.
+		     value="Start with my dataset">
+	      {% if demoavailable %}
+	      or <input formaction="{% url 'SPTGUI:new_demo' %}"
+			type="submit" class="btn btn-link"
+			value="start with a demo file">.
+	      {% endif %}
 	    </p>
 	  </form>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+          <img class="featurette-image img-responsive center-block" src="{% static 'SPTGUI/img/process.png' %}" alt="Spot-On workflow">
         </div>
       </div>
       
