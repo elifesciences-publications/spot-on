@@ -200,34 +200,32 @@
         </div>
       </div>
       
+      {% if mailavailable %}
       <hr class="featurette-divider">
-      
       <div class="row featurette" ng-controller="EmailController">
 	{% verbatim %}
-        <div class="col-md-7">
-          <h2 class="featurette-heading">Stay tuned. <span class="text-muted">Subscribe to our newsletter.</span></h2>
-          <p class="lead">We will keep you posted about future updates of the software. Your email address will not be shared with any third-party.</p>
-	  <div class="thumbnail center well well-small text-center">
-            <form ng-submit="subscribe(email)">
-              <div class="input-prepend"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-		<input type="email" ng-model="email" placeholder="your@email.org" required>
-		<input type="submit" value="Subscribe Now!" class="btn btn-large btn-primary" />
-              </div>
-            </form>
-	    <br/>
-	    <div class="alert alert-danger" ng-show="message_error!==null">
-	     {{message_error}}
-	    </div>
-	    <div class="alert alert-success" ng-show="message_success!==null">
-	     {{message_success}}
-	    </div>
+        <h2 class="featurette-heading">Stay tuned. <span class="text-muted">Subscribe to our newsletter.</span></h2>
+        <p class="lead">We will keep you posted about future updates of the software. Your email address will not be shared with any third-party.</p>
+	<div class="thumbnail center well well-small text-center">
+          <form ng-submit="subscribe(email)">
+            <div class="input-prepend"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+	      <input type="email" ng-model="email" placeholder="your@email.org" required>
+	      <input type="submit" value="Subscribe Now!" class="btn btn-large btn-primary" />
+            </div>
+          </form>
+	  <br/>
+	  <div class="alert alert-danger" ng-show="message_error!==null">
+	    {{message_error}}
 	  </div>
-        </div>
+	  <div class="alert alert-success" ng-show="message_success!==null">
+	    {{message_success}}
+	  </div>
+	</div>
 	{% endverbatim %}
-        <div class="col-md-5">
-          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
-        </div>
       </div>
+      {% endif %}
+    </div>
+    
 
       <!-- /END THE FEATURETTES -->
 
