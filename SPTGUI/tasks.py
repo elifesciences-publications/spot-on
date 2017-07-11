@@ -336,9 +336,6 @@ def check_input_file(filepath, file_id, fmt, fmtParams, queue=True):
             os.remove(toremove)
         return
 
-    ## ==== Infer dt
-    da.dt = stats.compute_dt(fi)
-
     ## ==== Save the parsed result!
     with tempfile.NamedTemporaryFile(dir="static/upload/", delete=False) as f:
         fil = File(f)
@@ -351,6 +348,9 @@ def check_input_file(filepath, file_id, fmt, fmtParams, queue=True):
     if queue:
         check_input_file.update_state(state='PROGRESS', meta={'progress': 'computing statistics'})
 
+    ## ==== Infer dt
+    da.dt = stats.compute_dt(fi)
+        
     ## ==== Extract the relevant information
     da.pre_ngaps   = stats.number_of_gaps(fi) # Max number of gaps in the data
     da.pre_ntraces = stats.number_of_trajectories(fi) # number of traces
