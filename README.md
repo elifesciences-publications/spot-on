@@ -1,5 +1,5 @@
-fastSPT (provisional title)
---------------------------
+Spot-On: model-based kinetic modeling of single-particle tracking experiments
+-----------------------------------------------------------------------------
 
 # Installation
 This software has been written for Python 2, but minimum work should be required to port it to Python 3. We recommend to install the dependencies of the software in a *virtual environment* (using the `virtualenv` and `virtualenvwrapper` tools).
