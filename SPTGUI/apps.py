@@ -28,7 +28,7 @@ class MyAppConfig(AppConfig):
             
             print "checking for demo Analysis"
             try:
-                Analysis.objects.get(id=custom_settings.demo_id)
+                Analysis.objects.filter(editable=False) # Should be the demo entries
                 check_failed = False
             except:
                 if custom_settings.use_demo:
@@ -39,8 +39,8 @@ class MyAppConfig(AppConfig):
             if check_failed:
                 errors.append(
                     Error(
-                        'Could not find the demo dataset, id={}'.format(custom_settings.demo_id),
-                        hint='Make sure that this value points to an existing analysis',
+                        'Could not find any demo dataset',
+                        hint='Make sure that you initialized Spot-On (demofiles.py)',
                         obj="",
                         id='SPTGUI.E001',
                     )

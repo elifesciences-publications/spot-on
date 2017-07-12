@@ -104,8 +104,3 @@ if __name__=='__main__':
 
     ## Exiting
     print "All done, the id of the Analysis database is {}".format(ana.id)
-    print "To activate the demo, set 'use_demo=True' and 'demo_id={}'".format(ana.id)
-    print "in custom_settings.py. This will be done automatically if you run"
-    print "this script from the Makefile."
-    with open('.id', 'w') as f:
-        f.write(str(ana.id))

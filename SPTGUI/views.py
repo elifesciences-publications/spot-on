@@ -113,7 +113,7 @@ def new_demo(request):
         url_basename = get_unused_namepage()
         
         ## Duplicate the related datasets
-        dem = Analysis.objects.get(id=custom_settings.demo_id)
+        dem = list(Analysis.objects.filter(editable=False))[-1]
         da = Dataset.objects.filter(analysis=dem)        
         print "The original analysis is {} and has {} datasets".format(dem.url_basename, len(da))
         

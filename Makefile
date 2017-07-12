@@ -37,10 +37,6 @@ init:
 	echo "-- 5. Populating the database"
 	python demofiles.py
 
-	echo "-- 6. Editing custom_settings.py"
-	sed -i.bak 's/use_demo = False/use_demo = True/g' fastSPT/custom_settings.py
-	sed -i.bak 's/demo_id = None/demo_id = '`cat .id`'/g' fastSPT/custom_settings.py
-
 .PHONY: clean
 clean:
 	echo "-- 1. Deleting the database"
