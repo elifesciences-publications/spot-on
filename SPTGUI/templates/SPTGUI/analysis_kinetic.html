@@ -271,15 +271,15 @@
 		    <span uib-tooltip="The number of times to run the optimization routine (to avoid getting stuck in local maxima)." class="glyphicon glyphicon-question-sign"></span>
 		  </td>
 		</tr>			  
-		<tr ng-hide="analysisState=='jld'">
+		<tr>
 		  <td>&nbsp;</td>
 		  <td>
 		    <button type="submit" class="btn btn-default"
-			    ng-disabled="isFitting()&&!haveFitParamsChanged()">
+			    ng-disabled="analysisState=='jld'||(isFitting()&&!haveFitParamsChanged())">
 		      Fit kinetic model
 		    </button>
 
-		    <span ng-show="isFitting()"> 
+		    <span ng-show="isFitting()&&analysisState!='jld'"> 
 		      <i class="fa fa-spinner fa-spin"
 			 style="font-size:24px"></i>
 		      {{getNumberFittedDatasets()}}/{{getNumberDatasetsToFit()}}
