@@ -26,7 +26,7 @@ You will also need the [`git` tool](https://git-scm.com/) to download the files.
 ```{shell}
 sudo apt-get install python-dev libffi-dev libssl-dev ## Required to compile dependencies
 sudo apt-get install gfortran libopenblas-dev liblapack-dev ## Required by Scipy
-sudo apt-get install git
+sudo apt-get install git inkscape 
 ```
 
 
