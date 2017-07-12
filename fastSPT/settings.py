@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-import custom_settings
+import custom_settings, version
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -139,7 +139,7 @@ STATIC_ROOT = os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(__fi
 STATIC_URL = '/static/'
 
 ## Version
-APP_VERSION = "v0.7.0a"
+APP_VERSION = version.__version__
 
 ## Import custom settings
 EMAIL_USE_TLS = custom_settings.EMAIL_USE_TLS
