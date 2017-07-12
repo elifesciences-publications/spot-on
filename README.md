@@ -5,7 +5,9 @@ fastSPT (provisional title)
 This software has been written for Python 2, but minimum work should be required to port it to Python 3. We recommend to install the dependencies of the software in a *virtual environment* (using the `virtualenv` and `virtualenvwrapper` tools).
 
 This section assumes that the user has access to the [`pip`](https://pip.pypa.io/en/stable/installing/) utility. Note that the pip version packaged with your distribution might be notably obsolete. In that case, pip has to be installed according to the instructions detailed in the link above.
- Spot-On can be installed using `pip v.9.0` or any further version.
+Spot-On can be installed using `pip v.9.0` or any further version.
+ 
+Finally, for the exports, Spot-On relies on the [Inkscape](https://inkscape.org) software to perform file conversions. 
  
 ## Setup the virtual environment
 We first install a tool to manage Python's [virtual environements](https://virtualenvwrapper.readthedocs.io/en/latest/): [`virtualenvwrapper`](https://virtualenvwrapper.readthedocs.io/en/latest/) and create a virtualenv called **fastSPT**.
