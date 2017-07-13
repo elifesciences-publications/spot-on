@@ -1,0 +1,123 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'SPTGUI/img/favicon.ico' %}">
+
+    <title>Spot-On: kinetic modeling of SPT data</title>
+
+    <!-- Captcha -->
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>   
+
+    <!-- add after bootstrap.min.css -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.css">
+
+    
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'SPTGUI/assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script><![endif]-->
+    <script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    
+    <!-- Angular JS -->
+    <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/angular-cookies.js' %}"></script>
+    
+    <!-- Custom styles for this template -->
+    <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/blog.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/style.css' %}" rel="stylesheet">
+
+    <!-- Custom app code & CSS -->
+    <script src="{% static 'SPTGUI/homepage.js' %}"></script>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link href="{% static 'SPTGUI/footnotes.css' %}" rel="stylesheet"> 
+  </head>
+  <body data-spy="scroll" data-target="#toc">
+    {% csrf_token %}
+    
+    <!-- NAVBAR ================================================== -->
+    {% include 'SPTGUI/navbar1.html' %}
+    <div class="container"><!-- Main container =========================-->
+      <div class="col-sm-8"><!-- Left column -->
+	
+	<!-- Header =========================-->
+	<div class="row">
+	  <div class="blog-header">
+	    <h1 class="blog-title">Privacy</h1>
+	    <p class="lead blog-description">How we handle privacy</p>
+	    
+	  </div>	
+	</div>
+	<!-- End Header =========================-->
+
+	<!-- Main docs =========================-->
+	<div class="row">
+	  <h2>Data handling</h2>
+	  <p>The datasets you upload and information you input into Spot-On are yours, and won't be shared. We make no use of the uploaded data, but can access them for statistics and debugging purposes.</p>
+	  <p>Furthermore, Spot-On associates a unique URL to each analysis. This URL is publicly accessible and is not password protected. This means that anyone knowing the URL can access the uploaded data. Thus, be sure not to share the URL to untrusted third-party.</p>
+	  <p>Spot-On is currently hosted on <a href="https://cloud.google.com/">Google Cloud</a>, which means that Google has in theory access to the data</p>
+	  <p>Here are a few measures to guarantee your anonymity when using Spot-On:</p>
+	  <ul>
+	  <li>The connection between you and Spot-On is encrypted (HTTPS), so that no third party can monitor your use of Spot-On.</li>
+	  <li>Spot-On does not require you to register, or to upload metadata to your datasets, we thus are totally blind to the type of data you upload: it is impossible for us to guess where the data comes from</li>
+	  </ul>
+	  
+	  <p>Finally, if you are willing to analyze datasets that cannot be uploaded, we invite you to use the offline version of Spot-On (described in the documentation).</p>
+	  
+	  <h2>Email handling</h2>
+	  <p>We do not ask you to provide an email address to use Spot-On, but we require an email address if you want to subscribe to our newsletter (about Spot-On updates) and to contact us. If you choose to disclose your email address, it will only be used for the purpose you opted for and will not be shared outside the team</p>
+
+	  <h2>Website browsing information</h2>
+	  <p>We use <a href="http://piwik.org/">Piwik</a> to collect anonymous statistics about the use of Spot-On.</p>
+	  <p>Piwik collects anonymous data such as the duration of sessions (time spent on the website), your IP domain, and some browser information (OS, resolution, etc), together with the pags browsed. </p>
+	  <p> You can opt out from this tracking by enabling the Do Not Track feature of your browser (see <a href="http://donottrack.us/">how to enable it</a>).<br/><br/></p>
+
+
+	</div>
+	<div class="row">
+	      <div class="col-md-6">
+		<img src="/static/SPTGUI/img/icons/UCB.png"
+		     class="img-responsive center-block"
+		     style="max-width: 80%;"
+		     alt="UC Berkeley logo">
+	      </div>	  
+	      <div class="col-md-6">
+		<img src="/static/SPTGUI/img/icons/IP.png"
+		     class="img-responsive center-block"
+		     style="max-width: 80%;"
+		     alt="Institut Pasteur logo">
+	      </div>	</div>
+	
+      </div><!-- Close Left column -->
+      
+      <div class="col-sm-3 col-sm-offset-1 blog-sidebar"><!-- Right column -->
+	<div class="sidebar-module">
+	  <nav id="toc" data-spy="affix" data-toggle="toc"></nav>
+	</div>
+      </div><!-- Close right column -->
+    </div><!-- Close Main container =========================-->
+    
+    <div class="container">
+      {% include 'SPTGUI/footer.html' %}
+    </div>
+    <!-- add after bootstrap.min.js -->
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.js"></script>
+  </body>
+</html>

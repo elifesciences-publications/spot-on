@@ -1,0 +1,262 @@
+{% load static %}
+<h2 class="blog-post-title">Methods</h2>
+<p>Spot-On extracts kinetic parameters by fitting the jump length distribution of the tracked particles while taking into account that a significant fraction of the particles might be moving out of focus during the imaging process. This approach is based on the initial work by <a href="#mazza" aria-describedby="footnote-label" id="mazza-ref"><em>Mazza et al. (2012)</em></a>, further simplified by <a href="#hansen" aria-describedby="footnote-label" id="hansen-ref"><em>Hansen et al. (2017)</em></a>.</p>
+
+<h3> Outline of the method </h3>
+<p> Transcription factors (or DNA-binding factors in general) can be envisioned (in an over-simplified manner) as proteins alternating between several states in the nucleus:</p>
+
+<ul>
+  <li>One "freely diffusing" state, where the diffusion of the factor is governed by its interactions with the nuclear components</li>
+  <li>One "bound" state, where the factor is immobilized onto chromatin</li> 
+</ul>
+
+<p> In this context, identifying the fraction of proteins present in each state and its diffusion coefficient is of biological relevance.</p>
+<div class="col-sm-6">
+<img src="/static/SPTGUI/img/twostates.png"
+     class="img-responsive center-block"
+     style="max-width: 75%;"
+     alt="Two states model">
+</div>
+<div class="col-sm-6">
+<img src="/static/SPTGUI/img/threestates.png"
+     class="img-responsive center-block"
+     style="max-width: 75%;"
+     alt="Three states model">
+</div>
+
+<p> In such a context, the kinetic parameters mentioned above (fraction of the observed population and diffusion coefficient of each of the states) can be inferred by fitting a model to the histogram of jump lengths derived from single particle data (SPT). In a histogram of jump lengths, several populations can overlap with various diffusion coefficients. The slow-moving fraction tends to show short displacements, possibly dominated by localization error while the fast-moving fraction shows bigger jumps. Such fractions can be estimated using adequate modeling.</p>
+
+<p>
+Such model has to account for two extra parameters: localization error and particles moving out of focus.
+</p>
+
+<h3> Derivation of the two states kinetic model </h3>
+<p> The evolution over time of a concentration of particles located at the origin as a Dirac delta function and which follows free diffusion in two dimensions with a diffusion constant \(D\) can be described by a propagator (also known as <a href="https://en.wikipedia.org/wiki/Green's_function">Green’s function</a>).  Properly normalized, the probability of a particle starting at the origin ending up at a location \(r = (x,y)\) after a time delay, \(\Delta t\), is then given by:</p>
+
+  $$P(r, \Delta t) = N \frac{r}{2D\Delta t}e^{-\frac{r^2}{4D\Delta t}}$$
+
+<p> Here, \(N\) is a normalization constant with units of length. In practice, this distribution is compared to binned data: we integrate this distribution over a small histogram bin window \(\Delta r\), to obtain a normalized distribution and to compare to the empirically measured distribution. For simplicity, we therefore leave out this normalization constant of subsequent expressions.</p>
+
+
+<p>Furthermore, in practice, we are unable to determine the precise localization of a single molecule. Instead, it is associated with a certain localization error \(\sigma\). Correcting for localization errors is important because it will other-
+wise appear as if molecules move further between frames than they actually did. Thus, we obtain the following expression for the jump length distribution taking localization error, \(\sigma\), into account (<a href="#matsuoka" aria-describedby="footnote-label" id="matsuoka-ref">Matsuoka et al., 2009</a>)</p>
+</p>
+
+  $$P(r, \Delta t) = \frac{r}{2\left(D\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D\Delta t + \sigma^2\right)}}$$
+
+<p>Next, we assume that the protein of interest exists in <em>two states</em>, one bound (characterized by a specific diffusion coefficient, \(D_{bound}\), and a fraction bound, \(F_{bound} \in [0,1]\)) and one "free" (characterized by a specific diffusion coefficient, \(D_{free}\), and a fraction free, \(F_{free} = 1-F_{bound}\)). Thus, the distribution of jump length \(P(r, \Delta t)\) reflects this mixture of two populations:</p>
+
+$$P(r, \Delta t) = F_{bound} \frac{r}{2\left(D_{bound}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{bound}\Delta t + \sigma^2\right)}} +
+\left(1-F_{bound}\right)\frac{r}{2\left(D_{free}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{free}\Delta t + \sigma^2\right)}}$$
+
+<p> Then, fast-moving molecules are more likely  to move out of the focal plane or axial detection window (\(\Delta z\)) during 2D image acquisition than slow-moving or bound molecules. Even though for short lag times (e.g \(\Delta t \sim 5-30 \text{ ms}\)), this is still long enough for a large fraction of the free population to be lost. As a consequence, bound molecules tend to have much longer trajectories than do free molecules. Again, this means that we are oversampling the bound population and undersampling the free population.</p>
+
+<p>To correct for this, we consider the probability that a freely diffusing molecule with diffusion constant \(D_{free}\) will move out of the axial detection window \(\Delta z\) during a lag time \(\Delta t\). This problem has also been previously considered (<a href="#kues" aria-describedby="footnote-label" id="kues-ref">Kues and Kubitscheck, 2002</a>). If we consider the extreme case of
+a population of molecules equally distributed one-dimensionally along an axis \(z\), with an absorbing boundary at \(z_{max} = \Delta z/2\) and \(z_{min} = -\Delta z/2\), the fraction \(P_{remaining}\), of molecules remaining at lag time \(\Delta t\), is given by:</p>
+  
+$$P_{remaining}(\Delta t) = \frac{1}{\Delta z}\int_{-\Delta z/2}^{\Delta z/2}
+\left\{
+1-\sum_{n=0}^{\infty}(-1)^n
+\left[
+\text{erfc}\left(\frac{\frac{(2n+1)\Delta z}{2}-z}{\sqrt{4D_{free}\Delta t}} \right)
++ \text{erfc}\left(\frac{\frac{(2n+1)\Delta z}{2}+z}{\sqrt{4D_{free}\Delta t}} \right)
+\right]\right\}dz$$
+
+<p> However, this expression significantly overestimates how many freely diffusing molecules are lost since it assumes absorbing boundaries: any molecules that comes into contact with the boundary at \(\pm \Delta z/2\) are permanently lost. In reality, there is a significant probability that a molecule, which has briefly contacted or exceeded the boundary, re-enters the axial detection window, \(\Delta z\), during a lag time \(\Delta t\). Moreover, since trajectory gaps can be allowed in the tracking algorithm (i.e. a molecule present in frame \(n\) and \(n+2\) can still be tracked even if it was not localized in frame \(n+1)\), we must consider the probability that a lost molecule re-enters the axial detection window during twice the lag time, \(2 \Delta t\). This results in the somewhat counter-intuitive effect, which was also noted by Kues and Kubitscheck, that the decay rate depends on the microscope frame rate. In other words, the fraction lost depends on how often one 'looks'. One approach (<a href="#mazza" aria-describedby="footnote-label" id="mazza-ref"><em>Mazza et al, 2012</em></a>) of accounting for this is to use a corrected axial detection window larger than the true axial detection window: \(\Delta z_{corr} > \Delta_z\).</p>
+
+<p> \(\Delta z_{corr}\) was computed from the true \(\Delta z\) as:</p>
+
+$$\Delta z_{corr}(\Delta z, \Delta t, D) = \Delta z + a(\Delta z, \Delta t)\sqrt{D} + b(\Delta z, \Delta t)$$
+
+<p>where compute the coefficients \(a\) and \(b\) were fitted based on Monte Carlo simulations. Indeed, for a given diffusion constant, \(D\), 50,000 molecules were uniformly placed one-dimensionally along the z-axis from \(z_{min} =  -\Delta z/2\) to \(z_{max} =  \Delta z/2\). Next, using a time-step \(\Delta t\), we simulated one-dimensional Brownian diffusion along the z-axis. For time gaps from \(1 \Delta t\) to \(15 \Delta t\), we calculated the fraction of molecules that were lost, allowing for one missing frame as the default setting in our tracking algorithm. We repeated these simulations for particles with diffusion constants in the range of \(D = 1 \mu\text{m}^2/s\) to \(D = 12 \mu\text{m}^2/s\) to generate a comprehensive dataset over a range of biologically plausible diffusion constants. From this series of simulation, a pair of coefficients \(\left(a(\Delta z, \Delta t), b(\Delta z, \Delta t) \right)\) was estimated. The process was repeated over a grid of plausible values of \((\Delta z, \Delta t)\) to derive a grid of \((a,b)\) parameters.</p>
+
+<p> Having derived an analytical expression for the probability of a free molecule being lost due to axial diffusion during the imaging time, we can now thus write down the final equations used for fitting the raw jump length distributions: </p>
+
+$$P(r, \Delta t) = F_{bound} \frac{r}{2\left(D_{bound}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{bound}\Delta t + \sigma^2\right)}} +
+Z_{corr}(\Delta t)\left(1-F_{bound}\right)\frac{r}{2\left(D_{free}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{free}\Delta t + \sigma^2\right)}}$$
+
+<p>where:</p>
+
+$$Z_{corr}(\Delta t) = \frac{1}{\Delta z}\int_{-\Delta z/2}^{\Delta z/2}
+\left\{
+1-\sum_{n=0}^{\infty}(-1)^n
+\left[
+\text{erfc}\left(\frac{\frac{(2n+1)\Delta z_{corr}}{2}-z}{\sqrt{4D_{free}\Delta t}} \right)
++ \text{erfc}\left(\frac{\frac{(2n+1)\Delta z_{corr}}{2}+z}{\sqrt{4D_{free}\Delta t}} \right)
+\right]\right\}dz$$
+
+<p> Finally, some questions arise about how to build the empirical jump length distribution.</p>
+
+<p>One of them is whether to use the entire trajectory or not. One bias against moving molecules is that frequently, freely diffusing molecules will translocate through the axial detection window, \(\Delta z\), yielding only a single detectable localization and thus no jumps to be counted. Conversely, one bias against bound molecules, is that moving molecules can re-enter the axial detection window multiple times resulting in the same molecule appearing as multiple distinct trajectories and thus being over-counted. Clearly, the extent of the bias will depend on the photobleaching rate – in the limit of no photobleaching, a single freely diffusing molecule could yield a very high number of different trajectories, leading to large over-counting of the free population.
+  However, in practice, using the current dyes and high laser illumination, the average dye lifetime is quite short. Thus, the number of jumps to consider should be chosen accordingly with the estimated diffusion coefficient and the exposure time.</p>
+
+<p> Another free parameter is the number of \(\Delta t\) used to fit the model. The default parameter is 7 \(\Delta t\), but this has to be adjusted so that the histograms for the longer time intervals remain populated.</p>
+
+<h3> Generalization to a 3-state model </h3>
+
+<p> Having introduced the theory for the inference of a two-state kinetic model, derivation of a three-state is straightforward.</p>
+
+<p> First, we assume that the observed factor exists in three distinct populations, characterized by their diffusion coefficients \(D_{bound}\), \(D_{slow}\), \(D_{fast}\) and by their fractions:  \(F_{bound}\), \(F_{slow}\), \(F_{fast}\), and the relationship \(F_{bound}+F_{slow}+F_{fast}=1\) holds, describing a model with five free parameters. From that, we can derive the (uncorrected) jump length distribution \(P_3(r, \Delta t)\):</p>
+
+$$\begin{align}
+P_3(r, \Delta t) = & F_{bound} \frac{r}{2\left(D_{bound}\Delta t \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{bound}\Delta t + \sigma^2\right)}}\\
++ & F_{slow} \frac{r}{2\left(D_{slow}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{slow}\Delta t + \sigma^2\right)}}\\
++ &\left(1-F_{bound}-F_{slow}\right)\frac{r}{2\left(D_{fast}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{fast}\Delta t + \sigma^2\right)}}
+\end{align}$$
+
+
+<p>Then, as described in the two states model, this derivation is biased against fast-moving molecules, that tend to move out of focus whereas slow-moving and bound molecules remain in the focal plane for more frames. This results into slow-moving molecules exhibiting more jumps than the fast moving molecules. This distribution is thus corrected by a factor taking into account the fraction of molecules lost by moving out of focus:</p>
+
+$$\begin{align}
+P_3(r, \Delta t) = & F_{bound} \frac{r}{2\left(D_{bound}\Delta t \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{bound}\Delta t + \sigma^2\right)}}\\
++ & Z_{corr}(\Delta t, D_{slow})F_{slow} \frac{r}{2\left(D_{slow}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{slow}\Delta t + \sigma^2\right)}}\\
++ & Z_{corr}(\Delta t, D_{fast})\left(1-F_{bound}-F_{slow}\right)
+\frac{r}{2\left(D_{fast}\Delta t + \sigma^2\right)}e^{-\frac{r^2}{4\left(D_{fast}\Delta t + \sigma^2\right)}}
+\end{align}$$
+
+<p>where \(Z_{corr}(\Delta t, D)\) is unchanged compared to the two-state model: </p>
+
+$$Z_{corr}(\Delta t, D) = \frac{1}{\Delta z}\int_{-\Delta z/2}^{\Delta z/2}
+\left\{
+1-\sum_{n=0}^{\infty}(-1)^n
+\left[
+\text{erfc}\left(\frac{\frac{(2n+1)\Delta z_{corr}}{2}-z}{\sqrt{4D_{free}\Delta t}} \right)
++ \text{erfc}\left(\frac{\frac{(2n+1)\Delta z_{corr}}{2}+z}{\sqrt{4D_{free}\Delta t}} \right)
+\right]\right\}dz$$
+
+<h3> Assumptions of the approach </h3>
+This modeling approach makes the following assumptions. In case these assumptions are not fulfilled, the result can be unreliable.
+
+<h4> State changes are neglected</h4>
+<p>The modeling approach described above does not explicitely incorporate the exchange rates between the different states (the apparent \(k^*_{on}\) and \(k_{off}\)), but defines rather the fraction in each of the states, and assumes that:</p>
+
+$$F_{bound} = \frac{k^*_{on}}{k^*_{on}+k_{off}}$$
+
+<p>However, our approach assumes that state exchange is rare when compared to the imaging framerate: that is that one observed jump likely belongs to one molecule either in one state or the other, rather than an average between the two states due to state exchange. In case this assumption is violated, then the estimate of diffusion coefficients and fraction bound might be wrong.</p>
+
+
+<h4> The correction for particles that move out of focus is semi-empirical </h4>
+<p>Although an analytical formula exists to estimate the fraction of molecule that reach the limit of the detection volume after a time \(\Delta t\), this formula does not take into account the fact that molecules can exit the detection volume for a very short time, or can exit for the duration of ~ 1 frame and reenter one frame later, a behavior that can be captured if the tracking algorithm is configured to allow for a gap. To take into account those effects, the corrected detection volume \(\Delta z_{corr}\) is estimated from Monte Carlo simulations. Spot-On relies on a database of ~16000 Monte Carlo simulations for a wide range of \(\Delta t, \Delta z, D\) values. Several limitations apply:</p>
+
+<ul>
+  <li>For values of \(\Delta t\) and \(\Delta z\) kept constant, we assume that \(\Delta z_{corr}\) follows the empirical relationship: \(\Delta z_{corr} = \Delta z + a\sqrt{D} + b\). This fit might not be accurate for all pairs of parameters.</li>
+  <li> All the Monte Carlo simulations were performed with the tracking algorithm allowing for 0, 1 or 2 frame gaps. If more than 2 gaps were allowed, the correction may not be accurate.</li>
+</ul>
+
+<h3> Numerical implementation </h3>
+<p>Here is a little bit more detail about how this model is implemented and fitted in Spot-On.</p>
+
+<h4> Computation of the jump length distribution</h4>
+<p> The empirical jump length distribution is computed as follows: first, the <code>MaxJump</code> and <code>BinWidth</code> parameters determine the range to build the histogram, and ulitmately the number of bins it will contain. Also, the input file is filtered for trajectories that contain more than three localizations.
+</p>
+
+<p> Then, the histogram in itself is built. For each trajectory, the <code>JumpsToConsider</code> parameter determines how many of the first jumps will be taken into account for the building of the histogram. If the <code>UseAllJumps</code> is set to "Yes", then all jumps (and not the first few ones) will be used to build the histogram. Note that this later option is likely to bias the histogram towards bound molecules. For this procedure, the number of gaps in the data is extracted.</p>
+
+<p> To increase the robustness of the fit, several histograms are built with increasing time lags \(\Delta t\). The number of histograms to be built is determined by the <code>Number of time points</code> parameter.</p>
+
+<h4> Computation of the model </h4>
+The model presented above can be numerically evaluated. To do so, one has to compute one 1D numerical integration and one infinite sum. The integral is computed using the <a href="https://en.wikipedia.org/wiki/Rectangle_method">midpoint</a> method over 200 points. The terms of the series are computed until the term falls below a \(10^{-10}\) threshold.
+
+<h4> Fitting </h4>
+<p>Parameter optimization of \((D_{free}, D_{bound}, F_{bound})\) (or \((D_{fast}, D_{slow}, D_{bound}, F_{fast}, F_{bound})\) for a 3-state model) is performed using a non-linear least-square algorithm. In practice, the <a href="https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm">
+  Levenberg-Marquardt</a> solver implemented wrapped by the <a href="https://lmfit.github.io/lmfit-py/"><code>lmfit</code></a> library is used. User-provided bounds are enforced and the algorithm provides estimates of the uncertainty for each estimated parameter. The routine is initialized with parameters drawn uniformly from the specified parameter range. The optimization is repeated several times with different initialization parameters. This number of initializations is determined by the <code>Iterations</code> parameter.</p>
+
+<h4> Specificities for the fitting of the three-state model</h4>
+
+<p>The three-state model is fitted similarly as the two-state model. The only difference is the parameter bounds cannot be easily specified. Indeed, the optimization is performed under the following constraints:</p>
+
+$$\begin{align}
+D^{MIN}_{bound} \leq D_{bound} \leq D^{MAX}_{bound} \\
+D^{MIN}_{slow} \leq D_{slow} \leq D^{MAX}_{slow} \\
+D^{MIN}_{fast} \leq D_{fast} \leq D^{MAX}_{fast} \\
+0 \leq F_{bound} \leq 1\\
+0 \leq F_{slow} \leq 1\\
+0 \leq F_{fast} \leq 1\\
+F_{bound} + F_{slow} + F_{fast} = 1
+\end{align}$$
+
+<p>The first six constraints are easy to enforce since they constrain the optimization inside an hypercube, and is built-in the solver. However, the last constraint, \(F_{bound} + F_{slow} + F_{fast} = 1\) is a triangular constraint for which a specific cost function was written. Indeed: \(F_{bound} + F_{fast} \leq 1\). Thus the cost function was modified to penalize parameters sets where \(F_{bound} + F_{fast} > 1\).</p>
+
+<p> In practice, denoting \(X_i, i \in [0,N]\) the bins of the empirical histogram with \(N\) the number of bins (\(N = \lfloor \frac{\text{MaxJump}}{\text{BinWidth}}\rfloor\), and \(X^*_i, i \in [0,N]\) the model resulting a set of candidate parameters, the algorithm minimizes the cost function \(L(X,X^*)\):</p>
+
+$$L(X,X^*) = \sum_{i=0}^N \left(X_i-X^*_i\right)^2 + 10^4\left(F_{bound}+F_{fast}-1\right)\mathbf{1}_{F_{bound} + F_{fast} > 1}$$
+
+<p> where \(\mathbf{1}\) denotes the indicator function. This in practice constrains the optimization to the half-plane where \(F_{bound} + F_{fast} \leq 1\).
+
+
+<h3 id="footnote-label">References</h3>
+<ol>
+  <li id="normanno"><blockquote>
+      Normanno, Davide, Lydia Boudarène, Claire Dugast-Darzacq, Jiji Chen, Christian Richter, Florence Proux, Olivier Bénichou, Raphaël Voituriez, Xavier Darzacq, and Maxime Dahan. “Probing the Target Search of DNA-Binding Proteins in Mammalian Cells Using TetR as Model Searcher.” Nature Communications 6 (July 7, 2015): 7357.
+      <footer>
+	DOI: <a href="https://doi.org/10.1038/ncomms8357">10.1038/ncomms8357</a>.
+	<a href="#tokunaga-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="tokunaga"><blockquote>
+      Tokunaga, Makio, Naoko Imamoto, and Kumiko Sakata-Sogawa. “Highly Inclined Thin Illumination Enables Clear Single-Molecule Imaging in Cells.” Nature Methods 5, no. 2 (2008): 159–161.
+      <footer>
+	DOI: <a href="https://doi.org/10.1038/nmeth1171">10.1038/nmeth1171
+.</a>
+	<a href="#tokunaga-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="grimm"><blockquote>
+      Grimm, Jonathan B, Brian P English, Jiji Chen, Joel P Slaughter, Zhengjian Zhang, Andrey Revyakin, Ronak Patel, et al. “A General Method to Improve Fluorophores for Live-Cell and Single-Molecule Microscopy.” Nature Methods 12, no. 3 (January 19, 2015): 244–50.
+      <footer>
+	DOI: <a href="https://doi.org/10.1038/nmeth3256">10.1038/nmeth3256.</a>
+	<a href="#grimm-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="manley"><blockquote>
+      Manley, Suliana, Jennifer M Gillette, George H Patterson, Hari Shroff, Harald F Hess, Eric Betzig, and Jennifer Lippincott-Schwartz. “High-Density Mapping of Single-Molecule Trajectories with Photoactivated Localization Microscopy.” Nature Methods 5, no. 2 (February 2008): 155–57. 
+      <footer>
+	DOI: <a href="https://doi.org/10.1038/nmeth1176">10.1038/nmeth1176.</a>
+	<a href="#manley-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="shinkai"><blockquote>
+      Shinkai, Soya, Tadasu Nozaki, Kazuhiro Maeshima, and Yuichi Togashi. “Dynamic Nucleosome Movement Provides Structural Information of Topological Chromatin Domains in Living Human Cells.” Edited by Alexandre V Morozov. PLOS Computational Biology 12, no. 10 (October 20, 2016): e1005136.
+      <footer>
+	DOI: <a href="https://doi.org/10.1371/journal.pcbi.1005136">10.1371/journal.pcbi.1005136.</a>
+	<a href="#shinkai-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="mazza"><blockquote>
+      Mazza, D., A. Abernathy, N. Golob, T. Morisaki, and J. G. McNally. “A Benchmark for Chromatin Binding Measurements in Live Cells.” Nucleic Acids Research 40, no. 15 (August 1, 2012): e119–e119.
+      <footer>
+	DOI: <a href="https://doi.org/10.1093/nar/gks701">10.1093/nar/gks701</a>
+	<a href="#mazza-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="hansen"> <blockquote>
+      Hansen, Anders S., Iryna Pustova, Claudia Cattoglio, Robert Tjian, and Xavier Darzacq. “CTCF and Cohesin Regulate Chromatin Loop Stability with Distinct Dynamics.” Elife 6 (2017).
+      <footer>
+	DOI: <a href="https://doi.org/10.7554/eLife.25776">10.7554/eLife.25776</a>
+	<a href="#hansen-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="matsuoka"> <blockquote>
+      Matsuoka, Satomi, Tatsuo Shibata, and Masahiro Ueda. “Statistical Analysis of Lateral Diffusion and Multistate Kinetics in Single-Molecule Imaging.” Biophysical Journal 97, no. 4 (August 2009): 1115–24.
+      <footer>
+	DOI: <a href="https://doi.org/10.1016/j.bpj.2009.06.007">10.1016/j.bpj.2009.06.007</a>
+	<a href="#matsuoka-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>
+  <li id="kues"> <blockquote>
+      Kues, Thorsten, and Ulrich Kubitscheck. “Single Molecule Motion Perpendicular to the Focal Plane of a Microscope: Application to Splicing Factor Dynamics within the Cell Nucleus.” Single Molecules 3, no. 4 (2002): 218–24.
+      <footer>
+	DOI: <a href="https://doi.org/10.1002/1438-5171(200208)3:4<218::AID-SIMO218>3.0.CO;2-C">10.1002/1438-5171(200208)3:4&lt;218::AID-SIMO218&gt;3.0.CO;2-C</a>
+	<a href="#kues-ref" aria-label="Back to content">↩</a>
+      </footer>
+    </blockquote>
+  </li>  
+</ol>

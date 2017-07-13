@@ -174,12 +174,13 @@ def analysis_dbg(request, url_basename):
 
 def static(request, page):
     """Returns a static page"""
-    doc_versions = [0.6, 0.7]
+    doc_versions = [0.6, 0.7, 0.8]
     templates = {"docs": "documentation.html",
                  "about": "about.html",
                  "contact": "contact.html",
                  "license": "license.html",
-                 "about": "about.html"}
+                 "about": "about.html",
+                 "privacy": "privacy.html"}
     context = {}
     templates_docs = {"docs/{}".format(k): "{}/{}".format(k, templates["docs"]) for k in doc_versions}
     for k in templates_docs:
