@@ -10,9 +10,15 @@
 <h3>What is not Spot-On?</h3>
 <p> Spot-On is not a tracking algorithm, thus you need to perform the tracking of your single particle tracking datasets using a separated algorithm. Spot-On accepts inputs from a range of <a href="#input-formats">popular tracking softwares</a>, and you can either add your own or write a converter towards a standard table-file import.</p>
 
-<p> See also the section <a href="appropriate-datasets">Which datasets are appropriate for Spot-On?</a>.</p>.
+<p> See also the section <a href="appropriate-datasets">Which datasets are appropriate for Spot-On?</a>.</p>
 
 <h3>What tracking software to use?</h3>
+<p>All tracking softwares are very sensitive to the input parameters, but also to the experimental acquisition conditions, such as the signal-to-background ratio and the presence/absence of motion blur.</p>
+
+<p>Thus, in all cases, a tracking software and the associated parameters have to be chosen carefully based on analysis of the data. A consequence of that is there is to our knowledge no universal tracking software. However, the guidelines presented in section <a href="#howto-acquisition">How to acquire a "good" dataset?</a> are supposed to minimize the impact of the choice of the algorithm/tracking parameters by ensuring a high signal-to-background ratio and low levels of motion blur thanks to stroboscopic illumination.</p>
+
+<p>All the data presented in this document was analysed using SLIMfast/evalSPT, a Matlab-based, modified version of MTT (Sergé et al.). A version of SLIMfast is available on the <a href="https://doi.org/10.7554/eLife.22280.022">eLife website</a>.</p>
+
 
 <h3>What types of input does Spot-On accept?</h3>
 
@@ -23,14 +29,25 @@
 <p>If the format of the tracking algorithm you use is not supported by Spot-On, here are a few things you can try:</p>
 
 <ul>
-  <li>If you believe that this format should be added to Spot-On, feel free to contact us, either through our <a href="{% url 'SPTGUI:contactform' %}">contact page</a> or by creating an issue on our <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">Gitlab bugtracker</a>.</li>
+  <li>If you believe that this format should be added to Spot-On, feel free to contact us, either through our <a href="{% url 'SPTGUI:contactform' %}">contact page</a> or by creating an issue on our <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/issues">Gitlab bugtracker</a>.</li>
   <li>In the meantime, you can try to convert your file to one of the formats supported by Spot-On. A description of the <a href="#input-formats">formats supported by Spot-On</a> is presented above. For instance, the CSV format has a very simple syntax.</li>
   <li> If you have programming skills, feel free to write an importer! The structure of the parser is documented in the <code>/SPTGUI/parsers.py</code> file. Do not forget to open an issue on the bugtracker so that we are aware that you are working on a specific file format.</li>
 </ul>
 
-<h3>How fast is Spot-On?</h3>
-<p> During our tests that included up to 1 million detections, the computation of the jump length distribution and the fitting of the most complicated kinetic model (3 states with estimation of the localization error from the data) usually takes about one minute.</p>
-<p> That said, the fitting speed depends on many parameters (load of the server, range of the parameters, shape of your jump length distribution, etc.). If the online version of Spot-On is performing too slowly for your needs, feel free to get either the <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">offline version of Spot-On</a>, or the <a href="https://github.com/DarzacqLab/fastspt"> command line version</a>.</p>
+<h3 id="trajectory-length"> What limits the length of trajectories? </h3>
+
+<p> Two factors limit the length of trajectories than one can obtain from a single-particle tracking experiment.</p>
+
+<p><em>Photobleaching: </em>First, the dyes used do not have an infinite lifetime, and bleach eventually. When high-power lasers are used, this can happen in a few frames. The datasets analyzed above have a median length of trajectories of 4 frames, mostly limited by fluorophore lifetime.</p>
+
+<p><em>Particles moving out of focus: </em>As described above, free particles diffuse in 3D and can move out of focus extremely quickly. Thus, for a fast-diffusing particle, it is extremely unlikely to observe a "long" trajectory, just because the probability of being lost at some point in the tracking process increases exponentially.</p>
+
+<p> The figure below shows for different diffusion coefficients and constant framerate (~7.5ms) the fraction of particles that have remained in focus (allowing for one gap, that is to track a particle that has moved out of focus for at most one frame). One can see that it is extremely unlikely to follow a fast protein for 100 ms (13 frames), simply because the particles tend to move out of focus.</p>
+
+    <img src="{% static '/SPTGUI/img/fractionlost.png' %}"
+	 class="img-responsive center-block"
+	 style="max-width: 60%;"
+	 alt="Fraction of the particles lost over time with one given framerate.">
 
 <h3>Are you just fitting a two-exponential model?</h3>
 
@@ -65,9 +82,14 @@
   <li>Select the option to fit the localization error in Spot-On</li>
 </ol>
 
-<h3 id="measure-locerror">How to measure the detection range? </h3>
+<h3 id="measure-locerror">How to measure the axial detection range? </h3>
 
-<em>TODO</em>
+<div class="alert alert-info">This section is empty</div>
+
+
+<h3>How fast is Spot-On?</h3>
+<p> During our tests that included up to 1 million detections, the computation of the jump length distribution and the fitting of the most complicated kinetic model (3 states with estimation of the localization error from the data) usually takes about one minute.</p>
+<p> That said, the fitting speed depends on many parameters (load of the server, range of the parameters, shape of your jump length distribution, etc.). If the online version of Spot-On is performing too slowly for your needs, feel free to get either the <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">offline version of Spot-On</a>, or the <a href="https://github.com/DarzacqLab/fastspt"> command line version</a>.</p>
 
 
 <h3>I'm afraid of uploading my dataset to your server. Is there an offline version?</h3>
@@ -117,7 +139,7 @@
 
 <h3>How do you handle privacy?</h3>
 
-<p>We only collect minimal information when you upload your datasets (your IP is saved somwhere in the logs but we don't use it), we do not ask for email or identification: no account is required to use Spot-On. Furthermore, you can erase your analysis anytime by going to the <em>Settings</em> tab in the analysis page. Finally, we provide an offline and a command-line version that you can run on your own machine. If you have any concern, feel free to <a href="{% url 'SPTGUI:contactform' %}">write to us.</a></p>
+<p>We only collect minimal information when you upload your datasets (your IP is saved somwhere in the logs but we don't use it), we do not ask for email or identification: no account is required to use Spot-On. Furthermore, you can erase your analysis anytime by going to the <em>Settings</em> tab in the analysis page. Finally, we provide an offline and a command-line version that you can run on your own machine. We can find more details on the <a href="{% url 'SPTGUI:staticpage' 'privacy' %}">Privacy page</a>. If you have any concern, feel free to <a href="{% url 'SPTGUI:contactform' %}">write to us</a>.</p>
 
 <h3>How to cite Spot-On?</h3>
 
