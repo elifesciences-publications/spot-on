@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect
+from fastSPT import custom_settings
 
 ##
 ## ==== Views
@@ -94,7 +95,7 @@ def contactform(request):
 ##
 ## ==== Helper functions
 ##
-def send_confirmation_email(email, token, bp='http://127.0.0.1:8000',
+def send_confirmation_email(email, token, bp=custom_settings.URL_BASENAME,
                             reminder=False):
     """Sends an email confirming that the email has been added to the newsletter"""
                         
@@ -132,14 +133,15 @@ PS: You can always unsubscribe by clicking this link: {}"""
     else:
         msg = msg1 + msg2_no + msg3
         link = bp+reverse('SPTGUI:email_confirm', args=[token])
-
+    admin_email = '{} <{}>'.format(custom_settings.ADMIN_NAME,
+                                   custom_settings.ADMIN_EMAIL)
     send_mail(
         'Subscription to the Spot-On newsletter',
         msg.format(bp+'/SPTGUI',
                    link,
                    bp+reverse('SPTGUI:email_unsubscribe', args=[token]),
                ),
-        'the Spot-On Team <spot-on@gmx.us>',
+        admin_email,
         [email],
         fail_silently=False,
     )
@@ -148,11 +150,13 @@ PS: You can always unsubscribe by clicking this link: {}"""
 def send_message(cc, subject, message):
     """Helper function to send a message to the Spot-On team"""
     msg = """Hi\n\nThe following message was submitted to the Spot-On contact form:\n\n============================================\n{}\n============================================\n\n -- The Spot-On team."""
+    admin_email = '{} <{}>'.format(custom_settings.ADMIN_NAME,
+                                   custom_settings.ADMIN_EMAIL)
     send_mail(
         '[Spot-On contact form] {}'.format(subject),
         msg.format(message),
-        'the Spot-On Team <spot-on@gmx.us>',
-        [cc, 'spot-on@gmx.us'],
+        admin_email,
+        [cc, admin_email]+custom_settings.EMAIL_CC_LIST,
         fail_silently=False,
     )
     print "done"    
