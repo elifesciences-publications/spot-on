@@ -21,6 +21,7 @@ angular.module('app')
 	    //This either contains the progress report or the result
 	    paramsJLD.hashvalueJLD = 'null';	    
 	    paramsJLD.hashvalueJLD = encodeQueryData(paramsJLD);
+	    paramsFit = angular.copy(paramsFit);
 	    paramsFit.hashvalue = 'null';
 	    paramsFit.hashvalue = encodeQueryData(paramsFit);
 	    return $http.get('./api/analyze/?' + encodeQueryData(Object.assign({}, paramsJLD, paramsFit)));
@@ -30,6 +31,7 @@ angular.module('app')
 	    //This either contains the progress report or the result
 	    paramsJLD.hashvalueJLD = 'null';	    
 	    paramsJLD.hashvalueJLD = encodeQueryData(paramsJLD);
+	    paramsFit = angular.copy(paramsFit);	    
 	    paramsFit.hashvalue = 'null';
 	    paramsFit.hashvalue = encodeQueryData(paramsFit);
 	    return $http.get('./api/analyze/'+data_id+'?'+encodeQueryData( Object.assign({}, paramsJLD, paramsFit)));
