@@ -655,7 +655,7 @@ Mean jump length: {}
 Max number of gaps: {}
 
 """
-        out.append(t.format(d.name, d.dt, d.description, 
+        out.append(t.format(d.name, d.description, d.dt,
                             d.pre_ntraces, d.pre_npoints,
                             d.pre_ntraces3, d.pre_nframes, d.pre_njumps,
                             d.pre_median_length_of_trajectories,
