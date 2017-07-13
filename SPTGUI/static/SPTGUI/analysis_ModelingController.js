@@ -71,7 +71,7 @@ angular.module('app')
 	    $scope.getNumberDatasetsToFit = function() {
 		if ($scope.modelingParameters.SingleCellFit) {
 		    return $scope.modelingParameters.include.length+1;
-		} else {
+		} else  {
 		    return 1; // Only fit the pooled distribution
 		}
 	    }
@@ -485,14 +485,25 @@ angular.module('app')
 		    (!angular.equals($scope.modelingParameters,
 				     fitsparamschanged_fitvalue))
 	    } else {
-		return ($scope.analysisState=='done') &&
-		    (fitsparamschanged_fitvalue !== null) &&
-		    (!angular.equals($scope.modelingParameters,
-				     fitsparamschanged_fitvalue))
+		if ($scope.analysisState=='done') {
+		    return (fitsparamschanged_fitvalue !== null) &&
+			(!angular.equals($scope.modelingParameters,
+					 fitsparamschanged_fitvalue))
+		} else {
+		    return false
+		}
 	    }
 	}
 
 	$scope.resetFitParams = function() {
+	    $scope.datasets.forEach(function(el,i) {
+		if (fitsparamschanged_fitvalue.include.indexOf(el.id)>-1) {
+		    $scope.datasetsToggle[i](true)
+		}
+	    });
+	    fitsparamschanged_fitvalue.include.forEach(function(el) {
+		$scope.datasets
+	    })
 	    $scope.modelingParameters = angular.copy(fitsparamschanged_fitvalue);
 	}
 
@@ -638,9 +649,9 @@ angular.module('app')
 	    if (angular.equals(params, oldparams)) {return}
 	    // Hide fit
 	    $scope.showJLPf = false;
-	    $scope.jlpfit = null;
-	    $scope.fitAvailable = false;
-	    $scope.jlfit = $scope.datasets.map(function(el){return null});
+	    //$scope.jlpfit = null;
+	    //$scope.fitAvailable = false;
+	    //$scope.jlfit = $scope.datasets.map(function(el){return null});
 	    
 	    // Get dT
 	    selected = $scope.datasets.filter(function(el) {
