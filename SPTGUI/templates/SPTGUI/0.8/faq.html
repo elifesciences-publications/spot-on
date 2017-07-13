@@ -5,7 +5,7 @@
 <p>Spot-On is an online tool to extract kinetic parameters from fast single particle tracking experiments. It does it in a manner that takes into account the finite depth of field of the objective and proposes corrections for that. Spot-On can fit two-state (Bound-Free) and three-state (Bound-Free1-Free2) models.</p>
 
 <p>Spot-On takes a set of trajectories as input (<a href="#input-formats">multiple formats supported</a>) and outputs a fitted jump length distribution, together with goodness-of-fit metrics and the corresponding fitted coefficients.</p>
-  
+
 
 <h3>What is not Spot-On?</h3>
 <p> Spot-On is not a tracking algorithm, thus you need to perform the tracking of your single particle tracking datasets using a separated algorithm. Spot-On accepts inputs from a range of <a href="#input-formats">popular tracking softwares</a>, and you can either add your own or write a converter towards a standard table-file import.</p>
@@ -23,14 +23,14 @@
 <p>If the format of the tracking algorithm you use is not supported by Spot-On, here are a few things you can try:</p>
 
 <ul>
-  <li>If you believe that this format should be added to Spot-On, feel free to contact us, either through our <a href="{% url 'SPTGUI:contactform' %}">contact page</a> or by creating an issue on our <a href="https://gitlab.com/padouppadoup/Spot-On/">Gitlab bugtracker</a>.</li>
+  <li>If you believe that this format should be added to Spot-On, feel free to contact us, either through our <a href="{% url 'SPTGUI:contactform' %}">contact page</a> or by creating an issue on our <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">Gitlab bugtracker</a>.</li>
   <li>In the meantime, you can try to convert your file to one of the formats supported by Spot-On. A description of the <a href="#input-formats">formats supported by Spot-On</a> is presented above. For instance, the CSV format has a very simple syntax.</li>
   <li> If you have programming skills, feel free to write an importer! The structure of the parser is documented in the <code>/SPTGUI/parsers.py</code> file. Do not forget to open an issue on the bugtracker so that we are aware that you are working on a specific file format.</li>
 </ul>
 
 <h3>How fast is Spot-On?</h3>
 <p> During our tests that included up to 1 million detections, the computation of the jump length distribution and the fitting of the most complicated kinetic model (3 states with estimation of the localization error from the data) usually takes about one minute.</p>
-<p> That said, the fitting speed depends on many parameters (load of the server, range of the parameters, shape of your jump length distribution, etc.). If the online version of Spot-On is performing too slowly for your needs, feel free to get either the <a href="https://gitlab.com/padouppadoup/Spot-On/">offline version of Spot-On</a>, or the <a href="https://github.com/DarzacqLab/fastspt"> command line version</a>.</p>
+<p> That said, the fitting speed depends on many parameters (load of the server, range of the parameters, shape of your jump length distribution, etc.). If the online version of Spot-On is performing too slowly for your needs, feel free to get either the <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">offline version of Spot-On</a>, or the <a href="https://github.com/DarzacqLab/fastspt"> command line version</a>.</p>
 
 <h3>Are you just fitting a two-exponential model?</h3>
 
@@ -72,7 +72,7 @@
 
 <h3>I'm afraid of uploading my dataset to your server. Is there an offline version?</h3>
 
-<p> Sure! Spot-On is fully <a href="{% url 'SPTGUI:staticpage' 'license' %}">free/open-source</a> and detailed download and installation instructions can be retrieved from our <a href="https://gitlab.com/padouppadoup/Spot-On/">Gitlab page</a>.</p>
+<p> Sure! Spot-On is fully <a href="{% url 'SPTGUI:staticpage' 'license' %}">free/open-source</a> and detailed download and installation instructions can be retrieved from our <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">Gitlab page</a>.</p>
 
 <h3>Is there a command-line version?</h3>
 <p> There is! Spot-On uses an independent command-line Python backend that is available in our <a href="https://github.com/DarzacqLab/fastspt">Github repository</a>. It implements most of the features of Spot-On, comes with simple wrapper functions that can quickly be implemented in your scripting framework.  There is also a <a href="https://gitlab.com/anders.sejr.hansen/spot-on-matlab">Matlab command line version</a> of Spot-On available from our Gitlab repository.</p>
@@ -89,7 +89,7 @@
 <ul>
   <li><em>The <a href="https://github.com/DarzacqLab/fastspt">fitting backend</a></em> is released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License version 3 or higher</a>. You can consult one of these links for a summary of the license: [<a href="https://tldrlegal.com/license/gnu-general-public-license-v3-%28gpl-3%29">1</a>] [<a href="https://choosealicense.com/licenses/gpl-3.0/">2</a>].</li>
   <li> <em>The <a href="https://gitlab.com/anders.sejr.hansen/spot-on-matlab">Matlab backend</a></em> is also released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License version 3 or higher</a>.</li>
-  <li><em>The <a href="https://gitlab.com/padouppadoup/Spot-On/">server frontend</a></em>, that wraps the fitting backend is released under the <a href="https://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License version 3 or higher</a>. You can consult one of these links for a summary of the license: [<a href="https://tldrlegal.com/license/gnu-affero-general-public-license-v3-%28agpl-3.0%29">1</a>] [<a href="https://choosealicense.com/licenses/agpl-3.0/">2</a>].</li>
+  <li><em>The <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">server frontend</a></em>, that wraps the fitting backend is released under the <a href="https://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License version 3 or higher</a>. You can consult one of these links for a summary of the license: [<a href="https://tldrlegal.com/license/gnu-affero-general-public-license-v3-%28agpl-3.0%29">1</a>] [<a href="https://choosealicense.com/licenses/agpl-3.0/">2</a>].</li>
   
 </ul>
 <div class="row">
@@ -112,7 +112,7 @@
 
 <ul>
   <li>Contact us by email (using our <a href="{% url 'SPTGUI:contactform' %}">contact form</a>)</li>
-  <li>Open an issue on our <a href="https://gitlab.com/padouppadoup/Spot-On/issues">Gitlab bugtracker</a></li>
+  <li>Open an issue on our <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/issues">Gitlab bugtracker</a></li>
 </ul>
 
 <h3>How do you handle privacy?</h3>
@@ -129,4 +129,4 @@
 
 <h3>I found a bug, how can I report it?</h3>  
 
-<p>Thanks a lot for letting us know, this is really important to us! You can either open an issue on our <a href="https://gitlab.com/padouppadoup/Spot-On/issues">Gitlab bugtracker</a> or <a href="{% url 'SPTGUI:contactform' %}">drop us a message</a>.</p>
+<p>Thanks a lot for letting us know, this is really important to us! You can either open an issue on our <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/issues">Gitlab bugtracker</a> or <a href="{% url 'SPTGUI:contactform' %}">drop us a message</a>.</p>
