@@ -42,9 +42,9 @@
 
 <p><em>Particles moving out of focus: </em>As described above, free particles diffuse in 3D and can move out of focus extremely quickly. Thus, for a fast-diffusing particle, it is extremely unlikely to observe a "long" trajectory, just because the probability of being lost at some point in the tracking process increases exponentially.</p>
 
-<p> The figure below shows for different diffusion coefficients and constant framerate (~7.5ms) the fraction of particles that have remained in focus (allowing for one gap, that is to track a particle that has moved out of focus for at most one frame). One can see that it is extremely unlikely to follow a fast protein for 100 ms (13 frames), simply because the particles tend to move out of focus.</p>
+<p> The figure below shows for different diffusion coefficients and constant framerate (10ms) the fraction of particles that have remained in focus (allowing for one gap, that is to track a particle that has moved out of focus for at most one frame). One can see that it is extremely unlikely to follow a fast protein for 100 ms (10 frames), simply because the particles tend to move out of focus.</p>
 
-    <img src="{% static '/SPTGUI/img/fractionlost.png' %}"
+    <img src="{% static '/SPTGUI/img/fractionlost.svg' %}"
 	 class="img-responsive center-block"
 	 style="max-width: 60%;"
 	 alt="Fraction of the particles lost over time with one given framerate.">
