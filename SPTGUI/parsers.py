@@ -71,10 +71,21 @@ def read_mosaic(fn, framerate, pixelsize):
     
 ## ==== UTrack file format
 def init_utrack():
+    pars = [{'name': 'framerate (ms)', 'info': '', 'type': 'number',
+             'value': 'framerate', 'model': 'framerate'}]
     return {'name': 'UTrack', 'info': "UTrack file format", 'anchor': 'utrack',
-            'active': False, 'params': []}
-def read_utrack(fn):
-    pass
+            'active': True, 'params': pars}
+def read_utrack(fn, framerate):
+    traces = []
+    m=scipy.io.loadmat(fn)
+    for (idx, tr) in enumerate(m['tracksFinal']):
+        out = []
+        fp = tr[0][2][0,0]
+        pts = tr[0][1].reshape(-1,8)
+        for i in range(tr[0][1].size/8):
+            out.append([pts[i,0], pts[i,1], (fp+i)*framerate, int(fp+i)])
+        traces.append(out)
+    return traces    
     
 ## ==== TrackMate file format
 def init_trackmate():
@@ -122,7 +133,6 @@ def init_csv():
             'active': True, 'params': []}
 def read_csv(fn):
     return read_arbitrary_csv(fn, col_traj="trajectory", col_x="x", col_y="y", col_frame="frame", col_t="t")
-
     
 ## ==== Anders' file format
 def init_anders():
