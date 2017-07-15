@@ -84,8 +84,21 @@
 
 <h3 id="measure-locerror">How to measure the axial detection range? </h3>
 
-<div class="alert alert-info">This section is empty</div>
+<p>Below is a short protocol to measure the empirical axial detection range:</p>
 
+<ul>
+  <li>Label cells with picomolar dye concentration to see single molecules (e.g. JF646)</li>
+  <li>Fix cells (4% PFA for 20 min)</li>
+  <li>Adjust image acquisition settings to get similar signal-to-noise as for SPT imaging</li>
+  <li>Record a z-stack throughout the whole cell (e.g. we did 6um with 20nm steps)</li>
+  <li>Localize and track molecules; fix max displacement to be short( e.g. 50 nm)</li>
+  <li>Plot survival probability vs. length.</li>
+  <li>2 types of decay are then observed:
+    <ul><li>photobleaching (slow and constant)</li>
+      <li>defocalization: sudden drop-off when molecules go to far out of focus</li></ul>
+  </li>
+  <li>It will not be perfectly like a step function, but use the photobleaching-corrected half-max as a rough estimate of the axial detection range</li>
+</ul>
 
 <h3>How fast is Spot-On?</h3>
 <p> During our tests that included up to 1 million detections, the computation of the jump length distribution and the fitting of the most complicated kinetic model (3 states with estimation of the localization error from the data) usually takes about one minute.</p>
