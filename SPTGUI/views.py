@@ -5,7 +5,7 @@
 ##
 ## ==== Imports
 ##
-import random, string, json, os, hashlib, pickle, urlparse, logging, re
+import random, string, json, os, hashlib, pickle, urlparse, logging, re, shutil
 from haikunator import Haikunator
 import fastspt
 
@@ -114,6 +114,7 @@ def new_demo(request):
         
         ## Duplicate the related datasets
         dem = list(Analysis.objects.filter(editable=False))[-1]
+        url_basename_demo = dem.url_basename
         da = Dataset.objects.filter(analysis=dem)        
         print "The original analysis is {} and has {} datasets".format(dem.url_basename, len(da))
         
@@ -124,15 +125,25 @@ def new_demo(request):
         dem.editable = True
         dem.pub_date=timezone.now()
         dem.save()
-
-        for d in da:
+        
+        ## Create the storage folder
+        os.makedirs(os.path.join(bf,url_basename))
+        cha = "03f9de26788d1c29" #'c0f7e565600c3bf5' # prefix for default jld
+        
+        for d in da: # Duplicate the related datasets. Does not duplicate the file
+            #print "Duplicating {}".format(d)
+            id_old = d.id
             d.pk = None
             d.id = None
             d.analysis = dem
             d.save()
-
-        ## Create the storage folder
-        os.makedirs(os.path.join(bf,url_basename))
+            id_new = d.id
+            path_old = os.path.join(bf, url_basename_demo,
+                                    "jld_{}_{}.pkl".format(cha, id_old))
+            path_new = os.path.join(bf, url_basename,
+                                    "jld_{}_{}.pkl".format(cha, id_new))
+            #print 'copy', path_old, path_new
+            shutil.copyfile(path_old, path_new)
 
         print "New id: ", dem.id, " new name: ", url_basename
         return redirect('SPTGUI:analysis', url_basename)

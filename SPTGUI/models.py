@@ -5,7 +5,6 @@ from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 
 
-# Create your models here.
 @python_2_unicode_compatible
 class Analysis(models.Model):
     """This is the main object to be manipulated. 

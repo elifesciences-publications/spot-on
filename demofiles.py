@@ -60,7 +60,7 @@ def import_dataset(path, name, ana, url_basename):
     pick = {'params' : compute_params,
             'jld' : None,
             'status' : 'queued'}
-    cha = 'c0f7e565600c3bf5'
+    cha = "03f9de26788d1c29" #'c0f7e565600c3bf5'
     pa = bf+"{}/jld_{}_{}.pkl".format(url_basename, cha, da.id)
     with open(pa, 'w') as f: ## Save that we are computing
         pickle.dump(pick, f)
