@@ -4,7 +4,7 @@
 # This provides some installation/init shortcuts to be run after downloading
 # all the libraries
 
-ABPARAMS_URL=http://alineos2-darzacqlab.mcb.berkeley.edu:8000/static/SPTGUI/
+ABPARAMS_URL=https://spoton.berkeley.edu/static/SPTGUI/resources/
 ABPARAMS_FNM=170614_fitted_abParams.bz2
 EXAMPLDTA_URL=${ABPARAMS_URL}
 EXAMPLDTA_FNM=170616_demoFiles.tar.bz2
