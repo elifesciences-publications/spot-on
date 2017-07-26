@@ -50,12 +50,15 @@ def read_file(fn, fmt, fmtParams):
 ## ==== evalSPT file format
 def init_evalspt():
     pars = [{'name': 'framerate (ms)', 'info': '', 'type': 'number',
-             'value': 'framerate', 'model': 'framerate'}]
+             'value': 'framerate', 'model': 'framerate'},
+            {'name': 'pixel size (nm/px)', 'type': 'number',
+             'value': 'pixelsize', 'model': 'pixelsize'}]
     return {'name': 'evalSPT', 'info': "", 'anchor': 'evalspt',
             'active': True, 'params': pars}
-def read_evalspt(fn, framerate):
+def read_evalspt(fn, framerate, pixelsize):
     return read_arbitrary_csv(fn, col_traj=3, col_x=0, col_y=1, col_frame=2,
-                              framerate=framerate/1000., sep="\t", header=None)
+                              framerate=framerate/1000., pixelsize=pixelsize/1000.,
+                              sep="\t", header=None)
 
 ## ==== MOSAIC suite file format
 def init_mosaic():
