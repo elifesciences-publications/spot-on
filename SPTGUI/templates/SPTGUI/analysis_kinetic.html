@@ -516,11 +516,17 @@
 </tab><!-- End of the ModelingController controller -->
 
 <tab heading="Download">
-  In this tab, you can download the results of your analysis. To do so, you need to click the "Mark for download" button in the "Kinetic modeling" tab.
+  <p>In this tab, you can download the results of your analysis. To do so, you need to click the "Mark for download" button in the "Kinetic modeling" tab.</p>
+  
   <div ng-controller="DownloadController"><!-- Another controller -->
     <div class="alert alert-warning" role="alert" ng-hide="downloads.length>0">
       No data has been marked for download yet.
     </div>
+
+    <div class="alert alert-info">
+      <p>To download all the fitted coefficients, together with the raw data, choose the ZIP export.</p>
+    </div>
+    
     <div ng-if="downloads.length>0">
       <div>
 	<table class="table-striped">
