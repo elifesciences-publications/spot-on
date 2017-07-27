@@ -377,11 +377,13 @@ angular.module('app')
 	    fitsparamschanged_fitvalue = angular.copy(parameters);
 
 	    // Fit
-	    analysisService.runAnalysis($scope.jldParameters, angular.copy(parameters)).then(function(resp) { // copy added by MW, 170711, not sure it doesn't break stuff
-		if (resp.data) {
-		    resp.data.forEach(function(el) {
-			if (el.celery_id != 'none') {
-			    ProcessingQueue.addToQueue(el.celery_id, 'fit').then(function(resp2) {
+	    analysisService.runAnalysis(
+		angular.copy($scope.jldParameters),
+		angular.copy(parameters)).then(function(resp) { // copy added by MW, 170711, not sure it doesn't break stuff
+		    if (resp.data) {
+			resp.data.forEach(function(el) {
+			    if (el.celery_id != 'none') {
+				ProcessingQueue.addToQueue(el.celery_id, 'fit').then(function(resp2) {
 				console.log("Fit done for dataset: "+ el.database_id)
 				
 				if (el.database_id == 'pooled') {
