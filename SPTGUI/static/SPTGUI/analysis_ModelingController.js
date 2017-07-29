@@ -289,13 +289,13 @@ angular.module('app')
 	    }
 	}, true); // deep watch the object
 	
-	$scope.modelingParameters = {D_free : [0.15, 25],
-				     D_fast : [0.15, 25],
-				     D_med : [0.15, 5], // D_slow
+	$scope.modelingParameters = {D_free : [0.15, 60],
+				     D_fast : [0.15, 60],
+				     D_med : [0.15, 15], // D_slow
 				     D_bound: [0.0005, 0.08],
 				     F_bound: [0, 1],
 				     F_fast:  [0, 1],
-				     sigma: [0.01, 0.1],
+				     sigma: [0.01, 0.2],
 				     LocError: 0.035,
 				     iterations: 3,
 				     dT: null,

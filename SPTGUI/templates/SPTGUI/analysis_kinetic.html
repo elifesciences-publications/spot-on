@@ -163,8 +163,8 @@
 		<tr ng-if="modelingParameters.fit2states==='true'">
 		  <td> D<sub>free</sub> (µm²/s): </td>
 		  <td>
-		    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0" max="25">
-		    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0" max="25">
+		    min: <input ng-model= "modelingParameters.D_free[0]"  type="number" step="any" min="0" max="60">
+		    max: <input ng-model= "modelingParameters.D_free[1]"  type="number" step="any" min="0" max="60">
 		    <span uib-tooltip="Range of possible diffusion coefficients for the free fraction." class="glyphicon glyphicon-question-sign"></span>
 		  </td>
 		</tr>
@@ -187,8 +187,8 @@
 		<tr ng-if="modelingParameters.fit2states==='false'">
 		  <td> D<sub>fast</sub> (µm²/s): </td>
 		  <td>
-		    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0" max="25">
-		    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0" max="25">
+		    min: <input ng-model= "modelingParameters.D_fast[0]"  type="number" step="any" min="0" max="60">
+		    max: <input ng-model= "modelingParameters.D_fast[1]"  type="number" step="any" min="0" max="60">
 		    <span uib-tooltip="Range of possible diffusion coefficients for the fast fraction." class="glyphicon glyphicon-question-sign"></span>
 		  </td>
 		</tr>			
