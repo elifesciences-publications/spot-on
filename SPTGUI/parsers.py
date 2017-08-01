@@ -96,7 +96,7 @@ def init_trackmate():
              'value': 'xml', 'model': 'format'},
             {'name': 'CSV', 'type': 'radio', 'info': '',
              'value': 'csv', 'model': 'format'},
-            {'name': 'framerate (ms)', 'type': 'number', 'info': 'placeholder',
+            {'name': 'framerate (ms)', 'type': 'number', 'info': 'this field is ignored if a XML file is provided',
              'value': 'framerate', 'model': 'framerate'}]
     return {'name': 'TrackMate', 'info': "TrackMate file format (an ImageJ/Fiji plugin)", 'anchor': 'trackmate',
             'active': True, 'params': pars}
