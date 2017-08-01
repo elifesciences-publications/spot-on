@@ -185,7 +185,7 @@ def analysis_dbg(request, url_basename):
 
 def static(request, page):
     """Returns a static page"""
-    doc_versions = [0.6, 0.7, 0.8]
+    doc_versions = [0.6, 0.7, 0.8, 0.9]
     templates = {"docs": "documentation.html",
                  "about": "about.html",
                  "contact": "contact.html",
