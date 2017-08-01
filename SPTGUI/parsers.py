@@ -113,7 +113,9 @@ def read_trackmate_xml(fn):
     # Checks
     if x['Tracks']['@spaceUnits'] != 'micron':
         raise IOError("Spatial unit not recognized")
-        
+    if x['Tracks']['@timeUnits'] != 'ms':
+        raise IOError("Time unit not recognized")
+    
     # parameters
     framerate = float(x['Tracks']['@frameInterval'])
     traces = []

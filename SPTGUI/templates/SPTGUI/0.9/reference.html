@@ -49,8 +49,21 @@
 <h4 id="trackmate"> TrackMate </h4>
 
 <p>
-  <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform various types of tracking and export the traces to various file formats. Spot-On can import from its XML and CSV export. Note that the file has to be exported from the last panel of the wizard (clicking the "Save" button at the bottom of the window will produce a XML file that cannot be read by Spot-On). A screenshot of TrackMate's export interface is displayed below.
-</p>
+  <a href="http://imagej.net/Getting_started_with_TrackMate">TrackMate</a> is an <a href="http://imagej.net">ImageJ</a>/<a href="http://fiji.sc">Fiji</a> plugin that can perform various types of tracking and export the traces to various file formats. Spot-On can import from its XML and CSV export.</p>
+
+<div class="alert alert-info">
+  <p>Note that the file has to be exported from the last panel of the wizard (clicking the "Save" button at the bottom of the window will produce a XML file that cannot be read by Spot-On). A screenshot of TrackMate's export interface is displayed below.
+  </p>
+</div>
+
+<div class="alert alert-info">
+  <p>
+    TrackMate saves the framerate of the movie in the exported XML file. However, for some reasons, this can be unproperly set. See the ImageJ documentation about how to set up the framerate. <em>The framerate has to be set in 'ms' (milliseconds) to be recognized by Spot-On.</em>
+  </p>
+  <p>
+    In the .xml file exported by TrackMate, the recorded framerate is indicated in the <code>frameInterval</code> field, and the saved unit in the <code>timeUnits</code> field. You can safely manually edit those values in case they were not saved when performing the tracking.
+  </p>
+</div>
 
 <img src="/static/SPTGUI/sample/trackmate.png"
      class="img-responsive center-block"
