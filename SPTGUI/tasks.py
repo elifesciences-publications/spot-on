@@ -556,7 +556,7 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
         table_fit = get_export_tableFIT(curves)
         table_fit.to_csv(os.path.join(bn, "fit_tables.csv"))
         
-    ## Get statistics    
+    ## Get statistics
     with open(os.path.join(bn, "statistics.txt"), "w") as f: 
         f.write("\n\n".join(get_export_statistics(da)))
 
@@ -572,8 +572,8 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
         f.write(msg)
 
     ## Add README
-    with open(os.path.join(bn, "README.md"), "w") as f:
-        f.write("Hi there!")
+    shutil.copyfile('./SPTGUI/static/SPTGUI/README_zip.md',
+                    os.path.join(bn, "README.md"))
     
 def check_filefield(d):
     """Returns if a file of a FileField exists"""
