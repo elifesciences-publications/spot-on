@@ -14,7 +14,7 @@ urlpatterns = [
     #url(r'^popover/$', views.popover, name='popover'),## TEMPORARY
 
     ##
-    ## ==== Email
+    ## ==== Email (these routes are duplicated in fastSPT/urls.py)
     ##
     url(r'^email/subscribe/$', views_email.email, name='email_subscribe'),
     url(r'^email/unsubscribe/(?P<token>.+)$',views_email.email_unsubscribe, name='email_unsubscribe'),

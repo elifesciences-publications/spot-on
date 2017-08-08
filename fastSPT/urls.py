@@ -1,4 +1,4 @@
-from SPTGUI import views
+from SPTGUI import views, views_email
 """fastSPT URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -21,4 +21,10 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'^SPTGUI/', include('SPTGUI.urls')),
     url(r'^admin/', admin.site.urls),
+    ##
+    ## ==== Email (these routes are duplicated in SPTGUI/urls.py)
+    ##
+    url(r'^email/subscribe/$', views_email.email, name='email_subscribe'),
+    url(r'^email/unsubscribe/(?P<token>.+)$',views_email.email_unsubscribe, name='email_unsubscribe'),
+    url(r'^email/confirm/(?P<token>.+)$', views_email.email, name='email_confirm'),
 ]
