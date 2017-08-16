@@ -379,6 +379,11 @@ def get_analysis(request, url_basename, dataset_id, pooled=False):
                     fitparams["D_med_std"] = fitparams["D_fast_std"]#.copy()
                     fitparams["D_fast"] =tmp
                     fitparams["D_fast_std"] = tmp_std
+
+                    fitparams["F_fast"] =  1-fitparams["F_fast"]-fitparams["F_bound"]
+                    fitparams["F_fast_std"] = 0
+
+                    
             print fitparams
             return HttpResponse(json.dumps(
                 {'status': 'done',
