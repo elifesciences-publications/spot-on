@@ -108,7 +108,7 @@ def read_trackmate_csv(fn, framerate):
     return read_arbitrary_csv(fn, col_traj="TRACK_ID", col_x="POSITION_X", col_y="POSITION_Y", col_frame="FRAME", framerate=framerate/1000., cb=cb)
 
 def read_trackmate_xml(fn):
-    """Do not call directly, wrapped into `read_trackmate`"""
+    """Do not call directly, wrapped into `read_trackmate`."""
     x=xmltodict.parse(open(fn, 'r').read())
     # Checks
     if x['Tracks']['@spaceUnits'] != 'micron':
@@ -117,7 +117,7 @@ def read_trackmate_xml(fn):
         raise IOError("Time unit not recognized")
     
     # parameters
-    framerate = float(x['Tracks']['@frameInterval'])
+    framerate = float(x['Tracks']['@frameInterval'])/1000. # framerate in ms
     traces = []
     
     for particle in x['Tracks']['particle']:  
