@@ -96,7 +96,7 @@ def init_trackmate():
              'value': 'xml', 'model': 'format'},
             {'name': 'CSV', 'type': 'radio', 'info': '',
              'value': 'csv', 'model': 'format'},
-            {'name': 'framerate (ms)', 'type': 'number', 'info': 'placeholder',
+            {'name': 'framerate (ms)', 'type': 'number', 'info': 'this field is ignored if a XML file is provided',
              'value': 'framerate', 'model': 'framerate'}]
     return {'name': 'TrackMate', 'info': "TrackMate file format (an ImageJ/Fiji plugin)", 'anchor': 'trackmate',
             'active': True, 'params': pars}
@@ -108,14 +108,16 @@ def read_trackmate_csv(fn, framerate):
     return read_arbitrary_csv(fn, col_traj="TRACK_ID", col_x="POSITION_X", col_y="POSITION_Y", col_frame="FRAME", framerate=framerate/1000., cb=cb)
 
 def read_trackmate_xml(fn):
-    """Do not call directly, wrapped into `read_trackmate`"""
+    """Do not call directly, wrapped into `read_trackmate`."""
     x=xmltodict.parse(open(fn, 'r').read())
     # Checks
     if x['Tracks']['@spaceUnits'] != 'micron':
         raise IOError("Spatial unit not recognized")
-        
+    if x['Tracks']['@timeUnits'] != 'ms':
+        raise IOError("Time unit not recognized")
+    
     # parameters
-    framerate = float(x['Tracks']['@frameInterval'])
+    framerate = float(x['Tracks']['@frameInterval'])/1000. # framerate in ms
     traces = []
     
     for particle in x['Tracks']['particle']:  

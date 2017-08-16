@@ -51,7 +51,7 @@
 		<td><label>{{par.name}}</label></td>
 		<td>
 		  <input type="{{par.type}}"  ng-model="uploadFormat.currentParams[par.model]"
-			 value="{{par.value}}"> 
+			 value="{{par.value}}" step="0.01"> 
 		  <span ng-show="par.info!=''"
 			class="glyphicon glyphicon-info-sign"
 			uib-tooltip="{{par.info}}"></span>

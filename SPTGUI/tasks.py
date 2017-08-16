@@ -19,6 +19,8 @@ from celery.utils.log import get_task_logger
 import django
 django.setup()
 
+import fastSPT.custom_settings
+from django.template.loader import render_to_string
 from django.core.files import File
 from SPTGUI.models import Dataset, Download
 import SPTGUI.parsers as parsers
@@ -554,9 +556,24 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
         table_fit = get_export_tableFIT(curves)
         table_fit.to_csv(os.path.join(bn, "fit_tables.csv"))
         
-    ## Get statistics    
+    ## Get statistics
     with open(os.path.join(bn, "statistics.txt"), "w") as f: 
         f.write("\n\n".join(get_export_statistics(da)))
+
+    ## Add HTML file
+    ub = fastSPT.custom_settings.URL_BASENAME
+    if not ub.endswith('/'):
+        ub += '/'
+    link_url = ub + 'SPTGUI/analysis/'+ana.url_basename+'/'
+    ## /!\ TODO MW to be rewritten with proper Django resolution
+    
+    msg = render_to_string('SPTGUI/link.html', context={'analysis_url': link_url})
+    with open(os.path.join(bn, "link.html"), "w") as f:
+        f.write(msg)
+
+    ## Add README
+    shutil.copyfile('./SPTGUI/static/SPTGUI/README_zip.md',
+                    os.path.join(bn, "README.md"))
     
 def check_filefield(d):
     """Returns if a file of a FileField exists"""
