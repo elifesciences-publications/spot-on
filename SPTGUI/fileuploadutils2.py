@@ -4,7 +4,7 @@ import os,shutil,logging,json
 
 #configuration for using pyserver.flowjs in windows o linux
 #where to change the path separator
-folderlike='/' #configimpl.config.get('fileconfig','folderlike')
+folderlike='/'
 #path where to save the file
 tmppath=os.getcwd()+folderlike+'static'+folderlike+'tmpdir'+folderlike
 uploadpath=os.getcwd()+folderlike+'static'+folderlike+'upload'+folderlike
