@@ -228,11 +228,13 @@ def uploadapi(request):
         f = tempfile.NamedTemporaryFile(dir=import_path, delete=False)
         f.write(rst.replace("µm", "micron"))
         fi = File(f)
-        
-        import_tools.import_dataset(fi, name, ana,
-                                    url_basename, bf=bf,
-                                    fmt="trackmate",
-                                    fmtParams={"format": "xml", "framerate":-1})
+        try:
+            import_tools.import_dataset(fi, name, ana,
+                                        url_basename, bf=bf,
+                                        fmt="trackmate",
+                                        fmtParams={"format": "xml", "framerate":-1})
+        except:
+            return answer("failed", "the file could not be processed")
 
         full_url = custom_settings.URL_BASENAME + reverse('SPTGUI:analysis', args=[url_basename])
         print "A new analysis has been uploaded on: {}".format(full_url)
