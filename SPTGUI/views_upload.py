@@ -5,7 +5,7 @@
 # Here we store views that relate to the upload of datasets
 
 ## ==== Imports
-import os, json, pickle, random
+import os, json, pickle, random, hashlib
 import fileuploadutils2 as fuu
 from flask import Response
 
@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files import File
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.core.urlresolvers import reverse
 from django.utils import timezone
 import fastSPT.custom_settings as custom_settings
 
@@ -130,12 +131,15 @@ def uploadapi(request):
     """This route handles external upload requests. It can be disabled by setting
     UPLOADAPI_ENABLE = False in the custom_settings.py file."""
 
-    ALLOWED_API_VERSIONS = ('1.0')
+    ALLOWED_API_VERSIONS = ('1.0',)
+    ALLOWED_FORMATS = ('trackmate',)
+    TOKEN_LENGTH = 32
 
-    def answer(status, message, token="none"):
-        return HttpResponse(json.dumps({"status": status,
-                                        "message": message,
-                                        "token": token}))
+    def answer(status, message, token="none", extra={}):
+        return HttpResponse(json.dumps(dict(
+            {"status": status,
+             "message": message,
+             "token": token}.items()+extra.items())))
 
     if not custom_settings.UPLOADAPI_ENABLE:
         return answer("denied", "The upload API is not activated in this server")
@@ -146,29 +150,94 @@ def uploadapi(request):
             return answer("denied", "Missing parameters")
         if request.GET['version'] not in ALLOWED_API_VERSIONS: ## Version
             return answer("denied", "Unsupported version")
+        if request.GET['format'] not in ALLOWED_FORMATS: ## Format
+            return answer("denied", "Unsupported format")
+        if not is_sha1(request.GET["sha"]):
+            return answer("denied", "Invalid SHA1")
+        if request.GET['url']=='new' and not custom_settings.UPLOADAPI_ENABLE_NEWANALYSIS:
+            return answer("denied", "The creation of a new analysis is not allowed.")
+        if request.GET['url']!='new' and not custom_settings.UPLOADAPI_ENABLE_EXISTINGANALYSIS:
+            return answer("denied", "Uploading to an existing analysis is not allowed.")
+        if request.GET['url']!='new' and Analysis.objects.filter(url_basename=request.GET['url']).count()==0:
+            return answer("denied", "The specified analysis does not exist.")
 
-        return answer("denied", "SpotOn is a crap")
-
-        ## Check that URL is accessible or that new is allowed
-        ## Do the logic here
-        ## - Generate token
-        ## - Provision URL
-
+        ## We cannot pre-reserve a name, so we just store "new" in the field
+        ##+if we need to create a new analysis
+        url_basename = request.GET['url']
+        sha = request.GET['sha']
         fmt = request.GET['format']
-        token = get_new_hex_token()
+        version = request.GET['version']
+
+        ## Generate a new token
+        token = get_new_hex_token(TOKEN_LENGTH)
+
+        ## Create the PendingUpload entry in the database
+        pu = PendingUploadAPI(token = token,
+                              expectedSHA = sha,
+                              fmt = fmt,
+                              version = version,
+                              url_basename = url_basename,
+                              creation_date = timezone.now())
+        pu.save()
         return answer("success", "Server ready to accept a {} file".format(fmt), token)
 
     elif request.method == 'POST':
-        return answer("debug", "A POST request has been received")
+        ## Handle the POSTed data
+        
+        ## Let's make preliminary checks    
+        try:
+            body = request.body.decode('utf-8')
+        except:
+            return answer("failed", "Cannot read sequence")
+        if len(body)<=TOKEN_LENGTH+3:
+            return answer("failed", "Received empty file")
+        token = body[:TOKEN_LENGTH]
+        if body[TOKEN_LENGTH:(TOKEN_LENGTH+2)] != "||" or not is_sha1(token, 32):
+            return answer("failed", "Misformed request")
+
+        ## Let's see if the token exists
+        pu_rq = PendingUploadAPI.objects.filter(token=token)
+        if pu_rq.count() != 1:
+            return answer("failed", "Unknown token")
+        pu = pu_rq[0]
+
+        ## Check SHA1
+        rst = body[(TOKEN_LENGTH+2):]
+        if hashlib.sha1(rst).hexdigest() != pu.expectedSHA:
+            return answer("failed", "Corrupted file")
+
+        ## Save if needed + defer to next analysis
+
+        ## Make sure the analysis exists
+        url_basename = pu.url_basename
+        # print 'Token: ', body[:TOKEN_LENGTH]
+        # print 'Sep: ', body[TOKEN_LENGTH:(TOKEN_LENGTH+2)]
+        # print 'Rest, length', len(rst)
+        # print 'Rest, SHA1', hashlib.sha1(rst).hexdigest()
+        full_url = custom_settings.URL_BASENAME + reverse('SPTGUI:analysis', args=[url_basename])
+        return answer("success",
+                      "A POST request has been received",
+                      extra={"url": full_url})
 
 ## ==== Private methods
-def get_hex_token(n=32):
+def get_hex_token(n):
     """Returns a 32-character hexadecimal token"""
     return '%030x' % random.randrange(16**n)
 
-def get_new_hex_token():
+def get_new_hex_token(n=32):
     """Returns a token that has never been attributed"""
-    tok = get_hex_token()
-    while PendingUploadAPI.objects.filter(token=tok).count()==0:
-        tok = get_hex_token()
+    tok = get_hex_token(n)
+    while PendingUploadAPI.objects.filter(token=tok).count()!=0:
+        tok = get_hex_token(n)
     return tok
+            
+def is_sha1(maybe_sha, n=40):
+    """Returns True if the maybe_sha could be a SHA
+    from: https://stackoverflow.com/a/32234251"""
+    if len(maybe_sha) != n:
+        return False
+    try:
+        sha_int = int(maybe_sha, 16)
+    except ValueError:
+        return False
+    return True
