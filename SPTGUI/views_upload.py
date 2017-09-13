@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 # Index of views for the fastSPT-GUI app
 # A graphical user interface to the fastSPT tool by Anders S. Hansen, 2016
 # By MW, GPLv3+, Feb.-Apr. 2017
@@ -5,7 +6,7 @@
 # Here we store views that relate to the upload of datasets
 
 ## ==== Imports
-import os, json, pickle, random, hashlib
+import os, json, pickle, random, hashlib, tempfile
 import fileuploadutils2 as fuu
 from flask import Response
 
@@ -19,11 +20,11 @@ from django.utils import timezone
 import fastSPT.custom_settings as custom_settings
 
 from celery import celery
-import tasks
+import tasks, import_tools
 
 
 bf = "./static/analysis/" ## Location to save the fitted datasets
-
+import_path = "./static/upload/"
 
 ## ==== Views
 def upload(request, url_basename):
@@ -134,6 +135,7 @@ def uploadapi(request):
     ALLOWED_API_VERSIONS = ('1.0',)
     ALLOWED_FORMATS = ('trackmate',)
     TOKEN_LENGTH = 32
+    BF="./static/analysis/"
 
     def answer(status, message, token="none", extra={}):
         return HttpResponse(json.dumps(dict(
@@ -186,7 +188,7 @@ def uploadapi(request):
         
         ## Let's make preliminary checks    
         try:
-            body = request.body.decode('utf-8')
+            body = request.body#.decode('utf-8')
         except:
             return answer("failed", "Cannot read sequence")
         if len(body)<=TOKEN_LENGTH+3:
@@ -206,15 +208,34 @@ def uploadapi(request):
         if hashlib.sha1(rst).hexdigest() != pu.expectedSHA:
             return answer("failed", "Corrupted file")
 
-        ## Save if needed + defer to next analysis
-
-        ## Make sure the analysis exists
+        ## Make sure the analysis exists, or create it if it doesn't exist
         url_basename = pu.url_basename
-        # print 'Token: ', body[:TOKEN_LENGTH]
-        # print 'Sep: ', body[TOKEN_LENGTH:(TOKEN_LENGTH+2)]
-        # print 'Rest, length', len(rst)
-        # print 'Rest, SHA1', hashlib.sha1(rst).hexdigest()
+        if url_basename == 'new':
+            url_basename = import_tools.get_unused_namepage()
+            ana = Analysis(url_basename=url_basename,
+                           pub_date=timezone.now(),
+                           name='',
+                           description='')
+            ana.save()
+        else:
+            ana = Analysis.objects.get(url_basename = url_basename)
+        BFpath = os.path.join(BF,url_basename)
+        if not os.path.isdir(BFpath):
+            os.makedirs(BFpath)
+            
+        ## Perform the import
+        name = "TMPNAME"
+        f = tempfile.NamedTemporaryFile(dir=import_path, delete=False)
+        f.write(rst.replace("µm", "micron"))
+        fi = File(f)
+        
+        import_tools.import_dataset(fi, name, ana,
+                                    url_basename, bf=bf,
+                                    fmt="trackmate",
+                                    fmtParams={"format": "xml", "framerate":-1})
+
         full_url = custom_settings.URL_BASENAME + reverse('SPTGUI:analysis', args=[url_basename])
+        print "A new analysis has been uploaded on: {}".format(full_url)
         return answer("success",
                       "A POST request has been received",
                       extra={"url": full_url})
