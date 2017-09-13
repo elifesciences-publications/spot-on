@@ -5,11 +5,12 @@
 # Here we store views that relate to the upload of datasets
 
 ## ==== Imports
-import os, json, pickle
+import os, json, pickle, random
 import fileuploadutils2 as fuu
 from flask import Response
 
-from .models import Analysis, Dataset
+from .models import Analysis, Dataset, PendingUploadAPI
+from django.views.decorators.csrf import csrf_exempt
 from django.core.files import File
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -108,3 +109,66 @@ def upload(request, url_basename):
         rr['celery_id'] = [ta.parent.id, ta.id]
         res.content = json.dumps(rr)
     return res
+
+
+## ==== TrackMate upload-related views
+## Spot-On implements a simple API (accessible at /uploadapi/) in order to simply
+##+interface with tracking softwares. Anyone is free to implement it, and it
+##+should not break randomly.
+## It works in two times:
+##  1. A GET request is made to declare what will be uploaded (more details below)
+##     Based on this request, the server decides whether or not it will allow the
+##     upload. If the upload is allowed, it returns a simple token.
+##  2. A POST request, containing the token and the data.
+##  3. When the data has been totally uploaded:
+##   a. The checksum of the file is checked
+##   b. The file is added at the right location (either a new analysis is created,
+##     +or the file is appended to an existing analysis.
+
+@csrf_exempt
+def uploadapi(request):
+    """This route handles external upload requests. It can be disabled by setting
+    UPLOADAPI_ENABLE = False in the custom_settings.py file."""
+
+    ALLOWED_API_VERSIONS = ('1.0')
+
+    def answer(status, message, token="none"):
+        return HttpResponse(json.dumps({"status": status,
+                                        "message": message,
+                                        "token": token}))
+
+    if not custom_settings.UPLOADAPI_ENABLE:
+        return answer("denied", "The upload API is not activated in this server")
+
+    if request.method == 'GET':
+        ## Validate the GET
+        if ('format' not in request.GET) or ('version' not in request.GET) or ('sha' not in request.GET) or ('url' not in request.GET): ## Missing parameters
+            return answer("denied", "Missing parameters")
+        if request.GET['version'] not in ALLOWED_API_VERSIONS: ## Version
+            return answer("denied", "Unsupported version")
+
+        return answer("denied", "SpotOn is a crap")
+
+        ## Check that URL is accessible or that new is allowed
+        ## Do the logic here
+        ## - Generate token
+        ## - Provision URL
+
+        fmt = request.GET['format']
+        token = get_new_hex_token()
+        return answer("success", "Server ready to accept a {} file".format(fmt), token)
+
+    elif request.method == 'POST':
+        return answer("debug", "A POST request has been received")
+
+## ==== Private methods
+def get_hex_token(n=32):
+    """Returns a 32-character hexadecimal token"""
+    return '%030x' % random.randrange(16**n)
+
+def get_new_hex_token():
+    """Returns a token that has never been attributed"""
+    tok = get_hex_token()
+    while PendingUploadAPI.objects.filter(token=tok).count()==0:
+        tok = get_hex_token()
+    return tok
