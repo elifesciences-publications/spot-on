@@ -51,8 +51,7 @@ def particles_per_frame(fi):
     return {"median": np.median(l), "mean": l.mean()}
 
 def jump_length(fi):
-    """Computes mean and median jump length"""
-    logging.warning("This is poorly optimized (jump length function in statistics.py")
+    """Computes mean and median jump length. This is poorly optimized"""
     def dist(x0, y0, x1, y1):
         return ((x0-x1)**2+(y0-y1)**2)**0.5
     l = []
