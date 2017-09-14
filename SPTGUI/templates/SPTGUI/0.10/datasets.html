@@ -1,0 +1,50 @@
+<p>To comprehensively test Spot-On over many different conditions, we conducted 1064 spaSPT experiments. The raw data is <a href="#exp-data-availability">freely available</a> and the purpose of this section is to describe the organization, acquisition parameters and format of the data. The data is for 4 different cell lines imaged over 15 different conditions yielding a total of 60 different conditions. The four cell lines were:</p>
+
+<ul>
+  <li>U2OS C32 Halo-CTCF</li>
+  <li>U2OS H2B-Halo-SNAP</li>
+  <li>U2OS Halo-3xNLS</li>
+  <li>mESC (JM8.N4) C3 Halo-Sox2</li>
+</ul>
+
+<h3> Construction of the cell lines</h3>
+<p>The cell lines were constructed in different ways.</p>
+<p><em>U2OS C32 Halo-CTCF</em> was made by homozygous endogenous N-terminal tagging of CTCF in human osteosarcoma U2OS cells using CRISPR/Cas9-mediated genome-editing as described (C32 refers to clone number 32). We note the CTCF is an essential gene and that N-terminal tagging did not appear to affect CTCF function or expression level according to a series of control experiments (see <a href="#hansen" aria-describedby="footnote-label" id="hansen-ref"><em>Hansen et al, 2017</em></a>). Moreover, C32 Halo-CTCF has been authenticated using Short Tandem Repeat (STR) profiling (performed by Dr. Alison N. Killilea at the UC Berkeley Cell Culture Facility) against the following loci: THO1, D5S818, D13S317, D7S820, D16S539, CSF1PO, AMEL, vWA and TPOX. The C32 Halo-CTCF cell line showed a 100% match with U2OS.</p>
+
+<p><em>U2OS H2B-Halo-SNAP</em> was made through random integration of a H2B-HaloTag-SNAP-Tag transgene expressed using the EF1a promoter with an IRES-NeoR gene for drug selection. After transfection, cells were selected using G418 until a pure cell population was obtained. This cell line has also been described previously. The wild-type U2OS cell line used to make this cell line was also authenticated using STR profiling against the same loci as C32 and also showed a 100% match with U2OS.</p>
+
+<p><em>U2OS Halo-3xNLS</em> was made through random integration of a FLAG-Halo-3xNLS (3x SV40 NLS: PKKKRKV) transgene expressed using the EF1a promoter. NeoR for drug selection was separately expressed using an SV40 promoter. After transfection, cells were selected using G418 until a pure cell population was obtained. This cell line has also been described previously. The wild-type U2OS cell line used to make this cell line was also authenticated using STR profiling against the same loci as C32 and also showed a 100% match with U2OS.</p>
+
+<p><em>mESC C3 Halo-Sox2</em> was made through homozygous N-terminal tagging of Sox2 in JM8.N4 mouse embryonic stem cells using CRISPR/Cas9-mediated genome editing as previously described (C3 refers to clone number 3). The functionality of the C3 Halo-Sox2 knock-in was validated through control experiments and pluripotency through teratoma assays as described previously (see <a href="#teves" aria-describedby="footnote-label" id="teves-ref"><em>Teves et al, 2016</em></a>).</p>
+
+<h3>Data acquisition</h3>
+<p>Each file contains single-molecule trajectories from a single cell imaged over 30,000 frames. Localization and tracking was performed using a custom-written Matlab implementation of the MTT-algorithm and the following settings:</p>
+
+<table class="table table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>
+  </tr>
+  <tr><td>Localization error</td><td>10<sup>-6.25</sup></td></tr>
+  <tr><td>Deflation loops</td><td>0</td></tr>
+  <tr><td>Blinking (frames)</td><td>1</td></tr>
+  <tr><td>Max competitors</td><td>3</td></tr>
+  <tr><td>Max \(D\) (µm²/s)</td><td>20</td></tr>
+</table>
+
+<p>The same 15 conditions were used for each of the 4 cell lines.</p>
+
+<h3>ExpA</h3>
+<p>The purpose of this experiment was to test the effect of “motion-blurring” on the Spot-On estimated \(D_{FREE}\) and \(F_{BOUND}\).</p>
+
+<p><em>Experiment with PA-JF-549 dyes</em>Five different experimental conditions were considered. Briefly, cells were grown overnight on plasma-cleaned 25 mm circular coverslips either directly (U2OS) and MatriGel coated. Cell were labeled with 5-50 nM PA-JF549 for around 15-30 min, washed twice and medium exchanged to phenol-red free medium. 30,000 frames were collected at a camera exposure time (Andor iXon Ultra 897; frame-transfer mode; vertical shift speed: 0.9 μs; -70°C) of 9.5 ms which together with a ~447 μs camera integration time gave a frame rate of ~100 Hz. PA-JF549 dyes were photo-activated during the ~447 μs camera integration time using 405 nm pulses and the 405 nm pulse intensity optimized to achieve a mean density of ~1 molecule per frame per nucleus. The JF549 dye was excited using a 561 nm laser and the total number of excitation photons kept constant but either delivered during a 1 ms pulse, a 2 ms pulse, a 4 ms pulse, a 7 ms pulse or with constant illumination. 
+For each cell line and condition, 4 replicates were performed. We count a replicate as an independent experiment performed on a different day. For each replicate around 5 cells were imaged. Occasionally, fewer than 5 cells are available. To avoid tracking errors, we removed cells with too high a localization density from the analysis.</p>
+
+<p><em>Experiment with PA-JF-646 dyes</em>This experiment was exactly identical to the “ExpA_PA-JF549” experiment except cell were labeled with PA-JF646 and excited using a 633 nm laser. The file names and data organization was otherwise the same and the same five excitation conditions were considered.</p>
+
+<h3>ExpB</h3>
+<p>The purpose of this experiment was to test if the Spot-On estimated  \(D_{FREE}\) and \(F_{BOUND}\) values would depend on the frame rate. In particular, all four proteins exhibit some levels of apparent anomalous diffusion, which could cause a dependence on the frame rate.</p>
+<p>Cells were labeled with PA-JF646 and grown and imaged as described above. Photo-activation took place during the ~447 μs camera integration time and JF646 dyes were excited using 1 ms stroboscopic 633 nm excitation pulses. To change the frame rate, the camera exposure time was set to 4.5 ms (~201 Hz), 5.5 ms (~167 Hz), 7 ms (~134 Hz), 13 ms (~74 Hz) and 19.5 ms (~50 Hz) when also counting the ~447 μs camera integration time.</p>
+
+<h3 id="exp-data-availability">Data availability</h3>
+All the data collected to validate Spot-On is publicly available under a Creative Commons Attribution license (v4). The data has been uploaded to the Zenodo repository under the doi <a href="https://doi.org/10.5281/zenodo.835171">10.5281/zenodo.835171</a>.

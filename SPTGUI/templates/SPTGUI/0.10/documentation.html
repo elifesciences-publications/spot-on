@@ -1,0 +1,173 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'SPTGUI/img/favicon.ico' %}">
+
+    <title>Spot-On: kinetic modeling of SPT data</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'SPTGUI/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'SPTGUI/dist/js/jquery.min.js' %}"></script>   
+
+    <!-- add after bootstrap.min.css -->
+    <link rel="stylesheet" href="{% static 'SPTGUI/dist/css/bootstrap-toc.min.css' %}">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'SPTGUI/assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script><![endif]-->
+    <script src="{% static 'SPTGUI/assets/js/ie-emulation-modes-warning.js' %}"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    
+    <!-- Angular JS -->
+    <script src="{% static 'SPTGUI/dist/js/angular.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/angular-cookies.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/angular-toggle-switch.min.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/ui-bootstrap-tpls-2.5.0.min.js' %}"></script>
+    <link href="{% static 'SPTGUI/dist/css/angular-toggle-switch.css' %}" rel="stylesheet">
+
+    <!-- Rzslider JS -->
+    <link href="{% static 'SPTGUI/dist/css/rzslider.min.css' %}" rel="stylesheet">
+    <script src="{% static 'SPTGUI/dist/js/rzslider.min.js' %}"></script>    
+
+    <!-- Custom app code & CSS -->
+    <script src="{% static 'SPTGUI/docs_visualizations.js' %}"></script>
+
+    <!-- D3.js -->
+    <script src="{% static 'SPTGUI/erfc.js' %}"></script>
+    <script src="{% static 'SPTGUI/dist/js/d3.v4.min.js' %}"></script>
+    
+    <!-- Custom styles for this template -->
+    <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/blog.css' %}" rel="stylesheet">
+    <link href="{% static 'SPTGUI/style.css' %}" rel="stylesheet">
+
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link href="{% static 'SPTGUI/footnotes.css' %}" rel="stylesheet"> 
+  </head>
+  <body ng-app="app" data-spy="scroll" data-target="#toc">
+    {% csrf_token %}
+    
+    <!-- NAVBAR ================================================== -->
+    {% include 'SPTGUI/navbar1.html' %}
+    <div class="container"><!-- Main container =========================-->
+      <div class="col-sm-8"><!-- Left column -->
+	
+	<!-- Header =========================-->
+	<div class="row">
+	  <div class="blog-header">
+	    <h1 class="blog-title">Spot-On documentation</h1>
+	    <p class="lead blog-description">The official Spot-On documentation.</p>
+	    <div class="col-md-7">
+	      <p class="lead"> Spot-On allows you to analyze single particle tracking datasets. Spot-On fits a realistic kinetic model to the jump length distribution of the observed trajectories and provides estimates of the fraction bound (\(F\)) and diffusion coefficients (\(D\)) for either a two state (bound-free) or a three state (bound-free1-free2) model.</p>
+	      <p class="lead"> Spot-On is a libre/open-source software and exists both as a web-application and a command-line version.</p>
+
+	      <p class="lead"> This project owes a lot to Davide Mazza, who initially developed the conceptual framework implemented in Spot-On (see <a href="#mazza" aria-describedby="footnote-label" id="mazza-ref">Mazza et al, 2012</a>).</p>
+
+	      
+	      {% if not latest_version %}
+	      <div class="alert alert-danger">
+		This page relates to an older version of Spot-On (version {{version_number}}). <a href="{% url 'SPTGUI:staticpage' 'docs/latest' %}">Jump to the latest version</a> ({{latest_version_number}}).
+	      </div>
+	      {% endif %}
+	    </div>
+	    <div class="col-md-5">
+	      <img src="/static/SPTGUI/img/spoton_logo_square.png"
+		   class="img-responsive center-block"
+		   style="max-width: 80%;"
+		   alt="Spot-On logo">
+
+	      <br/>
+	      <p>Browse the documentation for various versions of Spot-On:</p>
+	      <ul>
+	      {% for item in versions %}
+	      <li><a href="{% url 'SPTGUI:staticpage' item.url %}">Version {{item.version}}</a></li>
+	      {% endfor %}
+	      </ul>
+	      
+	      {% if False %}
+	      <p> This documentation can be downloaded as a PDF or HTML version:</p>
+	      <div class="col-md-6">
+		<img src="/static/SPTGUI/img/icons/html.png"
+		     class="img-responsive center-block"
+		     style="max-width: 80%;"
+		     alt="Download documentation in HTML">
+	      </div>
+	      <div class="col-md-6">
+		<img src="/static/SPTGUI/img/icons/pdf.png"
+		     class="img-responsive center-block"
+		     style="max-width: 80%;"
+		     alt="Download documentation in PDF">
+	      </div>
+	      TODO: automatically export the docs to PDF & HTML & credit flaticon authors.
+	      {% endif %}
+	      
+	    </div>
+	  </div>
+	</div>
+	<!-- End Header =========================-->
+
+	<!-- Main docs =========================-->
+        <div class="blog-post" id="problem">
+	  {% include 'SPTGUI/0.10/problem.html' %}
+	</div>
+
+	<div class="blog-post" id="tutorial">
+	  {% include 'SPTGUI/0.10/tutorial.html' %}
+	</div>
+	
+        <div class="blog-post">
+	  {% include 'SPTGUI/0.10/reference.html' %}
+	</div>
+
+        <div id="howto-acquisition" class="blog-post">
+	  {% include 'SPTGUI/0.10/acquisition.html' %}
+	</div>
+	
+        <div id="methods" class="blog-post">
+	  {% include 'SPTGUI/0.10/methods.html' %}
+	</div>
+	
+	<div id="code" class="blog-post">
+	  {% include 'SPTGUI/0.10/code.html' %}
+	</div>
+
+	<div id="datasets" class="blog-post">
+	  <h2>Datasets</h2>
+	  {% include 'SPTGUI/0.10/datasets.html' %}
+	</div>
+	
+        <div class="blog-post">
+	  {% include 'SPTGUI/0.10/faq.html' %}
+	</div>
+	
+
+	
+      </div><!-- Close Left column -->
+      
+      <div class="col-sm-3 col-sm-offset-1 blog-sidebar"><!-- Right column -->
+	<div class="sidebar-module">
+	  <nav id="toc" data-spy="affix" data-toggle="toc"></nav>
+	</div>
+      </div><!-- Close right column -->
+    </div><!-- Close Main container =========================-->
+    
+    <div class="container">
+      {% include 'SPTGUI/footer.html' %}
+    </div>
+    <!-- add after bootstrap.min.js -->
+    <script src="{% static 'SPTGUI/dist/js/bootstrap-toc.min.js' %}"></script>
+  </body>
+</html>
