@@ -157,7 +157,8 @@ def index(request):
                'captcha': custom_settings.RECAPTCHA_USE,
                'recaptchakey': custom_settings.RECAPTCHA_PUBLIC,
                'mailavailable': custom_settings.EMAIL_USE,
-               'demoavailable': custom_settings.use_demo}
+               'demoavailable': custom_settings.use_demo,
+               'spoton': custom_settings.APP_NAME}
     return HttpResponse(template.render(context, request))
 
 def analysis(request, url_basename, run_tests=False):
@@ -172,7 +173,8 @@ def analysis(request, url_basename, run_tests=False):
                'run_tests': run_tests,
                'lightlogo': True,
                'version': settings.APP_VERSION,
-               'versionbackend': fastspt.__version__}
+               'versionbackend': fastspt.__version__,
+               'spoton': custom_settings.APP_NAME}
     ana.save()
     return HttpResponse(template.render(context, request))
 
@@ -190,7 +192,7 @@ def static(request, page):
                  "license": "license.html",
                  "about": "about.html",
                  "privacy": "privacy.html"}
-    context = {}
+    context = {'spoton': custom_settings.APP_NAME}
     templates_docs = {"docs/{}".format(k): "{}/{}".format(k, templates["docs"]) for k in doc_versions}
     for k in templates_docs:
         templates[k] = templates_docs[k]
