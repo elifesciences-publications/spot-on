@@ -7,6 +7,11 @@
 ## See the documentation for a thorough description of
 ## of each option.
 
+## (0) ==== General settings
+##     This block contains settings that might be used in multiple
+##     modules of Spot-On.
+APP_NAME = 'Spot-On' # Name here
+URL_BASENAME = '' # URL here
 
 ## (1) ==== Whether to use the demonstration files. ====
 ##     To use demonstration files, you need to have an analysis
@@ -34,7 +39,6 @@ RECAPTCHA_SECRET = "" ## Provided by Google reCAPTCAH interface
 ##     Apart from that, they are not required and you can leave them blank
 ##     in the first place.
 ##     -> See the documentation for more explanation.
-URL_BASENAME = '' # URL here
 ADMIN_NAME = 'the Spot-On team' # Name to be displayed when sending emails.
 ADMIN_EMAIL = '' # Admin email (cc'ed in contacts)
 EMAIL_USE = True
