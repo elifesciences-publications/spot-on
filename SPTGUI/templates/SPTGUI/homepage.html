@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <link rel="icon" href="{% static 'SPTGUI/img/favicon.ico' %}">
 
-    <title>Spot-On: kinetic modeling of SPT data</title>
+    <title>{{spoton}}: kinetic modeling of SPT data</title>
 
     <!-- Captcha -->
     <script src="https://www.google.com/recaptcha/api.js"></script>
@@ -63,10 +63,10 @@
       </ol>
       <div class="carousel-inner" role="listbox">
         <div class="item active">
-	  <img src="{% static 'SPTGUI/img/spoton_logo_big.png' %}" alt="First slide">
+	  <img src="{% static 'SPTGUI/img/krampus_logo_big.png' %}" alt="First slide">
           <div class="container">
             <div class="carousel-caption">
-              <h1>Spot-On analyzes single particle tracking datasets.</h1>
+              <h1>{{spoton}} analyzes single particle tracking datasets.</h1>
               <p></p>
               <p><a class="btn btn-lg btn-primary" href="#start" role="button">Start with my dataset</a></p>
             </div>
@@ -77,7 +77,7 @@
           <div class="container">
             <div class="carousel-caption">
               <h1>Interactive kinetic modeling</h1>
-              <p>Spot-On comes with a user-friendly interactive interface to perform kinetic modeling of single particle tracking datasets.</p>
+              <p>{{spoton}} comes with a user-friendly interactive interface to perform kinetic modeling of single particle tracking datasets.</p>
               <p><a class="btn btn-lg btn-primary" href="#why" role="button">Learn more</a></p>
             </div>
           </div>
@@ -145,9 +145,9 @@
 
       <div class="row featurette">
         <div class="col-md-7" id="why">
-          <h2 class="featurette-heading">Why Spot-On?<span class="text-muted">&nbsp;(and kinetic modeling)</span></h2>
+          <h2 class="featurette-heading">Why {{spoton}}?<span class="text-muted">&nbsp;(and kinetic modeling)</span></h2>
           <p class="lead"><em>Single particle tracking</em> (SPT) is often seen as less biased and model-dependent than indirect and bulk techniques such as Fluorescence Recovery After Photobleaching (<a href="https://en.wikipedia.org/wiki/Fluorescence_recovery_after_photobleaching">FRAP</a>) or Fluorescence Correlation Spectroscopy (<a href="https://en.wikipedia.org/wiki/Fluorescence_correlation_spectroscopy">FCS</a>).</p>
-	  <p class="lead">Nevertheless, SPT data is subject to a number of biases and uncertainties, which must be corrected for in order to obtain accurate estimates of subpopulations. Spot-On offers a set of <a href="{% url 'SPTGUI:staticpage' 'docs' %}#how-to-acquire-a-good-dataset-">guidelines</a> to perform meaningful SPT experiments and provides a comprehensive, <a href="{% url 'SPTGUI:staticpage' 'docs' %}#methods">bias-aware</a>, framework to analyze the resulting data.</p>
+	  <p class="lead">Nevertheless, SPT data is subject to a number of biases and uncertainties, which must be corrected for in order to obtain accurate estimates of subpopulations. {{spoton}} offers a set of <a href="{% url 'SPTGUI:staticpage' 'docs' %}#how-to-acquire-a-good-dataset-">guidelines</a> to perform meaningful SPT experiments and provides a comprehensive, <a href="{% url 'SPTGUI:staticpage' 'docs' %}#methods">bias-aware</a>, framework to analyze the resulting data.</p>
 	   <p><a class="btn btn-default" href="{% url 'SPTGUI:staticpage' 'docs' %}#tutorial" role="button">Take the tutorial</a></p>
         </div>
         <div class="col-md-5">
@@ -160,11 +160,11 @@
       <div class="row featurette" id="how-it-works">
         <div class="col-md-7 col-md-push-5">
           <h2 class="featurette-heading">How does it work? <span class="text-muted">See for yourself.</span></h2>
-          <p class="lead">Spot-On fits a two-states or a three-states model to the empirical distribution of jump lengths obtained from a single particle tracking dataset. To do so, Spot-On takes into account a finite detection volume and biases against fast-moving particles. From that, Spot-On extracts kinetic parameters: diffusion coefficients, fraction bound.</p>
+          <p class="lead">{{spoton}} fits a two-states or a three-states model to the empirical distribution of jump lengths obtained from a single particle tracking dataset. To do so, {{spoton}} takes into account a finite detection volume and biases against fast-moving particles. From that, {{spoton}} extracts kinetic parameters: diffusion coefficients, fraction bound.</p>
 	  <a class="btn btn-lg btn-default" href="{% url 'SPTGUI:staticpage' 'docs' %}#methods" role="button">Learn more!</a>
         </div>
         <div class="col-md-5 col-md-pull-7">
-          <img class="featurette-image img-responsive center-block" src="{% static 'SPTGUI/img/principle.png' %}" alt="Principle of Spot-On: fit ">
+          <img class="featurette-image img-responsive center-block" src="{% static 'SPTGUI/img/principle.png' %}" alt="Principle of {{spoton}}: fit ">
         </div>
       </div>
 
@@ -174,7 +174,7 @@
       <div class="row featurette">
         <div class="col-md-7" id="start">
           <h2 class="featurette-heading">Get started<span class="text-muted"> (in a nutshell)</span></h2>
-          <p class="lead">To use Spot-On is straightforward, and Spot-On is <a href="{% url 'SPTGUI:staticpage' 'docs' %}">fully documented</a>. We have a <a href="{% url 'SPTGUI:staticpage' 'docs' %}">step-by-step tutorial</a> that details how to use Spot-On from scratch. In particular, the tutorial will guide you through:</p>
+          <p class="lead">To use {{spoton}} is straightforward, and {{spoton}} is <a href="{% url 'SPTGUI:staticpage' 'docs' %}">fully documented</a>. We have a <a href="{% url 'SPTGUI:staticpage' 'docs' %}">step-by-step tutorial</a> that details how to use {{spoton}} from scratch. In particular, the tutorial will guide you through:</p>
 	  <ol>
 	    <li>Uploading trajectories from a wide range of <a href="{% url 'SPTGUI:staticpage' 'docs' %}#input-formats">formats</a></li>
 	    <li>Perform a thorough quality-check of uploaded datasets</li>
@@ -204,16 +204,16 @@
 	  </form>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive center-block" src="{% static 'SPTGUI/img/process.png' %}" alt="Spot-On workflow">
+          <img class="featurette-image img-responsive center-block" src="{% static 'SPTGUI/img/process.png' %}" alt="{{spoton}} workflow">
         </div>
       </div>
 
       <!-- Please cite block -->
       <hr class="featurette-divider">
       <div class="row featurette">
-      	  <p class="lead">Please acknowledge Spot-On in your publications:</p>
+      	  <p class="lead">Please acknowledge {{spoton}} in your publications:</p>
 	  <blockquote>
-	    <p>Spot-On: robust model-based analysis of single-particle tracking experiments</p>
+	    <p>{{spoton}}: robust model-based analysis of single-particle tracking experiments</p>
 	    <p>Anders S Hansen*, Maxime Woringer*, Jonathan B Grimm, Luke D Lavis, Robert Tjian, Xavier Darzacq</p>
 	    <footer>bioRxiv preprint, Aug. 2017. doi:<a href="https://doi.org/10.1101/171983">10.1101/171983</a>.<br/>
 	      *These authors contributed equally and are alphabetically listed.

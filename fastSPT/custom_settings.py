@@ -10,8 +10,9 @@
 ## (0) ==== General settings
 ##     This block contains settings that might be used in multiple
 ##     modules of Spot-On.
-APP_NAME = 'Spot-On' # Name here
+APP_NAME = 'Krampus' # Name here
 URL_BASENAME = '' # URL here
+USE_DARKTHEME = True ## Not used yet
 
 ## (1) ==== Whether to use the demonstration files. ====
 ##     To use demonstration files, you need to have an analysis
