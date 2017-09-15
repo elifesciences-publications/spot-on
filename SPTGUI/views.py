@@ -70,7 +70,7 @@ if config.debug_views:
 ## ==== Main views
 ##
 def analysis_root(request):
-    """A simple placeholder text for the root of the analysis/ route"""
+    """A simple placeholder text for the root of the analysis/route"""
     return HttpResponse("There's nothing here...")
 
 def new_analysis(request):
@@ -131,7 +131,6 @@ def new_demo(request):
         cha = "03f9de26788d1c29" #'c0f7e565600c3bf5' # prefix for default jld
         
         for d in da: # Duplicate the related datasets. Does not duplicate the file
-            #print "Duplicating {}".format(d)
             id_old = d.id
             d.pk = None
             d.id = None
@@ -142,7 +141,6 @@ def new_demo(request):
                                     "jld_{}_{}.pkl".format(cha, id_old))
             path_new = os.path.join(bf, url_basename,
                                     "jld_{}_{}.pkl".format(cha, id_new))
-            #print 'copy', path_old, path_new
             shutil.copyfile(path_old, path_new)
 
         print "New id: ", dem.id, " new name: ", url_basename
