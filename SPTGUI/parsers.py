@@ -111,8 +111,9 @@ def read_trackmate_xml(fn):
     """Do not call directly, wrapped into `read_trackmate`."""
     x=xmltodict.parse(open(fn, 'r').read())
     # Checks
-    if x['Tracks']['@spaceUnits'] != 'micron':
-        raise IOError("Spatial unit not recognized")
+    spaceunit = x['Tracks']['@spaceUnits']
+    if spaceunit not in ('micron', 'um'):
+        raise IOError("Spatial unit not recognized: {}".format(spaceunit))
     if x['Tracks']['@timeUnits'] != 'ms':
         raise IOError("Time unit not recognized")
     

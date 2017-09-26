@@ -323,7 +323,8 @@ def check_input_file(filepath, file_id, fmt, fmtParams, queue=True):
     try: # try to parse the file
         fi = parsers.read_file(da.data.path, fmt, fmtParams)
         report += "SUCCESS, the file was successfully imported\n"
-    except: # exit
+    except Exception, e: # exit
+        print e
         report += "FAILURE, the file could not be imported.\n"
         report += "DELETED file: the imported file has been deleted\n"
         report += "ERROR MESSAGE:\n================================\n"
@@ -538,7 +539,6 @@ def collect_download_for_zip(tmpdirname, do, ana, da):
     with open(os.path.join(bn, "fit_coefficients.txt"), "w") as f:
         with open(do.data.name, 'r') as ff:
             coefs = pickle.load(ff)
-            print "Coefs: ", coefs.keys()
             if "fit" in coefs and coefs["fit"]!=None and "fitparams" in coefs["fit"]:
                 f.write("---- Individual fit")
                 f.write(get_export_coefficients(coefs['fit']['fitparams']))
@@ -592,7 +592,7 @@ def get_export_tableJLD(ta):
     For now, the format is a Pandas DataFrame.
     """
     ## Generate the dict
-    di = {'time': ta['jld'][0][0]}
+    di = {'distance': ta['jld'][0][0]}
     for cell in range(len(ta['jld'])): ## JLD
         for i in range(len(ta['jld'][cell][1])):
             di["cell{}_jl_{}dt".format(cell+1, i+1)] = ta['jld'][cell][1][i]
@@ -614,11 +614,11 @@ def get_export_tableFIT(ta):
     di = {}
     for cell in range(len(ta["fit"])): ## Not sure this will work
         if ta['fit'][cell] != None:
-            di['time'] = ta['fit'][cell][0]         
-            for i in range(len(ta['fit'][cell][1])):
-                di["cell{}_fit_{}dt".format(cell+1, i+1)] = ta['fit'][cell][1][i]
+            di['distance'] = ta['fit'][cell]['fit']['x']
+            for i in range(len(ta['fit'][cell]['fit']['y'])):
+                di["cell{}_fit_{}dt".format(cell+1, i+1)]=ta['fit'][cell]['fit']['y'][i]
     if 'fitp' in ta and ta['fitp']!=None and ta['fitp']['status']=='done':
-        di['time'] = ta['fitp']['fit']['x']        
+        di['distance'] = ta['fitp']['fit']['x']
         for i in range(len(ta['fitp']['fit']['y'])):
             di["pooled_fit_{}dt".format(i+1)] = ta['fitp']['fit']['y'][i]
             
