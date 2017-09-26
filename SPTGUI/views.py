@@ -6,12 +6,10 @@
 ## ==== Imports
 ##
 import random, string, json, os, hashlib, pickle, urlparse, logging, re, shutil
-from haikunator import Haikunator
 import fastspt
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.db import transaction
 from .models import Analysis, Dataset
 from django.http import HttpResponse
 from django.template import loader
@@ -20,7 +18,7 @@ import fastSPT.custom_settings as custom_settings
 
 from celery import celery
 import tasks, config, recaptcha
-import fitted_zcor
+import fitted_zcor, import_tools
 
 # ==== Initialization
 # careful a similar code exists in sockets_kinetics.py
@@ -28,7 +26,6 @@ paths = {0: "./SPTGUI/fit_zcorr/0gaps",
          1: "./SPTGUI/fit_zcorr/1gaps",
          2: "./SPTGUI/fit_zcorr/2gaps"}
 tree_init = fitted_zcor.init(paths=paths)
-haikunator = Haikunator()
 
 ##
 ## ==== Global variables
@@ -86,7 +83,7 @@ def new_analysis(request):
                 return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
         
         ## Generate a name
-        url_basename = get_unused_namepage()
+        url_basename = import_tools.get_unused_namepage()
         
         ## Create the analysis if needed
         ana = Analysis(url_basename=url_basename,
@@ -110,7 +107,7 @@ def new_demo(request):
                 return HttpResponse("Failed CAPTCHA, reason {}".format(captcha_ok['message']))
         
         ## Generate a name
-        url_basename = get_unused_namepage()
+        url_basename = import_tools.get_unused_namepage()
         
         ## Duplicate the related datasets
         dem = list(Analysis.objects.filter(editable=False))[-1]
@@ -186,7 +183,7 @@ def analysis_dbg(request, url_basename):
 
 def static(request, page):
     """Returns a static page"""
-    doc_versions = [0.6, 0.7, 0.8, 0.9]
+    doc_versions = ['0.6', '0.7', '0.8', '0.9', '0.10']
     templates = {"docs": "documentation.html",
                  "about": "about.html",
                  "contact": "contact.html",
@@ -573,15 +570,3 @@ def compute_hash(hashvalue):
 def compute_hash2(h1, h2):
     """Returns the concatenation of two hashes"""
     return compute_hash(h1)+compute_hash(h2)
-
-def get_unused_namepage():
-    """Function returns an cool name for an analysis. Checks that it doesn't
-    already exist. Requires the haikunator plugin."""
-    
-    new_analysis = False
-    while not new_analysis:
-        with transaction.atomic():
-            url_basename = haikunator.haikunate()
-            if not Analysis.objects.filter(url_basename=url_basename).exists():
-                break
-    return url_basename

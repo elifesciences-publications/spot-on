@@ -1,0 +1,121 @@
+{% load static %}
+<h2 class="blog-post-title">The problem</h2>
+<p> Within a cell, a DNA-binding factor diffuses and occasionally binds to DNA or forms complexes. Each of these states can be macroscopically characterized by an apparent diffusion coefficient and a fraction of the total population residing in this state. Thus, we are interested in extracting those parameters for each state. Note that even when the observed molecules are stably bound to DNA, they will still exhibit a nonzero diffusion coefficient (reflecting a mixture of the slow motion of chromatin (estimated to be around 0.01-0.02 µm²/s, <a href="#shinkai" aria-describedby="footnote-label" id="shinkai-ref"><em>Shinkai et al, 2016</em></a>) --, the motion of the cell itself, microscope drift and possibly other factors).
+</p>
+
+<img src="/static/SPTGUI/img/cell.png"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Schematic of a cell with diffusing particles.">
+
+<p>To infer those parameters, <em>single particle tracking</em> (SPT) approaches can be implemented. In single particle tracking of nuclear proteins, cells are typically engineered to express a protein of interest either fused to a fluorescent protein or to a tag that can be conjugated to a synthetic dye (e.g. HaloTag). When the density of dyes in the focal plane is sufficiently low (because the number of expressed proteins is low, because the depth of field is extremely small or because only a fraction of the molecules are visible at a time), individual molecules appear as isolated spots that can be localized with a subpixel accuracy by fitting a 2D (usually Gaussian) function and performing tracking between successive frames. This yields a series of trajectories, each corresponding to the motion of a single protein-conjugated fluorophore.</p>
+
+<p>Although extremely powerful, single particle tracking of nuclear factors is subject to several methodological difficulties detailed below: </p>
+
+<h3>Motion blur</h3>
+
+<p> When a diffusing particle is observed, it will keep diffusing while one frame is acquired. In this case, particles exhibit "motion blur", that is that the photons emitted by a fast-diffusing molecule appear spread across a higher surface than bound molecules. This has several consequences:</p>
+
+<ul>
+  <li>First, fast-diffusing molecules show a reduced signal-to-noise ratio</li>
+  <li>Second, these detections significantly deviate from the theoretical PSF (point-spread function) of bound molecules.</li>
+</ul>
+
+<p> Because of these two effects, fast-diffusing particles are harder to detect, especially if PSF-fitting localization algorithms are used. Furthermore, because bound molecules are not affected by motion blur, molecules in the bound state tend to be overestimated because the fast-diffusing molecules are undercounted.</p>
+
+<p> The picture below shows one frame containing two particles, one immobile particles appear as a very identifiable, Gaussian and symmetric spot (right red spot) whereas the fast-diffusing particle on the left is much harder to detect and very poorly resembles a point-emitter (spread out, left red spot).</p>
+
+<img src="/static/SPTGUI/img/motionblur.png"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Particles observed with motion blur">
+
+<p>Because motion blur results in under-detection of fast-diffusing particles, the amount of missed particles strongly depends on internal settings of the detection algorithm, and cannot readily be corrected after the acquisition. Section <a href="howto-acquisition">How to acquire a dataset</a> details a few ways to circumvent these biases at the acquisition step.</p>
+
+<p> In brief, the effect of motion blur can be mitigated by reducing the excitation pulse duration (to minimize the motion of the fast-diffusing population during one exposure) and the laser intensity (to keep the signal-to-noise sufficient).</p>
+
+<h3>Ambiguous tracking</h3>
+<p>As single particle tracking is intrinsically a low-throughput method, one may want to increase the density of tracked particles per frame in order to accelerate the data collection rate. However, as the density of particles increases, the tracking can become ambiguous. Furthermore, fast-moving particles are again more likely to be misconnected with other unrelated detections. This might result in a truncated jump length distribution, and thus a wrong estimation of the diffusion coefficient.</p>
+
+<p> When imaging with a high density of particles, the nearest detection in the next frame might not be the same particle. In the limit of particles with high diffusion coefficients, it is likely that particles will "cross" each other and that one particle with be connected with another particle.</p>
+
+<p> In practice, this leads to an under-detection of long jumps, because when a particle exhibits a long jump, the tracking algorithm is likely to pick another particle closer in space. This effect results in an underestimation of the fast-diffusing fraction and can be reduced by imaging at a low number of particles per frame. Section <a href="howto-acquisition">How to acquire a dataset</a> details a few ways to circumvent those biases at the acquisition step. </p>
+
+
+<h3>Particles move out of focus</h3>
+<p>In addition to motion blur biases, that leads to fast-moving particle to be missed by the detection algorithm, particles diffuse out of the detection volume (usually a slice of ~ 1 µm thickness). This effect is virtually zero for bound molecule, but becomes significant for fast-moving particles, leading to an undercounting of this population. The animated graph below shows the jump length distribution of a molecule appearing in two states with respective diffusion coefficients \(D_1\) and \(D_2\) (expressed in µm²/s).</p>
+
+<p> More precisely, the graph below displays the theoretical jump length distribution in case of an unlimited depth of field (solid line) and the simulation of the observed jump length distribution (dotted line) when particles are only observed within the depth of field of the objective (here set to 0.75 µm, <a href="#measure-locerror">see below for a method to measure it</a>).</p>
+
+<p> The cursors under the simulation allow tuning the diffusion coefficients of the two populations (\(D_1\) and \(D_2\)) and the proportion of the first population (\(p\)). From this graph, it appears (1) that as one increases the second diffusion coefficient (\(D_2\)), the discrepancy between the solid line and the dotted line increases, reflecting the fact that fast-diffusing particles tend to be under-counted in the observation through a setup with a finite depth of field.</p>
+
+<p> In addition to \(D_1\), \(D_2\) and \(p\), this interactive graph allows you to play with the effect of the localization error \(\sigma\) and the exposure time \(\Delta t\). Note that this simulation does not take into account motion blur, so the undercounting of fast-diffusing particles is likely to be an underestimate.</p>
+
+<p> Briefly, a reduced exposure time leads tends to limit the fraction of fast-diffusing particles moving out-of-focus from one frame to another. On the other hand, when the frame rate becomes too high, the detections are dominated by the localization error and inference become less and less accurate. Thus, a trade-off between the exposure time and the fast-diffusion coefficient has to be found.</p>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Theoretical jump length distribution</div>
+  <div class="panel-body" ng-init="jld={D1: 1.0, D2: 5.0, P: 0.5, S: 10, dt: 10, theo: true}">
+    <div class="text-center">
+      <jump-length-distribution data="jld"></jump-length-distribution>
+    </div>
+    <br/>
+    <table>
+      <tr>
+	<td class="col-sm-2">D<sub>1</sub> (&mu;m²/s)</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.D1"
+				 rz-slider-options="{floor: 0, ceil:10, step: 0.1, precision: 1}">
+	</rzslider></td>
+      </tr>
+      <tr>
+	<td class="col-sm-2">D<sub>2</sub> (&mu;m²/s)</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.D2"
+				 rz-slider-options="{floor: 0, ceil:10, step: 0.1, precision: 1}">
+	</rzslider></td>
+      </tr>
+      <tr>
+	<td class="col-sm-2">P</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.P"
+				 rz-slider-options="{floor: 0, ceil:1, step: 0.01, precision: 2}">
+	</rzslider></td>
+      </tr>
+      <tr>
+	<td class="col-sm-2">&sigma; (nm)</td>
+	<td class="col-sm-10"><rzslider
+				 rz-slider-model="jld.S"
+				 rz-slider-options="{floor: 0, ceil:100, step: 1}">
+	</rzslider></td>
+      </tr>
+      <tr>
+      <td class="col-sm-2">&Delta;t (ms)</td>
+      <td class="col-sm-10"><rzslider
+			       rz-slider-model="jld.dt"
+			       rz-slider-options="{floor: 1, ceil:100, step: 1}">
+      </rzslider></td>
+      </tr>
+      <tr>
+	<td>Show model with no depth of field correction</td>
+	<td>
+	  <toggle-switch ng-model="jld.theo"
+			 off-label="No"
+			 on-label="Yes"></toggle-switch>
+	  {{jld.theo}}
+	</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<p>From this representation, one can derive the fraction of particles that will move out of focus in the next frame as a function of the fast-diffusion coefficient and the exposure time (in this case, allowing one gap so that a particle out of focus for one frame can still be reconnected in the following frame).</p>
+
+<img src="{% static 'SPTGUI/img/fractionmissed.svg' %}"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Fraction of particles missed as a function of \Delta t">
+
+<p> This graph shows that fast-diffusing molecules (\(D> 5 \mu m/s\)) are extremely hard to track, even at a relatively high frame rate. For instance, when imaging at 100 Hz (10 ms per frame) a factor moving at 10 µm²/s (such as Halo-3xNLS), 40% of the particles move out of focus at each frame. This drastically limit the number of trajectories coming from the free population.</p>
+
+<p> Furthermore, this graph only represents the fraction of particles remaining in focus after one frame. To get longer trajectories (more than two timepoints) is much harder, and is both limited by photobleaching and particles moving out of focus (detailed in section <a href="#trajectory-length">What limits the length of trajectories?</a>.</p>

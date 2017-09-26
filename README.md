@@ -10,7 +10,7 @@ Spot-On can be installed using `pip v.9.0` or any further version.
 Finally, for the exports, Spot-On relies on the [Inkscape](https://inkscape.org) software to perform file conversions. 
  
 ## Setup the virtual environment
-We first install a tool to manage Python's [virtual environements](https://virtualenvwrapper.readthedocs.io/en/latest/): [`virtualenvwrapper`](https://virtualenvwrapper.readthedocs.io/en/latest/) and create a virtualenv called **fastSPT**.
+We first install a tool to manage Python's [virtual environements](https://virtualenvwrapper.readthedocs.io/en/latest/): [`virtualenvwrapper`](https://virtualenvwrapper.readthedocs.io/en/latest/) and create a virtualenv called **fastSPT**. This is only required if you want to work in a virtual environment (recommended).
 
 ```{shell}
 pip install virtualenvwrapper
@@ -38,7 +38,7 @@ See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#c
 
 ```{shell}
 git clone https://gitlab.com/tjian-darzacq-lab/Spot-On.git
-cd fastSPT
+cd Spot-On
 pip install pip -U # update to the last version of pip
 pip install -r requirements.txt
 make init ## This will download demo datasets and fitted (a,b) fitted values
@@ -51,7 +51,7 @@ make init ## This will download demo datasets and fitted (a,b) fitted values
 tmux
 export WORKON_HOME=~/.envs
 source /usr/local/bin/virtualenvwrapper.sh ## or: source ~/.local/bin/virtualenvwrapper.sh
-cd fastSPT/
+cd Spot-On/
 workon fastSPT
 python manage.py runserver
 celery -A SPTGUI worker -l INFO # In a different terminal

@@ -70,3 +70,5 @@ compute_params = {'BinWidth' : 0.01,
 ##     arbitrary files to your website. Nonetheless, these files will be
 ##     automatically deleted if they are not tracking files.
 UPLOADAPI_ENABLE = False
+UPLOADAPI_ENABLE_NEWANALYSIS = False
+UPLOADAPI_ENABLE_EXISTINGANALYSIS = False

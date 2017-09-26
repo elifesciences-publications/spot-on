@@ -323,7 +323,8 @@ def check_input_file(filepath, file_id, fmt, fmtParams, queue=True):
     try: # try to parse the file
         fi = parsers.read_file(da.data.path, fmt, fmtParams)
         report += "SUCCESS, the file was successfully imported\n"
-    except: # exit
+    except Exception, e: # exit
+        print e
         report += "FAILURE, the file could not be imported.\n"
         report += "DELETED file: the imported file has been deleted\n"
         report += "ERROR MESSAGE:\n================================\n"
