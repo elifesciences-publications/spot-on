@@ -7,6 +7,12 @@
 ## See the documentation for a thorough description of
 ## of each option.
 
+## (0) ==== Whether to display the 'beta' ribbon
+##     This can be used to warn users that they are using an experimental version
+##     of Spot-On, that might be under development or unstable. In particular,
+##     data loss or corruption or loss is more likely than in a production system
+BETA_VERSION = True
+
 
 ## (1) ==== Whether to use the demonstration files. ====
 ##     To use demonstration files, you need to have an analysis
