@@ -41,16 +41,23 @@
     <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
     <link href="{% static 'SPTGUI/homepage.css' %}" rel="stylesheet">
 
+    <!-- Beta ribbon -->
+    {% if beta %}
+    <link href="{% static 'SPTGUI/ribbon.css' %}" rel="stylesheet">
+    {% endif %}
+
     <!-- Custom app code & CSS -->
     <script src="{% static 'SPTGUI/homepage.js' %}"></script>    
   </head>
   
   <body ng-app="app">
     {% csrf_token %}
-    <!-- NAVBAR ================================================== -->
-
-
+    <!-- Beta ribbon  ================================================== -->
+    {% if beta %}
+    <div class="corner-ribbon bottom-right sticky red">Beta!</div>
+    {% endif %}
     
+    <!-- NAVBAR ================================================== -->
     {% include 'SPTGUI/navbar1.html' %}
 
     <!-- Carousel ================================================== -->

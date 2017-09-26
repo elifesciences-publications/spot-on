@@ -159,6 +159,7 @@ def index(request):
                'captcha': custom_settings.RECAPTCHA_USE,
                'recaptchakey': custom_settings.RECAPTCHA_PUBLIC,
                'mailavailable': custom_settings.EMAIL_USE,
+               'beta': custom_settings.BETA_VERSION,
                'demoavailable': custom_settings.use_demo}
     return HttpResponse(template.render(context, request))
 
