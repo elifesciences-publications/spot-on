@@ -37,16 +37,11 @@ See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#c
 ## Download and install Spot-On
 
 ```{shell}
-git clone https://padouppadoup@gitlab.com/padouppadoup/fastSPT.git
+git clone https://gitlab.com/tjian-darzacq-lab/Spot-On.git
 cd fastSPT
 pip install pip -U # update to the last version of pip
 pip install -r requirements.txt
 make init ## This will download demo datasets and fitted (a,b) fitted values
-
-#mkdir -p static/upload/
-#mkdir    static/tmpdir/
-#mkdir    static/analysis
-#mkdir -p uploads/uploads/
 ```
 
 # Usage
