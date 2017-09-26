@@ -29,16 +29,7 @@ You will also need the [`git` tool](https://git-scm.com/) to download the files.
 sudo apt-get install python-dev libffi-dev libssl-dev ## Required to compile dependencies
 sudo apt-get install gfortran libopenblas-dev liblapack-dev ## Required by Scipy
 sudo apt-get install git inkscape 
-```
-
-
-```{shell}
 sudo apt-get install redis-server
-#pip install Django
-#pip install numpy # Useless if already installed on your system, compilation might be long
-#pip install scipy # Useless if already installed on your system, compilation might be long
-#pip install pandas lmfit celery fasteners haikunator requests channels xmltodict
-#pip install redis_asgi django-angular celery[redis]
 ```
 
 See this: http://docs.celeryproject.org/en/latest/userguide/configuration.html#conf-redis-result-backend 
