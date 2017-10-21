@@ -235,14 +235,26 @@
 		  <td> dZ (µm): </td>
 		  <td>
 		    <input ng-model="modelingParameters.dZ"
+			   ng-disabled="!modelingParameters.useZcorr"
 			   type="number" step="any" min="0">
 		    <span uib-tooltip="The axial dimension of the detection volume. This is used to compute the fraction of particles that move out of focus and correct for that." class="glyphicon glyphicon-question-sign"></span>
-		    (using (dZ={{modelingParameters.dZfit}} &micro;m,
-		    dT={{modelingParameters.dTfit*1000.}} ms)
-		    for the z correction
-		    <a href="#"
-		       uib-tooltip="a={{zcorr.a|number}} 1/&#8730;s,  b={{zcorr.b|number}} µm">?</a>.
+		    Use Z correction
+		    <toggle-switch
+		       ng-model="modelingParameters.useZcorr"
+		       off-label="No"
+		       on-label="Yes">
+		    </toggle-switch>
+		    <span uib-tooltip="You should use it unless the molecules you are imaging are always in the focal plane." class="glyphicon glyphicon-question-sign"></span>
 		  </td>
+		</tr>
+		<tr>
+		  <td></td>
+		  <td>(using (dZ={{modelingParameters.dZfit}} &micro;m,
+		    dT={{modelingParameters.dTfit*1000.}} ms)
+		    for the z correction)
+		    <a href="#"
+		       uib-tooltip="a={{zcorr.a|number}} 1/&#8730;s,  b={{zcorr.b|number}} µm">?</a>.</td>
+		  
 		</tr>
 		<tr>
 		  <td> Model Fit: </td>
