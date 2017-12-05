@@ -110,20 +110,20 @@
 <p> Sure! Spot-On is fully <a href="{% url 'SPTGUI:staticpage' 'license' %}">free/open-source</a> and detailed download and installation instructions can be retrieved from our <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">Gitlab page</a>.</p>
 
 <h3>Is there a command-line version?</h3>
-<p> There is! Spot-On uses an independent command-line Python backend that is available in our <a href="https://github.com/DarzacqLab/fastspt">Github repository</a>. It implements most of the features of Spot-On, comes with simple wrapper functions that can quickly be implemented in your scripting framework.  There is also a <a href="https://gitlab.com/anders.sejr.hansen/spot-on-matlab">Matlab command line version</a> of Spot-On available from our Gitlab repository.</p>
+<p> There is! Spot-On uses an independent command-line Python backend that is available in our <a href="https://github.com/DarzacqLab/fastspt">Github repository</a>. It implements most of the features of Spot-On, comes with simple wrapper functions that can quickly be implemented in your scripting framework.  There is also a <a href="https://gitlab.com/tjian-darzacq-lab/spot-on-matlab">Matlab command line version</a> of Spot-On available from our Gitlab repository.</p>
 
 <h3>What technology is used by Spot-On?</h3>
 <p> Spot-On is written in <a href="http://python.org">Python</a>. The backend relies on the <a href="https://lmfit.github.io/lmfit-py/">lmfit</a> library. The server is based on <a href="https://www.djangoproject.com/">Django</a> and uses <a href="http://celeryproject.org/">Celery</a> to run an asynchronous queue to perform jobs. The frontend is written in <a href="https://angularjs.org/">AngularJS</a> and the graphs are rendered through <a href="http://d3js.org/">D3.js</a>.</p>
   
 <h3>Is there a Matlab® version?</h3>
-<p>Yes. The Matlab version gives equivalent results to the online version or Python command line version and can be downloaded from <a href="https://gitlab.com/anders.sejr.hansen/spot-on-matlab">our Gitlab repository</a>. Please note that the Matlab version accepts only one input format.</p>
+<p>Yes. The Matlab version gives equivalent results to the online version or Python command line version and can be downloaded from <a href="https://gitlab.com/tjian-darzacq-lab/spot-on-matlab">our Gitlab repository</a>. Please note that the Matlab version accepts only one input format.</p>
 
 <h3>What license uses Spot-On?</h3>
 <p>Spot-On is two-folds: </p>
 
 <ul>
   <li><em>The <a href="https://github.com/DarzacqLab/fastspt">fitting backend</a></em> is released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License version 3 or higher</a>. You can consult one of these links for a summary of the license: [<a href="https://tldrlegal.com/license/gnu-general-public-license-v3-%28gpl-3%29">1</a>] [<a href="https://choosealicense.com/licenses/gpl-3.0/">2</a>].</li>
-  <li> <em>The <a href="https://gitlab.com/anders.sejr.hansen/spot-on-matlab">Matlab backend</a></em> is also released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License version 3 or higher</a>.</li>
+  <li> <em>The <a href="https://gitlab.com/tjian-darzacq-lab/spot-on-matlab">Matlab backend</a></em> is also released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License version 3 or higher</a>.</li>
   <li><em>The <a href="https://gitlab.com/tjian-darzacq-lab/Spot-On/">server frontend</a></em>, that wraps the fitting backend is released under the <a href="https://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License version 3 or higher</a>. You can consult one of these links for a summary of the license: [<a href="https://tldrlegal.com/license/gnu-affero-general-public-license-v3-%28agpl-3.0%29">1</a>] [<a href="https://choosealicense.com/licenses/agpl-3.0/">2</a>].</li>
   
 </ul>
@@ -156,7 +156,14 @@
 
 <h3>How to cite Spot-On?</h3>
 
-<p>We've no idea so far!</p>
+<p>You can use the following citation:</p>
+<blockquote>
+  <p>Spot-On: robust model-based analysis of single-particle tracking experiments</p>
+  <p>Anders S Hansen*, Maxime Woringer*, Jonathan B Grimm, Luke D Lavis, Robert Tjian, Xavier Darzacq</p>
+  <footer>bioRxiv preprint, Aug. 2017. doi:<a href="https://doi.org/10.1101/171983">10.1101/171983</a>.<br/>
+    *These authors contributed equally and are alphabetically listed.
+  </footer>
+</blockquote>
 
 <h3>How to contact you?</h3>
 
