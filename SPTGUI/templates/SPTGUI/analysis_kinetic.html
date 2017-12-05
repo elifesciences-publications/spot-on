@@ -13,6 +13,12 @@
   
   <div ng-if="showModelingTab&&datasets.length>0;">
     <div class="row">
+      <br/>
+      <div ng-repeat="err in errors" class="alert alert-danger">
+	<p><em>Error:</em> {{err.message}}</p>
+      </div>
+    </div>
+    <div class="row">
       <h2> Dataset selection </h2>
 
       <table class="table-striped">

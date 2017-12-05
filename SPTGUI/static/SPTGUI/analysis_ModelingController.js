@@ -22,6 +22,7 @@ angular.module('app')
 	$scope.displayCDF = false; // Commanded by toggle switch
 	$scope.displayResiduals = {status: false}; // Commanded by toggle switch
 	$scope.zcorr = {a: null, b: null}
+	$scope.errors = [{message:"Cépété"},{message:"Babou"}]; // General array to report errors.
 	
 	initView = function() {
 	    // Initiate the window with what we have
