@@ -53,7 +53,7 @@
 
 <p>The "Upload dataset" region (<span class="red">&#x2461;</span> in the screenshot below), where you can upload from various file formats. Clicking on any of the format will display a box where you can enter additional upload parameters, and will ultimately display a drag-and-drop upload box. Accepted formats are described in more details in the <a href="#input-formats">Input formats</a> section below.</p>
 
-<div class="alert alert-info"> For the purpose of this tutorial, the data has already been loaded, so we won't play with this part of the page</div>
+<div class="alert alert-info"> For the purpose of this tutorial, the data has already been loaded, so we won't play with this part of the page.</div>
 
 <p> The "Uploaded datasets" region (<span class="red">&#x2462;</span> in the screenshot below), that displays the uploaded datasets, together with their status (<code>uploading</code>, <code>queued</code>, <code>error</code>). The meaning of the descriptors in the "status" column in the upload box is detailed in the <a href="#import-codes">Status code of imported datasets</a> section below. When clicking on the "eye" symbol (<span class="glyphicon glyphicon-eye-open"></span>) next to an uploaded dataset will display some statistics in the area  <span class="red">&#x2463;</span>. The meaning and details of the computation of each statistic is detailed in section <a href="#dataset-statistics">Dataset statistics</a> below. Finally, area <span class="red">&#x2464;</span> displays similar statistics as area <span class="red">&#x2463;</span>, but for all the datasets pooled together.</p>
 
@@ -78,7 +78,7 @@
   <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell05.mat</li>  
 </ol>
 
-<p> These files correspond to a subset of an experimental series spanning ~1500 cells in several conditions for various transcription factors and DNA-binding proteins, acquired at various framerates and durations of stroboscopic illumination. This dataset is described in more details in the <a href="#datasets">Datasets</a> section.
+<p> These files correspond to a subset of an experimental series spanning ~1500 cells in several conditions for various transcription factors and DNA-binding proteins, acquired at various framerates and durations of stroboscopic illumination. This dataset is described in more details in the <a href="#datasets">Datasets</a> section.</p>
 
 <p>Five of these correspond to the transcription factor <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>, which has been endogeneously tagged with a HaloTag and observed with the PA-JF646 organic dye (<a href="#grimm" aria-describedby="footnote-label" id="grimm-ref">Grimm et al, 2016</a>). The five other correspond to the Halo-tagged histone H2B imged under the same conditions.</p>
 
@@ -102,7 +102,7 @@
   <p>Click on the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>) next to the datasets and have a look at the metrics displayed. Make sure you familiarize yourself with those.</p>
 </div>
 
-<p> The table below summarizes the statistics computed for the first dataset (names <em>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</em>.</p>
+<p> The table below summarizes the statistics computed for the first dataset (named <em>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</em>).</p>
 
 <table class="table table-striped">
   <tr>
@@ -146,7 +146,7 @@
   </tr>
 </table>
 
-<p> <b>Comment on the main features of the dataset</b>. Although the number of jumps is not extremely high, we need to keep in mind that we plan to pool this dataset with four other datasets, which should overcome the limited size of this dataset. In case we encounter a dataset of unsuitable quality, we can exclude it by clicking the "cross" button (<span class="glyphicon glyphicon-remove"></span>) next to the dataset.</p>
+<p>Although the number of jumps is not extremely high, we need to keep in mind that we plan to pool this dataset with four other datasets, which should overcome the limited size of this dataset. In case we encounter a dataset of unsuitable quality, we can exclude it by clicking the "cross" button (<span class="glyphicon glyphicon-remove"></span>) next to the dataset.</p>
 
 <p>Once that we are confident about the quality of the uploaded data, we can proceed to the second tab, the "Kinetic modeling".</p>
 
@@ -173,7 +173,7 @@
   <tr>
     <td><span class="red">&#x246A;</span> and <span class="red">&#x246B;</span></td>
     <td>Jump length histogram</td>
-    <td>This area contains the plot of the jump length distribution, overlaid with the fitted model (if evaluated). It also contains option to either visualize single datasets or the pool of the selected datasets. Finally, it contains an option to save an analysis for download.</td>
+    <td>This area contains the plot of the jump length distribution, overlaid with the fitted model (if evaluated). It also contains the option to either visualize single datasets or the pool of the selected datasets. Finally, it contains an option to save an analysis for download.</td>
   </tr>
 </table>
 
@@ -264,7 +264,7 @@
 
   <p> The graph displayed should be read as follows:</p>
   <ul>
-    <li>Each row corresponds to a jump length distribution evaluated at a given \(\Delta t\). Since short trajectories are more frequent than long trajectories, higher \(\Delta t\) histograms tend to be less populated and appear less smooth (or more "noisy"). The number of rows is determined by the "Number of timepoints" parameter.</li>
+    <li> Each row corresponds to a jump length distribution evaluated at a given \(\Delta t\). Since short trajectories are more frequent than long trajectories, higher \(\Delta t\) histograms tend to be less populated and appear less smooth (or more "noisy"). The number of rows is determined by the "Number of timepoints" parameter.</li>
     <li> The jump length distribution is computed for values ranging between 0 µm and 3 µm (this corresponds to the "Max Jump" parameter). However, by default, only the first 1.2 µm are initially plotted. To plot the full histogram (or alternatively, to zoom to the origin), the "Max Jump displayed" cursor, located under the plot can be adjusted. </li>
     <li> Then, by default, the jump length distribution is displayed for individual datasets. The displayed dataset is specified in the "Display dataset" box under the plot. It is often useful to take the time to review the jump length distribution of each single acquisition, in order to know which datasets might have to be excluded from further analysis.</li>
     <li> Once individual datasets have been reviewed, it is possible to display the pooled jump length distribution by clicking the "Show pooled jump length distribution" toggle button under the plot. This will compute the distribution for the selected datasets only (in our case, for all the Sox2 datasets). Pooled histograms appear with a hard, black boundary, and the included datasets are displayed under the graph. The updated graph might take a few seconds to render.</li>
@@ -444,7 +444,7 @@
 </div>
 
 <div class="bs-callout bs-callout-warning"> <h4>Step 10: fit the Sox2 dataset with a two-state model</h4>
-  <p> We can now proceed similarly to derive the fit for the Sox2 datasets. The resulting fit is shown below, next to a fit using a three-state model. Notice in this plot that significant misfit occurs: at high \[\Delta t\) the model estimates predicts that the bound fraction should have bigger displacements than what actually is. This characterizes a model mismatch and suggest the use of a three-state model.</p>
+  <p> We can now proceed similarly to derive the fit for the Sox2 datasets. The resulting fit is shown below, next to a fit using a three-state model. Notice in this plot that significant misfit occurs: at high \(\Delta t\) the model estimates predicts that the bound fraction should have bigger displacements than what actually is. This characterizes a model mismatch and suggest the use of a three-state model.</p>
 </div>
 
 <div class="bs-callout bs-callout-warning"> <h4>Step 11: fit a three-state model</h4>
