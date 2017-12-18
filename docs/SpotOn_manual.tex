@@ -1,0 +1,732 @@
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% University Assignment Title Page 
+% LaTeX Template
+% Version 1.0 (27/12/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% WikiBooks (http://en.wikibooks.org/wiki/LaTeX/Title_Creation)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+% Instructions for using this template:
+% This title page is capable of being compiled as is. This is not useful for 
+% including it in another document. To do this, you have two options: 
+%
+% 1) Copy/paste everything between \begin{document} and \end{document} 
+% starting at \begin{titlepage} and paste this into another LaTeX file where you 
+% want your title page.
+% OR
+% 2) Remove everything outside the \begin{titlepage} and \end{titlepage} and 
+% move this file to the same directory as the LaTeX file you wish to add it to. 
+% Then add \input{./title_page_1.tex} to your LaTeX file where you want your
+% title page.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\title{Title page with logo}
+%----------------------------------------------------------------------------------------
+%   PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{hyperref}
+
+\begin{document}
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%   HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+%\textsc{\LARGE University Name}\\[1.5cm] % Name of your university/college
+%\textsc{\Large Major Heading}\\[0.5cm] % Major heading such as course name
+%----------------------------------------------------------------------------------------
+%   TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+       { \huge \bfseries Spot-On Manual (v0.10)
+       }\\[0.4cm] % Title of your document
+\HRule \\[1cm]
+
+\textsc{\large An updated version of this manual is online on}\\[0.2cm] % Minor heading such as course title
+\large \url{https://spoton.berkeley.edu/SPTGUI/docs/latest}\\[0.5cm]
+
+
+%----------------------------------------------------------------------------------------
+%   AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+%% \begin{minipage}{0.4\textwidth}
+%% \begin{flushleft} \large
+%% \emph{Authors:}\\
+%% Anders S. \textsc{Hansen}\\ % Your name
+%% Maxime \textsc{Woringer}\\ % Your name
+%% Jonathan B. \textsc{Grimm}\\
+%% Luke D. \textsc{Lavis}\\
+%% Robert \textsc{Tjian}\\
+%% Xavier \textsc{Darzacq}
+%% \end{flushleft}
+%% \end{minipage}
+%% ~
+%% \begin{minipage}{0.4\textwidth}
+%% \begin{flushright} \large
+%% \emph{Supervisor:} \\
+%% Dr. James \textsc{Smith} % Supervisor's Name
+%% \end{flushright}
+%% \end{minipage}\\[2cm]
+
+% If you don't want a supervisor, uncomment the two lines below and remove the section above
+\emph{Authors:}\\
+Anders S. \textsc{Hansen}\\ % Your name
+Maxime \textsc{Woringer}\\ % Your name
+Jonathan B. \textsc{Grimm}\\
+Luke D. \textsc{Lavis}\\
+Robert \textsc{Tjian}\\
+Xavier \textsc{Darzacq}
+\vfill
+
+%\Large \emph{Author:}\\
+%John \textsc{Smith}\\[3cm] % Your name
+
+%----------------------------------------------------------------------------------------
+%   LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\includegraphics[width=8cm]{../logo/spoton_logo_square.png}\\[0.3cm] % Include a department/university logo - this will require the graphicx package
+
+%----------------------------------------------------------------------------------------
+%   DATE SECTION
+%----------------------------------------------------------------------------------------
+
+{\large \today}\\[0.3cm] % Date, change the \today to a set date if you want to be precise
+
+
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+
+\begin{abstract}
+Spot-On allows you to analyze single particle tracking datasets. Spot-On fits a realistic kinetic model to the jump length distribution of the observed trajectories and provides estimates of the fraction bound ($F$) and diffusion coefficients ($D$) for either a two state (\textit{bound-free}) or a three state (\textit{bound-free1-free2}) model.
+
+Spot-On is a libre/open-source software and exists both as a web-application and a command-line version.
+
+This project owes a lot to Davide Mazza, who initially developed the conceptual framework implemented in Spot-On (see \cite{mazza_benchmark_2012}).
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{The problem}
+
+Within a cell, a DNA-binding factor diffuses and occasionally binds to DNA or forms complexes. Each of these states can be macroscopically characterized by an apparent diffusion coefficient and a fraction of the total population residing in this state. Thus, we are interested in extracting those parameters for each state (Figure~\ref{fig:fig1}). Note that even when the observed molecules are stably bound to DNA, they will still exhibit a nonzero diffusion coefficient (reflecting a mixture of the slow motion of chromatin (estimated to be around 0.01-0.02 $\mu m^2/s$, \cite{shinkai_dynamic_2016} --, the motion of the cell itself, microscope drift and possibly other factors).
+
+% Commands to include a figure:
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../SPTGUI/static/SPTGUI/img/cell.png}
+\caption{\label{fig:fig1}Schematic of a cell with diffusing particles.}
+\end{figure}
+
+To infer those parameters, \textit{single particle tracking} (SPT) approaches can be implemented. In single particle tracking of nuclear proteins, cells are typically engineered to express a protein of interest either fused to a fluorescent protein or to a tag that can be conjugated to a synthetic dye (e.g. HaloTag). When the density of dyes in the focal plane is sufficiently low (because the number of expressed proteins is low, because the depth of field is extremely small or because only a fraction of the molecules are visible at a time), individual molecules appear as isolated spots that can be localized with a subpixel accuracy by fitting a 2D (usually Gaussian) function and performing tracking between successive frames. This yields a series of trajectories, each corresponding to the motion of a single protein-conjugated fluorophore.
+
+Although extremely powerful, single particle tracking of nuclear factors is subject to several methodological difficulties detailed below:
+
+\subsection{Motion blur}
+When a diffusing particle is observed, it will keep diffusing while one frame is acquired. In this case, particles exhibit ``motion blur'', that is that the photons emitted by a fast-diffusing molecule appear spread across a higher surface than bound molecules. This has several consequences:
+
+\begin{itemize}
+\item{First, fast-diffusing molecules show a reduced signal-to-noise ratio}
+\item{Second, these detections significantly deviate from the theoretical PSF (point-spread function) of bound molecules.}
+\end{itemize}
+
+Because of these two effects, fast-diffusing particles are harder to detect, especially if PSF-fitting localization algorithms are used. Furthermore, because bound molecules are not affected by motion blur, molecules in the bound state tend to be overestimated because the fast-diffusing molecules are undercounted.
+
+The picture below (Figure~\ref{fig:fig2}) shows one frame containing two particles, one immobile particles appear as a very identifiable, Gaussian and symmetric spot (right red spot) whereas the fast-diffusing particle on the left is much harder to detect and very poorly resembles a point-emitter (spread out, left red spot).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../SPTGUI/static/SPTGUI/img/motionblur.png}
+\caption{\label{fig:fig2}Particles observed with motion blur.}
+\end{figure}
+
+Because motion blur results in under-detection of fast-diffusing particles, the amount of missed particles strongly depends on internal settings of the detection algorithm, and cannot readily be corrected after the acquisition. Section ``\href{https://spoton.berkeley.edu/SPTGUI/docs/latest#how-to-acquire-a-good-dataset-}{How to acquire a dataset}'' details a few ways to circumvent these biases at the acquisition step.
+
+In brief, the effect of motion blur can be mitigated by reducing the excitation pulse duration (to minimize the motion of the fast-diffusing population during one exposure) and the laser intensity (to keep the signal-to-noise sufficient).
+
+\subsection{Ambiguous tracking}
+
+As single particle tracking is intrinsically a low-throughput method, one may want to increase the density of tracked particles per frame in order to accelerate the data collection rate. However, as the density of particles increases, the tracking can become ambiguous. Furthermore, fast-moving particles are again more likely to be misconnected with other unrelated detections. This might result in a truncated jump length distribution, and thus a wrong estimation of the diffusion coefficient.
+
+When imaging with a high density of particles, the nearest detection in the next frame might not be the same particle. In the limit of particles with high diffusion coefficients, it is likely that particles will ``cross'' each other and that one particle with be connected with another particle.
+
+In practice, this leads to an under-detection of long jumps, because when a particle exhibits a long jump, the tracking algorithm is likely to pick another particle closer in space. This effect results in an underestimation of the fast-diffusing fraction and can be reduced by imaging at a low number of particles per frame. Section ``\href{https://spoton.berkeley.edu/SPTGUI/docs/latest#how-to-acquire-a-good-dataset-}{How to acquire a dataset}'' details a few ways to circumvent those biases at the acquisition step.
+
+\subsection{Particles move out of focus}
+
+In addition to motion blur biases, that leads to fast-moving particle to be missed by the detection algorithm, particles diffuse out of the detection volume (usually a slice of \(\sim\) 1 µm thickness). This effect is virtually zero for bound molecule, but becomes significant for fast-moving particles, leading to an undercounting of this population. The graph below (Figure~\ref{fig:fig3}) shows the jump length distribution of a molecule appearing in two states with respective diffusion coefficients \(D_1\) and \(D_2\) (expressed in µm²/s).
+
+More precisely, the graph below displays the theoretical jump length distribution in case of an unlimited depth of field (solid line) and the simulation of the observed jump length distribution (dotted line) when particles are only observed within the depth of field of the objective (here set to 0.75 µm, see \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#measure-locerror}{the FAQ} for a method to measure it).
+
+An interactive figure is available on \url{https://spoton.berkeley.edu/SPTGUI/docs/latest}. This figure features cursors under the simulation to tune the diffusion coefficients of the two populations (\(D_1\) and \(D_2\)) and the proportion of the first population (\(p\)). From this graph, it appears (1) that as one increases the second diffusion coefficient (\(D_2\)), the discrepancy between the solid line and the dotted line increases, reflecting the fact that fast-diffusing particles tend to be under-counted in the observation through a setup with a finite depth of field.
+
+In addition to \(D_1\), \(D_2\) and \(p\), this interactive graph allows you to play with the effect of the localization error \(\sigma\) and the exposure time \(\Delta t\). Note that this simulation does not take into account motion blur, so the undercounting of fast-diffusing particles is likely to be an underestimate.
+
+Briefly, a reduced exposure time leads tends to limit the fraction of fast-diffusing particles moving out-of-focus from one frame to another. On the other hand, when the frame rate becomes too high, the detections are dominated by the localization error and inference become less and less accurate. Thus, a trade-off between the exposure time and the fast-diffusion coefficient has to be found.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{img/interactive_static.png}
+\caption{\label{fig:fig3}Theoretical jump length distribution.}
+\end{figure}
+
+From this representation, one can derive the fraction of particles that will move out of focus in the next frame as a function of the fast-diffusion coefficient and the exposure time (Figure~\ref{fig:fig4}; in this case, allowing one gap so that a particle out of focus for one frame can still be reconnected in the following frame).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../SPTGUI/static/SPTGUI/img/fractionmissed.png}
+\caption{\label{fig:fig4}Fraction of particles missed as a function of \(\Delta t\).}
+\end{figure}
+
+This graph shows that fast-diffusing molecules (\(D> 5 \mu m/s\)) are extremely hard to track, even at a relatively high frame rate. For instance, when imaging at 100 Hz (10 ms per frame) a factor moving at 10 µm²/s (such as Halo-3xNLS), 40\% of the particles move out of focus at each frame. This drastically limit the number of trajectories coming from the free population.
+
+Furthermore, this graph only represents the fraction of particles remaining in focus after one frame. To get longer trajectories (more than two timepoints) is much harder, and is both limited by photobleaching and particles moving out of focus (detailed in section \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#trajectory-length}{''What limits the length of trajectories?''}.
+
+\newpage
+
+\section{Quickstart/tutorial}
+\label{sec:tutorial}
+
+This section of the Spot-On documentation will guide you through a sample analysis with a couple of demonstration files and will provide you with an overview of Spot-On features and options.
+
+\subsubsection{Step 1: start an analysis with demonstration files}
+To access the demonstration files, go to the Spot-On homepage (\url{https://spoton.berkeley.edu/}) and scroll to the ``Get Started section'' (or alternatively click the ``Start spotting!'' button on the top menu. First fill in the ``I'm not a robot'' CAPTCHA. Then you have the option to either upload your own tracking files and start your analysis or start with demo files. We will use the demo files for the purpose of this tutorial.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto1.png}
+\caption{\label{fig:tuto1}Screenshot of the CAPTCHA region.}
+\end{figure}
+
+This option will load the analysis page and will automatically import some demonstration file. Also, a custom and permanent URL is created. Your analyses will accessible from this URL until you choose to delete them. Do not share this URL if you want your datasets and analyses to remain private. You might want to bookmark it in order to reaccess the data later. Note that if you lose this address, there is no way for you to recover your files, since your upload is totally anonymous (we do not collect your identity or email address).
+
+\subsection{About the demonstration files}
+
+When you click on the ``Start with a demo file'' button, ten sample datasets are loaded. They are part of a bigger dataset described in details in the \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#datasets}{Datasets} section that include single particle tracking of four nuclear proteins: \href{https://en.wikipedia.org/wiki/Histone_H2B}{histone H2B (H2B)}, \href{https://en.wikipedia.org/wiki/SOX2}{Sox2}, \href{https://en.wikipedia.org/wiki/HaloTag}{HaloTag}-3x\href{https://en.wikipedia.org/wiki/Nuclear_localization_sequence}{NLS} and \href{https://en.wikipedia.org/wiki/CTCF}{CTCF}. These four proteins were imaged through a range of conditions, leading to approx. 1600 cells imaged in total.
+
+By default, the ten imported files are five replicates of histone H2B (fused to both a HaloTag and a \href{https://en.wikipedia.org/wiki/SNAP-tag}{SNAP-tag} in U2OS cells, labeled with the Halo-PA-JF646 dye and imaged at 74 Hz (that is 1000/74 = 13.5 ms per frame).
+
+The five other files are five replicates of the transcription factor Sox2 (fused to a HaloTag in mouse embryonic stem cells and imaged in comparable conditions: labeled with PA-JF646 and imagied at 74Hz.
+
+In this demo dataset, one of the goal is to get an idea of the dynamics of the Sox2 transcription factor. Indeed, an estimate of the fraction bound and diffusion coefficient of Sox2 provides a valuable insight into how this transcription factor regulates transcription. For instance, a low fraction bound and a high diffusion coefficient could suggest a highly dynamic regulation, but also a target search mechanism dominated by free diffusion. The H2B samples are provided as a reference for a protein that is known to be mostly bound to chromatin, in order to facilitate comparisons with more characterized systems.
+
+\subsection{Overview of the application}
+First of all, Spot-On is organized into \textit{four successive tabs}. These tabs are populated one after the other (that is, for instance, the ``Kinetic modeling'' tab remains blank as long as no dataset has been uploaded in the ``Data'' tab, etc). The four tabs are detailed in Table~\ref{table:table1} ((1) in Figure~\ref{fig:tuto2}).
+
+\begin{center}
+  \label{table:table1}
+\begin{tabular}{ll}
+Tab & Description\\
+\hline
+Data & This tab allows you to upload your datasets in various formats
+\\&in a batch mode, to annotate them, and to see statistics both for \\&individual datasets and for the ensemble of uploaded files.\\
+Kinetic modeling & Performs the fit of the kinetic model according to specified \\&parameters, display the jump length distribution and the corresponding fit. \\&Allows to include or exclude files for analysis. Display and fits can be \\&marked for download.\\
+Download & This tab allows you to download the files marked for
+\\&download in various formats (PDF, SVG, EPS, PNG, and ZIP archive).
+\\&The ZIP archive contains the raw data, the fitting parameters and
+\\&the fitted coefficients.\\
+Settings & Allows you to erase the analysis (together with all the uploaded datasets).\\
+\end{tabular}
+\end{center}
+
+The ``Upload dataset'' region ((2) in Figure~\ref{fig:tuto2}), where you can upload from various file formats. Clicking on any of the format will display a box where you can enter additional upload parameters, and will ultimately display a drag-and-drop upload box. Accepted formats are described in more details in the \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#input-formats}{``Input formats''} section online.\\
+
+\todo[inline, color=orange!40]{For the purpose of this tutorial, the data has already been loaded, so we won't play with this part of the page.}
+
+The ``Uploaded datasets'' region ((3) in Figure~\ref{fig:tuto2}), that displays the uploaded datasets, together with their status (\texttt{uploading}, \texttt{queued}, \texttt{error}). The meaning of the descriptors in the ``status'' column in the upload box is detailed in the \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#import-codes}{``Descriptors of imported datasets''} section online. When clicking on the ``eye'' symbol next to an uploaded dataset will display some statistics in the area (4). The meaning and details of the computation of each statistic is detailed in section \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#dataset-statistics}{``Dataset statistics''} below. Finally, area (5) displays similar statistics as area (4), but for all the datasets pooled together.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto2.png}
+\caption{\label{fig:tuto2}Screenshot of 'Data' tab.}
+\end{figure}
+
+\subsection{Import}
+
+To proceed with the tutorial, several files have been loaded, they are named. They might get imported in a different order:
+
+\begin{enumerate}
+\item mESC\_C3\_Halo-Sox2\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell01.mat
+\item mESC\_C3\_Halo-Sox2\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell02.mat
+\item mESC\_C3\_Halo-Sox2\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell03.mat
+\item mESC\_C3\_Halo-Sox2\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell04.mat
+\item mESC\_C3\_Halo-Sox2\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell05.mat
+\item U2OS\_H2B-Halo-SNAP\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell01.mat
+\item U2OS\_H2B-Halo-SNAP\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell02.mat
+\item U2OS\_H2B-Halo-SNAP\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell03.mat
+\item U2OS\_H2B-Halo-SNAP\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell04.mat
+\item U2OS\_H2B-Halo-SNAP\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell05.mat  
+\end{enumerate}
+
+These files correspond to a subset of an experimental series spanning ~1500 cells in several conditions for various transcription factors and DNA-binding proteins, acquired at various framerates and durations of stroboscopic illumination. This dataset is described in more details in the \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#datasets-1}{``Datasets''} section.
+
+Five of these correspond to the transcription factor \href{https://en.wikipedia.org/wiki/SOX2}{Sox2}, which has been endogeneously tagged with a HaloTag and observed with the PA-JF646 organic dye \cite{grimm_general_2015}. The five other correspond to the Halo-tagged histone H2B imged under the same conditions.
+
+\subsubsection{Step 2: rename and tag the uploaded files}
+Since the naming convention of these files is a little bit cumbersome, let's first edit the description of each file to make it clearer. To do so, click on the ``pencil'' icon (see (6)) next to each uploaded dataset. An ``edit'' box will appear at the bottom of the ``Uploaded datasets'' area, and we can now either rename or add a more explicit description of the datasets. We choose to leave the name as is, but add a short description for each dataset, such as ``H2B cell1'', ``H2B cell2'', etc. (7).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto3.png}
+\caption{\label{fig:tuto3}Screenshot: Editing the description of datasets.}
+\end{figure}
+
+\todo[inline, color=orange!40]{The uploaded dataset comprises two distinct proteins, and five replicates for each protein. In the next steps, we want to make sure that we pool the replicates of each protein together, but do not mix up the two proteins.}
+
+\subsection{Quality check}
+Now that we see a little bit clearer through the datasets, let's inspect a little bit the datasets, and try to assess the quality of the dataset. Spot-On provides a few quality metrics (statistics), accessible for each dataset by clicking the ``eye'' button.
+
+\subsubsection{Step 3: Inspect a few quality metrics}
+lick on the ``eye'' button next to the datasets and have a look at the metrics displayed. Make sure you familiarize yourself with those.
+
+The table below (Table~\ref{table:table2}) summarizes the statistics computed for the first dataset (named \texttt{mESC\_C3\_Halo-Sox2\_PA-JF646\_1ms-633nm\_74Hz\_rep2\_cell01.mat}).
+
+\begin{center}
+  \label{table:table2}
+  \begin{tabular}{lr}
+    Statistic & Value\\
+    \hline
+    Number of traces & 6103\\
+    Number of frames & 29997\\
+    Number of detections & 15692\\
+    Longest gap (frames) & 1\\
+    Number of traces with >3 detections & 1813\\
+    Number of jumps & 9589\\
+    Length of trajectories (in number of frames) & median: 1, mean: 2.571\\
+    Particles per frame & median: 0, mean: 0.523\\
+    Jump length (µm) & median: 0.126, Mean: 0.236\\
+  \end{tabular}
+\end{center}
+
+Although the number of jumps is not extremely high, we need to keep in mind that we plan to pool this dataset with four other datasets, which should overcome the limited size of this dataset. In case we encounter a dataset of unsuitable quality, we can exclude it by clicking the ``cross'' button next to the dataset.
+
+Once that we are confident about the quality of the uploaded data, we can proceed to the second tab, the ``Kinetic modeling''.
+
+\subsection{Kinetic modeling}
+\subsubsection{Overview of the kinetic modeling tab}
+The ``kinetic modeling'' tab is divided in several sections (Table~\ref{table:table3} and Figure~\ref{fig:tuto4}).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto4.png}
+\caption{\label{fig:tuto4}Overview of the kinetic modeling tab.}
+\end{figure}
+
+
+\begin{center}
+  \label{table:table3}
+  \begin{tabular}{lll}
+    \# & Section & Description\\
+    \hline
+    (8) & Dataset selection & This section lists all the uploaded \\&&datasets. For each fit of the model, \\&&you can choose whether to include one \\&&specific dataset for fitting or not.\\
+    (9) and (10) & Parameters & Parameters used to compute the empirical \\&&jump length distribution (9) and to fit \\&&it (9). This includes the choice of a 2-state \\&&vs. a 3-state model, the range of the \\&&tested parameters, etc.\\
+    (11) and (12) & Jump length histogram & This area contains the plot of the jump \\&&length distribution, overlaid with the \\&&fitted model (if evaluated). It also contains the \\&&option to either visualize single datasets \\&&or the pool of the selected datasets. \\&&Finally, it contains an option to save \\&&an analysis for download.\\
+  \end{tabular}
+\end{center}
+
+\subsection{Computation of the jump length distribution}
+For the purpose of this tutorial, we'll simply fit the H2B and Sox2 datasets separately, and compare the two-state and three-state models based on their goodness of fit (assessed by the Bayesian Information Criterion, \href{https://en.wikipedia.org/wiki/Bayesian_information_criterion}{BIC}).
+
+\subsubsection{Step 4: compute the empirical jump length distribution for the Sox2 datasets}
+
+First, in the ``Dataset selection'' select the five Sox2 replicates. This is done by switching the ``Include'' toggle button to ``On'' next to the Sox2 datasets. Make sure that none of the H2B datasets are included (Figure~\ref{fig:tuto5}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto5.png}
+\caption{\label{fig:tuto5}Selection of Sox2 datasets.}
+\end{figure}
+
+We can then set the parameters to compute the jump length distribution (Figure~\ref{fig:tuto6}). We will mostly leave the parameters as default. Section \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#jld-parameters}{``Jump length distribution computation parameters''} describe the role of each parameter in more details.
+
+Then click the `\textit{Compute!} button. After a few seconds, the jump length distribution is computed for all the datasets and appears under the ``Jump length distribution'' section.
+
+The table below (Table~\ref{table:table4}) summarizes some key principles to properly set those parameters.
+
+\begin{center}
+  \label{table:table4}
+\begin{tabular}{lrll}
+  Parameter & Value & Default? & Comment\\
+  \hline
+  Bin Width (µm) & 0.01 & Y & The size of the bin used to build the empirical \\&&&histogram of jump lengths.\\
+  Number of gaps allowed & 1 & Y & The number of gaps allowed by the tracking \\&&&algorithm. This has to match the maximum \\&&&number of gaps allowed by the tracking algorithm.\\
+  Number of timepoints & 8 & Y & The number of \(\Delta t\) to consider when \\&&&fitting the model. Usually, higher values \\&&&provide better results, provided \\&&&that the histogram are sufficiently populated.\\
+  Jumps to consider & 4 & Y & The number of jumps per trajectory \\&&&actually used to build the histogram. \\&&&This is empirically useful to correct for \\&&&overcounting of slow-molecules not accounted \\&&&for by the corrections implemented in the \\&&&algorithm (for instance for undercounting due \\&&&to motion-blur). Here, for each trajectory, \\&&&the first 4 jumps for each \(\Delta t\) (if possible) will \\&&&be used to build the jump length histogram. For \\&&&example, if Number of timepoints=8 and \\&&&JumpsToConsider=4, a trajectory of 9 frames \\&&&will contribute 4 jumps to 1dT, 4 jumps to \\&&&2 dT, \dots, and 2 jumps to 7 dT. This is a \\&&&semi-empirical way of correcting for additional \\&&&biases towards bound molecules.\\
+  Max jump (µm) & 3 & Y & The range of distances to build the \\&&&histogram of jump lengths. This parameter \\&&&has to be set so that the tail of the \\&&&distribution is properly captured. Conversely, \\&&&a value too high will disturb the fitting, \\&&&that will be very sensitive to this potentially \\&&&noisy tail.\\
+  dT (ms) & 13.5 & N & It is crucial to match this value with \\&&&the acquisition rate of the dataset. \\&&&Here 13.5 ms/frame.\\
+\end{tabular}
+\end{center}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto6.png}
+\caption{\label{fig:tuto6}Jump length distribution parameters.}
+\end{figure}
+
+\todo[inline, color=orange!40]{This is the main view of Spot-On, so it is useful to spend a little bit of time to get familiarized with the various options (Figure~\ref{fig:tuto7}).}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto7.png}
+\caption{\label{fig:tuto7}Jump length distribution plot.}
+\end{figure}
+
+\subsubsection{Step 5: play with the display options}
+The graph displayed should be read as follows:
+
+\begin{itemize}
+\item Each row corresponds to a jump length distribution evaluated at a given \(\Delta t\). Since short trajectories are more frequent than long trajectories, higher \(\Delta t\) histograms tend to be less populated and appear less smooth (or more ``noisy''). The number of rows is determined by the ``Number of timepoints'' parameter.
+\item The jump length distribution is computed for values ranging between 0 µm and 3 µm (this corresponds to the ``Max Jump'' parameter). However, by default, only the first 1.2 µm are initially plotted. To plot the full histogram (or alternatively, to zoom to the origin), the ``Max Jump displayed'' cursor, located under the plot can be adjusted. 
+\item Then, by default, the jump length distribution is displayed for individual datasets. The displayed dataset is specified in the ``Display dataset'' box under the plot. It is often useful to take the time to review the jump length distribution of each single acquisition, in order to know which datasets might have to be excluded from further analysis.
+\item Once individual datasets have been reviewed, it is possible to display the pooled jump length distribution by clicking the ``Show pooled jump length distribution'' toggle button under the plot. This will compute the distribution for the selected datasets only (in our case, for all the Sox2 datasets). Pooled histograms appear with a hard, black boundary, and the included datasets are displayed under the graph. The updated graph might take a few seconds to render.
+
+\end{itemize}
+
+\todo[inline, color=orange!40]{The result of all the computations operated by Spot-On are cached. This way, if you enter the same set of parameters as previously, the computation should be almost instantaneous.}
+
+\subsubsection{Step 6: compare the H2B and Sox2 jump length distributions}
+Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the ``Dataset selection'' area. Then click the \textit{Compute!} button in the ``Jump length distribution parameters'' box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of \href{https://en.wikipedia.org/wiki/Histone_H2B}{H2B} and \href{https://en.wikipedia.org/wiki/SOX2}{Sox2}?\\
+
+\textbf{Answer:} When looking at the two histograms side-by-side, the two look very similar at short time scales (up to 200 nm), suggesting that the two proteins show a bound fraction. The dispersion around ~70 nm is likely to be characteristic of a combination of localization error (similar at all time scales, from \(1\Delta t\) to  \(7\Delta t\) and of slow diffusion of chromatin (that slowly spreads when looking at higher \(\Delta t\).
+
+Then, when considering higher distances, the histograms differ significantly, with Sox2 exhibiting a ``heavy tail'' whereas H2B lacks it. This reflects the fact that H2B is mostly bound whereas Sox2 has a significant freely-diffusing fraction. The modeling approach presented in the next steps of the tutorial will allow us to better characterize this diffusing state (Figure~\ref{fig:tuto8}).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto8.png}
+\caption{\label{fig:tuto8}Comparison of the Sox2 and H2B jump length distributions.}
+\end{figure}
+
+\subsubsection{Step 7: mark one jump length distribution for download}
+
+Before moving to the fitting of the data, let's save this last plot. We will download it later (from the ``Download'' tab). To do so, click the \textit{Mark for download} button at the bottom of the page. This will prompt a small form where you can enter a name and a description that will be used as a reminder when you download the file. Also, display again the jump length distribution for Sox2 (by selecting the appropriate files and clicking the and \textit{Compute!} button in the ``Jump length distribution parameters'' box) and save Mark it for download too (Figure~\ref{fig:tuto9}. We'd get back to these saved analyses later.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto9.png}
+\caption{\label{fig:tuto9}Screenshot of the mark for download box.}
+\end{figure}
+
+\subsection{Model fitting}
+Now that we are familiar with the computation and display of the jump length distribution, let's now move to model fitting!
+
+Spot-On fits the jump length distribution, as defined by the parameters of the ``Jump length distribution'' box. The fitting parameters are defined in the ``Model fitting'' box (Table~\ref{table:table5}).
+
+\subsubsection{Step 8: fit a two-state model to the H2B data}
+Let's first try to fit a \textit{two-state model}. Click on the picture of the two-state kinetic model (\textit{Bound-Free}, Figure~\ref{fig:tuto10}). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#fit-parameters}{Fitting parameters}, a short description is shown below).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto10.png}
+\caption{\label{fig:tuto10}Screenshot of the fitting parameters box.}
+\end{figure}
+
+Having now reviewed the parameters, we can click the \textit{Fit kinetic model} button. A ``spinning wheel'' will appear next to the button while the fit is being performed and will get displayed when the fit completes.
+
+\begin{center}
+  \label{table:table5}
+\begin{tabular}{lllll}
+Parameter & Value & Default? & Description/Comments & \\
+\hline
+Kinetic model & 2-state model & N &  & \\
+Dbound (µm²/s) & [0.005, 0.8] & Y & The range of diffusion coefficients for\\&&&
+the bound fraction. It is based on a wide \\&&&
+plausible range of chromatin diffusion \\&&&
+coefficients. & \\
+Dfree (µm²/s) & [0.15, 25] & Y &
+The range of diffusion coefficients for \\&&&
+the free fraction. These numbers \\&&&
+encompass a wide range of free-diffusion \\&&&
+coefficients. Note that for diffusion \\&&&
+coefficients > 10 µm²/s, motion blurring \\&&&
+can become a very important issue. & \\
+Fbound & [0,1] & Y & The range for the fraction bound. & \\
+Localization error (µm) & 0.035 & Y & See How to measure the localization error?\\&&& below. & \\
+dZ (µm) & 0.7 & Y & The estimated detection range in z. & \\
+Model Fit & CDF & N &
+Select whether the model will fit \\&&&
+the jump length distribution (that \\&&&
+is the probability density function, \\&&&
+PDF), or the cumulative jump length \\&&&
+distribution (CDF) & .\\
+Perform single cell fit & No & Y &
+If ``Yes'', each individual dataset will be fit.\\&&&
+Since our uploaded files are replicates of \\&&&
+the same experiment, we want to pool \\&&&
+them together. & \\
+Iterations & 3 & Y & The number of times the solver will\\&&& independently be initialized. & \\
+\end{tabular}
+\end{center}
+
+\todo[inline, color=orange!40]{When adjusting the dZ parameter (in the fitting parameters box), you will notice that the mention next to the dZ box changes. The displayed values relate to precomputed coefficients required to perform the correction for particles moving out of focus (see the \href{https://spoton.berkeley.edu/SPTGUI/docs/latest#methods-1}{``Methods''} section). These parameters are termed \((a,b)\) and were precomputed over a grid of depths of field (dZ) and exposure times (dT).
+
+However, even though we tried to be as comprehensive as possible in our simulations to derive \((a,b)\), the condition that matches exactly the acquisition settings might be missing. The displayed parameters represent the closest match of the acquisition parameters (dT, dZ) in our simulated database. For most acquisitions setup, the closest precomputed value lies within 0.5 ms and 100 nm of the empirical value (Figure~\ref{fig:tuto11}).}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto11.png}
+\caption{\label{fig:tuto11}screenshot of the z correction box.}
+\end{figure}
+
+It is important to make sure that the set of displayed parameters is not too far from the real acquisition settings, else, the computed z correction might be biased.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto12.png}
+\caption{\label{fig:tuto12}2-state fitting result of the H2B datasets.}
+\end{figure}
+
+Let's take some time to quickly look at the parameters returned by the fitting routine (Figure~\ref{fig:tuto12}) for the H2B datasets. Note that due to different initialization values, the returned parameter can differ from execution to execution (Table~\ref{table:table6}).
+
+\begin{center}
+\label{table:table6}
+  \begin{tabular}{lr}
+Parameter & Value\\
+\hline
+Dbound & 0.021 µm²/s\\
+Dfree & 3.929 µm²/s\\
+Fbound & 0.733\\
+l2 error & 0.00009489\\
+AIC & -194578\\
+BIC & -194554\\
+\end{tabular}
+\end{center}
+
+A few comments arise. First, the estimated fraction bound is about 70 \%, which is expected from a strongly DNA-associated protein such as H2B. The associated coefficient with the bound population is close to zero (0.021 µm²/s) whereas the diffusion coefficient for the free population (3.93 µm²/s) matches previous knowledge of the dynamics of the protein.
+
+Furthermore, the \(\ell_2\) error (the mean square error) is   \(< 10^{-4}\), which can be considered as acceptable (note that this value is not a hard limit and depends on several parameters, including the bin width and the max jump parameters), even though significant misfit appear at low and high \(\Delta t\):  at \(1\Delta t\), the fitted distribution is fading faster than the empirical one, whereas at \(7\Delta t\), the opposite effect happens. This might be a sign that the protein of interest exhibits anomalous diffusion, or more generally that the model does not fully explain the dynamics of the molecule.
+
+Finally, the \href{https://en.wikipedia.org/wiki/Akaike_information_criterion}{AIC} (Akaike Information Criterion) and \href{https://en.wikipedia.org/wiki/Bayesian_information_criterion}{BIC} (Bayesian Information Criterion) criteria are provided to allow model comparison. These are two criteria that can be used to compare models and to get hints about which model fits the data best while penalizing for the number of parameters, in order to avoid overfitting.
+
+More specifically, the 3-state model provided by Spot-On has more free parameters than the two-state model (two extra parameters: the ``slow'' diffusion coefficient and the fraction of the slow-moving fraction). This additional degrees of freedom almost always a better fit than the 2-state model. The AIC and BIC criteria take this difference in the number of parameters and establish a trade-off between the quality of fit (that increases with the number of model parameters) and the number of parameters, in our case penalizing the possible overfitting of the 3-state model.
+
+Although these criteria are useful when comparing the fit of one dataset compared to various models, they cannot be used to assess the quality of fit per se.
+
+\subsubsection{Step 9: mark the plot for download}
+hen, we can save the displayed fit by clicking the \textit{Mark for download} button.
+
+\subsubsection{Step 10: fit the Sox2 dataset with a two-state model}
+We can now proceed similarly to derive the fit for the Sox2 datasets. The resulting fit is shown below, next to a fit using a three-state model. Notice in this plot that significant misfit occurs: at high \(\Delta t\) the model estimates predicts that the bound fraction should have bigger displacements than what actually is. This characterizes a model mismatch and suggest the use of a three-state model.
+
+\subsubsection{Step 11: fit a three-state model}
+Finally, we can now see how the quality of the fit increases by running the fit again, but with a 3-state model. Select the 3-state model icon (Slow-Bound-Fast) on the ``Model fitting'' box. New parameters appear, very similarly as with the two-state model. We will leave the parameters to their default values, except for the CDF fit. Then click the \textit{Fit kinetic model} button and wait a until the fitting completes (Figure~\ref{fig:tuto13}). Observe how the quality of fit evolves and the parameters and estimated fractions between the two-states (Table~\ref{table:table7}) and the three-states fit (Table~\ref{table:table8}).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto13.png}
+\caption{\label{fig:tuto13}Comparison of 2-state and 3-state fitting for Sox2 datasets.}
+\end{figure}
+
+\begin{center}
+  \label{table:table7}
+\begin{tabular}{lr}
+2-state model & \\
+\hline
+Parameter & Value\\
+\hline
+Dbound & 0.030 µm²/s\\
+Dfree & 2.410 µm²/s\\
+Fbound & 0.340\\
+l2 error & 0.00039589\\
+AIC & -164571\\
+BIC & -164547\\
+\end{tabular}
+\end{center}
+
+\begin{center}
+  \label{table:table8}
+\begin{tabular}{lr}
+3-state model & \\
+\hline
+Parameter & Value\\
+\hline
+Dbound & 0.012 µm²/s\\
+Dslow & 0.595 µm²/s\\
+Dfast & 4.016 µm²/s\\
+Fbound & 0.256\\
+Fslow & 0.258\\
+l2 error & 0.00014930\\
+AIC & -185061\\
+BIC & -185021\\
+\end{tabular}
+\end{center}
+
+Based on the information criteria, it is clear that the 3-state model provides a better fit to the data, even when penalizing for the number of parameters.
+
+\todo[inline, color=orange!40]{\textbf{About model selection.} Be careful when interpreting a 3-state model. Indeed, although a two-state model usually appears robust to model mismatch, a 3-state model can fit a wide range of distributions, and the estimated coefficients might be model specific. For instance, the model can invoke a third component to explain what actually is anomalous diffusion.}
+
+\subsubsection{Step 12: compare the two-state fits of H2B and Sox2 datasets}
+Let's then fit the H2B data with a two-state model, as described in Step 10 for Sox2 (make sure that you select the right datasets before clicking the Fit button). Once the fit has completed, compare the fitted coefficients between the two proteins (Table~\ref{table:table9}~\&~\ref{table:table10}).
+
+\begin{center}
+  \label{table:table9}
+\begin{tabular}{ll}
+Sox2 & \\
+\hline
+Parameter & Value\\
+\hline
+Dbound & 0.030 µm²/s\\
+Dfree & 2.410 µm²/s\\
+Fbound & 0.340\\
+\end{tabular}
+\end{center}
+
+\begin{center}
+  \label{table:table10}
+\begin{tabular}{ll}
+H2B & \\
+\hline
+Parameter & Value\\
+\hline
+Dbound & 0.023 µm²/s\\
+Dfree & 3.84 µm²/s\\
+Fbound & 0.70\\
+\end{tabular}
+\end{center}
+
+Notice that the bound diffusion coefficient are very similar, likely reflecting the diffusion coefficient of DNA/chromatin itself, while the free diffusion coefficients are different, and are likely to reflect different exploration modes of the two proteins. Also notice that the fraction bound are widely different: whereas H2B is mostly bound (70\%), Sox2 appears mostly free.
+
+\subsection{Download}
+\subsubsection{Step 13: download the marked analyses}
+Finally move to the ``Download'' tab, where all the analyses we marked for download are stored. The view should look as in (Figure~\ref{fig:tuto14}).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{../SPTGUI/static/SPTGUI/img/tutorial/0.7/tuto14.png}
+\caption{\label{fig:tuto14}Overview of the download page.}
+\end{figure}
+
+For each analysis marked for download, the following fields are displayed, in addition to the time of the analysis and the name and description we provided in the previous tab (Table~\ref{table:table11}).
+
+\begin{center}
+  \label{table:table11}
+\begin{tabular}{ll}
+Column & Description\\
+\hline
+Name \& description & The name \& description we provided in the previous tab.\\
+Datasets &
+The list of datasets included for this plot. Hovering over the numbers\\& displays the full name and description of the dataset.\\
+Display &
+Descriptor corresponding to the type of plot displayed. Hover over the\\&
+descriptor to see a short description:\\
+ & P: display of the probability density function,\\
+ & JP: display the pooled jump length distribution,\\
+ & F: pooled fit displayed\\
+Download &
+Download the corresponding analysis in various formats. The ZIP\\&
+archive contains all the formats, the raw data, the display parameters\\&
+and the fitted coefficients (if any).\\
+Delete & To delete this analysis.\\
+\end{tabular}
+\end{center}
+
+\newpage
+
+\section{Online sections}
+This document only contains an abbreviated version of the documentation for Spot-On. The complete manual for the latest version is available online at:\\
+
+\begin{minipage}{0.9\textwidth}
+\large{\url{https://spoton.berkeley.edu/SPTGUI/docs/latest}}\\
+\end{minipage}
+
+In addition to this tutorial, the following sections are available:
+\begin{itemize}
+\item{
+  Software reference
+  \begin{itemize}
+  \item  Input formats
+  \item      Descriptors of imported datasets
+  \item      Dataset statistics
+  \item      Jump length distribution computation parameters
+  \item      Fitting parameters
+  \item      Display parameters
+  \end{itemize}
+}
+\item{   How to acquire a ``good'' dataset?
+  \begin{itemize}
+  \item      Detection – minimizing “motion-blurring”
+  \item      Tracking – minimizing tracking errors
+  \item      Which datasets are appropriate for Spot-On?
+  \end{itemize}  
+}
+\item{
+  Methods
+  \begin{itemize}
+  \item      Outline of the method
+  \item      Derivation of the two states kinetic model
+  \item      Generalization to a 3-state model
+  \item      Assumptions of the approach
+  \item      Numerical implementation
+  \item      References
+  \end{itemize}
+}
+\item{Code}
+\item{  
+  Datasets
+  \begin{itemize}
+  \item      Construction of the cell lines
+  \item      Data acquisition
+  \item      ExpA
+  \item      ExpB
+  \item      Data availability
+  \end{itemize}
+}
+\item{    
+  Frequently asked questions
+  \begin{itemize}
+  \item  What is Spot-On?
+  \item  What is not Spot-On?
+  \item  What tracking software to use?
+  \item  What types of input does Spot-On accept?
+  \item  My input format does not seem to be supported, what can I do?
+  \item  What limits the length of trajectories?
+  \item  Are you just fitting a two-exponential model?
+  \item  How to measure the localization error?
+  \item  How to measure the axial detection range?
+  \item  How fast is Spot-On?
+  \item  I'm afraid of uploading my dataset to your server. Is there an offline version?
+  \item  Is there a command-line version?
+  \item  What technology is used by Spot-On?
+  \item  Is there a Matlab® version?
+  \item  What license uses Spot-On?
+  \item  I have a question
+  \item  How do you handle privacy?
+  \item  How to cite Spot-On?
+  \item  How to contact you?
+  \item  I found a bug, how can I report it?
+  \end{itemize}
+}
+\end{itemize}
+
+\bibliographystyle{apalike}
+\bibliography{SpotOn_manual}  
+
+\end{document}
