@@ -17,7 +17,7 @@
 
 <h3> About the demonstration files </h3>
 
-<p> When you click on the "Start with a demo file" button, ten sample datasets are loaded. They are part of a bigger dataset described in details in the <a href="#datasets">Datasets</a> section that include single particle tracking of four nuclear proteins: <a href="https://en.wikipedia.org/wiki/Histone_H2B">histone H2B</a> (H2B), <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>, <a href="https://en.wikipedia.org/wiki/HaloTag">HaloTag</a>-3x<a href="https://en.wikipedia.org/wiki/Nuclear_localization_sequence">NLS</a> and <a href="https://en.wikipedia.org/wiki/CTCF">CTCF</a>. These four proteins were imaged through a range of conditions, leading to approx. 1600 cells imaged in total.</p>
+<p> When you click on the "Start with a demo file" button, ten sample datasets are loaded. They are part of a bigger dataset described in details in the <a href="#datasets">Datasets</a> section that include single particle tracking of four nuclear proteins: <a href="https://en.wikipedia.org/wiki/Histone_H2B">histone H2B</a> (H2B), <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>, <a href="https://en.wikipedia.org/wiki/HaloTag">HaloTag</a>-3x<a href="https://en.wikipedia.org/wiki/Nuclear_localization_sequence">NLS</a> and <a href="https://en.wikipedia.org/wiki/CTCF">CTCF</a>. These four proteins were imaged through a range of conditions, leading to 1064 cells imaged in total.</p>
 
 <p> By default, the ten imported files are five replicates of histone H2B (fused to both a HaloTag and a <a href="https://en.wikipedia.org/wiki/SNAP-tag">SNAP-tag</a> in U2OS cells, labeled with the Halo-PA-JF646 dye and imaged at 74 Hz (that is 1000/74 = 13.5 ms per frame).</p>
 
@@ -237,12 +237,6 @@
     <td>3</td>
     <td>Y</td>
     <td>The range of distances to build the histogram of jump lengths. This parameter has to be set so that the tail of the distribution is properly captured. Conversely, a value too high will disturb the fitting, that will be very sensitive to this potentially noisy tail.</td>
-  </tr>
-  <tr>
-    <td>dT (ms)</td>
-    <td>13.5</td>
-    <td>N</td>
-    <td>It is crucial to match this value with the acquisition rate of the dataset. Here 13.5 ms/frame.</td>
   </tr>
 </table>
 
