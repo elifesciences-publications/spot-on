@@ -11,7 +11,7 @@
 ##     This can be used to warn users that they are using an experimental version
 ##     of Spot-On, that might be under development or unstable. In particular,
 ##     data loss or corruption or loss is more likely than in a production system
-BETA_VERSION = True
+BETA_VERSION = False
 
 
 ## (1) ==== Whether to use the demonstration files. ====
