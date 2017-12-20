@@ -52,6 +52,11 @@ url(r'^analysis/(?P<url_basename>.+)/datasets/(?P<dataset_id>[0-9]+)/original/$'
     url(r'^analysis/(?P<url_basename>.+)/api/jld/$', views.get_jld, name='get_jld'),
 
     ##
+    ## ==== TrackMate-SpotOn upload
+    ##
+    url('^uploadapi/$', views_upload.uploadapi, name='uploadapi'),
+
+    ##
     ## ==== Default routes
     ##
     url(r'^analysis/new/', views.new_analysis, name='new_analysis'),

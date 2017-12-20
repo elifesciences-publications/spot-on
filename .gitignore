@@ -10,3 +10,9 @@ demofiles/
 SPTGUI/static/SPTGUI/downloads/
 uploads/
 *.bkp
+
+## LaTex stuff
+*.aux
+*.bbl
+*.blg
+*.toc

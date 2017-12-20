@@ -41,16 +41,23 @@
     <link href="{% static 'SPTGUI/carousel.css' %}" rel="stylesheet">
     <link href="{% static 'SPTGUI/homepage.css' %}" rel="stylesheet">
 
+    <!-- Beta ribbon -->
+    {% if beta %}
+    <link href="{% static 'SPTGUI/ribbon.css' %}" rel="stylesheet">
+    {% endif %}
+
     <!-- Custom app code & CSS -->
     <script src="{% static 'SPTGUI/homepage.js' %}"></script>    
   </head>
   
   <body ng-app="app">
     {% csrf_token %}
-    <!-- NAVBAR ================================================== -->
-
-
+    <!-- Beta ribbon  ================================================== -->
+    {% if beta %}
+    <div class="corner-ribbon bottom-right sticky red">Beta!</div>
+    {% endif %}
     
+    <!-- NAVBAR ================================================== -->
     {% include 'SPTGUI/navbar1.html' %}
 
     <!-- Carousel ================================================== -->
@@ -117,7 +124,7 @@
 	       src="{% static 'SPTGUI/img/icons/001-upload.png' %}"
 	       alt="Import pictogram" width="140" height="140">
           <h2>Import...</h2>
-          <p> from a wide range of tracking softwares.</p>
+          <p> from a wide range of tracking softwares, including a direct upload from Fiji/TrackMate.</p>
           <p><a class="btn btn-default" href="{% url 'SPTGUI:staticpage' 'docs' %}#input-formats" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">

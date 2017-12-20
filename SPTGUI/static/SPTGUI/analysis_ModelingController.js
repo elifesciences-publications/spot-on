@@ -305,6 +305,7 @@ angular.module('app')
 				     SingleCellFit: false,
 				     include : [], // Populated later
 				     fit2states : null,
+				     useZcorr: true,
 				    };
 	modelingParametersDefault = angular.copy($scope.modelingParameters)
 	$scope.ce = 1;

@@ -98,3 +98,15 @@ class Email(models.Model):
     add_date = models.DateTimeField('date created')
     validation_date = models.DateTimeField('date validated', null=True, blank=True)
     
+class PendingUploadAPI(models.Model):
+    """A class to store an upcoming upload from the Upload API
+    This is a very minimal class since we basically know nothing
+    about the file to be uploaded"""
+
+    token =  models.CharField(default="na", max_length=100)
+    expectedSHA = models.CharField(default="na", max_length=100)
+    fileReceived = models.BooleanField(default=False)
+    fmt = models.CharField(default="na", max_length=100)
+    version = models.CharField(default="na", max_length=100)
+    url_basename = models.CharField(default="na", max_length=100)
+    creation_date = models.DateTimeField('date created', null=True, blank=True)

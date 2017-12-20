@@ -1,0 +1,622 @@
+{% load static %}
+<h2 class="blog-post-title">Quickstart/tutorial</h2>
+<p>This section of the Spot-On documentation will guide you through a sample analysis with a couple of demonstration files and will provide you with an overview of Spot-On features and options.</p>
+
+<div class="bs-callout bs-callout-warning">
+  <h4>Step 1: start an analysis with demonstration files</h4>
+  <p> To access the demonstration files, go to the <a href="{% url 'SPTGUI:index' %}">Spot-On homepage</a> and scroll to the "Get Started section" (or alternatively click the <a href="{% url 'SPTGUI:index' %}#start" class="btn btn-default btn-sm">Start spotting!</a> button on the top menu. First fill in the "I'm not a robot" CAPTCHA. Then you have the option to either upload your own tracking files and start your analysis or start with demo files. We will use the demo files for the purpose of this tutorial.</p>
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto1.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 50%;"
+     alt="Screenshot of the CAPTCHA region.">
+
+</div>
+
+
+<p> This option will load the analysis page and will automatically import some demonstration file. Also, a custom and permanent URL is created. Your analyses will accessible from this URL until you choose to delete them. Do not share this URL if you want your datasets and analyses to remain private. You might want to bookmark it in order to reaccess the data later. Note that if you lose this address, there is no way for you to recover your files, since your upload is totally anonymous (we do not collect your identity or email address).</p>
+
+<h3> About the demonstration files </h3>
+
+<p> When you click on the "Start with a demo file" button, ten sample datasets are loaded. They are part of a bigger dataset described in details in the <a href="#datasets">Datasets</a> section that include single particle tracking of four nuclear proteins: <a href="https://en.wikipedia.org/wiki/Histone_H2B">histone H2B</a> (H2B), <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>, <a href="https://en.wikipedia.org/wiki/HaloTag">HaloTag</a>-3x<a href="https://en.wikipedia.org/wiki/Nuclear_localization_sequence">NLS</a> and <a href="https://en.wikipedia.org/wiki/CTCF">CTCF</a>. These four proteins were imaged through a range of conditions, leading to 1064 cells imaged in total.</p>
+
+<p> By default, the ten imported files are five replicates of histone H2B (fused to both a HaloTag and a <a href="https://en.wikipedia.org/wiki/SNAP-tag">SNAP-tag</a> in U2OS cells, labeled with the Halo-PA-JF646 dye and imaged at 74 Hz (that is 1000/74 = 13.5 ms per frame).</p>
+
+<p>The five other files are five replicates of the transcription factor Sox2 (fused to a HaloTag in mouse embryonic stem cells and imaged in comparable conditions: labeled with PA-JF646 and imagied at 74Hz.</p>
+
+<p>In this demo dataset, one of the goal is to get an idea of the dynamics of the Sox2 transcription factor. Indeed, an estimate of the fraction bound and diffusion coefficient of Sox2 provides a valuable insight into how this transcription factor regulates transcription. For instance, a low fraction bound and a high diffusion coefficient could suggest a highly dynamic regulation, but also a target search mechanism dominated by free diffusion. The H2B samples are provided as a reference for a protein that is known to be mostly bound to chromatin, in order to facilitate comparisons with more characterized systems.</p>
+
+<h3> Overview of the application </h3>
+<p> First of all, Spot-On is organized into <em>four successive tabs</em>. These tabs are populated one after the other (that is, for instance, the "Kinetic modeling" tab remains blank as long as no dataset has been uploaded in the "Data" tab, etc). The four tabs are (<span class="red">&#x2460;</span> in the screenshot below):</p>
+
+<table class="table table-striped">
+  <tr>
+    <th class="col-md-2">Tab</th>
+    <th class="col-md-10">Description</th>
+  </tr>
+  <tr>
+    <td class="col-md-2">Data</td>
+    <td class="col-md-10">This tab allows you to upload your datasets in various formats in a batch mode, to annotate them, and to see statistics both for individual datasets and for the ensemble of uploaded files.</td>
+  </tr>
+  <tr>
+    <td class="col-md-2">Kinetic modeling</td>
+    <td class="col-md-10">Performs the fit of the kinetic model according to specified parameters, display the jump length distribution and the corresponding fit. Allows to include or exclude files for analysis. Display and fits can be marked for download.</td>
+  </tr>
+  <tr>
+    <td class="col-md-2">Download</td>
+    <td class="col-md-10">This tab allows you to download the files marked for download in various formats (PDF, SVG, EPS, PNG, and ZIP archive). The ZIP archive contains the raw data, the fitting parameters and the fitted coefficients.</td>
+  </tr>
+  <tr>
+    <td class="col-md-2">Settings</td>
+    <td class="col-md-10">Allows you to erase the analysis (together with all the uploaded datasets).</td>
+  </tr>
+</table>
+
+<p>The "Upload dataset" region (<span class="red">&#x2461;</span> in the screenshot below), where you can upload from various file formats. Clicking on any of the format will display a box where you can enter additional upload parameters, and will ultimately display a drag-and-drop upload box. Accepted formats are described in more details in the <a href="#input-formats">Input formats</a> section below.</p>
+
+<div class="alert alert-info"> For the purpose of this tutorial, the data has already been loaded, so we won't play with this part of the page.</div>
+
+<p> The "Uploaded datasets" region (<span class="red">&#x2462;</span> in the screenshot below), that displays the uploaded datasets, together with their status (<code>uploading</code>, <code>queued</code>, <code>error</code>). The meaning of the descriptors in the "status" column in the upload box is detailed in the <a href="#import-codes">Status code of imported datasets</a> section below. When clicking on the "eye" symbol (<span class="glyphicon glyphicon-eye-open"></span>) next to an uploaded dataset will display some statistics in the area  <span class="red">&#x2463;</span>. The meaning and details of the computation of each statistic is detailed in section <a href="#dataset-statistics">Dataset statistics</a> below. Finally, area <span class="red">&#x2464;</span> displays similar statistics as area <span class="red">&#x2463;</span>, but for all the datasets pooled together.</p>
+
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto2.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 70%;"
+     alt="Screenshot of 'Data' tab.">
+
+<h3>Import</h3>
+<p>To proceed with the tutorial, several files have been loaded, they are named. They might get imported in a different order:</p>
+
+<ol>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell02.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell03.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell04.mat</li>
+  <li>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell05.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell02.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell03.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell04.mat</li>
+  <li>U2OS_H2B-Halo-SNAP_PA-JF646_1ms-633nm_74Hz_rep2_cell05.mat</li>  
+</ol>
+
+<p> These files correspond to a subset of an experimental series spanning ~1500 cells in several conditions for various transcription factors and DNA-binding proteins, acquired at various framerates and durations of stroboscopic illumination. This dataset is described in more details in the <a href="#datasets">Datasets</a> section.</p>
+
+<p>Five of these correspond to the transcription factor <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>, which has been endogeneously tagged with a HaloTag and observed with the PA-JF646 organic dye (<a href="#grimm" aria-describedby="footnote-label" id="grimm-ref">Grimm et al, 2016</a>). The five other correspond to the Halo-tagged histone H2B imged under the same conditions.</p>
+
+<div class="bs-callout bs-callout-warning">
+  <h4>Step 2: rename and tag the uploaded files</h4>
+  <p> Since the naming convention of these files is a little bit cumbersome, let's first edit the description of each file to make it clearer. To do so, click on the "pencil" icon (<span class="glyphicon glyphicon-pencil"></span>, see <span class="red">&#x2465;</span>) next to each uploaded dataset. An "edit" box will appear at the bottom of the "Uploaded datasets" area, and we can now either rename or add a more explicit description of the datasets. We choose to leave the name as is, but add a short description for each dataset, such as "H2B cell1", "H2B cell2", etc. (<span class="red">&#x2466;</span>)</p>
+
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto3.png' %}"
+       class="img-responsive center-block"
+       style="max-width: 50%;"
+       alt="Screenshot: Editing the description of datasets.">
+</div>
+
+<div class="alert alert-danger"> The uploaded dataset comprises two distinct proteins, and five replicates for each protein. In the next steps, we want to make sure that we pool the replicates of each protein together, but do not mix up the two proteins.</div>
+
+<h3>Quality check</h3>
+<p>Now that we see a little bit clearer through the datasets, let's inspect a little bit the datasets, and try to assess the quality of the dataset. Spot-On provides a few quality metrics (statistics), accessible for each dataset by clicking the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>).</p>
+
+<div class="bs-callout bs-callout-warning">
+  <h4>Step 3: Inspect a few quality metrics</h4>
+  <p>Click on the "eye" button (<span class="glyphicon glyphicon-eye-open"></span>) next to the datasets and have a look at the metrics displayed. Make sure you familiarize yourself with those.</p>
+</div>
+
+<p> The table below summarizes the statistics computed for the first dataset (named <em>mESC_C3_Halo-Sox2_PA-JF646_1ms-633nm_74Hz_rep2_cell01.mat</em>).</p>
+
+<table class="table table-striped">
+  <tr>
+    <th>Statistic</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Number of traces</td>
+    <td>6103</td>
+  </tr>
+  <tr>
+    <td>Number of frames</td>
+    <td>29997</td>
+  </tr>
+  <tr>
+    <td>Number of detections</td>
+    <td>15692</td>
+  </tr>
+  <tr>
+    <td>Longest gap (frames)</td>
+    <td>1</td>
+  </tr>  <tr>
+    <td>Number of traces with &gt;3 detections </td>
+    <td>1813</td>
+  </tr>
+  <tr>
+    <td>Number of jumps</td>
+    <td>9589</td>
+  </tr>
+  <tr>
+    <td>Length of trajectories (in number of frames)</td>
+    <td>median: 1, mean: 2.571</td>
+  </tr>
+  <tr>
+    <td>Particles per frame</td>
+    <td>median: 0, mean: 0.523</td>
+  </tr>
+  <tr>
+    <td>Jump length (µm) </td>
+    <td>median: 0.126, Mean: 0.236</td>
+  </tr>
+</table>
+
+<p>Although the number of jumps is not extremely high, we need to keep in mind that we plan to pool this dataset with four other datasets, which should overcome the limited size of this dataset. In case we encounter a dataset of unsuitable quality, we can exclude it by clicking the "cross" button (<span class="glyphicon glyphicon-remove"></span>) next to the dataset.</p>
+
+<p>Once that we are confident about the quality of the uploaded data, we can proceed to the second tab, the "Kinetic modeling".</p>
+
+<h3>Kinetic modeling</h3>
+<h4>Overview of the kinetic modeling tab</h4>
+<p>The "kinetic modeling" tab is divided in several sections:</p>
+
+<table class="table table-striped">
+  <tr>
+    <th>#</th>
+    <th>Section</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><span class="red">&#x2467;</span></td>
+    <td>Dataset selection</td>
+    <td>This section lists all the uploaded datasets. For each fit of the model, you can choose whether to include one specific dataset for fitting or not.</td>
+  </tr>
+  <tr>
+    <td><span class="red">&#x2468;</span> and <span class="red">&#x2469;</span></td>
+    <td>Parameters</td>
+    <td>Parameters used to compute the empirical jump length distribution (<span class="red">&#x2468;</span>) and to fit it (<span class="red">&#x2468;</span>). This includes the choice of a 2-state vs. a 3-state model, the range of the tested parameters, etc.</td>
+  </tr>
+  <tr>
+    <td><span class="red">&#x246A;</span> and <span class="red">&#x246B;</span></td>
+    <td>Jump length histogram</td>
+    <td>This area contains the plot of the jump length distribution, overlaid with the fitted model (if evaluated). It also contains the option to either visualize single datasets or the pool of the selected datasets. Finally, it contains an option to save an analysis for download.</td>
+  </tr>
+</table>
+
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto4.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 60%;"
+     alt="Screenshot: Overview of the kinetic modeling tab.">
+
+<h4>Computation of the jump length distribution</h4>
+<p> For the purpose of this tutorial, we'll simply fit the H2B and Sox2 datasets separately, and compare the two-state and three-state models based on their goodness of fit (assessed by the Bayesian Information Criterion, <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a>).</p>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 4: compute the empirical jump length distribution for the Sox2 datasets</h4>
+
+  <p> First, in the "Dataset selection" select the five Sox2 replicates. This is done by switching the "Include" toggle button to "On" next to the Sox2 datasets. Make sure that none of the H2B datasets are included.</p>
+
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto5.png' %}"
+     class="img-responsive center-block"
+       style="max-width: 60%;"
+       alt="Selection of Sox2 datasets.">
+  
+  <p> We can then set the parameters to compute the jump length distribution. We will mostly leave the parameters as default. Section <a href="jld-parameters">Jump length distribution computation parameters</a> describe the role of each parameter in more details.</p>
+
+  <p> Then click the <span class="btn btn-default">Compute!</span> button. After a few seconds, the jump length distribution is computed for all the datasets and appears under the "Jump length distribution" section.</p>
+</div>
+
+<p>The table below summarizes some key principles to properly set those parameters</p>
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>
+    <th>Default?</th>
+    <th>Comment</th>
+  </tr>
+  <tr>
+    <td>Bin Width (µm)</td>
+    <td>0.01</td>
+    <td>Y</td>    
+    <td>The size of the bin used to build the empirical histogram of jump lengths.</td>
+  </tr>
+  <tr>
+    <td>Number of gaps allowed</td>
+    <td>1</td>
+    <td>Y</td>    
+    <td>The number of gaps allowed by the tracking algorithm. This <em>has to</em> match the maximum number of gaps allowed by the tracking algorithm.</td>
+  </tr>
+  <tr>
+    <td>Number of timepoints</td>
+    <td>8</td>
+    <td>Y</td>    
+    <td>The number of \(\Delta t\) to consider when fitting the model. Usually, higher values provide better results, provided that the histogram are sufficiently populated.</td>
+  </tr>
+  <tr>
+    <td>Jumps to consider</td>
+    <td>4</td>
+    <td>Y</td>
+    <td>The number of jumps per trajectory actually used to build the histogram. This is empirically useful to correct for overcounting of slow-molecules not accounted for by the corrections implemented in the algorithm (for instance for undercounting due to motion-blur). Here, for each trajectory, the first 4 jumps for each \(\Delta t\) (if possible) will be used to build the jump length histogram. For example, if Number of timepoints=8 and JumpsToConsider=4, a trajectory of 9 frames will contribute 4 jumps to 1dT, 4 jumps to 2 dT, …, and 2 jumps to 7 dT. This is a semi-empirical way of correcting for additional biases towards bound molecules.</td>
+  </tr>
+  <tr>
+    <td>Max jump (µm)</td>
+    <td>3</td>
+    <td>Y</td>
+    <td>The range of distances to build the histogram of jump lengths. This parameter has to be set so that the tail of the distribution is properly captured. Conversely, a value too high will disturb the fitting, that will be very sensitive to this potentially noisy tail.</td>
+  </tr>
+</table>
+
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto6.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Jump length distribution parameters.">
+
+<br/>
+
+<div class="alert alert-info"> This is the main view of Spot-On, so it is useful to spend a little bit of time to get familiarized with the various options.</div>
+
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto7.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 80%;"
+     alt="Jump length distribution plot.">
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 5: play with the display options</h4>
+
+  <p> The graph displayed should be read as follows:</p>
+  <ul>
+    <li> Each row corresponds to a jump length distribution evaluated at a given \(\Delta t\). Since short trajectories are more frequent than long trajectories, higher \(\Delta t\) histograms tend to be less populated and appear less smooth (or more "noisy"). The number of rows is determined by the "Number of timepoints" parameter.</li>
+    <li> The jump length distribution is computed for values ranging between 0 µm and 3 µm (this corresponds to the "Max Jump" parameter). However, by default, only the first 1.2 µm are initially plotted. To plot the full histogram (or alternatively, to zoom to the origin), the "Max Jump displayed" cursor, located under the plot can be adjusted. </li>
+    <li> Then, by default, the jump length distribution is displayed for individual datasets. The displayed dataset is specified in the "Display dataset" box under the plot. It is often useful to take the time to review the jump length distribution of each single acquisition, in order to know which datasets might have to be excluded from further analysis.</li>
+    <li> Once individual datasets have been reviewed, it is possible to display the pooled jump length distribution by clicking the "Show pooled jump length distribution" toggle button under the plot. This will compute the distribution for the selected datasets only (in our case, for all the Sox2 datasets). Pooled histograms appear with a hard, black boundary, and the included datasets are displayed under the graph. The updated graph might take a few seconds to render.</li>
+  </ul>
+</div>
+
+<div class="alert alert-info"> The result of all the computations operated by Spot-On are cached. This way, if you enter the same set of parameters as previously, the computation should be almost instantaneous.</div>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 6: compare the H2B and Sox2 jump length distributions</h4>
+  <p> Before moving to the fitting, compare the pooled jump length distribution for Sox2 and H2B. To compute the H2B jump length distribution, simply uncheck the Sox2 datasets and select the H2B datasets in the "Dataset selection" area. Then click the <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box. The two histograms are displayed below. What can you tell from that? Does it match your knowledge of <a href="https://en.wikipedia.org/wiki/Histone_H2B">H2B</a> and <a href="https://en.wikipedia.org/wiki/SOX2">Sox2</a>?</p>
+
+ <button data-toggle="collapse" data-target="#answer1" class="btn btn-primary">Show/hide the "answer"</button>
+    
+  <div id="answer1" class="collapse alert alert-info">
+    <p>When looking at the two histograms side-by-side, the two look very similar at short time scales (up to 200 nm), suggesting that the two proteins show a bound fraction. The dispersion around ~70 nm is likely to be characteristic of a combination of localization error (similar at all time scales, from \(1\Delta t\) to  \(7\Delta t\) and of slow diffusion of chromatin (that slowly spreads when looking at higher \(\Delta t\).</p>
+    <p> Then, when considering higher distances, the histograms differ significantly, with Sox2 exhibiting a "heavy tail" whereas H2B lacks it. This reflects the fact that H2B is mostly bound whereas Sox2 has a significant freely-diffusing fraction. The modeling approach presented in the next steps of the tutorial will allow us to better characterize this diffusing state.</p>
+  </div> 
+
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto8.png' %}"
+       class="img-responsive center-block"
+       style="max-width: 95%;"
+       alt="Comparison of the Sox2 and H2B jump length distributions.">
+</div>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 7: mark one jump length distribution for download</h4>
+  <p> Before moving to the fitting of the data, let's save this last plot. We will download it later (from the "Download" tab). To do so, click the <span class="btn btn-default btn-sm">Mark for download</span> button at the bottom of the page. This will prompt a small form where you can enter a name and a description that will be used as a reminder when you download the file. Also, display again the jump length distribution for Sox2 (by selecting the appropriate files and clicking the and <span class="btn btn-default btn-sm">Compute!</span> button in the "Jump length distribution parameters" box) and save Mark it for download too. We'd get back to these saved analyses later.</p>
+
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto9.png' %}"
+     class="img-responsive center-block"
+       style="max-width: 95%;"
+       alt="Screenshot of the mark for download box.">
+</div>
+
+<h4>Model fitting</h4>
+<p> Now that we are familiar with the computation and display of the jump length distribution, let's now move to model fitting!</p>
+
+<p>Spot-On fits the jump length distribution, as defined by the parameters of the "Jump length distribution" box. The fitting parameters are defined in the "Model fitting" box.</p>
+
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 8: fit a two-state model to the H2B data</h4>
+  <p>Let's first try to fit a <em>two-state model</em>. Click on the picture of the two-state kinetic model (<em>Bound-Free</em>). Specific parameter for this model unfold. Let's take a minute to quickly review them (a more detailed description of each parameter is presented in Section <a href="#fit-parameters">Fitting parameters</a>, a short description is shown below).</p>
+
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto10.png' %}"
+       class="img-responsive center-block"
+       style="max-width: 60%;"
+       alt="screenshot of the fitting parameters box.">
+
+  <p> Having now reviewed the parameters, we can click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button. A "spinning wheel" will appear next to the button while the fit is being performed and will get displayed when the fit completes.</p>
+</div>
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>
+    <th>Default?</th>
+    <th>Description/Comments</th>    
+  </tr>
+  <tr>
+    <td>Kinetic model</td>
+    <td>2-state model</td>
+    <td>N</td>
+    <td></td>    
+  </tr>
+  <tr>
+    <td>D<sub>bound</sub> (µm²/s)</td>
+    <td>[0.005, 0.8]</td>
+    <td>Y</td>
+    <td>The range of diffusion coefficients for the bound fraction. It is based on a wide plausible range of chromatin diffusion coefficients.</td>    
+  </tr>
+  <tr>
+    <td>D<sub>free</sub> (µm²/s)</td>
+    <td>[0.15, 25]</td>
+    <td>Y</td>
+    <td>The range of diffusion coefficients for the free fraction. These numbers encompass a wide range of free-diffusion coefficients. Note that for diffusion coefficients > 10 µm²/s, motion blurring can become a very important issue.</td>    
+  </tr>
+  <tr>
+    <td>F<sub>bound</sub></td>
+    <td>[0,1]</td>
+    <td>Y</td>
+    <td>The range for the fraction bound.</td>    
+  </tr>
+  <tr>
+    <td>Localization error (µm)</td>
+    <td>0.035</td>
+    <td>Y</td>
+    <td>See <a href="#measure-locerror">How to measure the localization error?</a> below.</td>    
+  </tr>
+  <tr>
+    <td>dZ (µm)</td>
+    <td>0.7</td>
+    <td>Y</td>
+    <td>The estimated detection range in z.</td>    
+  </tr>
+  <tr>
+    <td>Model Fit</td>
+    <td>CDF</td>
+    <td>N</td>
+    <td>Select whether the model will fit the jump length distribution (that is the probability density function, PDF), or the cumulative jump length distribution (CDF).</td>    
+  </tr>
+  <tr>
+    <td>Perform single cell fit</td>
+    <td>No</td>
+    <td>Y</td>
+    <td>If "Yes", each individual dataset will be fit. Since our uploaded files are replicates of the same experiment, we want to pool them together.</td>    
+  </tr>
+  <tr>
+    <td>Iterations</td>
+    <td>3</td>
+    <td>Y</td>
+    <td>The number of times the solver will independently be initialized.</td>    
+  </tr>
+</table>
+
+<div class="alert alert-info">
+  <p>When adjusting the dZ parameter (in the fitting parameters box), you will notice that the mention next to the dZ box changes. The displayed values relate to precomputed coefficients required to perform the correction for particles moving out of focus (see the <a href="#methods">Methods</a> section). These parameters are termed \((a,b)\) and were precomputed over a grid of depths of field (dZ) and exposure times (dT).</p>
+  <p> However, even though we tried to be as comprehensive as possible in our simulations to derive \((a,b)\), the condition that matches exactly the acquisition settings might be missing. The displayed parameters represent the closest match of the acquisition parameters (dT, dZ) in our simulated database. For most acquisitions setup, the closest precomputed value lies within 0.5 ms and 100 nm of the empirical value.
+  </p>
+  
+  <img src="{% static 'SPTGUI/img/tutorial/0.7/tuto11.png' %}"
+       class="img-responsive center-block"
+       style="max-width: 60%;"
+       alt="screenshot of the z correction box.">
+
+  <p> It is important to make sure that the set of displayed parameters is not too far from the real acquisition settings, else, the computed z correction might be biased.</p>
+</div>
+
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto12.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="2-state fitting result of the H2B datasets.">
+
+<p>Let's take some time to quickly look at the parameters returned by the fitting routine for the H2B datasets. Note that due to different initialization values, the returned parameter can differ from execution to execution:</p>
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>      
+  </tr>
+  <tr>
+    <td>D<sub>bound</sub></td>
+    <td>0.021 µm²/s</td>      
+  </tr>
+  <tr>
+    <td>D<sub>free</sub></td>
+    <td>3.929 µm²/s</td>      
+  </tr>
+  <tr>
+    <td>F<sub>bound</sub></td>
+    <td>0.733</td>      
+  </tr>
+  <tr>
+    <td>l<sub>2</sub> error</td>
+    <td>0.00009489</td>      
+  </tr>
+  <tr>
+    <td>AIC</td>
+    <td>-194578</td>      
+  </tr>
+  <tr>
+    <td>BIC</td>
+    <td>-194554</td>      
+  </tr>
+</table>
+
+<p> A few comments arise. First, the estimated fraction bound is about 70 %, which is expected from a strongly DNA-associated protein such as H2B. The associated coefficient with the bound population is close to zero (0.021 µm²/s) whereas the diffusion coefficient for the free population (3.93 µm²/s) matches previous knowledge of the dynamics of the protein.</p>
+
+<p>Furthermore, the \(\ell_2\) error (the mean square error) is   \(\lt 10^{-4}\), which can be considered as acceptable (note that this value is not a hard limit and depends on several parameters, including the bin width and the max jump parameters), even though significant misfit appear at low and high \(\Delta t\):  at \(1\Delta t\), the fitted distribution is fading faster than the empirical one, whereas at \(7\Delta t\), the opposite effect happens. This might be a sign that the protein of interest exhibits anomalous diffusion, or more generally that the model does not fully explain the dynamics of the molecule.</p>
+									   
+<p> Finally, the <a href="https://en.wikipedia.org/wiki/Akaike_information_criterion">AIC</a> (Akaike Information Criterion) and <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a> (Bayesian Information Criterion) criteria are provided to allow model comparison. These are two criteria that can be used to compare models and to get hints about which model fits the data best while penalizing for the number of parameters, in order to avoid overfitting.</p>
+
+<p>More specifically, the 3-state model provided by Spot-On has more free parameters than the two-state model (two extra parameters: the "slow" diffusion coefficient and the fraction of the slow-moving fraction). This additional degrees of freedom almost always a better fit than the 2-state model. The AIC and BIC criteria take this difference in the number of parameters and establish a trade-off between the quality of fit (that increases with the number of model parameters) and the number of parameters, in our case penalizing the possible overfitting of the 3-state model.</p>
+
+<p>Although these criteria are useful when comparing the fit of one dataset compared to various models, they cannot be used to assess the quality of fit per se.</p>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 9: mark the plot for download</h4>
+  <p>Then, we can save the displayed fit by clicking the <span class="btn btn-default btn-sm">Mark for download</span> button.</p>
+</div>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 10: fit the Sox2 dataset with a two-state model</h4>
+  <p> We can now proceed similarly to derive the fit for the Sox2 datasets. The resulting fit is shown below, next to a fit using a three-state model. Notice in this plot that significant misfit occurs: at high \(\Delta t\) the model estimates predicts that the bound fraction should have bigger displacements than what actually is. This characterizes a model mismatch and suggest the use of a three-state model.</p>
+</div>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 11: fit a three-state model</h4>
+  <p> Finally, we can now see how the quality of the fit increases by running the fit again, but with a 3-state model. Select the 3-state model icon (Slow-Bound-Fast) on the "Model fitting" box. New parameters appear, very similarly as with the two-state model. We will leave the parameters to their default values, except for the CDF fit. Then click the <span class="btn btn-default btn-sm">Fit kinetic model</span> button and wait a until the fitting completes. Observe how the quality of fit evolves, and the parameters and estimated fractions.</p>
+</div>
+
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto13.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Comparison of 2-state and 3-state fitting for Sox2 datasets.">
+
+<div class="col-md-6">
+  <b> 2-state model</b>
+  <table class="table table-striped table-condensed">
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>      
+    </tr>
+    <tr>
+      <td>D<sub>bound</td>
+      <td>0.030 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>D<sub>free</sub></td>
+      <td>2.410 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>F<sub>bound</sub></td>
+      <td>0.340</td>      
+    </tr>
+    <tr>
+      <td>l<sub>2</sub> error</td>
+      <td>0.00039589</td>      
+    </tr>
+    <tr>
+      <td>AIC</td>
+      <td>-164571</td>      
+    </tr>
+    <tr>
+      <td>BIC</td>
+      <td>-164547</td>      
+    </tr>
+  </table>
+</div>
+
+<div class="col-md-6">
+  <b> 3-state model</b>
+  <table class="table table-striped table-condensed">
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>      
+    </tr>
+    <tr>
+      <td>D<sub>bound</td>
+      <td>0.012 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>D<sub>slow</sub></td>
+      <td>0.595 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>D<sub>fast</sub></td>
+      <td>4.016 µm²/s</td>      
+    </tr>
+    <tr>
+      <td>F<sub>bound</sub></td>
+      <td>0.256</td>      
+    </tr>
+    <tr>
+      <td>F<sub>slow</sub></td>
+      <td>0.258</td>      
+    </tr>
+    <tr>
+      <td>l<sub>2</sub> error</td>
+      <td>0.00014930 </td>      
+    </tr>
+    <tr>
+      <td>AIC</td>
+      <td>-185061</td>      
+    </tr>
+    <tr>
+      <td>BIC</td>
+      <td>-185021</td>      
+    </tr>
+  </table>
+</div>
+
+<p> Based on the information criteria, it is clear that the 3-state model provides a better fit to the data, even when penalizing for the number of parameters. </p>
+
+<div class="alert alert-info"> <b>About model selection.</b> Be careful when interpreting a 3-state model. Indeed, although a two-state model usually appears robust to model mismatch, a 3-state model can fit a wide range of distributions, and the estimated coefficients might be model specific. For instance, the model can invoke a third component to explain what actually is anomalous diffusion.</div>
+
+<div class="bs-callout bs-callout-warning"> <h4>Step 12: compare the two-state fits of H2B and Sox2 datasets</h4>
+  <p> Let's then fit the H2B data with a two-state model, as described in Step 10 for Sox2 (make sure that you select the right datasets before clicking the Fit button). Once the fit has completed, compare the fitted coefficients between the two proteins:</p>
+
+  <div class="col-md-6">
+    <b>Sox2</b>
+    <table class="table table-striped table-condensed">
+      <tr>
+	<th>Parameter</th>
+	<th>Value</th>      
+      </tr>
+      <tr>
+	<td>D<sub>bound</td>
+	<td>0.030 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>D<sub>free</sub></td>
+	<td>2.410 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>F<sub>bound</sub></td>
+	<td>0.340</td>      
+      </tr>
+    </table>
+  </div>
+  <div class="col-md-6">
+    <b>H2B</b>
+    <table class="table table-striped table-condensed">
+      <tr>
+	<th>Parameter</th>
+	<th>Value</th>      
+      </tr>
+      <tr>
+	<td>D<sub>bound</td>
+	<td>0.023 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>D<sub>free</sub></td>
+	<td>3.84 µm²/s</td>      
+      </tr>
+      <tr>
+	<td>F<sub>bound</sub></td>
+	<td>0.70</td>      
+      </tr>
+    </table>
+  </div>
+</div>
+
+<p>Notice that the bound diffusion coefficient are very similar, likely reflecting the diffusion coefficient of DNA/chromatin itself, while the free diffusion coefficients are different, and are likely to reflect different exploration modes of the two proteins. Also notice that the fraction bound are widely different: whereas H2B is mostly bound (70%), Sox2 appears mostly free.</p>
+
+<h3>Download</h3>
+<div class="bs-callout bs-callout-warning"> <h4>Step 13: download the marked analyses</h4>
+  <p>Finally move to the "Download" tab, where all the analyses we marked for download are stored. The view should look as below:</p>
+</div>
+
+<img src="{% static 'SPTGUI/img/tutorial/0.7/tuto14.png' %}"
+     class="img-responsive center-block"
+     style="max-width: 95%;"
+     alt="Overview of the download page.">
+
+<p>For each analysis marked for download, the following fields are displayed, in addition to the time of the analysis and the name and description we provided in the previous tab: </p>
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Column</th>
+    <th>Description</th>      
+  </tr>
+  <tr>
+    <td>Name & description</td>
+    <td>The name & description we provided in the previous tab.</td>      
+  </tr>
+  <tr>
+    <td>Datasets</td>
+    <td>The list of datasets included for this plot. Hovering over the numbers displays the full name and description of the dataset.</td>      
+  </tr>
+  <tr>
+    <td>Display</td>
+    <td>Descriptor corresponding to the type of plot displayed. Hover over the descriptor to see a short description:
+      <br/><code>P</code>: display of the probability density function,
+      <br/><code>JP</code>: display the pooled jump length distribution,
+      <br/><code>F</code>: pooled fit displayed</td>      
+  </tr>
+  <tr>
+    <td>Download</td>
+    <td>Download the corresponding analysis in various formats. The ZIP archive contains all the formats, the raw data, the display parameters and the fitted coefficients (if any).</td>      
+  </tr>
+  <tr>
+    <td>Delete</td>
+    <td>To delete this analysis.</td>      
+  </tr>
+</table>

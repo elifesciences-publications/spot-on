@@ -213,6 +213,8 @@ def fit_jld(arg, hash_prefix):
     fit2states = params["fit2states"]
     params.pop("include")
     params.pop("hashvalue")
+
+    #params['useZcorr'] = False
     
     if fit2states:
         params["LB"] = np.array([params["D_free"][0],
@@ -257,12 +259,11 @@ def fit_jld(arg, hash_prefix):
         JumpProb = JumpProb,
         r = HistVecJumpsCDF,
         LocError = fit.params['sigma'].value,
-        #LocError = params['LocError'],
         dT = params['dT'],
         dZ = params['dZ'],
         a = params["a"],
         b = params["b"],
-        fit2states = fit2states)
+        fit2states = fit2states, useZcorr=params['useZcorr'])
         
     ## Normalize it
     norm_y = np.zeros_like(y)
@@ -323,7 +324,8 @@ def check_input_file(filepath, file_id, fmt, fmtParams, queue=True):
     try: # try to parse the file
         fi = parsers.read_file(da.data.path, fmt, fmtParams)
         report += "SUCCESS, the file was successfully imported\n"
-    except: # exit
+    except Exception, e: # exit
+        print e
         report += "FAILURE, the file could not be imported.\n"
         report += "DELETED file: the imported file has been deleted\n"
         report += "ERROR MESSAGE:\n================================\n"
