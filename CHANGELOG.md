@@ -1,5 +1,8 @@
 Changelog for Spot-On
 
+## v0.11.0a [2017-10-20]
+- Option to deactivate the Z correction
+
 ## v0.10.0a [2017-09-13]
 ### Bugfixes
 - Improved user interface, that do not display the spinning wheel at inappropriate moments (bug #154)

@@ -9,3 +9,4 @@ We are very grateful to all the people who provided inputs, suggestions, support
 - Sheila Teves
 - Amy Strom
 - Laura Caccianini
+- Thomas Etheridge
