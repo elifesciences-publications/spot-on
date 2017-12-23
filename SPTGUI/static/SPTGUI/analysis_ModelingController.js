@@ -300,7 +300,7 @@ angular.module('app')
 				     iterations: 3,
 				     dT: null,
 				     dZ: 0.700,
-				     ModelFit: false, //false: PDF, true: CDF fit
+				     ModelFit: true, //false: PDF, true: CDF fit
 				     fitSigma: false,
 				     SingleCellFit: false,
 				     include : [], // Populated later
